@@ -1,0 +1,450 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <title>
+      Welcome! @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/zepto.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="i">Colophon</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Follow</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <h1>
+          Welcome!
+        </h1>
+        <section id="category">
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/03/22/mini-backtrace-for-minitest-and-rails">MiniBacktrace - For MiniTest & Rails</a>
+              </h3>
+              <time pubdate datetime="2011-03-22T00:00:00-04:00">
+                22 Mar 2011
+              </time>
+            </header>
+            <p>
+              MiniBacktrace allows you to take advantage of the Rails.backtrace_cleaner when using MiniTest. This includes everyone using Rails 3
+              with Ruby 1.9. Just add 'mini_backtrace' to your Gemfile's :test group and your should automatically see a huge difference. Any
+              additions to the Rails.backtrace_cleaner should now work. Rails.backtrace_cleaner.add_silencer { |line| line =~ /my_noisy_library/ }
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/03/20/pdfkit-overview-and-advanced-usage">PDFKit Overview & Advanced Usage</a>
+              </h3>
+              <time pubdate datetime="2011-03-20T00:00:00-04:00">
+                20 Mar 2011
+              </time>
+            </header>
+            <p>
+              Last week I had the pleasure of rewriting 4 years of legacy PDF::Writer code to PDFKit. Why? Well drawing pdfs in ruby using libraries
+              like PDF::Writer is like composing a webpage with an Etch A Sketch. In short, its a damn chore that involves a bunch of code that mixes
+              both data and presentation. Sure there are gems like Prawn that make this much easier, but nothing beats drawing your pdf code in
+              native HTML and CSS, and that is...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/03/09/gc-tune-ruby-1.9.2-with-rvm">GC Tune Ruby 1.9.2 With RVM</a>
+              </h3>
+              <time pubdate datetime="2011-03-09T00:00:00-05:00">
+                09 Mar 2011
+              </time>
+            </header>
+            <p>
+              Here is a gist by Sokolov Yura (funny-falcon) that allows you to GC tune Ruby 1.9.2 just like Ruby Enterprise Edition (REE). So all of
+              us using RVM have no reason not start using this right away. Here are the steps. $ curl
+              https://gist.github.com/raw/856296/patch-1.9.2-gc.patch &gt; ~/192-gc.patch $ rvm uninstall 1.9.2 $ rvm install 1.9.2 --patch
+              ~/192-gc.patch I have used this RVM hook below for awhile now. It automatically sets and unsets the proper ENV vars to GC tunes my
+              REE....
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/03/03/code-sharing-with-xcode-4-an-alternative-to-static-libraries">Code Sharing With XCode 4 - An Alternative To
+                Static Libraries</a>
+              </h3>
+              <time pubdate datetime="2011-03-03T00:00:00-05:00">
+                03 Mar 2011
+              </time>
+            </header>
+            <p>
+              There are many great techniques for sharing code across XCode projects. If that code is tested and build-able by XCode as a static
+              library, Clint Harris' Easy, Modular Code Sharing Across iPhone Apps: Static Libraries and Cross-Project References is really a solid
+              source on the topic. However, this approach is a bit heavy handed for what I wanted to do. Basically if you just have some common
+              header and implementation files that you want to use across multiple XCode projects,...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/02/10/modern-sql-server--rails">Modern SQL Server & Ruby/Rails Installer For Windows</a>
+              </h3>
+              <time pubdate datetime="2011-02-10T00:00:00-05:00">
+                10 Feb 2011
+              </time>
+            </header>
+            <p>
+              If you have not done so, please go read my article Modern SQL Server & Rails on the Engine Yard blog. I want to thank Wayne E Seguin
+              for inviting me to write the article. This article details many exciting things that have been happening for those using the SQL Server
+              Adapter for Rails, most notably TinyTDS. The article outlines why everyone still using the ODBC connection mode should really switch
+              over to TinyTDS. Many exciting things are happening thanks...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/01/27/simple-memcached-reports-in-rails">Simple Memcached Reports In Rails</a>
+              </h3>
+              <time pubdate datetime="2011-01-27T00:00:00-05:00">
+                27 Jan 2011
+              </time>
+            </header>
+            <p>
+              The Pragmatic Bookshelf's Using memcached: How to scale your website easily is way old. But then again, memcached is still very useful.
+              One of the things I remember reading a long time ago was the stats for your process and how to pull out meaningful reports like a hit
+              ratio, memory and a get to set ration. I whipped these up today as a simple way of getting a report using Rails.cache.report, assuming
+              your cache strategy is set to memcached....
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda">From Test::Unit & Shoulda To MiniTest::Spec &
+                MiniShoulda</a>
+              </h3>
+              <time pubdate datetime="2011-01-25T00:00:00-05:00">
+                25 Jan 2011
+              </time>
+            </header>
+            <p>
+              It seems the MiniTest replacement for Test::Unit in Ruby 1.9 has been presenting itself more and more in my daily readings. Recently
+              was Jamis Buck's article titled The road to faster tests where he talks about optimizing basecamp's suite to run faster. And there
+              again, some of the comments below mentioned MiniTest as a solution. That got me thinking on what would it take for me to switch from
+              Test::Unit to MiniTest. I love testing! But I am not nuts...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/01/03/automating-heroku-pg-backups">Automating Heroku PG Backups</a>
+              </h3>
+              <time pubdate datetime="2011-01-03T00:00:00-05:00">
+                03 Jan 2011
+              </time>
+            </header>
+            <p>
+              On December 1st, Heroku deprecated their bundles add-on in favor of their new PG Backups. Even though there are other solutions for
+              automating backups using this new add-on, none of them met my needs. I like to have a daily DB backup history, just in case you find
+              something bad that happened "n" days earlier. Below is a simple rake task suitable to place in your rails lib/tasks/heroku.task file.
+              I'll explain some things I learned below when writing this. require...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/12/29/pyr-pressure">Pyr Pressure</a>
+              </h3>
+              <time pubdate datetime="2010-12-29T00:00:00-05:00">
+                29 Dec 2010
+              </time>
+            </header>
+            <p>
+              It's a shame I do not do lifestyle posts more often, but with the new blog I hope to change that. To that end, this article is
+              dedicated to our Great Pyrenees Sasha who passed away from bone cancer last month. She was just 7 years old and we only had 3 weeks of
+              good times from the point she was diagnosed with osteosarcoma, a form of bone cancer. I am sure everyone loves their pet(s), we even
+              have another...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/12/27/let-it-go-moving-from-mephisto-to-jekyll">Let It Go - Moving From Mephisto To Jekyll</a>
+              </h3>
+              <time pubdate datetime="2010-12-27T00:00:00-05:00">
+                27 Dec 2010
+              </time>
+            </header>
+            <p>
+              Welcome to the new MetaSkills.net! I have moved from Mephisto to Jekyll and done a complete rewrite of the presentation layer to the
+              latest web standards as a way of staying somewhat sharp with the latest HTML5/CSS3 hotness. In this article, I would like to cover all
+              the gory details of what I learned about moving to Jekyll and the various techniques I have used for the site's CSS. But first a small
+              history lesson. If you are somewhat new...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/10/18/tinytds-a-modern-simple-and-fast-freetds-library-for-ruby-using-db-library">TinyTds - A modern, simple and fast
+                FreeTDS library for Ruby using DB-Library</a>
+              </h3>
+              <time pubdate datetime="2010-10-18T00:00:00-04:00">
+                18 Oct 2010
+              </time>
+            </header>
+            <p>
+              I just finished the first cut of learning C extensions for ruby and I present The TinyTds gem. It is meant to serve the extremely
+              common use-case of connecting, querying and iterating over results to Microsoft SQL Server databases from ruby. Even though it uses
+              FreeTDS's DB-Library, it is NOT meant to serve as direct 1:1 mapping of that complex C API The benefits are speed, automatic casting to
+              ruby primitives, and proper encoding support. It converts all SQL Server...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/08/19/how-to-clean-a-campfire-room-of-uploads">How To Clean A Campfire Room Of Uploads</a>
+              </h3>
+              <time pubdate datetime="2010-08-19T00:00:00-04:00">
+                19 Aug 2010
+              </time>
+            </header>
+            <p>
+              For us at work, our uploads to campfire are really transitory. Most of the time they are simple screenshots around a current topic.
+              Every now and then vacation photos or even movies, at the end of the day, none of it has value after a certain amount of time. To us as
+              the real value of campfire is our textual transcripts. This morning after 4 years of campfire, we were real close to our 1GB limit of
+              uploads. Time for...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/08/06/protip-exclude-your-rvm-install-from-timemachine-backups">Protip: Exclude Your RVM Install From Time Machine
+                Backups</a>
+              </h3>
+              <time pubdate datetime="2010-08-06T00:00:00-04:00">
+                06 Aug 2010
+              </time>
+            </header>
+            <p>
+              You may not realize it, but that ~/.rvm directory is getting big and may be hurting your Time Machine backups. Especially if you are
+              doing a lot of development. I just checked mine today. du -skh ~/.rvm/gems 1012M /Users/kencollins/.rvm/gems Ouch! That's around 1gig
+              of stuff that is pointless to backup just in the gems directory. I frequently blow away certain rubies and install them again using
+              various rake tasks and just found out today that you have to pass the...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/07/30/the-rvm-ruby-api">The RVM Ruby API - Setting Up A CI System For The SQL Server Adapter</a>
+              </h3>
+              <time pubdate datetime="2010-07-30T00:00:00-04:00">
+                30 Jul 2010
+              </time>
+            </header>
+            <p>
+              A few weeks ago I started looking into the Ruby Version Manager (RVM) project to help me build a better testing setup for both my day
+              job and the ActiveRecord SQL Server Adapter. In a previous article I covered details of how to get a development stack up and running
+              for Rails with SQL Server using MacPort's. This article will cover some new additions to that goal, but first and primarily, I wanted
+              to talk about the wonders of RVM...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/07/19/a-macport-rubyodbc-update">A MacPort/RubyODBC Update</a>
+              </h3>
+              <time pubdate datetime="2010-07-19T00:00:00-04:00">
+                19 Jul 2010
+              </time>
+            </header>
+            <p>
+              TinyTDS is the upcoming de facto raw connection method for the SQL Server adapter. Please read the Using TinyTDS wiki page on the
+              adapter for switching. No longer do you have to worry about compiling ODBC layers! I have changed my mind about the UTF-8 version of
+              RubyODBC. Please read that section in the the rails 3 announcements for the SQL Server adapter. Quite a while ago I wrote a soup to
+              nuts article on getting the full multi-ruby development...
+            </p>
+          </article>
+          <div class="floatr mr20">
+            <a href="/archive.html">&laquo; Archives</a>
+          </div>
+        </section>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              MiniBacktrace - For MiniTest & Rails
+            </h4>
+            <p>
+              <a href="/2011/03/22/mini-backtrace-for-minitest-and-rails">MiniBacktrace allows you to take advantage of the Rails.backtrace_cleaner
+              when using MiniTest. This includes everyone using Rails 3 with Ruby 1.9. Just add 'mini_backtrace' to your Gemfile's :test group
+              and...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              PDFKit Overview & Advanced Usage
+            </h4>
+            <p>
+              <a href="/2011/03/20/pdfkit-overview-and-advanced-usage">Last week I had the pleasure of rewriting 4 years of legacy PDF::Writer code
+              to PDFKit. Why? Well drawing pdfs in ruby using libraries like PDF::Writer is like composing a...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              GC Tune Ruby 1.9.2 With RVM
+            </h4>
+            <p>
+              <a href="/2011/03/09/gc-tune-ruby-1.9.2-with-rvm">Here is a gist by Sokolov Yura (funny-falcon) that allows you to GC tune Ruby 1.9.2
+              just like Ruby Enterprise Edition (REE). So all of us using RVM have no...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2011 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_slideshare" href="http://www.slideshare.net/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <title>
+      Custom Rake Task To Unload Fixtures @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/zepto.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="i">Colophon</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Follow</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate datetime="2006-10-02T00:00:00-04:00">
+              <span class="day">02</span> <span class="month">Oct</span> <span class="year">2006</span>
+            </time>
+            <h1>
+              Custom Rake Task To Unload Fixtures
+            </h1>
+          </header>
+          <p>
+            I made a revised version of a rake task that I have used quite often, for unloading existing DB tables into fixture data and thought I
+            would share. This rake task is the in correct name space and adds a "rake db:fixtures:unload" command to your rails project when you put
+            this in "lib/tasks/foo.rake". It can take an optional TABLES variable or if none is present the whole array of DB tables are converted. I
+            find this rake task helpful when dealing with LARGE databases.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">namespace</span> <span class="ss">:db</span> <span class="k">do</span>
+  <span class="n">namespace</span> <span class="ss">:fixtures</span> <span class="k">do</span>
+    <span class="n">desc</span> <span class=
+"s1">&#39;Create YAML test fixtures from data in specifed tables. Set table names by TABLES=foos,bars,etc&#39;</span>
+    <span class="n">task</span> <span class="ss">:unload</span> <span class="o">=&gt;</span> <span class="ss">:environment</span> <span class=
+"k">do</span>
+      <span class="n">sql</span>  <span class="o">=</span> <span class="s2">&quot;SELECT * FROM %s&quot;</span>
+      <span class="n">tables</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;schema_info&quot;</span><span class=
+"o">]</span>
+      <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class=
+"n">establish_connection</span>
+      <span class="p">(</span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;TABLES&#39;</span><span class=
+"o">]</span> <span class="p">?</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;TABLES&#39;</span><span class=
+"o">].</span><span class="n">split</span><span class="p">(</span><span class="sr">/,/</span><span class="p">)</span> <span class=
+"p">:</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class=
+"n">connection</span><span class="o">.</span><span class="n">tables</span><span class="p">)</span><span class="o">.</span><span class=
+"n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">table_name</span><span class="o">|</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="s2">&quot;000&quot;</span>
+        <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class=
+"s2">&quot;</span><span class="si">#{</span><span class="no">RAILS_ROOT</span><span class="si">}</span><span class=
+"s2">/test/fixtures/</span><span class="si">#{</span><span class="n">table_name</span><span class="si">}</span><span class=
+"s2">.yml&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">do</span> <span class=
+"o">|</span><span class="n">file</span><span class="o">|</span>
+          <span class="n">data</span> <span class="o">=</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class=
+"no">Base</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">select_all</span><span class=
+"p">(</span><span class="n">sql</span> <span class="o">%</span> <span class="n">table_name</span><span class="p">)</span>
+          <span class="n">file</span><span class="o">.</span><span class="n">write</span> <span class="n">data</span><span class=
+"o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="p">{</span> <span class="o">|</span><span class=
+"nb">hash</span><span class="p">,</span> <span class="n">record</span><span class="o">|</span>
+            <span class="nb">hash</span><span class="o">[</span><span class="s2">&quot;</span><span class="si">#{</span><span class=
+"n">table_name</span><span class="si">}</span><span class="s2">_</span><span class="si">#{</span><span class="n">i</span><span class=
+"o">.</span><span class="n">succ!</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">record</span>
+            <span class="nb">hash</span>
+          <span class="p">}</span><span class="o">.</span><span class="n">to_yaml</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+
+            var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2006/10/02/custom-rake-task-to-unload-fixtures/';
+            var disqus_title = 'Custom Rake Task To Unload Fixtures';
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              MiniBacktrace - For MiniTest & Rails
+            </h4>
+            <p>
+              <a href="/2011/03/22/mini-backtrace-for-minitest-and-rails">MiniBacktrace allows you to take advantage of the Rails.backtrace_cleaner
+              when using MiniTest. This includes everyone using Rails 3 with Ruby 1.9. Just add 'mini_backtrace' to your Gemfile's :test group
+              and...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              PDFKit Overview & Advanced Usage
+            </h4>
+            <p>
+              <a href="/2011/03/20/pdfkit-overview-and-advanced-usage">Last week I had the pleasure of rewriting 4 years of legacy PDF::Writer code
+              to PDFKit. Why? Well drawing pdfs in ruby using libraries like PDF::Writer is like composing a...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              GC Tune Ruby 1.9.2 With RVM
+            </h4>
+            <p>
+              <a href="/2011/03/09/gc-tune-ruby-1.9.2-with-rvm">Here is a gist by Sokolov Yura (funny-falcon) that allows you to GC tune Ruby 1.9.2
+              just like Ruby Enterprise Edition (REE). So all of us using RVM have no...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2011 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_slideshare" href="http://www.slideshare.net/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

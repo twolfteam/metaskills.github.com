@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <title>
+      Visor Terminal on Snow Leopard @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/zepto.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="i">Colophon</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Follow</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate datetime="2009-08-18T00:00:00-04:00">
+              <span class="day">18</span> <span class="month">Aug</span> <span class="year">2009</span>
+            </time>
+            <h1>
+              Visor Terminal on Snow Leopard
+            </h1>
+          </header>
+          <aside class="flash_warn">
+            UPDATE: Hacks no longer needed, latest Visor/SIMBL is 64-bit Snow Leopard happy!
+          </aside>
+          <p>
+            This is a similar process that I had to go through back in the day when I had to hack visor terminal in Leopard. Basically the steps are
+            pretty easy. First you just install <a href="http://www.culater.net/software/SIMBL/SIMBL.php">SIMBL</a> and the <a href=
+            "http://visor.binaryage.com/">Visor.bundle</a> as a SIMBL plugin in <code>~/Library/Application
+            Support/SIMBL/Plugins/Visor.bundle</code>. Once that is done here is the process to get this working in Snow Leopard.
+          </p>
+          <p>
+            First, you are going to need a copy of the Terminal.app from Leopard. I have <a href=
+            "http://cdn.metaskills.net/VisorTerminal.zip">provided a copy</a> in the resources section below. This copy has a few key things changed
+            in the app's Info.plist file. First I have changed the bundle identifiers and display names to VisorTerminal. This is how we are going to
+            scope visor to use this particular app. It also allows us to set things like the LSUIElement to 1 so that this app does not show in the
+            dock. A summary of the changes I made are below, all these are done already in the download file I provide. If you want to do these on
+            your own copy of Leopard's Terminal.app then just right click on the app, show package contents, and edit the Info.plist file. Remember
+            to rename the app to VisorTerminal.app.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="html"><span class="nt">&lt;key&gt;</span>CFBundleDisplayName<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>VisorTerminal<span class="nt">&lt;/string&gt;</span>
+...
+<span class="nt">&lt;key&gt;</span>CFBundleIdentifier<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>com.apple.VisorTerminal<span class="nt">&lt;/string&gt;</span>
+...
+<span class="nt">&lt;key&gt;</span>CFBundleName<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>VisorTerminal<span class="nt">&lt;/string&gt;</span>
+...
+<span class="nt">&lt;key&gt;</span>LSUIElement<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>1<span class="nt">&lt;/string&gt;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Now we need to edit the installed <code>~/Library/Application Support/SIMBL/Plugins/Visor.bundle</code> so that it focuses on the old
+            Leopard's terminal app (now VisorTerminal.app). Again right click on it and show the package contents, here is the complete plist below.
+            You can see where I changed 3 places to VisorTerminal.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="html"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class=
+"cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;dict&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleDevelopmentRegion<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>English<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleExecutable<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>Visor<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleIdentifier<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>com.blacktree.visor<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleInfoDictionaryVersion<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>6.0<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleName<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>Visor<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundlePackageType<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>BNDL<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleSignature<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>????<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleVersion<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>Custom<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>GoogleML<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;dict&gt;</span>
+    <span class="nt">&lt;key&gt;</span>TargetApplications<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;array&gt;</span>
+      <span class="nt">&lt;dict&gt;</span>
+        <span class="nt">&lt;key&gt;</span>BundleIdentifier<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;string&gt;</span>com.apple.VisorTerminal<span class="nt">&lt;/string&gt;</span>
+        <span class="nt">&lt;key&gt;</span>BundleVersionsRE<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;array&gt;</span>
+          <span class="nt">&lt;string&gt;</span>.*<span class="nt">&lt;/string&gt;</span>
+        <span class="nt">&lt;/array&gt;</span>
+        <span class="nt">&lt;key&gt;</span>ExecPattern<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;string&gt;</span>*/VisorTerminal.app/Contents/MacOS/Terminal<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;/dict&gt;</span>
+    <span class="nt">&lt;/array&gt;</span>
+  <span class="nt">&lt;/dict&gt;</span>
+  <span class="nt">&lt;key&gt;</span>NSPrincipalClass<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>Visor<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>SIMBLTargetApplications<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;array&gt;</span>
+    <span class="nt">&lt;dict&gt;</span>
+      <span class="nt">&lt;key&gt;</span>BundleIdentifier<span class="nt">&lt;/key&gt;</span>
+      <span class="nt">&lt;string&gt;</span>com.apple.VisorTerminal<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;/dict&gt;</span>
+  <span class="nt">&lt;/array&gt;</span>
+<span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/plist&gt;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Now when you launch VisorTerminal, it will be hidden from the dock and be the app that Visor.bundle focuses on. I really like how this
+            app is removed from the doc too. More so I am just stoked it is working in Snow Leopard. As a last step, yoyou can add this to your login
+            items so that it opens up automatically. I have found that it is a bit sticky when it first launches, but a few clicks in and out on
+            first launch fixes that. One last note, I found it is easier to edit the custom properties for this terminal window like it's default
+            color, font size, etc, if I turn off the LSUIElement.
+          </p>
+          <p>
+            <strong>UPDATE:</strong> Thanks to Raptor007 for reminding us that if you want to get a head start on your terminal preferences looking
+            the same for your VisorTerminal, you should copy <code>~/Library/Preferences/com.apple.Terminal.plist</code> to
+            <code>~/Library/Preferences/com.apple.VisorTerminal.plist</code>. Thanks!
+          </p>
+          <h2>
+            Resources
+          </h2>
+          <ul>
+            <li>
+              <a href="http://visor.binaryage.com/">Visor Project Page</a>
+            </li>
+            <li>
+              <a href="http://www.culater.net/software/SIMBL/SIMBL.php">SIMBL Project Page</a>
+            </li>
+            <li>
+              <a href="http://cdn.metaskills.net/downloads/VisorTerminal.zip">VisorTerminal.app (Leopard)</a>
+            </li>
+          </ul>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+
+            var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2009/08/18/visor-terminal-on-snow-leopard/';
+            var disqus_title = 'Visor Terminal on Snow Leopard';
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              MiniBacktrace - For MiniTest & Rails
+            </h4>
+            <p>
+              <a href="/2011/03/22/mini-backtrace-for-minitest-and-rails">MiniBacktrace allows you to take advantage of the Rails.backtrace_cleaner
+              when using MiniTest. This includes everyone using Rails 3 with Ruby 1.9. Just add 'mini_backtrace' to your Gemfile's :test group
+              and...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              PDFKit Overview & Advanced Usage
+            </h4>
+            <p>
+              <a href="/2011/03/20/pdfkit-overview-and-advanced-usage">Last week I had the pleasure of rewriting 4 years of legacy PDF::Writer code
+              to PDFKit. Why? Well drawing pdfs in ruby using libraries like PDF::Writer is like composing a...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              GC Tune Ruby 1.9.2 With RVM
+            </h4>
+            <p>
+              <a href="/2011/03/09/gc-tune-ruby-1.9.2-with-rvm">Here is a gist by Sokolov Yura (funny-falcon) that allows you to GC tune Ruby 1.9.2
+              just like Ruby Enterprise Edition (REE). So all of us using RVM have no...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2011 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_slideshare" href="http://www.slideshare.net/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

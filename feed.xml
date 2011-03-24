@@ -1,0 +1,1353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>MetaSkills.net</title>
+ <link href="http://metaskills.net/feed.xml" rel="self"/>
+ <link href="http://metaskills.net/"/>
+ <updated>2011-03-23T20:38:12-04:00</updated>
+ <id>http://metaskills.net/</id>
+ <author>
+   <name>Ken Collins</name>
+   <email>ken@metaskills.net</email>
+ </author>
+
+ 
+ <entry>
+   <title>MiniBacktrace - For MiniTest &amp; Rails</title>
+   <link href="http://metaskills.net/2011/03/22/mini-backtrace-for-minitest-and-rails"/>
+   <updated>2011-03-22T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/03/22/mini-backtrace-for-minitest-and-rails</id>
+   <content type="html">
+     <![CDATA[<p>
+  <a href="https://github.com/metaskills/mini_backtrace">MiniBacktrace</a> allows you to take advantage of the Rails.backtrace_cleaner when using MiniTest. This includes everyone using Rails 3 with Ruby 1.9.
+</p>
+
+<p>
+  Just add 'mini_backtrace' to your Gemfile's :test group and your should automatically see a huge difference. Any additions to the Rails.backtrace_cleaner should now work.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="no">Rails</span><span class="o">.</span><span class="n">backtrace_cleaner</span><span class="o">.</span><span class="n">add_silencer</span> <span class="p">{</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span> <span class="n">line</span> <span class="o">=~</span> <span class="sr">/my_noisy_library/</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>PDFKit Overview &amp; Advanced Usage</title>
+   <link href="http://metaskills.net/2011/03/20/pdfkit-overview-and-advanced-usage"/>
+   <updated>2011-03-20T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/03/20/pdfkit-overview-and-advanced-usage</id>
+   <content type="html">
+     <![CDATA[<p>
+  Last week I had the pleasure of rewriting 4 years of legacy PDF::Writer code to <a href="http://github.com/jdpace/PDFKit">PDFKit</a>. Why? Well drawing pdfs in ruby using libraries like PDF::Writer is like composing a webpage with an Etch A Sketch. In short, its a damn chore that involves a bunch of code that mixes both data and presentation. Sure there are gems like <a href="http://prawn.majesticseacreature.com/">Prawn</a> that make this much easier, but nothing beats drawing your pdf code in native HTML and CSS, and that is where <a href="http://code.google.com/p/wkhtmltopdf/">wkhtmltopdf</a> comes in.
+</p>
+
+<p>
+  Wkhtmltopdf is an open source project that uses the <a href="http://www.webkit.org/">WebKit</a> rendering engine to convert HTML to native PDF code. This is the muscle behind the PDFKit gem and other projects like <a href="https://github.com/mileszs/wicked_pdf">WickedPdf</a>. In this article I am only going to focus on PDFKit with Rails. But many topics will apply to both PDFKit and WickedPdf since they use wkhtmltopdf on the backside.
+</p>
+
+
+<h2>Installation</h2>
+
+<p>
+  Installing the PDFKit gem is a no brainer. The hard part is getting the wkhtmltopdf binaries for you platform installed. Thankfully the google project page hosts a batch of static binaries that work on just about every platform. So <a href="http://code.google.com/p/wkhtmltopdf/downloads/list">go to their download page</a> and pick the statically compiled binary that meets your needs. I highly suggest that you get the latest 0.10.0rc2 since some topics below take advantage of recent bug fixes. I have tested both the OSX and i386 on RHEL with success and the release candidate seems very production ready. I suggest placing wkhtmltopdf in <code>/usr/local/bin/wkhtmltopdf</code>.
+</p>
+
+<pre class="command">
+$ which wkhtmltopdf
+/usr/local/bin/wkhtmltopdf
+</pre>
+
+<h2>The Basic Requirements</h2>
+
+<p>
+  I knew that HTML to PDF generation has its drawbacks, specifically with common headers/footers and page breaks. I happily found out that wkhtmltopdf has a solution for all these problems and can layout PDF pages with pixel perfect precision. So let's skip over the <a href="https://github.com/jdpace/PDFKit/wiki">basics</a> and get right down to using PDFKit like a pro. We are going to build out the Rails HTML/CSS layouts and templates that will solve a series of common problems.
+</p>
+
+<p>
+  The major reason to use PDFKit and wkhtmltopdf is that we can use the same templating system in Rails that we use to generate other views. This means that we test our PDF view code just like any other Rails code using its built-in functional or integration test cases. Let me say that again, we can TEST our PDF code! A huge win if you have complex conditional view code. So let's get to it.
+</p>
+
+
+<h2>The Main PDF Layout</h2>
+
+<p>
+  Sometimes it is useful to start at the end. So the first thing we need is a new layout for all of our pdf templates to use. Here is a <a href="http://haml-lang.com/">HAML</a> file that I recommend you name <code>app/views/layouts/pdf.html.pdf.haml</code>. Did you see that name? <strong>This is important!</strong> because Rails allows us to specify template names that can service more than one mime type format. So in this case, the layout will be found when rendering both HTML and .pdf formats. 
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
+<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">}</span>
+  <span class="o">%</span><span class="n">head</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdfkit-footer_html&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="n">pdf_footer_url</span><span class="p">}</span>
+    <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">request</span><span class="o">.</span><span class="n">protocol</span><span class="si">}#{</span><span class="n">request</span><span class="o">.</span><span class="n">host_with_port</span><span class="si">}</span><span class="s2">/stylesheets/pdf.css&quot;</span>
+  <span class="o">%</span><span class="n">body</span>
+    <span class="o">=</span> <span class="k">yield</span><span class="p">(</span><span class="ss">:layout</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>
+  <strong>I recommend that all PDF layouts, templates, and partials use the dual mime type naming convention.</strong> This will allow you to test your rendered HTML to PDF view code using common DOM techniques. Like <code>assert_select</code> in rails or maybe <a href="https://github.com/jnicklas/capybara">capybara's</a> <code>has_selector?</code>. So given that you may have a print action for your orders controller, you would use <code>print_orders_path(@order)</code> for your functional tests with DOM assertions and <code>print_orders_path(@order,:format=>:pdf)</code> for real world usage and/or integration tests. Both formats will render the same partials, templates and layouts if you use that naming structure.
+</p>
+
+<p>
+  So that layout file is a real basic HTML5 doctype (which WebKit handles just fine) plus a few special elements. I'll cover that <code>pdfkit-footer_html</code> meta tag later on. For now, let's focus on that <code>pdf.css</code> stylesheet.
+</p>
+
+
+<h2>Your PDF CSS</h2>
+
+<p>
+  You might be tempted to utilize your existing site's stylesheets for a base and then use media/print techniques to override and customize your printed versions. I am of the opinion that your PDF stylesheets should be very basic and easy to layout. To this end, I highly suggest that you start with an HTML reset CSS. In the example below, I have used <a href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css">Yahoo's CSS reset</a>. This makes it so that every bit of layout is under your strict control with a common rendering of no margin or padding to throw you off.
+</p>
+
+<div class="highlight"><pre><code class="css"><span class="c">/* Reset CSS. http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css  */</span>
+<span class="nt">html</span><span class="p">{</span><span class="k">color</span><span class="o">:</span><span class="m">#000</span><span class="p">;</span><span class="k">background</span><span class="o">:</span><span class="m">#FFF</span><span class="p">;}</span><span class="nt">body</span><span class="o">,</span><span class="nt">div</span><span class="o">,</span><span class="nt">dl</span><span class="o">,</span><span class="nt">dt</span><span class="o">,</span><span class="nt">dd</span><span class="o">,</span><span class="nt">ul</span><span class="o">,</span><span class="nt">ol</span><span class="o">,</span><span class="nt">li</span><span class="o">,</span><span class="nt">h1</span><span class="o">,</span><span class="nt">h2</span><span class="o">,</span><span class="nt">h3</span><span class="o">,</span><span class="nt">h4</span><span class="o">,</span><span class="nt">h5</span><span class="o">,</span><span class="nt">h6</span><span class="o">,</span>
+<span class="nt">pre</span><span class="o">,</span><span class="nt">code</span><span class="o">,</span><span class="nt">form</span><span class="o">,</span><span class="nt">fieldset</span><span class="o">,</span><span class="nt">legend</span><span class="o">,</span><span class="nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span><span class="nt">p</span><span class="o">,</span><span class="nt">blockquote</span><span class="o">,</span><span class="nt">th</span><span class="o">,</span><span class="nt">td</span><span class="p">{</span><span class="k">margin</span><span class="o">:</span><span class="m">0</span><span class="p">;</span><span class="k">padding</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span>
+<span class="nt">table</span><span class="p">{</span><span class="k">border-collapse</span><span class="o">:</span><span class="k">collapse</span><span class="p">;</span><span class="k">border-spacing</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span><span class="nt">fieldset</span><span class="o">,</span><span class="nt">img</span><span class="p">{</span><span class="k">border</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span><span class="nt">address</span><span class="o">,</span><span class="nt">caption</span><span class="o">,</span>
+<span class="nt">cite</span><span class="o">,</span><span class="nt">code</span><span class="o">,</span><span class="nt">dfn</span><span class="o">,</span><span class="nt">em</span><span class="o">,</span><span class="nt">strong</span><span class="o">,</span><span class="nt">th</span><span class="o">,</span><span class="nt">var</span><span class="p">{</span><span class="k">font-style</span><span class="o">:</span><span class="k">normal</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span><span class="nt">li</span><span class="p">{</span><span class="k">list-style</span><span class="o">:</span><span class="k">none</span><span class="p">;}</span>
+<span class="nt">caption</span><span class="o">,</span><span class="nt">th</span><span class="p">{</span><span class="k">text-align</span><span class="o">:</span><span class="k">left</span><span class="p">;}</span><span class="nt">h1</span><span class="o">,</span><span class="nt">h2</span><span class="o">,</span><span class="nt">h3</span><span class="o">,</span><span class="nt">h4</span><span class="o">,</span><span class="nt">h5</span><span class="o">,</span><span class="nt">h6</span><span class="p">{</span><span class="k">font-size</span><span class="o">:</span><span class="m">100%</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span>
+<span class="nt">q</span><span class="nd">:before</span><span class="o">,</span><span class="nt">q</span><span class="nd">:after</span><span class="p">{</span><span class="k">content</span><span class="o">:</span><span class="s1">&#39;&#39;</span><span class="p">;}</span><span class="nt">abbr</span><span class="o">,</span><span class="nt">acronym</span><span class="p">{</span><span class="k">border</span><span class="o">:</span><span class="m">0</span><span class="p">;</span><span class="k">font-variant</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span>
+<span class="nt">sup</span><span class="p">{</span><span class="k">vertical-align</span><span class="o">:</span><span class="k">text</span><span class="o">-</span><span class="k">top</span><span class="p">;}</span><span class="nt">sub</span><span class="p">{</span><span class="k">vertical-align</span><span class="o">:</span><span class="k">text</span><span class="o">-</span><span class="k">bottom</span><span class="p">;}</span><span class="nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span>
+<span class="nt">select</span><span class="p">{</span><span class="k">font-family</span><span class="o">:</span><span class="k">inherit</span><span class="p">;</span><span class="k">font-size</span><span class="o">:</span><span class="k">inherit</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">inherit</span><span class="p">;}</span><span class="nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span>
+<span class="nt">select</span><span class="p">{</span><span class="o">*</span><span class="k">font-size</span><span class="o">:</span><span class="m">100%</span><span class="p">;}</span><span class="nt">legend</span><span class="p">{</span><span class="k">color</span><span class="o">:</span><span class="m">#000</span><span class="p">;}</span>
+
+<span class="c">/* Your Base Foundation */</span>
+<span class="nt">html</span><span class="o">,</span><span class="nt">body</span> <span class="p">{</span> <span class="k">font-family</span><span class="o">:</span> <span class="k">sans-serif</span><span class="p">;</span> <span class="k">font-size</span><span class="o">:</span><span class="m">12px</span><span class="p">;</span> <span class="p">}</span>
+<span class="nt">h1</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">18px</span><span class="p">;</span> <span class="p">}</span>
+<span class="nt">h2</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">16px</span><span class="p">;</span> <span class="p">}</span>
+<span class="nt">h3</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">14px</span><span class="p">;</span> <span class="p">}</span>
+<span class="nt">h4</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">12px</span><span class="p">;</span> <span class="p">}</span>
+<span class="nt">strong</span> <span class="p">{</span> <span class="k">font-weight</span><span class="o">:</span><span class="m">900</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
+<span class="nt">hr</span>     <span class="p">{</span> <span class="k">border</span><span class="o">:</span><span class="m">0</span><span class="p">;</span> <span class="k">margin</span><span class="o">:</span><span class="m">0</span><span class="p">;</span> <span class="k">padding</span><span class="o">:</span><span class="m">0</span><span class="p">;</span> <span class="k">height</span><span class="o">:</span><span class="m">1px</span><span class="p">;</span> <span class="k">color</span><span class="o">:</span><span class="m">#000</span><span class="p">;</span> <span class="k">background-color</span><span class="o">:</span><span class="m">#000</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="c">/* Page Breaks */</span>
+<span class="nc">.pb_before</span> <span class="p">{</span> <span class="k">page</span><span class="o">-</span><span class="n">break</span><span class="o">-</span><span class="n">before</span><span class="o">:</span><span class="k">always</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.pb_after</span>  <span class="p">{</span> <span class="k">page</span><span class="o">-</span><span class="n">break</span><span class="o">-</span><span class="n">after</span><span class="o">:</span><span class="k">always</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.pbi_avoid</span> <span class="p">{</span> <span class="k">page</span><span class="o">-</span><span class="n">break</span><span class="o">-</span><span class="k">inside</span><span class="o">:</span><span class="k">avoid</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>
+  The second section of the CSS above is the place where you can put in a few custom styles that fit your needs. In my example I set a series of header font sizes, a base sans-serif font face and an hr tag that can be used as a simple rule. Feel free to add others here like basic styles for data tables, etc. The last section of the CSS file above are page break helpers. The latest version of wkhtmltopdf never breaks text in the middle of the line anymore. So most of the time the default page break behavior will work fine. But for those situations where you need more control, these 3 CSS declarations will serve most of your needs. Let's take a look at a few examples of their usage. Full details on <a href="http://www.w3.org/TR/css3-page/">CSS paged media</a> can be found on the W3C's site.
+</p>
+
+<p>
+  Use the <code>.pbi_avoid</code> class on any block level element that you want to make sure is never broken across multiple pages. A great usage would be on each element of an orders line items. It can also be used on any large page element that will certainly fit on one page, but should never be broken up. This is perfect in places where you might have measured the remaining page space before drawing said element. The <code>.pb_before</code> class will always break to a new page. I found this very useful when printing composite PDF files that combined multiple other PDF actions. So here is another HAML template that renders 3 other PDF full page partials. Each partial can be 1 to many pages. By enclosing each in a <code><div></code> tag that forces a new page break makes sure that we always start a new page when rendering each document.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">%</span><span class="n">div</span><span class="o">.</span><span class="n">pb_before</span>
+  <span class="o">=</span> <span class="n">render</span> <span class="ss">:partial</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdf/orders/print&#39;</span>
+<span class="o">%</span><span class="n">div</span><span class="o">.</span><span class="n">pb_before</span>
+  <span class="o">=</span> <span class="n">render</span> <span class="ss">:partial</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdf/orders/invoice&#39;</span>
+<span class="o">%</span><span class="n">div</span><span class="o">.</span><span class="n">pb_before</span>
+  <span class="o">=</span> <span class="n">render</span> <span class="ss">:partial</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdf/orders/picklist&#39;</span>
+</code></pre>
+</div>
+
+
+<h2>Custom Headers/Footers</h2>
+
+<p>
+  PDFKit and specifically wkhtmltopdf handles common page headers and footers just wonderfully, though it did take me some time to figure it out. I'll try to spare you the same pain by detailing the process for a custom footer on each page. In this example we will expect that our custom footer will be approximately .2 inches tall with a current page number next to a total page count. 
+</p>
+
+<p>
+  Remember that <code>pdfkit-footer_html</code> meta tag in the pdf layout above? If not, here it is again.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdfkit-footer_html&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="n">pdf_footer_url</span><span class="p">}</span>
+</code></pre>
+</div>
+
+<p>
+  So what is going on here? Two things really. The first is a way for PDFKit to customize the command arguments passed down to wkhtmltopdf when the page is converted. PDFKit will take any meta tag with a name prefixed using "pdfkit-" and pass down the content attribute as the value to the suffix of the name attribute. In this case <code>--foter-html http://myapp.com/pdf/footer</code> will be used as a command argument to wkhtmltopdf when rendering templates using that layout file. Note, it is important to use fully qualified URLs for header and footer arguments.
+</p>
+
+<p>
+  When it comes to headers and footers, wkhtmltopdf takes the URL to an HTML page, renders it to native PDF code and embeds it automatically for you below or above your page margin. You can control the placement of these in one of two ways. The first is by adjusting the layout of the header/footer HTML page. The second is by adjusting the margin of the parent document. In my case, since I knew my footer was around .2 inches tall, I gave it's template an internal top margin of 10 pixels and told PDFKit to increase my global .5 inch page margins by .2 inches for the bottom margin using a rails initializer.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="no">PDFKit</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">default_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="ss">:page_size</span>     <span class="o">=&gt;</span> <span class="s1">&#39;Letter&#39;</span><span class="p">,</span>
+    <span class="ss">:margin_top</span>    <span class="o">=&gt;</span> <span class="s1">&#39;0.5in&#39;</span><span class="p">,</span>
+    <span class="ss">:margin_right</span>  <span class="o">=&gt;</span> <span class="s1">&#39;0.5in&#39;</span><span class="p">,</span>
+    <span class="ss">:margin_bottom</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.7in&#39;</span><span class="p">,</span>
+    <span class="ss">:margin_left</span>   <span class="o">=&gt;</span> <span class="s1">&#39;0.5in&#39;</span>
+  <span class="p">}</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  So now I know that whatever content I render in my <code>http://myapp.com/pdf/footer</code> page will fit just nicely on the bottom of each page. But how to generate that content and the custom page numbers? First, let's make a single pdf resource in our rails route file with a collection action for #footer. Now here is a controller for that resource with a single footer action.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">PdfController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">perform_caching</span> <span class="p">;</span> <span class="kp">true</span> <span class="p">;</span> <span class="k">end</span>
+  <span class="n">caches_page</span> <span class="ss">:footer</span>
+  
+  <span class="k">def</span> <span class="nf">footer</span>
+    <span class="n">render</span> <span class="ss">:layout</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+  <span class="k">end</span>
+  
+  <span class="kp">private</span>
+  
+  <span class="k">def</span> <span class="nf">perform_caching</span>
+    <span class="kp">true</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  There is not much here past rendering a basic template file with no layout. All the rest is to achieve an important set of caching rules. Ideally the URL argument to <code>--footer-html</code> would be a static HTML file. However, if want to use Rails templating to render that file, it is important to cache the results. The parent document will request this URL for each page it renders, so you can see how one process could deadlock another if your were not careful. In my example above, I override ActionController's perform_caching class and instance methods so that all actions in this controller would cache. I recommend committing a cached footer html page to any source control you have for deployment.
+</p>
+
+<p>
+  With that out of the way, what about the content of the footer HTML page? Again, here is a HAML template I used. This is very much like my pdf layout with one important difference, some JavaScript that is used to parse the query parameters that wkhtmltopdf tacks onto each header/footer URL request. In the example below I am only using the current page <code>page</code> and total page count <code>topage</code> params and inserting those values into to elements. For a full list of all the query parameters, consult the wkhtmltopdf expanded help page.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
+<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">}</span>
+  <span class="o">%</span><span class="n">head</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
+    <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">request</span><span class="o">.</span><span class="n">protocol</span><span class="si">}#{</span><span class="n">request</span><span class="o">.</span><span class="n">host_with_port</span><span class="si">}</span><span class="s2">/stylesheets/pdf.css&quot;</span>
+    <span class="ss">:javascript</span>
+      <span class="n">var</span> <span class="n">pdfInfo</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="n">var</span> <span class="n">x</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">);</span>
+      <span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">i</span> <span class="k">in</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span> <span class="n">var</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span> <span class="n">pdfInfo</span><span class="o">[</span><span class="n">z</span><span class="o">[</span><span class="mi">0</span><span class="o">]]</span> <span class="o">=</span> <span class="n">unescape</span><span class="p">(</span><span class="n">z</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">);</span> <span class="p">}</span>
+      <span class="n">function</span> <span class="n">getPdfInfo</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">var</span> <span class="n">page</span> <span class="o">=</span> <span class="n">pdfInfo</span><span class="o">.</span><span class="n">page</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">var</span> <span class="n">pageCount</span> <span class="o">=</span> <span class="n">pdfInfo</span><span class="o">.</span><span class="n">topage</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class="s1">&#39;pdfkit_page_current&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">textContent</span> <span class="o">=</span> <span class="n">page</span><span class="p">;</span>
+        <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class="s1">&#39;pdfkit_page_count&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">textContent</span> <span class="o">=</span> <span class="n">pageCount</span><span class="p">;</span>
+      <span class="p">}</span>
+  <span class="o">%</span><span class="n">body</span><span class="p">{</span><span class="ss">:onload</span> <span class="o">=&gt;</span> <span class="s1">&#39;getPdfInfo()&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">div</span><span class="c1">#pdfkit_page_numbers</span>
+      <span class="o">%</span><span class="n">span</span> <span class="no">Page</span><span class="p">:</span> 
+      <span class="o">%</span><span class="n">span</span><span class="c1">#pdfkit_page_current</span>
+      <span class="o">%</span><span class="n">span</span> <span class="n">of</span> 
+      <span class="o">%</span><span class="n">span</span><span class="c1">#pdfkit_page_count</span>
+</code></pre>
+</div>
+
+<p>
+  Hopefully this helps anyone looking to use PDFKit or any system that leverages the wkhtmltopdf project. If I missed anything or can help, please leave me a comment. Thanks!
+</p>
+
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>GC Tune Ruby 1.9.2 With RVM</title>
+   <link href="http://metaskills.net/2011/03/09/gc-tune-ruby-1.9.2-with-rvm"/>
+   <updated>2011-03-09T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2011/03/09/gc-tune-ruby-1.9.2-with-rvm</id>
+   <content type="html">
+     <![CDATA[<p>
+  Here is a <a href="https://gist.github.com/856296">gist</a> by Sokolov Yura (funny-falcon) that allows you to GC tune Ruby 1.9.2 just like Ruby Enterprise Edition (REE). So all of us using <a href="http://rvm.beginrescueend.com/">RVM</a> have no reason not start using this right away. Here are the steps.
+</p>
+
+<pre class="command">
+  $ curl https://gist.github.com/raw/856296/patch-1.9.2-gc.patch > ~/192-gc.patch
+  $ rvm uninstall 1.9.2
+  $ rvm install 1.9.2 --patch ~/192-gc.patch
+</pre>
+
+<p>
+  I have used this RVM hook below for awhile now. It automatically sets and unsets the proper ENV vars to GC tunes my REE. I have now updated it to apply the same GC settings to my newly patched 1.9.2 as well. I recommend this go into <code>~/.rvm/hooks/after_use</code>. 
+</p>
+
+<div class="highlight"><pre><code class="bash"><span class="k">case</span> <span class="s2">&quot;$rvm_ruby_string&quot;</span> in
+  *ree*|*ruby-1.9.2*<span class="o">)</span>
+    <span class="nb">export </span><span class="nv">RUBY_HEAP_MIN_SLOTS</span><span class="o">=</span>1000000
+    <span class="nb">export </span><span class="nv">RUBY_HEAP_SLOTS_INCREMENT</span><span class="o">=</span>1000000
+    <span class="nb">export </span><span class="nv">RUBY_HEAP_SLOTS_GROWTH_FACTOR</span><span class="o">=</span>1
+    <span class="nb">export </span><span class="nv">RUBY_GC_MALLOC_LIMIT</span><span class="o">=</span>1000000000
+    <span class="nb">export </span><span class="nv">RUBY_HEAP_FREE_MIN</span><span class="o">=</span>500000
+    <span class="nb">export </span><span class="nv">RUBY_FREE_MIN</span><span class="o">=</span><span class="nv">$RUBY_HEAP_FREE_MIN</span>
+  ;;
+  *<span class="o">)</span>
+    <span class="nb">unset </span>RUBY_HEAP_MIN_SLOTS RUBY_HEAP_SLOTS_INCREMENT RUBY_HEAP_SLOTS_GROWTH_FACTOR RUBY_GC_MALLOC_LIMIT RUBY_HEAP_FREE_MIN RUBY_FREE_MIN
+  ;;                                                                                                                                                                                                                                                                                                                        
+<span class="k">esac</span>
+</code></pre>
+</div>
+
+
+
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Code Sharing With XCode 4 - An Alternative To Static Libraries</title>
+   <link href="http://metaskills.net/2011/03/03/code-sharing-with-xcode-4-an-alternative-to-static-libraries"/>
+   <updated>2011-03-03T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2011/03/03/code-sharing-with-xcode-4-an-alternative-to-static-libraries</id>
+   <content type="html">
+     <![CDATA[<p>
+  There are many great techniques for sharing code across XCode projects. If that code is tested and build-able by XCode as a static library, Clint Harris' <em><a href="http://www.clintharris.net/2009/iphone-app-shared-libraries/">Easy, Modular Code Sharing Across iPhone Apps: Static Libraries and Cross-Project References</a></em> is really a solid source on the topic. However, this approach is a bit heavy handed for what I wanted to do. Basically if you just have some common header and implementation files that you want to use across multiple XCode projects, this article is for you. The goals for the common code is simple:
+</p>
+
+<ul>
+  <li>Common code needs to be under distinct version control.</li>
+  <li>Common code files need to be editable by XCode from the referencing project.</li>  
+</ul>
+
+<p>
+  In this example I will use a contrived example folder called "MetaSupport" as simple directory of common code to use. It includes some global function, a MyApp namespace with class with accessors and a directory of Additions to core classes.
+</p>
+
+<pre class="command">
+$ tree MetaSupport
+├── Additions
+│   ├── NSArray+MetaSupport.h
+│   └── NSArray+MetaSupport.m
+├── MyApp.h
+├── MyApp.m
+├── MyGlobal.h
+└── MyGlobal.m  
+</pre>
+
+<p>
+  So let's get started. Below are the steps for adding shared code to our "KillerApp" iOS project. FIrst, right click on the XCode project in your project navigator. Select "New Group".
+  <aside class="center">
+    <span class="photofancy">
+      <img src="/assets/xcs_addgroup.png" alt="XCode 4 Add New Group" width="367" height="421" />
+    </span>
+  </aside>
+</p>
+
+<p>
+  Select the newly created group in your project navigator. Now open up the file inspector. It can be found in View => Utilities => File Inspector. In the file inspector, set the "Group Name" to match your shared code folder. In this case I named it "MetaSupport". This is purely optional and simply helps you organize your code.
+  <aside class="center">
+    <span class="photofancy">
+      <img src="/assets/xcs_addedgroup.png" alt="XCode 4 Added New Group" width="367" height="421" />
+    </span>
+  </aside>
+</p>
+
+<p>
+  Drag all your shared files and folders from your "MetaSupport" directory to the newly created "MetaSupport" group folder. XCode will ask you to choose some options for adding these files. It is important to add folder references and not copy files. Check any targets that apply.
+  <aside class="center">
+    <span class="photofancy">
+      <img src="/assets/xcs_addfiles.png" alt="XCode 4 Added New Files" width="730" height="493" />
+    </span>
+  </aside>
+</p>
+
+<p>
+  So not only can you see and edit the files belonging to your shared code. You can also commit changes to those files and they will be committed to the shared code's repository that they reside in, not the current KillerApp projects repo! Hence you can update your shared code for all projects from any project.
+  <aside class="center">
+    <span class="photofancy">
+      <img src="/assets/xcs_commitfiles.png" alt="XCode 4 Commit Files" width="756" height="457" />
+    </span>
+  </aside>
+</p>
+
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Modern SQL Server &amp; Ruby/Rails Installer For Windows</title>
+   <link href="http://metaskills.net/2011/02/10/modern-sql-server--rails"/>
+   <updated>2011-02-10T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2011/02/10/modern-sql-server--rails</id>
+   <content type="html">
+     <![CDATA[<p>
+  <span class="photofancy floatr ml20 mb10">
+    <img src="/assets/mss_eyarticle.png" alt="My Modern SQL Server & Rails Engine Yard Article" width="400" height="293" />
+  </span>
+  If you have not done so, please go read my article <em><a href="http://www.engineyard.com/blog/2011/modern-sql-server-rails/">Modern SQL Server & Rails</a></em> on the Engine Yard blog. I want to thank Wayne E Seguin for inviting me to write the article. This article details many exciting things that have been happening for those using the SQL Server Adapter for Rails, most notably TinyTDS. The article outlines why everyone still using the ODBC connection mode should really switch over to TinyTDS.
+</p>
+
+<p>
+  <span class="photofancy floatr ml20 mb20">
+    <img src="/assets/mss_railsinstaller.png" alt="Ruby Rails Installer For Windows" width="400" height="293" />
+  </span>
+  Many exciting things are happening thanks to Wayne's new pet project, a <a href="http://railsinstaller.org/">ruby and rails installer for Windows</a>. The adapter and TinyTDS will hopefully dove tail into that. The plan is to include components in the one click installer that will allow Windows users to access their legacy databases using TinyTDS and the SQL Server Adapter. We had even talked on the mailing list about including a demo rails app with the ruby windows installer that would access the northwind database much the same way .Net demos would.
+</p>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Simple Memcached Reports In Rails</title>
+   <link href="http://metaskills.net/2011/01/27/simple-memcached-reports-in-rails"/>
+   <updated>2011-01-27T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2011/01/27/simple-memcached-reports-in-rails</id>
+   <content type="html">
+     <![CDATA[<p>
+  <span class="photofancy floatr ml20">
+    <img src="/assets/memcd.jpg" alt="Time Machine Exclude Window" width="152" height="182" />
+  </span>
+  The Pragmatic Bookshelf's <a href="http://www.pragprog.com/titles/memcd/using-memcached"><em>Using memcached: How to scale your website easily</em></a> is way old. But then again, memcached is still very useful. One of the things I remember reading a long time ago was the stats for your process and how to pull out meaningful reports like a hit ratio, memory and a get to set ration.
+</p>
+
+<p>
+  I whipped these up today as a simple way of getting a report using <code>Rails.cache.report</code>, assuming your cache strategy is set to memcached. Hope others find it useful. BTW, I do not recommend the book, it is too low level for any useful meaning to the average Rails developer.
+</p>
+
+<div class="h20"></div>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">module</span> <span class="nn">ActiveSupport</span>
+  <span class="k">module</span> <span class="nn">Cache</span>
+    <span class="k">class</span> <span class="nc">MemCacheStore</span> <span class="o">&lt;</span> <span class="no">Store</span>
+      
+      <span class="kp">include</span> <span class="no">ActionView</span><span class="o">::</span><span class="no">Helpers</span><span class="o">::</span><span class="no">DateHelper</span>
+      <span class="kp">include</span> <span class="no">ActionView</span><span class="o">::</span><span class="no">Helpers</span><span class="o">::</span><span class="no">NumberHelper</span>
+
+      <span class="c1"># Higher percentages, above 90%, are good.</span>
+      <span class="k">def</span> <span class="nf">hit_ratio</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class="n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">stat</span><span class="o">[</span><span class="s1">&#39;get_hits&#39;</span><span class="o">].</span><span class="n">to_f</span> <span class="o">/</span> <span class="n">stat</span><span class="o">[</span><span class="s1">&#39;cmd_get&#39;</span><span class="o">].</span><span class="n">to_f</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class="o">=</span> <span class="n">number_to_percentage</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="ss">:precision</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">)</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="c1"># Another good statistic to look at is percentage of gets to sets. For a well-tuned application, </span>
+      <span class="c1"># there should be more gets than sets. High percents are bad, negatives are great.</span>
+      <span class="k">def</span> <span class="nf">gets_to_sets</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class="n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">sets</span> <span class="o">=</span> <span class="n">stat</span><span class="o">[</span><span class="s1">&#39;cmd_set&#39;</span><span class="o">].</span><span class="n">to_f</span>
+          <span class="nb">gets</span> <span class="o">=</span> <span class="n">stat</span><span class="o">[</span><span class="s1">&#39;cmd_get&#39;</span><span class="o">].</span><span class="n">to_f</span>
+          <span class="n">more_sets</span> <span class="o">=</span> <span class="n">sets</span> <span class="o">-</span> <span class="nb">gets</span>
+          <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">more_sets</span> <span class="o">/</span> <span class="nb">gets</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class="o">=</span> <span class="n">number_to_percentage</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="ss">:precision</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">)</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">uptime</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class="n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">started_on</span> <span class="o">=</span> <span class="n">stat</span><span class="o">[</span><span class="s1">&#39;uptime&#39;</span><span class="o">].</span><span class="n">seconds</span><span class="o">.</span><span class="n">ago</span>
+          <span class="n">utime</span> <span class="o">=</span> <span class="n">distance_of_time_in_words</span> <span class="n">started_on</span><span class="p">,</span> <span class="no">Time</span><span class="o">.</span><span class="n">now</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class="o">=</span> <span class="p">{</span><span class="ss">:started_on</span> <span class="o">=&gt;</span> <span class="n">started_on</span><span class="p">,</span> <span class="ss">:uptime</span> <span class="o">=&gt;</span> <span class="n">utime</span><span class="p">}</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">memory</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class="n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">memory</span> <span class="o">=</span> <span class="n">number_to_human_size</span> <span class="n">stat</span><span class="o">[</span><span class="s1">&#39;limit_maxbytes&#39;</span><span class="o">]</span>
+          <span class="n">used</span> <span class="o">=</span> <span class="n">number_to_human_size</span> <span class="n">stat</span><span class="o">[</span><span class="s1">&#39;bytes&#39;</span><span class="o">]</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class="o">=</span> <span class="p">{</span><span class="ss">:memory_total</span> <span class="o">=&gt;</span> <span class="n">memory</span><span class="p">,</span> <span class="ss">:memory_used</span> <span class="o">=&gt;</span> <span class="n">used</span><span class="p">}</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+      
+      <span class="k">def</span> <span class="nf">report</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="n">server</span><span class="o">|</span>
+          <span class="n">rpt</span> <span class="o">=</span> <span class="n">memory</span><span class="o">[</span><span class="n">server</span><span class="o">].</span><span class="n">merge</span><span class="p">(</span><span class="n">uptime</span><span class="o">[</span><span class="n">server</span><span class="o">]</span><span class="p">)</span>
+          <span class="n">rpt</span><span class="o">[</span><span class="ss">:hit_ratio</span><span class="o">]</span> <span class="o">=</span> <span class="n">hit_ratio</span><span class="o">[</span><span class="n">server</span><span class="o">]</span>
+          <span class="n">rpt</span><span class="o">[</span><span class="ss">:gets_to_sets</span><span class="o">]</span> <span class="o">=</span> <span class="n">gets_to_sets</span><span class="o">[</span><span class="n">server</span><span class="o">]</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class="o">=</span> <span class="n">rpt</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+      
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>From Test::Unit &amp; Shoulda To MiniTest::Spec &amp; MiniShoulda</title>
+   <link href="http://metaskills.net/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda"/>
+   <updated>2011-01-25T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda</id>
+   <content type="html">
+     <![CDATA[<p>
+  It seems the MiniTest replacement for Test::Unit in Ruby 1.9 has been presenting itself more and more in my daily readings. Recently was Jamis Buck's article titled <a href="http://37signals.com/svn/posts/2742-the-road-to-faster-tests">The road to faster tests</a> where he talks about optimizing basecamp's suite to run faster. And there again, some of the comments below mentioned MiniTest as a solution. That got me thinking on what would it take for me to switch from Test::Unit to MiniTest.
+</p>
+
+<p>
+  I love testing! But I am not nuts about large libraries. Looking at you RSpec! <a href="http://evan.tiggerpalace.com/articles/2010/12/18/ruby-test-unit-sucks-and-why-i-still-use-it/">Like others</a>, I believe that you do not need a bloated test framework to get good coverage with a lean and succinct style. A handful of assertions and a simple context structure provided by libraries like <a href="https://github.com/thoughtbot/shoulda">Shoulda</a> is really all I need for both unit and a certain level of functional testing. It is my firm believe that large libraries and semi-magical test code based on things like RSpec will wane in the coming years. Those that base very large test suites on them will suffer the penalty for when an upgrade or test refactor is needed. I could be wrong, time will tell. For now let's cover how to move to MiniTest for those that like simple Test::Unit and or Shoulda.
+</p>
+
+<p>
+  MiniTest provides a drop in replacement for Test::Unit, so I wont cover the details of those basics. What most do not know is that MiniTest comes with a simple MiniTest::Spec DSL that uses <code>describe</code> and <code>it</code> blocks much like Shoulda's <code>context</code> and <code>should</code> methods. The similarities were so close that I set out to move all my projects to MiniTest::Spec. The goal would be that none of my exiting suites context/should/before/after code would require a change. The result...
+</p>
+
+
+<h2>MiniShoulda</h2>
+
+<p>
+  <a href="https://github.com/metaskills/mini_shoulda">MiniShoulda</a> is a small ruby gem that puts a Shoulda DSL on top of MiniTest::Spec. All it really does it alias a few key methods. Here is the core of it now.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">MiniTest</span><span class="o">::</span><span class="no">Spec</span> <span class="o">&lt;</span> <span class="no">MiniTest</span><span class="o">::</span><span class="no">Unit</span><span class="o">::</span><span class="no">TestCase</span>
+  
+  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+    <span class="k">alias</span> <span class="ss">:setup</span>    <span class="ss">:before</span>
+    <span class="k">alias</span> <span class="ss">:teardown</span> <span class="ss">:after</span>
+    <span class="k">alias</span> <span class="ss">:should</span>   <span class="ss">:it</span>
+    <span class="k">alias</span> <span class="ss">:context</span>  <span class="ss">:describe</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">should_eventually</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
+    <span class="n">it</span><span class="p">(</span><span class="s2">&quot;should eventually </span><span class="si">#{</span><span class="n">desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">skip</span><span class="p">(</span><span class="s2">&quot;Should eventually </span><span class="si">#{</span><span class="n">desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  For now, MiniShoulda performs only one monkey patch to MiniTest. There is a critical bug in MiniTest that does not allow the describe/context blocks to use the existing scope of the parent class. I have a <a href="https://github.com/seattlerb/minitest/pull/9">pull request</a> in for the project. Please help out and add a thoughtful comment based on the <a href="https://github.com/metaskills/minitest/commit/e7cde5bd9e61bc1ac13c7326ef4de23382e3467b">merits of the patch</a> and the <a href="https://gist.github.com/793330">description of the problem</a>. No author likes to see simple +1 comments.
+</p>
+
+
+<h2>The MiniTest Switch</h2>
+
+<pre class="command">
+$ gem install mini_shoulda
+</pre>
+
+<p>
+  Our gem spec will automatically pull in MiniTest version 2.0.2 or greater. Assuming you have a test helper file, the top requires will looks something like this. MiniTest needs that autorun file required or none of your tests will run.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;mini_shoulda&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;minitest/autorun&#39;</span>
+</code></pre>
+</div>
+
+<p>
+  What should I expect? For starters, expect a few of your tests to fail. Especially ones that were happenstantially running linearly and not exercised in isolation. I think there is a technical term for this? Anyways, MiniTest mixes up the test suite each run trough it using a random seed. So it is highly like to expose a few poorly written tests that depended on state leftover from a previous test. Also the MiniTest::Unit underneath MiniTest::Spec does not have a few assertions you may have used. One is <code>assert_raise</code> which is now the standard convention <code>assert_raises</code> with an "s". And finally <code>assert_nothing_raised</code> has been pulled completely since Test::Unit's documentation alluded to its uselessness for a long time.
+</p>
+
+<p>
+  What does MiniTest::Spec give you besides clean and powerful describe/it organization with before/after setups and teardowns? I highly recommend the <a href="http://cheat.errtheblog.com/s/minitest/1">MiniTest cheat sheet</a> to find out. See the spec and mock methods at the bottom? As much as I have always like the basic unit testing assertions, I am looking forward to using the must/wont object assertions.
+</p>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="https://github.com/metaskills/mini_shoulda">MiniShoulda Github Project</a></li>
+  <li><a href="https://github.com/seattlerb/minitest/pull/9">The MiniTest Describe Pull Resuest</a> - HELP OUT! COMMENT!</li>
+  <li><a href="http://cheat.errtheblog.com/s/minitest/1">MiniTest Cheat Sheet</a></li>
+</ul>
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Automating Heroku PG Backups</title>
+   <link href="http://metaskills.net/2011/01/03/automating-heroku-pg-backups"/>
+   <updated>2011-01-03T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2011/01/03/automating-heroku-pg-backups</id>
+   <content type="html">
+     <![CDATA[<p>
+  On December 1st, Heroku <a href="http://blog.heroku.com/archives/2010/12/1/bundles-deprecation/">deprecated their bundles add-on</a> in favor of <a href="http://blog.heroku.com/archives/2010/11/16/pgbackups/">their new PG Backups</a>. Even though there are <a href="http://groups.google.com/group/heroku/browse_thread/thread/25402694098d393a">other solutions</a> for automating backups using this new add-on, none of them met my needs. I like to have a daily DB backup history, just in case you find something bad that happened "n" days earlier. Below is a simple rake task suitable to place in your rails <code>lib/tasks/heroku.task</code> file. I'll explain some things I learned below when writing this.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;heroku&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;heroku/command&#39;</span>
+
+<span class="no">HEROKU_BACKUP_BUCKET</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Heroku</span><span class="o">::</span><span class="no">Command</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">selected_application</span><span class="si">}</span><span class="s2">-backups&quot;</span>
+
+<span class="n">namespace</span> <span class="ss">:heroku</span> <span class="k">do</span>
+  
+  <span class="n">desc</span> <span class="s2">&quot;Use the `heroku pgbackups` with my S3 bucket.&quot;</span>
+  <span class="n">task</span> <span class="ss">:backup</span> <span class="o">=&gt;</span> <span class="ss">:connect_to_s3</span> <span class="k">do</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">capture_heroku_command</span> <span class="s1">&#39;pgbackups&#39;</span>
+    <span class="k">if</span> <span class="n">heroku_existing_backup?</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+      <span class="n">last_backup_info</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; | &quot;</span><span class="p">)</span>
+      <span class="n">last_backup_id</span> <span class="o">=</span> <span class="n">last_backup_info</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+      <span class="n">last_backup_time</span> <span class="o">=</span> <span class="n">last_backup_info</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
+      <span class="nb">puts</span> <span class="s2">&quot;Deleting last backup - ID: </span><span class="si">#{</span><span class="n">last_backup_id</span><span class="si">}</span><span class="s2"> BackupTime: </span><span class="si">#{</span><span class="n">last_backup_time</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="n">heroku_command</span> <span class="s1">&#39;pgbackups:destroy&#39;</span><span class="p">,</span> <span class="n">last_backup_id</span>
+    <span class="k">end</span>
+    <span class="n">heroku_command</span> <span class="s1">&#39;pgbackups:capture&#39;</span>
+    <span class="n">backup_url</span> <span class="o">=</span> <span class="n">capture_heroku_command</span> <span class="s1">&#39;pgbackups:url&#39;</span>
+    <span class="n">backup_filename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Heroku</span><span class="o">::</span><span class="no">Command</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">selected_application</span><span class="si">}</span><span class="s2">_</span><span class="si">#{</span><span class="no">Time</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">xmlschema</span><span class="si">}</span><span class="s2">.dump&quot;</span>
+    <span class="n">backup_data</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="no">URI</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">backup_url</span><span class="p">))</span><span class="o">.</span><span class="n">body</span>
+    <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">S3Object</span><span class="o">.</span><span class="n">store</span> <span class="n">backup_filename</span><span class="p">,</span> <span class="n">backup_data</span><span class="p">,</span> <span class="no">HEROKU_BACKUP_BUCKET</span>
+  <span class="k">end</span>
+  
+  <span class="n">task</span> <span class="ss">:connect_to_s3</span> <span class="k">do</span>
+    <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">establish_connection!</span><span class="p">(</span>
+      <span class="ss">:access_key_id</span>     <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;AMAZON_ACCESS_KEY_ID&#39;</span><span class="o">]</span><span class="p">,</span>
+      <span class="ss">:secret_access_key</span> <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;AMAZON_SECRET_ACCESS_KEY&#39;</span><span class="o">]</span><span class="p">)</span>
+    <span class="k">begin</span>
+      <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">Bucket</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="no">HEROKU_BACKUP_BUCKET</span><span class="p">)</span>
+    <span class="k">rescue</span> <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">NoSuchBucket</span>
+      <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">Bucket</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="no">HEROKU_BACKUP_BUCKET</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+<span class="kp">private</span>
+
+<span class="k">def</span> <span class="nf">heroku_command</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">)</span>
+  <span class="no">Heroku</span><span class="o">::</span><span class="no">Command</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">capture_heroku_command</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">)</span>
+  <span class="n">stdout</span> <span class="o">=</span> <span class="no">STDOUT</span>
+  <span class="no">StringIO</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">out</span><span class="o">|</span>
+    <span class="k">def</span> <span class="nc">out</span><span class="o">.</span><span class="nf">flush</span> <span class="p">;</span> <span class="k">end</span>
+    <span class="vg">$stdout</span> <span class="o">=</span> <span class="n">out</span>
+    <span class="n">heroku_command</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">)</span>
+  <span class="k">end</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">chomp</span>
+<span class="k">ensure</span>
+  <span class="vg">$stdout</span> <span class="o">=</span> <span class="n">stdout</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">heroku_existing_backup?</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+  <span class="n">info</span> <span class="o">!~</span> <span class="sr">/no backups/i</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+
+<p>
+  Once installed you can run something like <code>bundle exec rake heroku:backup</code> or if you are not using bundler, <code>rake heroku:backup</code>. Assuming you have your S3 credentials setup in the ENV variables, it will find or create a private bucket on your S3 account and upload an app-named and time-stamped dump file to that new bucket. If necessary, it <strong>will delete your latest backup</strong> on Heroku to make room for this new one. The code should be easy to change, so flavor to taste.
+</p>
+
+<p>
+  I tried to use the Heroku commands built into their plugin without resorting to command interpolation. The only problem was that the Heroku gem always wants to print to standard out and flush the buffer. So I created a few private helper methods that temporarily shim in a <code>$stdout</code> replacement that does not flush. This let's me run the Heroku commands from code and capture what would have been printed to standard out.
+</p>
+
+<p>
+  Lastly, since I could not find a way to automate this on Heroku via their cron add-on, I simply added a <code>launchd</code> plist to my desktop Mac that hit a shell script in my project folder to run the rake task. It is way past my skills to try and get RVM to work in the <code>launchd.plist</code> system since it is not a true shell. This is why the shell script uses my system ruby (installed via MacPorts). Here is the shell script below and the launchd plist which I placed in <code>~/Library/LaunchAgents</code> with a name like <code>com.actionmoniker.backupMyApp.plist</code>. Just run <code>launchctl load ~/Library/LaunchAgents/com.actionmoniker.backupMyApp.plist</code> and this will run at 4am every morning. If any one finds out how to automate the execution of this rake task on Heroku, please drop me a line!
+</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c">#! /bin/zsh</span>
+<span class="nb">source</span> /Users/kencollins/.zshenv
+<span class="nb">cd</span> /Users/kencollins/repos/myapp <span class="o">&amp;&amp;</span> /opt/local/bin/rake heroku:backup
+</code></pre>
+</div>
+
+<div class="highlight"><pre><code class="html"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;dict&gt;</span>
+  <span class="nt">&lt;key&gt;</span>Label<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>com.actionmoniker.backupMyApp<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>ProgramArguments<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;array&gt;</span>
+    <span class="nt">&lt;string&gt;</span>/Users/kencollins/repos/myapp/lib/bin/backup.sh<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;/array&gt;</span>
+  <span class="nt">&lt;key&gt;</span>StartCalendarInterval<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;dict&gt;</span>
+    <span class="nt">&lt;key&gt;</span>Minute<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;integer&gt;</span>0<span class="nt">&lt;/integer&gt;</span>
+    <span class="nt">&lt;key&gt;</span>Hour<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;integer&gt;</span>4<span class="nt">&lt;/integer&gt;</span>
+  <span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/plist&gt;</span>
+</code></pre>
+</div>
+
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Pyr Pressure</title>
+   <link href="http://metaskills.net/2010/12/29/pyr-pressure"/>
+   <updated>2010-12-29T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2010/12/29/pyr-pressure</id>
+   <content type="html">
+     <![CDATA[<p>
+  <span class="photofancy floatr ml20"><img src="/assets/sasha.png" width="284" height="376" alt="Sasha - Our Great Pyrenees"></img></span>
+  It's a shame I do not do lifestyle posts more often, but with the <a href="/2010/12/27/let-it-go-moving-from-mephisto-to-jekyll/">new blog</a> I hope to change that. To that end, this article is dedicated to our Great Pyrenees Sasha who passed away from bone cancer last month. She was just 7 years old and we only had 3 weeks of good times from the point she was diagnosed with osteosarcoma, a form of bone cancer. I am sure everyone loves their pet(s), we even have another dog and 3 cats. But there is something about a large breed, perhaps more so a Great Pyrenees, that made our loss really painful. It was also the first time I heard about the rainbow bridge, total tear buster.
+</p>
+
+<p>
+  Luckily for us, we have a personal friend that breeds Great Pyrenees show dogs in Smithfield, VA and she just so happens to have had a new litter. Determined to turn a bad situation into something positive, we just up'ed our family by two more puppy dogs. You could say I RAID-1'ed my pyr puppies. So we now have a little boy and girl from the same litter. His name is Remy LeBeau and is on the left and her name is Sonya, pictured on the right.
+</p>
+
+<p class="clearfix">
+  <span class="photofancy floatl mr20"><img src="/assets/pyrpups.png" width="350" height="325" alt="Remy LeBeau & Sonya - Our New Pyr Puppies"></img></span>
+  They are getting tons of love, attention, and good food. Raising two puppy dogs is so much fun, but it takes a lot of time and patience, especially when training them to go out doors with all the snow we have gotten lately. In the future Kelly and I will enjoy walking these guys around Colonial Williamsburg. Since they look like sheep, our Border Collie will corral them indoors for us as he did for Sasha. We can already tell that Remy will be the protector of the household and probably weigh in around 150 pounds when he grows up.
+</p>
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Let It Go - Moving From Mephisto To Jekyll</title>
+   <link href="http://metaskills.net/2010/12/27/let-it-go-moving-from-mephisto-to-jekyll"/>
+   <updated>2010-12-27T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2010/12/27/let-it-go-moving-from-mephisto-to-jekyll</id>
+   <content type="html">
+     <![CDATA[<p>
+  Welcome to the new MetaSkills.net! I have moved from Mephisto to <a href="https://github.com/mojombo/jekyll">Jekyll</a> and done a complete rewrite of the presentation layer to the latest web standards as a way of staying somewhat sharp with the latest HTML5/CSS3 hotness. In this article, I would like to cover all the gory details of what I learned about moving to Jekyll and the various techniques I have used for the site's CSS. But first a small history lesson. 
+</p>
+
+<p>
+  If you are somewhat new to rails, Mephisto was one of the greatest open source blog engines a <a href="/2008/03/22/metaskills-net-reborn-on-mephisto/">ruby developer could work with</a>. But ruby, and especially rails, is a fast paced landscape, making it hard to keep any CMS project up to date. Options like file storage, comment moderation, templating languages, hosting locations and more are all very hard to embody in one project. I think that is why Mephisto's creator, <a href="http://twitter.com/#!/technoweenie">Rick Olson</a> (@technoweenie), <a href="http://techno-weenie.net/2010/6/23/you-can-let-go-now/">announced that he was dropping the project</a>. Good for him and many thanks for his hard work on all the open source projects he has contributed to! So let's talk about Jekyll et al.
+</p>
+
+
+<h2>Migrating Mephisto Data</h2>
+
+<p>
+  So maybe you have an old Mephisto install that you would like to migrate to Jekyll? If so, I have <a href="https://gist.github.com/756111">posted a gist</a> of some rails 3 models that I used to export my data from MySQL to static files following the format required by Jekyll. Simply populate a new rails 3 project with these, fire up a console and do <code>Site.export_jekyll</code>. This will create a folder in <code>tmp/jekyll_posts</code> and write a file for each Mephisto article. The posts will contain the YAML front matter for jekyll and hopefully a good starting point of the categories you had assigned to that post. As a bonus, the export will create a <code>tmp/jekyll_posts/rewrites.txt</code> file that will be very useful to include in a .htaccess file of your jekyll project. An example below.
+</p>
+
+<div class="highlight"><pre><code class="apache"><span class="nb">RewriteRule</span> ^2010/8/19/how-to-clean-a-campfire-room-of-uploads$ <span class="sx">/2010/08/19/how-to-clean-a-campfire-room-of-uploads/</span> [L]
+</code></pre>
+</div>
+
+<p>
+  Also included in the gist is a <code>Site.export_jskit</code> method that will generate an XML file of  your comments to import into Disqus. Though I was able to import my Mephisto comments into Disqus and see them linked from the admin interface, I have yet to get them to show up on the new site. I have a support request open with Disqus and will update this article and the gist with any new information.
+</p>
+
+
+<h2>Using Jekyll</h2>
+
+<p>
+  The best way you can learn how to use Jekyll is to <a href="https://github.com/mojombo/jekyll/wiki/Sites">review code of the sites</a> that use it. If you want to learn more about how I have implemented jekyll, you could <a href="https://github.com/metaskills/metaskills.net">browse my source</a> on github.
+</p>
+
+<p>
+  Like many others, I have created a tasks directory in my project root with some executable scripts that help me author, publish and deploy my site. Here are some examples.
+</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c">#!/usr/bin/env zsh</span>
+<span class="c"># File: tasks/scss</span>
+<span class="c"># Handy to watch for scss file changes while designing.</span>
+sass --scss --watch _sass:_site/resource --style compact --no-cache
+
+<span class="c">#!/usr/bin/env zsh</span>
+<span class="c"># File: tasks/jekyll</span>
+<span class="c"># Create the site and tidy it.</span>
+setopt rmstarsilent
+rm -rf _site/* <span class="o">&amp;&amp;</span> <span class="se">\</span>
+  sass --style compressed _sass/site.scss:resource/site.css <span class="o">&amp;&amp;</span> <span class="se">\</span>
+  bundle <span class="nb">exec </span>jekyll <span class="o">&amp;&amp;</span> <span class="se">\</span>
+  find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/tidy.conf <span class="o">{}</span> <span class="se">\;</span>
+  
+<span class="c">#!/usr/bin/env zsh</span>
+<span class="c"># File: tasks/deploy</span>
+<span class="c"># Build and deploy to mini.</span>
+./tasks/jekyll <span class="o">&amp;&amp;</span> <span class="se">\</span>
+  rsync -avz --delete _site/ mini:/Library/WebServer/hosts/metaskills.net <span class="o">&amp;&amp;</span> <span class="se">\</span>
+  mini sudo apachectl restart
+</code></pre>
+</div>
+
+<p>
+  The first one, <code>task/scss</code> allowed me to author my site's CSS using <a href="http://sass-lang.com/">SASS</a> and its newer SCSS syntax, more on that later. This task simply let me publish my site and then style it later by easily saving the source SCSS file and avoiding a long running jekyll command. The second <code>task/jekyll</code> is my own long winded jekyll command. Basically it will compile my SCSS file, execute my bundled jekyll binary, then post process all my HTML files with tidy. I spent a long time coming up with <a href="https://github.com/metaskills/metaskills.net/blob/master/tidy.conf">an appropriate tidy.conf compatible with HTML5 standards.</a> Perhaps you may find it useful. Lastly, the <code>task/deploy</code> is just a simple wrapper to my own jekyll command and a final rsync command to my Mac Mini web server. I restart the web server just in case I have made changes to my <code>.htaccess</code> file.
+</p>
+
+
+<h2>HTML5</h2>
+
+<p>
+  A personal tech blog is a great platform to try out new things, including the semantic goodness that HTML5 offers. Frankly, it was way past time for me to learn and I found <a href="http://diveintohtml5.org/">Mark Pilgrim's - Dive Into HTML5</a> really helpful on the topic. The final structure of the blog came out nicely. A post is contained in its own <code>&lt;article&gt;</code> element with <code>&lt;header&gt;</code> and <code>&lt;footer&gt;</code> elements in between. A great way to organize comments and new elements like the <code>&lt;time&gt;</code> so you can associate a machine readable publication date to your post.
+</p>
+
+<div class="highlight"><pre><code class="html"><span class="nt">&lt;article</span> <span class="na">id=</span><span class="s">&quot;post&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;header&gt;</span>
+    <span class="nt">&lt;time</span> <span class="na">pubdate</span> <span class="na">datetime=</span><span class="s">&quot;2010-12-27T00:00:00-05:00&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;day&quot;</span><span class="nt">&gt;</span>27<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;month&quot;</span><span class="nt">&gt;</span>Dec<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;year&quot;</span><span class="nt">&gt;</span>2010<span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;/time&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>Let It Go - Moving From Mephisto To Jekyll<span class="nt">&lt;/h1&gt;</span>
+  <span class="nt">&lt;/header&gt;</span>
+  ...
+  <span class="nt">&lt;footer</span> <span class="na">id=</span><span class="s">&quot;disqus_thread&quot;</span><span class="nt">&gt;</span>
+    ...
+  <span class="nt">&lt;/footer&gt;</span>
+<span class="nt">&lt;/article&gt;</span>
+</code></pre>
+</div>
+
+
+<h2>Presentation - SASS</h2>
+
+<p>
+  This was the second time I have used SASS from the start of a project. The first time was almost a year ago and I must say, it has gotten much nicer with the newer SCSS format. While writing <a href="https://github.com/metaskills/metaskills.net/blob/master/_sass/site.scss">my lengthy SCSS file</a>, I found the following linear organization method very helpful. </p>
+
+<ul>
+  <li><strong>Font Declarations</strong> - With Mixins For Usage.</li>
+  <li><strong>Global Variables</strong> - Grids, Colors...</li>
+  <li><strong>Vendor Mixins</strong> - Gradients, Shadows, Transformations...</li>
+  <li><strong>Component Mixins</strong> - Links, Navigation, Fancy Images, Comments...</li>
+  <li><strong>Layout Mixins</strong> - Posts, Footer, Excerpts, Etc</li>
+  <li><strong>Final Layout</strong> - Site Structure (using mixins)</li>
+</ul>
+
+<p>
+  I think this is important, because it outlines a radical shift from writing raw CSS and really flexes SASS's <code>@mixin</code> and <code>@include</code> features. First it is important to point out that CSS falls into two categories, layout &amp; presentation. Layout CSS is akin to using <code>&lt;table&gt;</code> tags in the old days. It is CSS that controls the structure of your site. After that, all CSS is presentation oriented. It is there to make things look pretty.
+</p>
+
+<p>
+  Back in the day, I would put my layout styles at the beginning of my stylesheet, then finish with abstract presentation classes. This works, but sometimes you find yourself deep into a CSS corner and having to whip out <code>!important</code> declarations to bail yourself out. When writing with SASS, the layout styles are now my last declarations. Why? Because you can include your earlier coded design components as a last step within the structure declarations, thereby ensuring their scope is locked down to the explicit node of your choosing. This helps you keep your layout and presentation CSS in separate and manageable chunks that have logical names while keeping your SASS file from looking like one big long procedural function. It's OO-CSS at its best!
+</p>
+
+<div class="highlight"><pre><code class="text">...
+section#page { 
+  width: $pagewidth; 
+  margin: 0px auto;
+  min-height: 800px;
+  @include cmpnt-links;
+  section#content {
+    float: right;
+    width: $c8width;
+    padding-top: $hdrheight + 20px;
+    padding-bottom: 20px;
+    @include layout-excerpt;
+    @include layout-post;
+    @include cmpnt-flash;
+    @include cmpnt-blockquote;
+  }
+...
+</code></pre>
+</div>
+
+
+<h2>Presentation - Simple Grid</h2>
+
+<p>
+  I have previously used CSS grids like <a href="http://960.gs/">960.gs</a> and the <a href="http://www.1kbgrid.com/">1Kb Grid</a>. However, for this project, I decided to flex SASS and my previous CSS knowledge of positioning and clearing for a leaner layout structure. These SCSS variables were enough to let me build out the new layout.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="vg">$cols</span><span class="p">:</span> <span class="mi">10</span><span class="p">;</span>
+<span class="vg">$colwidth</span><span class="p">:</span> <span class="mi">80</span><span class="n">px</span><span class="p">;</span>
+<span class="vg">$gutterwidth</span><span class="p">:</span> <span class="mi">20</span><span class="n">px</span><span class="p">;</span>
+<span class="vg">$c1width</span><span class="p">:</span>  <span class="vg">$colwidth</span> <span class="o">*</span> <span class="mi">1</span><span class="p">;</span>
+<span class="vg">$c2width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">1</span><span class="p">);</span>
+<span class="vg">$c3width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+<span class="vg">$c4width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">3</span><span class="p">);</span>
+<span class="vg">$c5width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">4</span><span class="p">);</span>
+<span class="vg">$c6width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class="o">*</span> <span class="mi">6</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">5</span><span class="p">);</span>
+<span class="vg">$c7width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class="o">*</span> <span class="mi">7</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">6</span><span class="p">);</span>
+<span class="vg">$c8width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">7</span><span class="p">);</span>
+<span class="vg">$c9width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class="o">*</span> <span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">8</span><span class="p">);</span>
+<span class="vg">$c10width</span><span class="p">:</span> <span class="p">(</span><span class="vg">$colwidth</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">9</span><span class="p">);</span>
+<span class="vg">$pagewidth</span><span class="p">:</span> <span class="p">(</span><span class="vg">$colwidth</span> <span class="o">*</span> <span class="vg">$cols</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="vg">$gutterwidth</span> <span class="o">*</span> <span class="p">(</span><span class="vg">$cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">));</span>
+</code></pre>
+</div>
+
+
+<h2>Presentation - Pseudo Generated Content</h2>
+
+<div class="highlight"><pre><code class="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;photobounding&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;tl&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;tr&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;bl&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;br&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;photoborder&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;photo&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;/files/yourpicture.jpg&quot;</span> <span class="na">alt=</span><span class="s">&quot;&quot;</span> <span class="na">width=</span><span class="s">&quot;&quot;</span> <span class="na">height=</span><span class="s">&quot;&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre>
+</div>
+
+<p>
+  We have all seen code like this! It is called divitis, the overuse of span or div elements to structure and style content. I am guilty of doing this too, in fact, that code is from my old blog's CSS convention page to make a fancy border around a photo. The new MetaSkills.net takes advantage of a pseudo generated content to style complex elements and avoid this. <span class="photofancy floatr mt20 mb10 ml20"><img src="/assets/jack.png" alt="Jack Has Many Things" width="320" height="214" /></span> I would like to show you a few examples, but first, learn from the master <a href="http://twitter.com/#!/necolas">Nicolas Gallagher</a> (@necolas) in a series of articles he published for <a href="http://nicolasgallagher.com/multiple-backgrounds-and-borders-with-css2/">backgrounds/borders</a>, <a href="http://nicolasgallagher.com/pure-css-speech-bubbles/">speach bubbles</a>, and <a href="http://nicolasgallagher.com/pure-css-gui-icons/">GUI icons</a> all using pseudo generated content with CSS.
+</p>
+
+<p>
+  Using these techniques, I was able to accomplish all the complex styles like my Apple TV navigation and photo fancy borders with simple semantic elements. The image to the right is only surrounded by one <code>&lt;span class="photofancy"&gt;...&lt;/span&gt;</code> element since you can not generate pseudo content from a <code>&lt;img&gt;</code> tag. I also used pseudo generated content to remove excessive layout elements too. My complex headers use them to add multiple backgrounds where only one element resides in the code. Learn this technique, it keeps things very clean.
+</p>
+
+
+<h2>Zepto.js - Something You Need To Watch For</h2>
+
+<p>
+  Lastly, if you have not seen the <a href="https://github.com/madrobby/zepto">zepto.js</a> project, go check it out. It bills itself as the aerogel-weight mobile javascript framework. Besides being incredibly small, I think zepto has some incredible potential when used with backbone.js. I have never used jQuery and always looked at JavaScript thru the eye's of prototype since most of my JavaScript needs require rich objects first, and access to the DOM second. I'll make another post on Zepto and why I think it is so bad ass. I use it on the new MetaSkills.net to shim up my custom pygmentize theme.
+</p>
+
+
+<h2>In Closing</h2>
+
+<p>
+  I am really happy with the new layout and using Jekyll to publish my static blog. I even think the old content carried over well once I tweaked it to the new CSS conventions. One particular old article that embodies all the design aspects of the new layout is <a href="/2008/9/28/jack-has_many-things">Jack has_many :things</a>. It is about a plugin I wrote on grouping ActiveRecord has_many associations. Hope you find some time to try out Jekyll too and let me know what you think of my new site!
+</p>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://techno-weenie.net/2010/6/23/you-can-let-go-now/">You Can Let Go Now</a> - Mephisto ends</li>
+  <li><a href="https://github.com/mojombo/jekyll">Jekyll Project</a> - A static blog/site generator</li>
+  <li><a href="https://gist.github.com/756111">Migrate Mephisto Data</a> - A gist of rails 3 model files</li>
+  <li><a href="https://github.com/metaskills/metaskills.net">MetaSkills.net Source</a> - On Github.com</li>
+  <li><a href="http://diveintohtml5.org/">Dive Into HTML5</a></li>
+  <li><a href="http://nicolasgallagher.com/multiple-backgrounds-and-borders-with-css2/">Multiple Backgrounds &amp; Borders With CSS2</a></li>
+  <li><a href="http://nicolasgallagher.com/pure-css-speech-bubbles/">Pure CSS speech bubbles</a></li>
+  <li><a href="http://nicolasgallagher.com/pure-css-gui-icons/">Pure CSS GUI Icons </a></li>
+  <li><a href="https://github.com/madrobby/zepto">Zepto.js</a> - The aerogel-weight mobile javascript framework</li>
+  
+</ul>
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>TinyTds - A modern, simple and fast FreeTDS library for Ruby using DB-Library</title>
+   <link href="http://metaskills.net/2010/10/18/tinytds-a-modern-simple-and-fast-freetds-library-for-ruby-using-db-library"/>
+   <updated>2010-10-18T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2010/10/18/tinytds-a-modern-simple-and-fast-freetds-library-for-ruby-using-db-library</id>
+   <content type="html">
+     <![CDATA[<p>I just finished the first cut of learning C extensions for ruby and I <a href="http://github.com/rails-sqlserver/tiny_tds">present The TinyTds gem</a>. It is meant to serve the extremely common use-case of connecting, querying and iterating over results to Microsoft SQL Server databases from ruby. Even though it uses FreeTDS's DB-Library, it is NOT meant to serve as direct 1:1 mapping of that complex C API</p>
+
+<p>The benefits are speed, automatic casting to ruby primitives, and proper encoding support. It converts all SQL Server datatypes to native ruby objects supporting :utc or :local time zones for time-like types. To date it is the only ruby client library that allows client encoding options, defaulting to UTF-8, while connecting to SQL Server. It also properly encodes all string and binary data. The motivation for TinyTds is to become the de-facto low level connection mode for the SQL Server adapter for ActiveRecord. For further details see the special thanks to Erik Bryn for his help, the authors/contributors of the Mysql2 gem for inspiration, and Yehuda Katz for articulating ruby's need for proper encoding support. Please read up on it here.</p>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>How To Clean A Campfire Room Of Uploads</title>
+   <link href="http://metaskills.net/2010/08/19/how-to-clean-a-campfire-room-of-uploads"/>
+   <updated>2010-08-19T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2010/08/19/how-to-clean-a-campfire-room-of-uploads</id>
+   <content type="html">
+     <![CDATA[<p>For us at work, our uploads to campfire are really transitory. Most of the time they are simple screenshots around a current topic. Every now and then vacation photos or even movies, at the end of the day, none of it has value after a certain amount of time. To us as the real value of campfire is our textual transcripts.</p>
+
+<p>This morning after 4 years of campfire, we were real close to our 1GB limit of uploads. Time for a clean up. I found no easy way of automating this, so I turned to the Tinder gem. It has a nice interface to the campfire API using HTTParty as the backend. I found out that there was no easy way to delete uploads too. So after some good ole fashion DOM inspection and knowing rails application conventions, I found my own interface. Below is a little script I used to clean up our room this morning. It basically loops thru a rooms uploads, 5 at a time, and deletes them. Pausing for a quarter of a second between each so I don't freak out the new 37signals administrator :)</p>
+
+
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;tinder&#39;</span>
+
+<span class="k">class</span> <span class="nc">CampfireUploadCleaner</span>
+  
+  <span class="no">CF_DOMAIN</span> <span class="o">=</span> <span class="s1">&#39;mydomain&#39;</span>
+  <span class="no">CF_ROOM</span>   <span class="o">=</span> <span class="s1">&#39;My Room Name&#39;</span>
+  <span class="no">CF_TOKEN</span>  <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MY_CF_TOKEN&#39;</span><span class="o">]</span>
+  
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vi">@campfire</span> <span class="o">=</span> <span class="no">Tinder</span><span class="o">::</span><span class="no">Campfire</span><span class="o">.</span><span class="n">new</span> <span class="no">CF_DOMAIN</span><span class="p">,</span> <span class="ss">:token</span> <span class="o">=&gt;</span> <span class="no">CF_TOKEN</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">room</span>
+    <span class="vi">@room</span> <span class="o">||=</span> <span class="vi">@campfire</span><span class="o">.</span><span class="n">find_room_by_name</span><span class="p">(</span><span class="no">CF_ROOM</span><span class="p">)</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">connection</span>
+    <span class="n">room</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ss">:connection</span><span class="p">)</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">delete_uploads</span>
+    <span class="n">uploads</span> <span class="o">=</span> <span class="n">room</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ss">:get</span><span class="p">,</span><span class="ss">:uploads</span><span class="p">)</span><span class="o">[</span><span class="s1">&#39;uploads&#39;</span><span class="o">]</span>
+    <span class="n">uploads</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">upload</span><span class="o">|</span>
+      <span class="nb">id</span> <span class="o">=</span> <span class="n">upload</span><span class="o">[</span><span class="s1">&#39;id&#39;</span><span class="o">]</span>
+      <span class="nb">name</span> <span class="o">=</span> <span class="n">upload</span><span class="o">[</span><span class="s1">&#39;name&#39;</span><span class="o">]</span>
+      <span class="n">connection</span><span class="o">.</span><span class="n">post</span> <span class="s2">&quot;/uploads/delete/</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">?n=0&quot;</span>
+      <span class="nb">puts</span> <span class="s2">&quot;Deleted: [</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="nb">sleep</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">25</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">sweep_uploads</span>
+    <span class="k">while</span> <span class="n">room</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">present?</span>
+      <span class="n">delete_uploads</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+<span class="n">cleaner</span> <span class="o">=</span> <span class="no">CampfireUploadCleaner</span><span class="o">.</span><span class="n">new</span>
+
+<span class="n">cleaner</span><span class="o">.</span><span class="n">delete_uploads</span>  <span class="c1"># =&gt; Deletes the top 5 uploads.</span>
+<span class="n">cleaner</span><span class="o">.</span><span class="n">sweep_uploads</span>   <span class="c1"># =&gt; Deletes all uploads.</span>
+</code></pre>
+</div>
+
+
+<p>The upload hash actually contains much more than just the id and name of the upload. There is a timestamp, filetype and other attributes. So if you wanted to extend this script, you could. I did not spent a lot of time with it, but I never figured out how to get more than the top 5 uploads too. I'm sure some param hacking would yield some good results.</p>
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Protip: Exclude Your RVM Install From Time Machine Backups</title>
+   <link href="http://metaskills.net/2010/08/06/protip-exclude-your-rvm-install-from-timemachine-backups"/>
+   <updated>2010-08-06T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2010/08/06/protip-exclude-your-rvm-install-from-timemachine-backups</id>
+   <content type="html">
+     <![CDATA[<p>
+  You may not realize it, but that <code>~/.rvm</code> directory is getting big and may be hurting your Time Machine backups. Especially if you are doing a lot of development. I just checked mine today.
+</p>
+
+<pre class="command">
+du -skh ~/.rvm/gems
+1012M	/Users/kencollins/.rvm/gems
+</pre>
+
+<p>
+  Ouch! That's around 1gig of stuff that is pointless to backup just in the gems directory. I frequently blow away certain rubies and install them again using <a href="/2010/7/30/the-rvm-ruby-api">various rake tasks</a> and just found out today that you have to pass the --gems option to rvm remove to clean those old gemsets out. Either way, that whole rvm directory can just be ignored from Time Machine backups. Here is how, there is really only one tricky part.
+</p>
+
+<p>
+  First, open up your System Preferences, then open up the Time Machine pref pane. From here click on the "Options...". Within this window you will be able to add a folder to be excluded from backup. Hit the "+" button to add a directory. Now here is the tricky part, your rvm directory is prefixed with a period and hence is invisible to the normal finder windows. Thankfully all Mac file windows can use a keyboard shortcut. Hit <code>Command+Shift G</code>. That will blind down a "Go to the folder:" window. Simply type in <code>~/.rvm</code> here and hit "Go". Now choose "Exclude" from the main file window. Your done!
+</p>
+
+<div class="center">
+  <span class="photofancy">
+    <img src="/assets/exclude_from_timemachine.gif" alt="Time Machine Exclude Window" width="463" height="320" />
+  </span>
+</div>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>The RVM Ruby API - Setting Up A CI System For The SQL Server Adapter</title>
+   <link href="http://metaskills.net/2010/07/30/the-rvm-ruby-api"/>
+   <updated>2010-07-30T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2010/07/30/the-rvm-ruby-api</id>
+   <content type="html">
+     <![CDATA[<p>
+  A few weeks ago I started looking into the <a href="http://rvm.beginrescueend.com/">Ruby Version Manager (RVM)</a> project to help me build a better testing setup for both my day job and the <a href="http://github.com/rails-sqlserver/activerecord-sqlserver-adapter">ActiveRecord SQL Server Adapter</a>. In a <a href="/2009/9/5/the-ultimate-os-x-snow-leopard-stack-for-rails-development-x86_64-macports-ruby-1-8-1-9-sql-server-more">previous article</a> I covered details of how to get a development stack up and running for Rails with SQL Server using MacPort's. This article will cover some new additions to that goal, but first and primarily, I wanted to talk about the wonders of RVM and it's new ruby API.
+</p>
+    
+<p>
+  So like any good agile software gardner tasked with building a continuous integration system, I wanted to do it in such a way that was completely automated using rake. My first cut at said rake task used ruby's Kernel.system to issue <code>rvm</code> commands down to the shell. This failed horribly! Basically no matter how hard I tried, I could not hit the rvm shell function from ruby's system command. It kept using the rvm binary which can not change the local shell environment and hence do very little magic that RVM allows. Thankfully <a href="http://twitter.com/wayneeseguin">@wayneeseguin</a> pointed me to the new RVM ruby API and <a href="http://blog.ninjahideout.com/posts/the-path-to-better-rvm-and-passenger-integration">this article on how to use it for passenger</a>. I immediately started to switch my rvm rake tasks to use the new RVM API and was just floored with how well it did. Below is a copy of that rake task. Take a look over it and read below for details and how I have used this with the SQL Server stack.
+</p>
+    
+<div class="highlight"><pre><code class="ruby"><span class="no">MYPROJECT_RUBIES</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">&#39;ruby-1.8.6-p388&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj186&#39;</span><span class="p">,</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">},</span>
+  <span class="s1">&#39;ruby-1.8.7-p299&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj187&#39;</span><span class="p">,</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">},</span>
+  <span class="s1">&#39;ruby-1.9.1-p378&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj191&#39;</span><span class="p">,</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">},</span>
+  <span class="s1">&#39;ruby-1.9.2-head&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj192&#39;</span><span class="p">,</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99992pre3&#39;</span><span class="p">},</span>
+  <span class="s1">&#39;ree-1.8.7-2010.02&#39;</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprjree&#39;</span><span class="p">,</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">namespace</span> <span class="ss">:rvm</span> <span class="k">do</span>
+
+  <span class="n">task</span> <span class="ss">:setup</span> <span class="k">do</span>
+    <span class="k">unless</span> <span class="vi">@rvm_setup</span>
+      <span class="n">rvm_lib_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="sb">`echo $rvm_path`</span><span class="o">.</span><span class="n">strip</span><span class="si">}</span><span class="s2">/lib&quot;</span>
+      <span class="vg">$LOAD_PATH</span><span class="o">.</span><span class="n">unshift</span><span class="p">(</span><span class="n">rvm_lib_path</span><span class="p">)</span> <span class="k">unless</span> <span class="vg">$LOAD_PATH</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">rvm_lib_path</span><span class="p">)</span>
+      <span class="nb">require</span> <span class="s1">&#39;rvm&#39;</span>
+      <span class="nb">require</span> <span class="s1">&#39;tmpdir&#39;</span>
+      <span class="vi">@rvm_setup</span> <span class="o">=</span> <span class="kp">true</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">namespace</span> <span class="ss">:install</span> <span class="k">do</span>
+
+    <span class="n">task</span> <span class="ss">:all</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:setup</span><span class="p">,</span><span class="ss">:rubies</span><span class="p">,</span><span class="ss">:odbc</span><span class="p">,</span><span class="ss">:gems</span><span class="o">]</span>
+
+    <span class="n">task</span> <span class="ss">:rubies</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
+      <span class="n">installed_rubies</span> <span class="o">=</span> <span class="no">RVM</span><span class="o">.</span><span class="n">list_strings</span>
+      <span class="no">MYPROJECT_RUBIES</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">rubie</span><span class="o">|</span>
+        <span class="k">if</span> <span class="n">installed_rubies</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">rubie</span><span class="p">)</span>
+          <span class="nb">puts</span> <span class="s2">&quot;info: Rubie </span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2"> already installed.&quot;</span>
+        <span class="k">else</span>
+          <span class="n">with_my_environment_vars</span> <span class="k">do</span>
+            <span class="n">good_msg</span> <span class="o">=</span> <span class="s2">&quot;info: Rubie </span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2"> installed.&quot;</span>
+            <span class="n">bad_msg</span> <span class="o">=</span> <span class="s2">&quot;Failed </span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2"> install! Check RVM logs here: </span><span class="si">#{</span><span class="no">RVM</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">/log/</span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="nb">puts</span> <span class="s2">&quot;info: Rubie </span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2"> installation inprogress. This could take awhile...&quot;</span>
+            <span class="no">RVM</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">rubie</span><span class="p">,</span><span class="n">rvm_install_options</span><span class="p">)</span> <span class="p">?</span> <span class="nb">puts</span><span class="p">(</span><span class="n">good_msg</span><span class="p">)</span> <span class="p">:</span> <span class="nb">abort</span><span class="p">(</span><span class="n">bad_msg</span><span class="p">)</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="no">RVM</span><span class="o">.</span><span class="n">alias_create</span> <span class="no">MYPROJECT_RUBIES</span><span class="o">[</span><span class="n">rubie</span><span class="o">][</span><span class="ss">:alias</span><span class="o">]</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2">@myproject&quot;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">task</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
+      <span class="n">rvm_each_rubie</span> <span class="k">do</span>
+        <span class="n">odbc</span> <span class="o">=</span> <span class="s2">&quot;ruby-odbc-</span><span class="si">#{</span><span class="n">myproject_current_rubie_info</span><span class="o">[</span><span class="ss">:odbc</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="no">RVM</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="no">Dir</span><span class="o">.</span><span class="n">tmpdir</span><span class="p">)</span> <span class="k">do</span>
+          <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;rm -rf </span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">*&quot;</span>
+          <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC downloading </span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">...&quot;</span>
+          <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;curl -O http://www.ch-werner.de/rubyodbc/</span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">.tar.gz&quot;</span>
+          <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC extracting clean work directory...&quot;</span>
+          <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;tar -xf </span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">.tar.gz&quot;</span>
+          <span class="no">RVM</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">/ext&quot;</span><span class="p">)</span> <span class="k">do</span>
+            <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC configuring...&quot;</span>
+            <span class="no">RVM</span><span class="o">.</span><span class="n">ruby</span> <span class="s1">&#39;extconf.rb&#39;</span><span class="p">,</span> <span class="s2">&quot;--with-odbc-dir=</span><span class="si">#{</span><span class="n">rvm_odbc_dir</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC make and installing for </span><span class="si">#{</span><span class="n">rvm_current_name</span><span class="si">}</span><span class="s2">...&quot;</span>
+            <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;make &amp;&amp; make install&quot;</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">task</span> <span class="ss">:gems</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
+      <span class="nb">puts</span> <span class="s2">&quot;info: Installing our app gems.&quot;</span>
+      <span class="n">rvm_each_rubie</span> <span class="k">do</span>
+        <span class="n">myproject_gem_specs</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">spec</span><span class="o">|</span> <span class="n">rvm_install_gem</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="p">}</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">task</span> <span class="ss">:remove</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
+    <span class="n">myproject_rubies</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">rubie</span><span class="o">|</span> <span class="no">RVM</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">rubie</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+
+<span class="k">def</span> <span class="nf">myproject_rubies</span>
+  <span class="no">MYPROJECT_RUBIES</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">map</span><span class="p">{</span> <span class="o">|</span><span class="n">rubie</span><span class="o">|</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2">@myproject&quot;</span> <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">myproject_current_rubie_info</span>
+  <span class="no">MYPROJECT_RUBIES</span><span class="o">[</span><span class="n">rvm_current_rubie_name</span><span class="o">]</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">myproject_gem_specs</span>
+  <span class="o">[</span>
+    <span class="o">[</span><span class="s1">&#39;rails&#39;</span><span class="p">,</span><span class="s1">&#39;2.3.8&#39;</span><span class="o">]</span><span class="p">,</span>
+    <span class="o">[</span><span class="s1">&#39;activerecord-sqlserver-adapter&#39;</span><span class="p">,</span><span class="s1">&#39;2.3.8&#39;</span><span class="o">]</span><span class="p">,</span>
+    <span class="o">[</span><span class="s1">&#39;erubis&#39;</span><span class="p">,</span><span class="s1">&#39;2.6.6&#39;</span><span class="o">]</span><span class="p">,</span>
+    <span class="o">[</span><span class="s1">&#39;haml&#39;</span><span class="p">,</span><span class="s1">&#39;3.0.13&#39;</span><span class="o">]</span><span class="p">,</span>
+    <span class="o">[</span><span class="s1">&#39;mocha&#39;</span><span class="p">,</span><span class="s1">&#39;0.9.8&#39;</span><span class="o">]</span><span class="p">,</span>
+  <span class="o">]</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_each_rubie</span>
+  <span class="n">myproject_rubies</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">rubie</span><span class="o">|</span>
+    <span class="no">RVM</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">rubie</span><span class="p">)</span>
+    <span class="k">yield</span>
+  <span class="k">end</span>
+<span class="k">ensure</span>
+  <span class="no">RVM</span><span class="o">.</span><span class="n">reset_current!</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_current_rubie_name</span>
+  <span class="n">rvm_current_name</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;@myproject&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_current_name</span>
+  <span class="no">RVM</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">expanded_name</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_gem_available?</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="n">gem</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">spec</span>
+  <span class="no">RVM</span><span class="o">.</span><span class="n">ruby_eval</span><span class="p">(</span><span class="s2">&quot;require &#39;rubygems&#39; ; print Gem.available?(&#39;</span><span class="si">#{</span><span class="n">gem</span><span class="si">}</span><span class="s2">&#39;,&#39;</span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">stdout</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_install_gem</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="n">gem</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">spec</span>
+  <span class="k">if</span> <span class="n">rvm_gem_available?</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">&quot;info: Gem </span><span class="si">#{</span><span class="n">gem</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class="s2"> already installed in </span><span class="si">#{</span><span class="n">rvm_current_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+  <span class="k">else</span>
+    <span class="nb">puts</span> <span class="s2">&quot;info: Installing gem </span><span class="si">#{</span><span class="n">gem</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class="s2"> in </span><span class="si">#{</span><span class="n">rvm_current_name</span><span class="si">}</span><span class="s2">...&quot;</span>
+    <span class="nb">puts</span> <span class="no">RVM</span><span class="o">.</span><span class="n">perform_set_operation</span><span class="p">(</span><span class="ss">:gem</span><span class="p">,</span><span class="s1">&#39;install&#39;</span><span class="p">,</span><span class="n">gem</span><span class="p">,</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span><span class="n">version</span><span class="p">)</span><span class="o">.</span><span class="n">stdout</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">for_macports?</span>
+  <span class="sb">`uname`</span><span class="o">.</span><span class="n">strip</span> <span class="o">==</span> <span class="s1">&#39;Darwin&#39;</span> <span class="o">&amp;&amp;</span> <span class="sb">`which port`</span><span class="o">.</span><span class="n">present?</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_install_options</span>
+  <span class="p">{}</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">my_environment_vars</span>
+  <span class="k">if</span> <span class="n">for_macports?</span>
+    <span class="p">{</span><span class="s1">&#39;CC&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/usr/bin/gcc-4.2&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;CFLAGS&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-O2 -arch x86_64&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;LDFLAGS&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-L/opt/local/lib -arch x86_64&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;CPPFLAGS&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-I/opt/local/include&#39;</span><span class="p">}</span>
+  <span class="k">else</span>
+    <span class="p">{}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_odbc_dir</span>
+  <span class="n">for_macports?</span> <span class="p">?</span> <span class="s1">&#39;/opt/local&#39;</span> <span class="p">:</span> <span class="s1">&#39;/usr/local&#39;</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">set_environment_vars</span><span class="p">(</span><span class="n">vars</span><span class="p">)</span>
+  <span class="n">vars</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="no">ENV</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">v</span> <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">with_my_environment_vars</span>
+  <span class="n">my_vars</span> <span class="o">=</span> <span class="n">my_environment_vars</span>
+  <span class="n">current_vars</span> <span class="o">=</span> <span class="n">my_vars</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="p">{</span> <span class="o">|</span><span class="n">cvars</span><span class="p">,</span><span class="n">kv</span><span class="o">|</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="o">=</span> <span class="n">kv</span> <span class="p">;</span> <span class="n">cvars</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="p">;</span> <span class="n">cvars</span> <span class="p">}</span>
+  <span class="n">set_environment_vars</span><span class="p">(</span><span class="n">my_vars</span><span class="p">)</span>
+  <span class="k">yield</span>
+<span class="k">ensure</span>
+  <span class="n">set_environment_vars</span><span class="p">(</span><span class="n">current_vars</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+
+<h2>RVM Rake Task Breakdown</h2>
+
+<p>
+  This is the fun part - lets start from top to bottom. I'll focus only on the parts that are centric to why the RVM ruby API is so bad ass and the rake task in general. The following section is dedicated to RVM with the SQL Server Adapter stack. First, the :setup task, this is called before every other task. It simply sets up the load path so that the RVM API file can be required. That api file is located in your rvm repo path, typically in your ~/.rvm directory. Now every other task can use the <code>RVM</code> module which implements method missing for many commands.
+</p>
+
+<p>
+  Past this my rvm namespace is broken up into three main install tasks. The primary concerns are <code>rvm:install:rubies</code> and <code>rvm:install:gems</code> each invoked by the rake task. Starting with the :rubies task, this iterates over a collection of ruby version strings first checking if RVM knows its installed then installing it otherwise.
+</p>
+
+<p>
+  In the :gems task, things get a little interesting. I am using a few methods (seen toward the bottom) that give this a nice little DSL of my own around RVM. The first is a block method called <code>rvm_each_rubie</code>. This iterates over each of my project's ruby strings, tells RVM to use that ruby, hence dynamically switching to that ruby/gemset then yielding to the block. That means that each go around I will be in an completely different ruby/gem environment, each specific to my project using RVM gemsets. This allows the inner method for iterating over the required gems for my project and asking to install them with <code>rvm_install_gem</code>. This method uses <code>RVM.ruby_eval</code> to execute a string of ruby in the context of the current ruby version and gemset. In this case, finding out if a gem is installed already. If not, I use the <code>RVM.perform_set_operation</code> to install the gem, again in current context. I use perform_set_operation so I can read the STDOUT back to the rake task so a user sees exactly what is going of for the gem install.
+</p>
+
+<p>
+  Past that there are a few other details. Most can be picked up by reading the helper methods toward the bottom. Using the RVM ruby API is a bit of a chore if you rely on documentation. Sure it has some, but nothing beats reading the code to see what is available to you. Remember you can find the API library by opening up the <code>~/.rvm/lib</code> directory. I'm sure you can also find help on the <a href="http://rvm.beginrescueend.com/support/irc/">RVM IRC channel</a>.
+</p>
+
+<p>
+  Though it is not specific to general RVM API goodness, the :odbc task does show some great interfaces that RVM exposes for doing standard file system directory changing and running commands to the system.
+</p>
+
+
+<h2>Notes On RVM With The SQL Server Adapter Stack</h2>
+
+<p>
+  So you use the ActiveRecord SQLServerAdapter? That means you have some underlying components installed - namely FreeTDS, unixODBC, and RubyODBC right. If your like me and believe that MacPorts is the way to go and risking a Homebrew interleaved dependency with Apple's libraries is risky, this section is for you! So you have a MacPort base and you want to compile your RVM rubies in such a way that other dependencies such as Nokogiri and RubyODBC use your /opt/local installs. By default this does not happen because unless ruby was compiled the right way, it wont be able to allow built gems to know about your /opt/local directory. So this is what I came up with.
+</p>
+
+<p>
+  Take a look at the <code>my_environment_vars</code> method. This works in-conjunction with the <code>with_my_environment_vars</code> block method. Basically it temporarily set's MacPort specific environment variables before installing a ruby version via RVM. The ones shown are what I have found work best for my system. I think the most important are <code>LDFLAGS=-L/opt/local/lib -arch x86_64</code> and <code>CPPFLAGS=-I/opt/local/include</code>. Once ruby is built with those, it can easily reflect with standard 3rd party install methods that use <code>RbConfig</code>. To date any gem that I have had to compile, most importantly RubyODBC, does so perfectly against my /opt/local ports. This includes MySQL, Nokogiri, everything! I love it. I totally encourage anyone to use RVM and to get to know it's great ruby API for automating all sorts of things.
+</p>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://rvm.beginrescueend.com/">Ruby Version Manager (RVM)</a></li>
+  <li><a href="http://github.com/rails-sqlserver/activerecord-sqlserver-adapter">ActiveRecord SQL Server Adapter</a></li>
+  <li><a href="/2009/9/5/the-ultimate-os-x-snow-leopard-stack-for-rails-development-x86_64-macports-ruby-1-8-1-9-sql-server-more">The Ultimate OS X Snow Leopard Stack For Rails Development - x86_64, MacPorts, Ruby 1.8/1.9, SQL Server, SQLite3, MySQL & More</a></li>
+  <li><a href="http://wiki.github.com/rails-sqlserver/activerecord-sqlserver-adapter/">SQL Server Adapter Wiki</a></li>
+</ul>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>A MacPort/RubyODBC Update</title>
+   <link href="http://metaskills.net/2010/07/19/a-macport-rubyodbc-update"/>
+   <updated>2010-07-19T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2010/07/19/a-macport-rubyodbc-update</id>
+   <content type="html">
+     <![CDATA[<aside class="flash_warn">
+  <a href="https://github.com/rails-sqlserver/tiny_tds">TinyTDS</a> is the upcoming de facto raw connection method for the SQL Server adapter. Please read the <em><a href="https://github.com/rails-sqlserver/activerecord-sqlserver-adapter/wiki/Using-TinyTds">Using TinyTDS</a></em> wiki page on the adapter for switching. No longer do you have to worry about compiling ODBC layers!
+</aside>
+
+<aside class="flash_info">
+  I have changed my mind about the UTF-8 version of RubyODBC. Please <a href="http://groups.google.com/group/rails-sqlserver-adapter/browse_thread/thread/367cf70b2b48d4a0?hl=en">read that section</a> in the the rails 3 announcements for the SQL Server adapter.
+</aside>
+
+
+<p>
+  Quite a while ago I wrote a <a href="/2009/9/5/the-ultimate-os-x-snow-leopard-stack-for-rails-development-x86_64-macports-ruby-1-8-1-9-sql-server-more">soup to nuts article on getting the full multi-ruby development stack installed</a> for those using the SQL Server adapter. The base package management system used there was MacPorts. In it I described how to edit the outdated Portfile for the rb-odbc package and exclaimed how important it was to use the +utf8 variant. I was totally wrong about that part.
+</p>
+
+<p>
+  This past week I started heavily exploring <a href="http://rvm.beginrescueend.com/">RVM</a> at the advice of friend while we visited the Boston.rb user grooup. As an aside, I finally feel my unix-fu is strong enough to cover the edge cases needed to get the SQL Server stack happy with RVM. Good news, but that's next weeks blog post. Anyways I found that while updating my core MacPort's rb-odbc package that +utf8 was blowing up. I am currently using MacPorts 1.9.1 and was targeting 0.99991 of RubyODBC. Here is the updated port file. To edit your current port file run <code>mate $(port file rb-odbc)</code> and paste this new one in. Details afterward.
+</p>
+
+<div class="highlight"><pre><code class="text"># $Id: Portfile 30250 2010-07-18 02:16:17Z ken@metaskills.net $
+PortSystem    1.0
+PortGroup     ruby 1.0
+
+ruby.setup          {odbc ruby-odbc} 0.99991 extconf.rb {README doc test} 
+maintainers         nomaintainer
+description         An extension library for ODBC from ruby.
+long_description    Extension library to use ODBC data sources from Ruby. \
+                    Supports Ruby 1.6.x and 1.8 on Win32 OSes and UN*X 
+checksums           md5 64eaf6089e7ca17eeff54c4fe052ac96
+homepage            http://www.ch-werner.de/rubyodbc
+master_sites        http://www.ch-werner.de/rubyodbc
+categories-append   databases
+platforms           darwin 
+
+configure.cmd             ${ruby.bin} -rvendor-specific -Cext extconf.rb
+build.pre_args-append     -C ext
+destroot.pre_args-append  -C ext
+
+variant utf8 {
+  configure.cmd             ${ruby.bin} -rvendor-specific -Cext/utf8 extconf.rb
+  build.pre_args-delete     -C ext
+  build.pre_args-append     -C ext/utf8
+  destroot.pre_args-delete  -C ext
+  destroot.pre_args-append  -C ext/utf8
+}
+</code></pre>
+</div>
+
+<p>
+  So where did I go wrong on my old article? My first big mistake was thinking that the <code>+utf8</code> port variant was needed. Not only is it <strong>NOT NEEDED</strong>, it may not work right at all. In fact, the old Portfile in MacPorts trunk technically did not even configure/make/install the utf8 version either! Honestly â€“ I spent all day learning the MacPort's Portfile syntax and tested this. Installing that variant just breaks with an error like <code>LoadError: dlsym(0x1010cd3b0, Init_odbc): symbol not found</code>.
+</p>
+
+<p>
+  So, even though my updated Portfile above now fixes that issue and supports actually building a utf8 version of RubyODBC, <strong>YOU DO NOT NEED IT!</strong> In fact the entire SQL Server stack is tested with the plain non-utf8 package and passes with flying colors. This includes passing tests where unicode columns return correctly utf8-encoded strings, among others. Though I have not tested it, I believe the utf8 version would do more damage than good. The RubyODBC documentation says it would make every string utf8 encoded. Not good for an adapter that has mixed data types. For my own personal notes, here is a diff of the Makefile below. I think the Init_odbc error was a result of a missing flag in the Makefile.
+</p>
+
+<div class="highlight"><pre><code class="diff"># My notes
+# +CPPFLAGS = -DHAVE_LONG_LONG
+# +CPPFLAGS = -DHAVE_VERSION_H
+# +CPPFLAGS = -DHAVE_TYPE_SQLBIGINT
+# -CPPFLAGS = -DHAVE_SQLCONFIGDATASOURCEW
+# -CPPFLAGS = -DHAVE_SQLINSTALLERERRORW
+# -CPPFLAGS = -DHAVE_SQLWRITEFILEDSNW
+# -CPPFLAGS = -DHAVE_SQLREADFILEDSNW
+<span class="gd">--- Makefile(+utf8)  2010-07-18 12:00:24.000000000 -0400</span>
+<span class="gi">+++ Makefile(-utf8)  2010-07-18 12:49:32.000000000 -0400</span>
+<span class="gu">@@ -47,7 +47,7 @@</span>
+ CFLAGS   =  -fno-common -O2 -arch x86_64  -fno-common -pipe -fno-common $(cflags) -arch x86_64
+ INCFLAGS = -I. -I. -I/opt/local/lib/ruby/1.8/i686-darwin10 -I.
+ DEFS     = 
+<span class="gd">-CPPFLAGS = -DHAVE_SQL_H -DHAVE_SQLEXT_H -DHAVE_TYPE_SQLTCHAR -DHAVE_TYPE_SQLLEN -DHAVE_TYPE_SQLULEN -DHAVE_ODBCINST_H -DHAVE_SQLCONFIGDATASOURCEW -DHAVE_SQLWRITEFILEDSNW -DHAVE_SQLREADFILEDSNW -DHAVE_SQLINSTALLERERROR -DHAVE_SQLINSTALLERERRORW -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include</span>
+<span class="gi">+CPPFLAGS = -DHAVE_VERSION_H -DHAVE_SQL_H -DHAVE_SQLEXT_H -DHAVE_TYPE_SQLTCHAR -DHAVE_TYPE_SQLLEN -DHAVE_TYPE_SQLULEN -DHAVE_ODBCINST_H -DHAVE_SQLINSTALLERERROR -DHAVE_TYPE_SQLBIGINT -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -DHAVE_LONG_LONG</span>
+ CXXFLAGS = $(CFLAGS) 
+ ldflags  = -L. -L/opt/local/lib -arch x86_64
+ dldflags = 
+<span class="gu">@@ -89,7 +89,7 @@</span>
+ LIBS = $(LIBRUBYARG_SHARED) -lodbcinst -lodbc  -lpthread -ldl -lobjc  
+ SRCS = init.c odbc.c
+ OBJS = init.o odbc.o
+<span class="gd">-TARGET = odbc_utf8</span>
+<span class="gi">+TARGET = odbc</span>
+ DLLIB = $(TARGET).bundle
+ EXTSTATIC = 
+ STATIC_LIB =
+</code></pre>
+</div>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ 
+</feed>
