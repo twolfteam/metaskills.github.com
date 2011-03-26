@@ -4,7 +4,7 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2011-03-23T21:25:40-04:00</updated>
+ <updated>2011-03-26T12:43:35-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
@@ -13,12 +13,87 @@
 
  
  <entry>
+   <title>Using MiniTest::Spec With Rails</title>
+   <link href="http://metaskills.net/2011/03/26/using-minitest-spec-with-rails"/>
+   <updated>2011-03-26T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/03/26/using-minitest-spec-with-rails</id>
+   <content type="html">
+     <![CDATA[<p>
+  So after a few blog post on the subject of MiniTest::Spec, I finally have a simple testing stack for Rails 3 that leverages MiniTest's spec DSL. I introduce to you the <a href="http://github.com/metaskills/mini_specunit">MiniSpecUnit</a> gem. MiniSpecUnit defines a <code>Test::Unit::TestCase</code> class that subclasses MiniTest::Spec. It implements only what is needed to make rails happy. It is not drop in replacement for the real Test::Unit::TestCase that is included with ruby 1.9.
+</p>
+
+<p>
+  Once you bundle the gem in your Rails application, it will satisfy the <code>require "test/unit/testcase"</code> from ActiveSupport's test case. Tricking it to use MiniTest::Spec instead of MiniTest::Unit. Here is an example Gemfile that shows the usage of MiniSpecUnit as well as two other MiniTest gems that I have made. The first is <a href="/2011/03/22/mini-backtrace-for-minitest-and-rails/">MiniBacktrace</a> which allows you to leverage the <code>Rails.backtrace_cleaner</code> using MiniTest. The other is <a href="/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda/">MiniShoulda</a> which builds a simple Shoulda syntax on top of MiniTest::Spec.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="ss">:test</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">&#39;minitest&#39;</span>          <span class="c1"># At least v2.0.2 if using MiniShoulda.</span>
+  <span class="n">gem</span> <span class="s1">&#39;mini_specunit&#39;</span>     <span class="c1"># The goods! Force MiniTest::Spec instead of MiniTest::Unit.</span>
+  <span class="n">gem</span> <span class="s1">&#39;mini_backtrace&#39;</span>    <span class="c1"># Use Rails.backtrace_cleaner with MiniTest.</span>
+  <span class="n">gem</span> <span class="s1">&#39;mini_shoulda&#39;</span>      <span class="c1"># A small Shoulda syntax on top of MiniTest::Spec.</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Since MinitTest::Spec is built on top of MiniTest::Unit, there is not a lot that can go wrong. With MiniSpecUnit, we finally have a working solution by replacing MiniTest::Spec as the superclass for ActiveSupport::TestCase when using Rails. This solution is drop dead simple and does not require to you to recreate a new test case in your <code>test_helper.rb</code> and change all your cases to subclass that. About the only gotcha is a few missing assertions available in Test::Unit. If you encounter these, I encourage you to rewrite them to the modern MiniTest::Spec assertion style. I commonly use this <a href="http://cheat.errtheblog.com/s/minitest/1">cheat sheet</a> to remember them. For example:
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># This:</span>
+<span class="n">assert_not_nil</span> <span class="vi">@foo</span><span class="o">.</span><span class="n">bar</span>
+
+<span class="c1"># Would Become This:</span>
+<span class="vi">@foo</span><span class="o">.</span><span class="n">bar</span><span class="o">.</span><span class="n">wont_be_nil</span>
+</code></pre>
+</div>
+
+
+
+<h2>Functional Tests With ActionController::TestCase</h2>
+
+<p>
+  One problem you may have with your functional tests is a nil <code>@controller</code> instance variable in <code>describe</code> or <code>context</code> blocks. Resulting in the "<em>RuntimeError: @controller is nil: make sure you set it in your test's setup method.</em>" message. This is easy to fix, all you have to do is be explicit about your controller that you are testing like so.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">UsersControllerTest</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">TestCase</span>
+  <span class="n">tests</span> <span class="no">UsersController</span>
+  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+
+<h2>Broken Describe Scopes</h2>
+
+<p>
+  In my article, <a href="/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda/"><em>From Test::Unit & Shoulda To MiniTest::Spec & MiniShoulda</em></a>, I cover a patch to MiniTest that would fix "undefined local variable or method" errors when using describe/context scopes. I submitted a <a href="https://github.com/seattlerb/minitest/pull/9">patch and pull request</a> to Ryan Davis that I believe was applied. At the time of this article, there is no release version of MiniTest that includes <a href="http://github.com/metaskills/mini_shoulda/blob/master/lib/mini_shoulda/minitest_describe_patch.rb">this patch</a> that I have in MiniShoulda. So if you find yourself with errors in describe/context blocks, consider bundling the MiniSholda gem to fix it till a new version of MiniTest is released.
+</p>
+
+
+<h2>In Closing</h2>
+
+<p>
+  I have only tested the above stack in the latest Rails edge, 3.1.beta and ruby 1.9.2. I doubt there are issues on older versions of Rails with different Ruby versions. If you apply these gems to success, I would love to hear about it. Happy testing!
+</p>
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
    <title>MiniBacktrace - For MiniTest &amp; Rails</title>
    <link href="http://metaskills.net/2011/03/22/mini-backtrace-for-minitest-and-rails"/>
    <updated>2011-03-22T00:00:00-04:00</updated>
    <id>http://metaskills.net/2011/03/22/mini-backtrace-for-minitest-and-rails</id>
    <content type="html">
-     <![CDATA[<p>
+     <![CDATA[<aside class="flash_info">
+  UPDATE:  
+  <a href="/2011/03/26/using-minitest-spec-with-rails/">Using MiniTest::Spec With Rails</a> 
+  &amp;
+  <a href="/2011/03/26/using-minitest-spec-with-rails/">From Test::Unit &amp; Shoulda To MiniTest::Spec &amp; MiniShoulda</a>
+</aside>
+
+<p>
   <a href="https://github.com/metaskills/mini_backtrace">MiniBacktrace</a> allows you to take advantage of the Rails.backtrace_cleaner when using MiniTest. This includes everyone using Rails 3 with Ruby 1.9.
 </p>
 
@@ -480,7 +555,14 @@ $ tree MetaSupport
    <updated>2011-01-25T00:00:00-05:00</updated>
    <id>http://metaskills.net/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda</id>
    <content type="html">
-     <![CDATA[<p>
+     <![CDATA[<aside class="flash_info">
+  UPDATE:  
+  <a href="/2011/03/26/using-minitest-spec-with-rails/">Using MiniTest::Spec With Rails</a> 
+  &amp;
+  <a href="/2011/03/26/using-minitest-spec-with-rails/">MiniBacktrace For MiniTest &amp; Rails</a>
+</aside>
+
+<p>
   It seems the MiniTest replacement for Test::Unit in Ruby 1.9 has been presenting itself more and more in my daily readings. Recently was Jamis Buck's article titled <a href="http://37signals.com/svn/posts/2742-the-road-to-faster-tests">The road to faster tests</a> where he talks about optimizing basecamp's suite to run faster. And there again, some of the comments below mentioned MiniTest as a solution. That got me thinking on what would it take for me to switch from Test::Unit to MiniTest.
 </p>
 
@@ -1247,102 +1329,6 @@ du -skh ~/.rvm/gems
   <li><a href="/2009/9/5/the-ultimate-os-x-snow-leopard-stack-for-rails-development-x86_64-macports-ruby-1-8-1-9-sql-server-more">The Ultimate OS X Snow Leopard Stack For Rails Development - x86_64, MacPorts, Ruby 1.8/1.9, SQL Server, SQLite3, MySQL & More</a></li>
   <li><a href="http://wiki.github.com/rails-sqlserver/activerecord-sqlserver-adapter/">SQL Server Adapter Wiki</a></li>
 </ul>
-
-
-]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>A MacPort/RubyODBC Update</title>
-   <link href="http://metaskills.net/2010/07/19/a-macport-rubyodbc-update"/>
-   <updated>2010-07-19T00:00:00-04:00</updated>
-   <id>http://metaskills.net/2010/07/19/a-macport-rubyodbc-update</id>
-   <content type="html">
-     <![CDATA[<aside class="flash_warn">
-  <a href="https://github.com/rails-sqlserver/tiny_tds">TinyTDS</a> is the upcoming de facto raw connection method for the SQL Server adapter. Please read the <em><a href="https://github.com/rails-sqlserver/activerecord-sqlserver-adapter/wiki/Using-TinyTds">Using TinyTDS</a></em> wiki page on the adapter for switching. No longer do you have to worry about compiling ODBC layers!
-</aside>
-
-<aside class="flash_info">
-  I have changed my mind about the UTF-8 version of RubyODBC. Please <a href="http://groups.google.com/group/rails-sqlserver-adapter/browse_thread/thread/367cf70b2b48d4a0?hl=en">read that section</a> in the the rails 3 announcements for the SQL Server adapter.
-</aside>
-
-
-<p>
-  Quite a while ago I wrote a <a href="/2009/9/5/the-ultimate-os-x-snow-leopard-stack-for-rails-development-x86_64-macports-ruby-1-8-1-9-sql-server-more">soup to nuts article on getting the full multi-ruby development stack installed</a> for those using the SQL Server adapter. The base package management system used there was MacPorts. In it I described how to edit the outdated Portfile for the rb-odbc package and exclaimed how important it was to use the +utf8 variant. I was totally wrong about that part.
-</p>
-
-<p>
-  This past week I started heavily exploring <a href="http://rvm.beginrescueend.com/">RVM</a> at the advice of friend while we visited the Boston.rb user grooup. As an aside, I finally feel my unix-fu is strong enough to cover the edge cases needed to get the SQL Server stack happy with RVM. Good news, but that's next weeks blog post. Anyways I found that while updating my core MacPort's rb-odbc package that +utf8 was blowing up. I am currently using MacPorts 1.9.1 and was targeting 0.99991 of RubyODBC. Here is the updated port file. To edit your current port file run <code>mate $(port file rb-odbc)</code> and paste this new one in. Details afterward.
-</p>
-
-<div class="highlight"><pre><code class="text"># $Id: Portfile 30250 2010-07-18 02:16:17Z ken@metaskills.net $
-PortSystem    1.0
-PortGroup     ruby 1.0
-
-ruby.setup          {odbc ruby-odbc} 0.99991 extconf.rb {README doc test} 
-maintainers         nomaintainer
-description         An extension library for ODBC from ruby.
-long_description    Extension library to use ODBC data sources from Ruby. \
-                    Supports Ruby 1.6.x and 1.8 on Win32 OSes and UN*X 
-checksums           md5 64eaf6089e7ca17eeff54c4fe052ac96
-homepage            http://www.ch-werner.de/rubyodbc
-master_sites        http://www.ch-werner.de/rubyodbc
-categories-append   databases
-platforms           darwin 
-
-configure.cmd             ${ruby.bin} -rvendor-specific -Cext extconf.rb
-build.pre_args-append     -C ext
-destroot.pre_args-append  -C ext
-
-variant utf8 {
-  configure.cmd             ${ruby.bin} -rvendor-specific -Cext/utf8 extconf.rb
-  build.pre_args-delete     -C ext
-  build.pre_args-append     -C ext/utf8
-  destroot.pre_args-delete  -C ext
-  destroot.pre_args-append  -C ext/utf8
-}
-</code></pre>
-</div>
-
-<p>
-  So where did I go wrong on my old article? My first big mistake was thinking that the <code>+utf8</code> port variant was needed. Not only is it <strong>NOT NEEDED</strong>, it may not work right at all. In fact, the old Portfile in MacPorts trunk technically did not even configure/make/install the utf8 version either! Honestly â€“ I spent all day learning the MacPort's Portfile syntax and tested this. Installing that variant just breaks with an error like <code>LoadError: dlsym(0x1010cd3b0, Init_odbc): symbol not found</code>.
-</p>
-
-<p>
-  So, even though my updated Portfile above now fixes that issue and supports actually building a utf8 version of RubyODBC, <strong>YOU DO NOT NEED IT!</strong> In fact the entire SQL Server stack is tested with the plain non-utf8 package and passes with flying colors. This includes passing tests where unicode columns return correctly utf8-encoded strings, among others. Though I have not tested it, I believe the utf8 version would do more damage than good. The RubyODBC documentation says it would make every string utf8 encoded. Not good for an adapter that has mixed data types. For my own personal notes, here is a diff of the Makefile below. I think the Init_odbc error was a result of a missing flag in the Makefile.
-</p>
-
-<div class="highlight"><pre><code class="diff"># My notes
-# +CPPFLAGS = -DHAVE_LONG_LONG
-# +CPPFLAGS = -DHAVE_VERSION_H
-# +CPPFLAGS = -DHAVE_TYPE_SQLBIGINT
-# -CPPFLAGS = -DHAVE_SQLCONFIGDATASOURCEW
-# -CPPFLAGS = -DHAVE_SQLINSTALLERERRORW
-# -CPPFLAGS = -DHAVE_SQLWRITEFILEDSNW
-# -CPPFLAGS = -DHAVE_SQLREADFILEDSNW
-<span class="gd">--- Makefile(+utf8)  2010-07-18 12:00:24.000000000 -0400</span>
-<span class="gi">+++ Makefile(-utf8)  2010-07-18 12:49:32.000000000 -0400</span>
-<span class="gu">@@ -47,7 +47,7 @@</span>
- CFLAGS   =  -fno-common -O2 -arch x86_64  -fno-common -pipe -fno-common $(cflags) -arch x86_64
- INCFLAGS = -I. -I. -I/opt/local/lib/ruby/1.8/i686-darwin10 -I.
- DEFS     = 
-<span class="gd">-CPPFLAGS = -DHAVE_SQL_H -DHAVE_SQLEXT_H -DHAVE_TYPE_SQLTCHAR -DHAVE_TYPE_SQLLEN -DHAVE_TYPE_SQLULEN -DHAVE_ODBCINST_H -DHAVE_SQLCONFIGDATASOURCEW -DHAVE_SQLWRITEFILEDSNW -DHAVE_SQLREADFILEDSNW -DHAVE_SQLINSTALLERERROR -DHAVE_SQLINSTALLERERRORW -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include</span>
-<span class="gi">+CPPFLAGS = -DHAVE_VERSION_H -DHAVE_SQL_H -DHAVE_SQLEXT_H -DHAVE_TYPE_SQLTCHAR -DHAVE_TYPE_SQLLEN -DHAVE_TYPE_SQLULEN -DHAVE_ODBCINST_H -DHAVE_SQLINSTALLERERROR -DHAVE_TYPE_SQLBIGINT -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -DHAVE_LONG_LONG</span>
- CXXFLAGS = $(CFLAGS) 
- ldflags  = -L. -L/opt/local/lib -arch x86_64
- dldflags = 
-<span class="gu">@@ -89,7 +89,7 @@</span>
- LIBS = $(LIBRUBYARG_SHARED) -lodbcinst -lodbc  -lpthread -ldl -lobjc  
- SRCS = init.c odbc.c
- OBJS = init.o odbc.o
-<span class="gd">-TARGET = odbc_utf8</span>
-<span class="gi">+TARGET = odbc</span>
- DLLIB = $(TARGET).bundle
- EXTSTATIC = 
- STATIC_LIB =
-</code></pre>
-</div>
 
 
 ]]>
