@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="author" content="Ken Collins">
     <title>
-      Modern SQL Server & Ruby/Rails Installer For Windows @MetaSkills.net
+      Use Compass Sass Framework Files With The Rails 3.1 Asset Pipeline @MetaSkills.net
     </title>
     <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
     <link rel="author" href="mailto:ken@metaskills.net">
@@ -50,35 +50,87 @@
       <section id="content">
         <article id="post">
           <header>
-            <time pubdate datetime="2011-02-10T00:00:00-05:00">
-              <span class="day">10</span> <span class="month">Feb</span> <span class="year">2011</span>
+            <time pubdate datetime="2011-05-18T00:00:00-04:00">
+              <span class="day">18</span> <span class="month">May</span> <span class="year">2011</span>
             </time>
             <h1>
-              Modern SQL Server & Ruby/Rails Installer For Windows
+              Use Compass Sass Framework Files With The Rails 3.1 Asset Pipeline
             </h1>
           </header>
           <p>
-            <span class="photofancy floatr ml20 mb10"><img src="/assets/mss_eyarticle.png" alt="My Modern SQL Server & Rails Engine Yard Article"
-            width="400" height="293"></span> If you have not done so, please go read my article <em><a href=
-            "http://www.engineyard.com/blog/2011/modern-sql-server-rails/">Modern SQL Server & Rails</a></em> on the Engine Yard blog. I want to
-            thank Wayne E Seguin for inviting me to write the article. This article details many exciting things that have been happening for those
-            using the SQL Server Adapter for Rails, most notably TinyTDS. The article outlines why everyone still using the ODBC connection mode
-            should really switch over to TinyTDS.
+            The Sprockets 2 gem along with the Tilt gem make it really easy to write JavaScript or CSS using any templating language you desire. The
+            rails defaults are CoffeeScript and Sass. About the <a href=
+            "https://github.com/chriseppstein/compass/tree/stable/frameworks/compass/stylesheets">best collection of Sass framework files</a> for
+            easy cross-browser CSS authoring are packaged in the compass framework. Compass even has <a href=
+            "http://compass-style.org/reference/compass/css3/">great documentation</a> for using their Sass framework. But what if you want to use
+            those within the asset pipeline provided by Rails? Easy enough!
           </p>
           <p>
-            <span class="photofancy floatr ml20 mb20"><img src="/assets/mss_railsinstaller.png" alt="Ruby Rails Installer For Windows" width="400"
-            height="293"></span> Many exciting things are happening thanks to Wayne's new pet project, a <a href="http://railsinstaller.org/">ruby
-            and rails installer for Windows</a>. The adapter and TinyTDS will hopefully dove tail into that. The plan is to include components in the
-            one click installer that will allow Windows users to access their legacy databases using TinyTDS and the SQL Server Adapter. We had even
-            talked on the mailing list about including a demo rails app with the ruby windows installer that would access the northwind database much
-            the same way .Net demos would.
+            First, bundle up the compass, but do not require it. Add this to your <code>Gemfile</code>.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class="p">,</span> <span class=
+"ss">:require</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Next, add a Sass initializer in <code>config/initializers/sass.rb</code> and fill it in with the code below. This will add two more load
+            paths to the Sass engine. The first is your default rails/sprockets asset path for stylesheets. It simply let's you build a deep folder
+            structure in that directory and use relative paths from each file. The second will put the entire compass Sass framework files into the
+            Sass load path.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="no">Sass</span><span class="o">::</span><span class="no">Engine</span><span class="o">::</span><span class=
+"no">DEFAULT_OPTIONS</span><span class="o">[</span><span class="ss">:load_paths</span><span class="o">].</span><span class=
+"n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">load_paths</span><span class="o">|</span>
+  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
+"no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/app/assets/stylesheets&quot;</span>
+  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
+"no">Gem</span><span class="o">.</span><span class="n">loaded_specs</span><span class="o">[</span><span class=
+"s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class="si">}</span><span class=
+"s2">/frameworks/compass/stylesheets&quot;</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Now in your rails <code>app/assets/stylesheets/foo.scss</code> file you can use Sass' <code>@import</code> with paths to the compass
+            framework.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="css"><span class="k">@import</span> <span class="s2">&quot;compass/css3/opacity&quot;</span><span class="p">;</span>
+<span class="nf">#mylogo</span> <span class="p">{</span> <span class="o">@</span><span class="n">include</span> <span class=
+"k">opacity</span><span class="p">(</span><span class="m">0</span><span class="o">.</span><span class="m">5</span><span class=
+"p">);</span> <span class="p">}</span>
+</code>
+</pre>
+          </div>
+          <p>
+            That is an example loading up the opacity helpers. Your generated css file will look like this! CSS is never going to be the same again!
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="css"><span class="nf">#mylogo</span> <span class="p">{</span>
+  <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">filter</span><span class="o">:</span> <span class=
+"s2">&quot;progid:DXImageTransform.Microsoft.Alpha(Opacity=50)&quot;</span><span class="p">;</span>
+  <span class="n">filter</span><span class="o">:</span> <span class="n">progid</span><span class="o">:</span><span class=
+"n">DXImageTransform</span><span class="o">.</span><span class="n">Microsoft</span><span class="o">.</span><span class="n">Alpha</span><span class=
+"p">(</span><span class="n">Opacity</span><span class="o">=</span><span class="m">50</span><span class="p">);</span>
+  <span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span><span class=
+"p">;</span> <span class="p">}</span>
+</code>
+</pre>
+          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 
             var disqus_shortname = 'metaskillsnet';
-            var disqus_identifier = '/2011/02/10/modern-sql-server--rails';
-            var disqus_title = 'Modern SQL Server & Ruby/Rails Installer For Windows';
+            var disqus_identifier = '/2011/05/18/use-compass-sass-framework-files-with-the-rails-3.1-asset-pipeline';
+            var disqus_title = 'Use Compass Sass Framework Files With The Rails 3.1 Asset Pipeline';
             (function() {
             var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
             dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';

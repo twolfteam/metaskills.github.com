@@ -4,13 +4,69 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2011-05-15T16:15:48-04:00</updated>
+ <updated>2011-05-18T20:07:43-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
    <email>ken@metaskills.net</email>
  </author>
 
+ 
+ <entry>
+   <title>Use Compass Sass Framework Files With The Rails 3.1 Asset Pipeline</title>
+   <link href="http://metaskills.net/2011/05/18/use-compass-sass-framework-files-with-the-rails-3.1-asset-pipeline"/>
+   <updated>2011-05-18T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/05/18/use-compass-sass-framework-files-with-the-rails-3.1-asset-pipeline</id>
+   <content type="html">
+     <![CDATA[<p>
+  The Sprockets 2 gem along with the Tilt gem make it really easy to write JavaScript or CSS using any templating language you desire. The rails defaults are CoffeeScript and Sass. About the <a href="https://github.com/chriseppstein/compass/tree/stable/frameworks/compass/stylesheets">best collection of Sass framework files</a> for easy cross-browser CSS authoring are packaged in the compass framework. Compass even has <a href="http://compass-style.org/reference/compass/css3/">great documentation</a> for using their Sass framework. But what if you want to use those within the asset pipeline provided by Rails? Easy enough!
+</p>
+
+<p>
+  First, bundle up the compass, but do not require it. Add this to your <code>Gemfile</code>.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class="p">,</span> <span class="ss">:require</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</code></pre>
+</div>
+
+<p>
+  Next, add a Sass initializer in <code>config/initializers/sass.rb</code> and fill it in with the code below. This will add two more load paths to the Sass engine. The first is your default rails/sprockets asset path for stylesheets. It simply let's you build a deep folder structure in that directory and use relative paths from each file. The second will put the entire compass Sass framework files into the Sass load path.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="no">Sass</span><span class="o">::</span><span class="no">Engine</span><span class="o">::</span><span class="no">DEFAULT_OPTIONS</span><span class="o">[</span><span class="ss">:load_paths</span><span class="o">].</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">load_paths</span><span class="o">|</span>
+  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/app/assets/stylesheets&quot;</span>
+  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Gem</span><span class="o">.</span><span class="n">loaded_specs</span><span class="o">[</span><span class="s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class="si">}</span><span class="s2">/frameworks/compass/stylesheets&quot;</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Now in your rails <code>app/assets/stylesheets/foo.scss</code> file you can use Sass' <code>@import</code> with paths to the compass framework.
+</p>
+
+<div class="highlight"><pre><code class="css"><span class="k">@import</span> <span class="s2">&quot;compass/css3/opacity&quot;</span><span class="p">;</span>
+<span class="nf">#mylogo</span> <span class="p">{</span> <span class="o">@</span><span class="n">include</span> <span class="k">opacity</span><span class="p">(</span><span class="m">0</span><span class="o">.</span><span class="m">5</span><span class="p">);</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>
+  That is an example loading up the opacity helpers. Your generated css file will look like this! CSS is never going to be the same again!
+</p>
+
+<div class="highlight"><pre><code class="css"><span class="nf">#mylogo</span> <span class="p">{</span>
+  <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">filter</span><span class="o">:</span> <span class="s2">&quot;progid:DXImageTransform.Microsoft.Alpha(Opacity=50)&quot;</span><span class="p">;</span>
+  <span class="n">filter</span><span class="o">:</span> <span class="n">progid</span><span class="o">:</span><span class="n">DXImageTransform</span><span class="o">.</span><span class="n">Microsoft</span><span class="o">.</span><span class="n">Alpha</span><span class="p">(</span><span class="n">Opacity</span><span class="o">=</span><span class="m">50</span><span class="p">);</span>
+  <span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span><span class="p">;</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+
+
+
+]]>
+    </content>
+ </entry>
  
  <entry>
    <title>Speaking At MADExpo</title>
@@ -1050,70 +1106,6 @@ section#page {
    <id>http://metaskills.net/2010/8/19/how-to-clean-a-campfire-room-of-uploads_redirect</id>
    <content type="html">
      <![CDATA[]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>How To Clean A Campfire Room Of Uploads</title>
-   <link href="http://metaskills.net/2010/08/19/how-to-clean-a-campfire-room-of-uploads"/>
-   <updated>2010-08-19T00:00:00-04:00</updated>
-   <id>http://metaskills.net/2010/08/19/how-to-clean-a-campfire-room-of-uploads</id>
-   <content type="html">
-     <![CDATA[<p>For us at work, our uploads to campfire are really transitory. Most of the time they are simple screenshots around a current topic. Every now and then vacation photos or even movies, at the end of the day, none of it has value after a certain amount of time. To us as the real value of campfire is our textual transcripts.</p>
-
-<p>This morning after 4 years of campfire, we were real close to our 1GB limit of uploads. Time for a clean up. I found no easy way of automating this, so I turned to the Tinder gem. It has a nice interface to the campfire API using HTTParty as the backend. I found out that there was no easy way to delete uploads too. So after some good ole fashion DOM inspection and knowing rails application conventions, I found my own interface. Below is a little script I used to clean up our room this morning. It basically loops thru a rooms uploads, 5 at a time, and deletes them. Pausing for a quarter of a second between each so I don't freak out the new 37signals administrator :)</p>
-
-
-<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;tinder&#39;</span>
-
-<span class="k">class</span> <span class="nc">CampfireUploadCleaner</span>
-  
-  <span class="no">CF_DOMAIN</span> <span class="o">=</span> <span class="s1">&#39;mydomain&#39;</span>
-  <span class="no">CF_ROOM</span>   <span class="o">=</span> <span class="s1">&#39;My Room Name&#39;</span>
-  <span class="no">CF_TOKEN</span>  <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MY_CF_TOKEN&#39;</span><span class="o">]</span>
-  
-  <span class="k">def</span> <span class="nf">initialize</span>
-    <span class="vi">@campfire</span> <span class="o">=</span> <span class="no">Tinder</span><span class="o">::</span><span class="no">Campfire</span><span class="o">.</span><span class="n">new</span> <span class="no">CF_DOMAIN</span><span class="p">,</span> <span class="ss">:token</span> <span class="o">=&gt;</span> <span class="no">CF_TOKEN</span>
-  <span class="k">end</span>
-  
-  <span class="k">def</span> <span class="nf">room</span>
-    <span class="vi">@room</span> <span class="o">||=</span> <span class="vi">@campfire</span><span class="o">.</span><span class="n">find_room_by_name</span><span class="p">(</span><span class="no">CF_ROOM</span><span class="p">)</span>
-  <span class="k">end</span>
-  
-  <span class="k">def</span> <span class="nf">connection</span>
-    <span class="n">room</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ss">:connection</span><span class="p">)</span>
-  <span class="k">end</span>
-  
-  <span class="k">def</span> <span class="nf">delete_uploads</span>
-    <span class="n">uploads</span> <span class="o">=</span> <span class="n">room</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ss">:get</span><span class="p">,</span><span class="ss">:uploads</span><span class="p">)</span><span class="o">[</span><span class="s1">&#39;uploads&#39;</span><span class="o">]</span>
-    <span class="n">uploads</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">upload</span><span class="o">|</span>
-      <span class="nb">id</span> <span class="o">=</span> <span class="n">upload</span><span class="o">[</span><span class="s1">&#39;id&#39;</span><span class="o">]</span>
-      <span class="nb">name</span> <span class="o">=</span> <span class="n">upload</span><span class="o">[</span><span class="s1">&#39;name&#39;</span><span class="o">]</span>
-      <span class="n">connection</span><span class="o">.</span><span class="n">post</span> <span class="s2">&quot;/uploads/delete/</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">?n=0&quot;</span>
-      <span class="nb">puts</span> <span class="s2">&quot;Deleted: [</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
-      <span class="nb">sleep</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">25</span><span class="p">)</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-  
-  <span class="k">def</span> <span class="nf">sweep_uploads</span>
-    <span class="k">while</span> <span class="n">room</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">present?</span>
-      <span class="n">delete_uploads</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-  
-<span class="k">end</span>
-
-<span class="n">cleaner</span> <span class="o">=</span> <span class="no">CampfireUploadCleaner</span><span class="o">.</span><span class="n">new</span>
-
-<span class="n">cleaner</span><span class="o">.</span><span class="n">delete_uploads</span>  <span class="c1"># =&gt; Deletes the top 5 uploads.</span>
-<span class="n">cleaner</span><span class="o">.</span><span class="n">sweep_uploads</span>   <span class="c1"># =&gt; Deletes all uploads.</span>
-</code></pre>
-</div>
-
-
-<p>The upload hash actually contains much more than just the id and name of the upload. There is a timestamp, filetype and other attributes. So if you wanted to extend this script, you could. I did not spent a lot of time with it, but I never figured out how to get more than the top 5 uploads too. I'm sure some param hacking would yield some good results.</p>
-]]>
     </content>
  </entry>
  
