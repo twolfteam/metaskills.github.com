@@ -55,55 +55,6 @@
           <article class="excerpt">
             <header>
               <h3>
-                <a href="/2011/05/21/the-browser-is-dead">The Browser Is Dead?</a>
-              </h3>
-              <time pubdate datetime="2011-05-21T00:00:00-04:00">
-                21 May 2011
-              </time>
-            </header>
-            <p>
-              This twitter post by Dave Thomas sparked an interesting back and forth with DHH on how Rails 3.1 could be more opinionated towards web
-              development for the browser. A short time before &ndash; it was announced that Rails would include CoffeeScript and Sass as defaults
-              for JavaScript and CSS authoring. FWIW, both of these new defaults are in my opinion the best of the breed fore each task. If you have
-              not done so, I suggest taking a quick read...
-            </p>
-          </article>
-          <article class="excerpt">
-            <header>
-              <h3>
-                <a href="/2011/05/18/use-compass-sass-framework-files-with-the-rails-3.1-asset-pipeline">Use Compass Sass Framework Files With The
-                Rails 3.1 Asset Pipeline</a>
-              </h3>
-              <time pubdate datetime="2011-05-18T00:00:00-04:00">
-                18 May 2011
-              </time>
-            </header>
-            <p>
-              The Sprockets 2 gem along with the Tilt gem make it really easy to write JavaScript or CSS using any templating language you desire.
-              The rails defaults are CoffeeScript and Sass. About the best collection of Sass framework files for easy cross-browser CSS authoring
-              are packaged in the compass framework. Compass even has great documentation for using their Sass framework. But what if you want to use
-              those within the asset pipeline provided by Rails? Easy enough! First, bundle up...
-            </p>
-          </article>
-          <article class="excerpt">
-            <header>
-              <h3>
-                <a href="/2011/05/06/speaking_at_madexpo">Speaking At MADExpo</a>
-              </h3>
-              <time pubdate datetime="2011-05-06T00:00:00-04:00">
-                06 May 2011
-              </time>
-            </header>
-            <p>
-              Over the past few months I have been actively working with both Luis Lavena and Wayne E Seguin to incorporate both TinyTDS and the SQL
-              Server Adapter into the latest release of the Rails Installer for Windows. Like them, I firmly believe that Ruby's success is tightly
-              bound to how well we can bring these tools to the Windows platform. So despite that I have no love for the Windows – I do want to see
-              Ruby succeed and help...
-            </p>
-          </article>
-          <article class="excerpt">
-            <header>
-              <h3>
                 <a href="/2011/03/26/using-minitest-spec-with-rails">Using MiniTest::Spec With Rails</a>
               </h3>
               <time pubdate datetime="2011-03-26T00:00:00-04:00">
@@ -297,6 +248,55 @@
               ruby primitives, and proper encoding support. It converts all SQL Server...
             </p>
           </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/08/19/how-to-clean-a-campfire-room-of-uploads">How To Clean A Campfire Room Of Uploads</a>
+              </h3>
+              <time pubdate datetime="2010-08-19T00:00:00-04:00">
+                19 Aug 2010
+              </time>
+            </header>
+            <p>
+              For us at work, our uploads to campfire are really transitory. Most of the time they are simple screenshots around a current topic.
+              Every now and then vacation photos or even movies, at the end of the day, none of it has value after a certain amount of time. To us as
+              the real value of campfire is our textual transcripts. This morning after 4 years of campfire, we were real close to our 1GB limit of
+              uploads. Time for...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/08/06/protip-exclude-your-rvm-install-from-timemachine-backups">Protip: Exclude Your RVM Install From Time Machine
+                Backups</a>
+              </h3>
+              <time pubdate datetime="2010-08-06T00:00:00-04:00">
+                06 Aug 2010
+              </time>
+            </header>
+            <p>
+              You may not realize it, but that ~/.rvm directory is getting big and may be hurting your Time Machine backups. Especially if you are
+              doing a lot of development. I just checked mine today. du -skh ~/.rvm/gems 1012M /Users/kencollins/.rvm/gems Ouch! That's around 1gig
+              of stuff that is pointless to backup just in the gems directory. I frequently blow away certain rubies and install them again using
+              various rake tasks and just found out today that you have to pass the...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/07/30/the-rvm-ruby-api">The RVM Ruby API - Setting Up A CI System For The SQL Server Adapter</a>
+              </h3>
+              <time pubdate datetime="2010-07-30T00:00:00-04:00">
+                30 Jul 2010
+              </time>
+            </header>
+            <p>
+              A few weeks ago I started looking into the Ruby Version Manager (RVM) project to help me build a better testing setup for both my day
+              job and the ActiveRecord SQL Server Adapter. In a previous article I covered details of how to get a development stack up and running
+              for Rails with SQL Server using MacPort's. This article will cover some new additions to that goal, but first and primarily, I wanted
+              to talk about the wonders of RVM...
+            </p>
+          </article>
           <div class="floatr mr20">
             <a href="/archive.html">&laquo; Archives</a>
           </div>
@@ -348,29 +348,30 @@
           </h3>
           <article>
             <h4>
-              The Browser Is Dead?
+              Using MiniTest::Spec With Rails
             </h4>
             <p>
-              <a href="/2011/05/21/the-browser-is-dead">This twitter post by Dave Thomas sparked an interesting back and forth with DHH on how Rails
-              3.1 could be more opinionated towards web development for the browser. A short...</a>
+              <a href="/2011/03/26/using-minitest-spec-with-rails">So after a few blog post on the subject of MiniTest::Spec, I finally have a simple
+              testing stack for Rails 3 that leverages MiniTest's spec DSL. I introduce to you...</a>
             </p>
           </article>
           <article>
             <h4>
-              Use Compass Sass Framework Files With The Rails 3.1 Asset Pipeline
+              MiniBacktrace - For MiniTest & Rails
             </h4>
             <p>
-              <a href="/2011/05/18/use-compass-sass-framework-files-with-the-rails-3.1-asset-pipeline">The Sprockets 2 gem along with the Tilt gem
-              make it really easy to write JavaScript or CSS using any templating language you desire. The rails defaults are CoffeeScript and...</a>
+              <a href="/2011/03/22/mini-backtrace-for-minitest-and-rails">UPDATE: Using MiniTest::Spec With Rails &amp; From Test::Unit &amp; Shoulda
+              To MiniTest::Spec &amp; MiniShoulda MiniBacktrace allows you to take advantage of the Rails.backtrace_cleaner when using MiniTest. This
+              includes everyone using...</a>
             </p>
           </article>
           <article>
             <h4>
-              Speaking At MADExpo
+              PDFKit Overview & Advanced Usage
             </h4>
             <p>
-              <a href="/2011/05/06/speaking_at_madexpo">Over the past few months I have been actively working with both Luis Lavena and Wayne E
-              Seguin to incorporate both TinyTDS and the SQL Server Adapter into the latest...</a>
+              <a href="/2011/03/20/pdfkit-overview-and-advanced-usage">Last week I had the pleasure of rewriting 4 years of legacy PDF::Writer code
+              to PDFKit. Why? Well drawing pdfs in ruby using libraries like PDF::Writer is like composing a...</a>
             </p>
           </article>
           <aside id="powered">

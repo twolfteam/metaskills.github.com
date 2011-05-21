@@ -4,130 +4,13 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2011-05-21T13:14:03-04:00</updated>
+ <updated>2011-05-21T18:53:06-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
    <email>ken@metaskills.net</email>
  </author>
 
- 
- <entry>
-   <title>The Browser Is Dead?</title>
-   <link href="http://metaskills.net/2011/05/21/the-browser-is-dead"/>
-   <updated>2011-05-21T00:00:00-04:00</updated>
-   <id>http://metaskills.net/2011/05/21/the-browser-is-dead</id>
-   <content type="html">
-     <![CDATA[<p>
-  <img class="floatr ml30 mr10" src="/assets/the_browser_is_dead.png" width="368" height="2969" alt="Converstation between DHH And Dave Thomas on Rails 3.1"/>
-  This <a href="https://twitter.com/#!/pragdave/status/62510978893492224">twitter post by Dave Thomas</a> sparked an interesting back and forth with DHH on how Rails 3.1 could be more opinionated towards web development for the browser. A short time before &ndash; it was announced that Rails would include CoffeeScript and Sass as defaults for JavaScript and CSS authoring. FWIW, both of these new defaults are in my opinion the best of the breed fore each task. If you have not done so, I suggest taking a quick read down this thread that I put together with screenshots from my Twitter.app.
-</p>
-
-<p>
-  The topic is one I have thought often about over the past 6 years. I started writing Rails applications before 1.0 was released and I have seen the changes and felt each one. Having written both web and native iOS apps for <a href="http://homemarks.com">HomeMarks.com</a> and retooling the whole application for each major Rails version, I think it gives me a good insight into the pain here. For instance when <a href="http://ajaxian.com/archives/rails-rjs-for-ajax-101">RJS in Rails</a> first came out, HomeMarks took extreme advantage of it in very clever ways. Pushing rendered partials out and communicating to the browser's JavaScript environment was fun and rewarding at the time. It also felt really DRY at times.
-</p>
-
-<p>
-  As I started to <a href="/2008/08/18/in-hell-oo-for-homemarks/">learn more advanced JavaScript techniques</a> for organizing my rich client code, I ended up rewriting HomeMarks again under the poorly named moniker <a href="/2008/05/24/the-ajax-head-design-pattern/">"The AJAX Head Design Pattern"</a>. It even caught a little bit of attention by the Ajaxian and <a href="http://voodootikigod.com/ajax-head-design-pattern">Chris Williams</a>. Essentially what I ended up building was my own minimal <a href="http://documentcloud.github.com/backbone/">backbone.js</a> in that I had a rich MVC layer all written in JavaScript. This usage of Rails as an API foundation on top of a rich JavaScript application was in my opinion a few years ahead of the average curve. Though it was very rewarding from a JavaScript as a language first, DOM second development perspective &amp; it yielded a very clean way to leverage the same RESTful controller actions used by JavaScript in the browser with a <a href="/2010/02/12/synchronizing-core-data-with-rails-3-0-0-pre/">native iOS app that integrated with Core Data</a>, it still felt like an over achievement or harder than it had to be.
-</p>
-
-<p>
-  So as I embark on my third complete rewrite of HomeMarks, I have to think about my tools and techniques again and what the end goal may look like. I have thrown away thousands of lines of OO-JavaScript written in Prototype.js and <a href="https://gist.github.com/973483">started rewriting them in CoffeeScript</a>. Though there are still some tough decisions to be made on what my complete stack will look like and how HomeMarks v3 will hopefully again push the new web forward, I cant help bug agree with both Dave and DHH. I also share James A Rosen's opinion summed up in <a href="http://twitter.com/#!/jamesarosen/status/70544535373086720">this tweet</a>.
-  <blockquote style="width:220px;">
-    If I had known that RailsConf would be How-to-Use-Rails-as-a-Backend-for-Javascript-Conf, I would've gone!
-  </blockquote>
-</p>]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>Use Compass Sass Framework Files With The Rails 3.1 Asset Pipeline</title>
-   <link href="http://metaskills.net/2011/05/18/use-compass-sass-framework-files-with-the-rails-3.1-asset-pipeline"/>
-   <updated>2011-05-18T00:00:00-04:00</updated>
-   <id>http://metaskills.net/2011/05/18/use-compass-sass-framework-files-with-the-rails-3.1-asset-pipeline</id>
-   <content type="html">
-     <![CDATA[<p>
-  The Sprockets 2 gem along with the Tilt gem make it really easy to write JavaScript or CSS using any templating language you desire. The rails defaults are CoffeeScript and Sass. About the <a href="https://github.com/chriseppstein/compass/tree/stable/frameworks/compass/stylesheets">best collection of Sass framework files</a> for easy cross-browser CSS authoring are packaged in the compass framework. Compass even has <a href="http://compass-style.org/reference/compass/css3/">great documentation</a> for using their Sass framework. But what if you want to use those within the asset pipeline provided by Rails? Easy enough!
-</p>
-
-<p>
-  First, bundle up the compass, but do not require it. Add this to your <code>Gemfile</code>.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class="p">,</span> <span class="ss">:require</span> <span class="o">=&gt;</span> <span class="kp">false</span>
-</code></pre>
-</div>
-
-<p>
-  Next, add a Sass initializer in <code>config/initializers/sass.rb</code> and fill it in with the code below. This will add two more load paths to the Sass engine. The first is your default rails/sprockets asset path for stylesheets. It simply let's you build a deep folder structure in that directory and use relative paths from each file. The second will put the entire compass Sass framework files into the Sass load path.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="no">Sass</span><span class="o">::</span><span class="no">Engine</span><span class="o">::</span><span class="no">DEFAULT_OPTIONS</span><span class="o">[</span><span class="ss">:load_paths</span><span class="o">].</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">load_paths</span><span class="o">|</span>
-  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/app/assets/stylesheets&quot;</span>
-  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Gem</span><span class="o">.</span><span class="n">loaded_specs</span><span class="o">[</span><span class="s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class="si">}</span><span class="s2">/frameworks/compass/stylesheets&quot;</span>
-<span class="k">end</span>
-</code></pre>
-</div>
-
-<p>
-  Now in your rails <code>app/assets/stylesheets/foo.scss</code> file you can use Sass' <code>@import</code> with paths to the compass framework.
-</p>
-
-<div class="highlight"><pre><code class="css"><span class="k">@import</span> <span class="s2">&quot;compass/css3/opacity&quot;</span><span class="p">;</span>
-<span class="nf">#mylogo</span> <span class="p">{</span> <span class="o">@</span><span class="n">include</span> <span class="k">opacity</span><span class="p">(</span><span class="m">0</span><span class="o">.</span><span class="m">5</span><span class="p">);</span> <span class="p">}</span>
-</code></pre>
-</div>
-
-<p>
-  That is an example loading up the opacity helpers. Your generated css file will look like this! CSS is never going to be the same again!
-</p>
-
-<div class="highlight"><pre><code class="css"><span class="nf">#mylogo</span> <span class="p">{</span>
-  <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">filter</span><span class="o">:</span> <span class="s2">&quot;progid:DXImageTransform.Microsoft.Alpha(Opacity=50)&quot;</span><span class="p">;</span>
-  <span class="n">filter</span><span class="o">:</span> <span class="n">progid</span><span class="o">:</span><span class="n">DXImageTransform</span><span class="o">.</span><span class="n">Microsoft</span><span class="o">.</span><span class="n">Alpha</span><span class="p">(</span><span class="n">Opacity</span><span class="o">=</span><span class="m">50</span><span class="p">);</span>
-  <span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span><span class="p">;</span> <span class="p">}</span>
-</code></pre>
-</div>
-
-
-
-
-]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>Speaking At MADExpo</title>
-   <link href="http://metaskills.net/2011/05/06/speaking_at_madexpo"/>
-   <updated>2011-05-06T00:00:00-04:00</updated>
-   <id>http://metaskills.net/2011/05/06/speaking_at_madexpo</id>
-   <content type="html">
-     <![CDATA[<p>
-  Over the past few months I have been actively working with both <a href="http://twitter.com/#!/luislavena">Luis Lavena</a> and <a href="http://twitter.com/#!/wayneeseguin">Wayne E Seguin</a> to incorporate both <a href="https://github.com/rails-sqlserver/tiny_tds">TinyTDS</a> and the <a href="https://github.com/rails-sqlserver/activerecord-sqlserver-adapter">SQL Server Adapter</a> into the latest release of the <a href="http://railsinstaller.org/">Rails Installer for Windows</a>. Like them, I firmly believe that Ruby's success is tightly bound to how well we can bring these tools to the Windows platform. So despite that I have no love for the Windows – I do want to see Ruby succeed and help spread the gospel. To this end, I have been working really hard at making both TinyTDS and the adapter a superb backend for ActiveRecord. In fact today, I just released a 3.1 beta that takes advantage of the new prepared statement support.
-</p>
-
-<p>
-  <span class="photofancy floatr ml20">
-    <img src="/assets/madexpo.png" alt="MADExpo: Mid Atlantic Developer Expo" width="240" height="80" />
-  </span>
-  To go one step further in helping Ruby, I have decided to speak at a local conference called the <a href="http://madexpo2011-collins.eventbrite.com/">Mid Atlantic Developer Expo</a> or just MADExpo. The <a href="http://madexpo.us/Sessions/84">details for my talk
-</a> are below and if you find any of the <a href="http://madexpo.us/agenda">other talks</a> interesting, I highly advise you to grab a ticket and help me bring the message of Ruby right to the belly of the beast!
-</p>
-
-
-<h2>Free The Enterprise With Ruby &amp; Master Your Own Domain</h2>
-
-<p>On the heals of Luis Lavena's RailsConf talk "<a href="http://en.oreilly.com/rails2011/public/schedule/detail/19499"><em>Infiltrating Ruby Onto The Enterprise Death Star Using Guerilla Tactics</em></a>" comes a local and frank talk about the current state of Open Source Software (OSS) participation from Windows developers. Learn what OSS is, what motivates its contributors, and how OSS can make you a stronger developer. Be prepared to fall in love with writing software again!</p>
-
-<p>We will start off with a 101 introduction to both the Ruby programming language and the Ruby on Rails web application framework. You will learn about ActiveRecord, a powerful ORM that maps rich objects to your databases, and the latest components to use it with SQL Server. As a Rails core contributor and author of the SQL Server stack, I will give you a modern insight into both that will allow you to leverage your legacy data with Ruby.</p>
-
-<p>Lastly, I will review the bleeding edge tools being actively created for Windows developers to ease the transition to Ruby, Rails and OSS from a POSIX driven world. Many things have changed. It is time to learn and perform some occupational maintenance.</p>
-
-
-
-]]>
-    </content>
- </entry>
  
  <entry>
    <title>Using MiniTest::Spec With Rails</title>
@@ -1121,6 +1004,331 @@ section#page {
      <![CDATA[<p>I just finished the first cut of learning C extensions for ruby and I <a href="http://github.com/rails-sqlserver/tiny_tds">present The TinyTds gem</a>. It is meant to serve the extremely common use-case of connecting, querying and iterating over results to Microsoft SQL Server databases from ruby. Even though it uses FreeTDS's DB-Library, it is NOT meant to serve as direct 1:1 mapping of that complex C API</p>
 
 <p>The benefits are speed, automatic casting to ruby primitives, and proper encoding support. It converts all SQL Server datatypes to native ruby objects supporting :utc or :local time zones for time-like types. To date it is the only ruby client library that allows client encoding options, defaulting to UTF-8, while connecting to SQL Server. It also properly encodes all string and binary data. The motivation for TinyTds is to become the de-facto low level connection mode for the SQL Server adapter for ActiveRecord. For further details see the special thanks to Erik Bryn for his help, the authors/contributors of the Mysql2 gem for inspiration, and Yehuda Katz for articulating ruby's need for proper encoding support. Please read up on it here.</p>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>How To Clean A Campfire Room Of Uploads</title>
+   <link href="http://metaskills.net/2010/08/19/how-to-clean-a-campfire-room-of-uploads"/>
+   <updated>2010-08-19T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2010/08/19/how-to-clean-a-campfire-room-of-uploads</id>
+   <content type="html">
+     <![CDATA[<p>For us at work, our uploads to campfire are really transitory. Most of the time they are simple screenshots around a current topic. Every now and then vacation photos or even movies, at the end of the day, none of it has value after a certain amount of time. To us as the real value of campfire is our textual transcripts.</p>
+
+<p>This morning after 4 years of campfire, we were real close to our 1GB limit of uploads. Time for a clean up. I found no easy way of automating this, so I turned to the Tinder gem. It has a nice interface to the campfire API using HTTParty as the backend. I found out that there was no easy way to delete uploads too. So after some good ole fashion DOM inspection and knowing rails application conventions, I found my own interface. Below is a little script I used to clean up our room this morning. It basically loops thru a rooms uploads, 5 at a time, and deletes them. Pausing for a quarter of a second between each so I don't freak out the new 37signals administrator :)</p>
+
+
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;tinder&#39;</span>
+
+<span class="k">class</span> <span class="nc">CampfireUploadCleaner</span>
+  
+  <span class="no">CF_DOMAIN</span> <span class="o">=</span> <span class="s1">&#39;mydomain&#39;</span>
+  <span class="no">CF_ROOM</span>   <span class="o">=</span> <span class="s1">&#39;My Room Name&#39;</span>
+  <span class="no">CF_TOKEN</span>  <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;MY_CF_TOKEN&#39;</span><span class="o">]</span>
+  
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="vi">@campfire</span> <span class="o">=</span> <span class="no">Tinder</span><span class="o">::</span><span class="no">Campfire</span><span class="o">.</span><span class="n">new</span> <span class="no">CF_DOMAIN</span><span class="p">,</span> <span class="ss">:token</span> <span class="o">=&gt;</span> <span class="no">CF_TOKEN</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">room</span>
+    <span class="vi">@room</span> <span class="o">||=</span> <span class="vi">@campfire</span><span class="o">.</span><span class="n">find_room_by_name</span><span class="p">(</span><span class="no">CF_ROOM</span><span class="p">)</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">connection</span>
+    <span class="n">room</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ss">:connection</span><span class="p">)</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">delete_uploads</span>
+    <span class="n">uploads</span> <span class="o">=</span> <span class="n">room</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="ss">:get</span><span class="p">,</span><span class="ss">:uploads</span><span class="p">)</span><span class="o">[</span><span class="s1">&#39;uploads&#39;</span><span class="o">]</span>
+    <span class="n">uploads</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">upload</span><span class="o">|</span>
+      <span class="nb">id</span> <span class="o">=</span> <span class="n">upload</span><span class="o">[</span><span class="s1">&#39;id&#39;</span><span class="o">]</span>
+      <span class="nb">name</span> <span class="o">=</span> <span class="n">upload</span><span class="o">[</span><span class="s1">&#39;name&#39;</span><span class="o">]</span>
+      <span class="n">connection</span><span class="o">.</span><span class="n">post</span> <span class="s2">&quot;/uploads/delete/</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">?n=0&quot;</span>
+      <span class="nb">puts</span> <span class="s2">&quot;Deleted: [</span><span class="si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">] </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="nb">sleep</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">25</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">sweep_uploads</span>
+    <span class="k">while</span> <span class="n">room</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">present?</span>
+      <span class="n">delete_uploads</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+<span class="n">cleaner</span> <span class="o">=</span> <span class="no">CampfireUploadCleaner</span><span class="o">.</span><span class="n">new</span>
+
+<span class="n">cleaner</span><span class="o">.</span><span class="n">delete_uploads</span>  <span class="c1"># =&gt; Deletes the top 5 uploads.</span>
+<span class="n">cleaner</span><span class="o">.</span><span class="n">sweep_uploads</span>   <span class="c1"># =&gt; Deletes all uploads.</span>
+</code></pre>
+</div>
+
+
+<p>The upload hash actually contains much more than just the id and name of the upload. There is a timestamp, filetype and other attributes. So if you wanted to extend this script, you could. I did not spent a lot of time with it, but I never figured out how to get more than the top 5 uploads too. I'm sure some param hacking would yield some good results.</p>
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Protip: Exclude Your RVM Install From Time Machine Backups</title>
+   <link href="http://metaskills.net/2010/08/06/protip-exclude-your-rvm-install-from-timemachine-backups"/>
+   <updated>2010-08-06T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2010/08/06/protip-exclude-your-rvm-install-from-timemachine-backups</id>
+   <content type="html">
+     <![CDATA[<p>
+  You may not realize it, but that <code>~/.rvm</code> directory is getting big and may be hurting your Time Machine backups. Especially if you are doing a lot of development. I just checked mine today.
+</p>
+
+<pre class="command">
+du -skh ~/.rvm/gems
+1012M	/Users/kencollins/.rvm/gems
+</pre>
+
+<p>
+  Ouch! That's around 1gig of stuff that is pointless to backup just in the gems directory. I frequently blow away certain rubies and install them again using <a href="/2010/7/30/the-rvm-ruby-api">various rake tasks</a> and just found out today that you have to pass the --gems option to rvm remove to clean those old gemsets out. Either way, that whole rvm directory can just be ignored from Time Machine backups. Here is how, there is really only one tricky part.
+</p>
+
+<p>
+  First, open up your System Preferences, then open up the Time Machine pref pane. From here click on the "Options...". Within this window you will be able to add a folder to be excluded from backup. Hit the "+" button to add a directory. Now here is the tricky part, your rvm directory is prefixed with a period and hence is invisible to the normal finder windows. Thankfully all Mac file windows can use a keyboard shortcut. Hit <code>Command+Shift G</code>. That will blind down a "Go to the folder:" window. Simply type in <code>~/.rvm</code> here and hit "Go". Now choose "Exclude" from the main file window. Your done!
+</p>
+
+<div class="center">
+  <span class="photofancy">
+    <img src="/assets/exclude_from_timemachine.gif" alt="Time Machine Exclude Window" width="463" height="320" />
+  </span>
+</div>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>The RVM Ruby API - Setting Up A CI System For The SQL Server Adapter</title>
+   <link href="http://metaskills.net/2010/07/30/the-rvm-ruby-api"/>
+   <updated>2010-07-30T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2010/07/30/the-rvm-ruby-api</id>
+   <content type="html">
+     <![CDATA[<p>
+  A few weeks ago I started looking into the <a href="http://rvm.beginrescueend.com/">Ruby Version Manager (RVM)</a> project to help me build a better testing setup for both my day job and the <a href="http://github.com/rails-sqlserver/activerecord-sqlserver-adapter">ActiveRecord SQL Server Adapter</a>. In a <a href="/2009/9/5/the-ultimate-os-x-snow-leopard-stack-for-rails-development-x86_64-macports-ruby-1-8-1-9-sql-server-more">previous article</a> I covered details of how to get a development stack up and running for Rails with SQL Server using MacPort's. This article will cover some new additions to that goal, but first and primarily, I wanted to talk about the wonders of RVM and it's new ruby API.
+</p>
+    
+<p>
+  So like any good agile software gardner tasked with building a continuous integration system, I wanted to do it in such a way that was completely automated using rake. My first cut at said rake task used ruby's Kernel.system to issue <code>rvm</code> commands down to the shell. This failed horribly! Basically no matter how hard I tried, I could not hit the rvm shell function from ruby's system command. It kept using the rvm binary which can not change the local shell environment and hence do very little magic that RVM allows. Thankfully <a href="http://twitter.com/wayneeseguin">@wayneeseguin</a> pointed me to the new RVM ruby API and <a href="http://blog.ninjahideout.com/posts/the-path-to-better-rvm-and-passenger-integration">this article on how to use it for passenger</a>. I immediately started to switch my rvm rake tasks to use the new RVM API and was just floored with how well it did. Below is a copy of that rake task. Take a look over it and read below for details and how I have used this with the SQL Server stack.
+</p>
+    
+<div class="highlight"><pre><code class="ruby"><span class="no">MYPROJECT_RUBIES</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">&#39;ruby-1.8.6-p388&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj186&#39;</span><span class="p">,</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">},</span>
+  <span class="s1">&#39;ruby-1.8.7-p299&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj187&#39;</span><span class="p">,</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">},</span>
+  <span class="s1">&#39;ruby-1.9.1-p378&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj191&#39;</span><span class="p">,</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">},</span>
+  <span class="s1">&#39;ruby-1.9.2-head&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj192&#39;</span><span class="p">,</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99992pre3&#39;</span><span class="p">},</span>
+  <span class="s1">&#39;ree-1.8.7-2010.02&#39;</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprjree&#39;</span><span class="p">,</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">namespace</span> <span class="ss">:rvm</span> <span class="k">do</span>
+
+  <span class="n">task</span> <span class="ss">:setup</span> <span class="k">do</span>
+    <span class="k">unless</span> <span class="vi">@rvm_setup</span>
+      <span class="n">rvm_lib_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="sb">`echo $rvm_path`</span><span class="o">.</span><span class="n">strip</span><span class="si">}</span><span class="s2">/lib&quot;</span>
+      <span class="vg">$LOAD_PATH</span><span class="o">.</span><span class="n">unshift</span><span class="p">(</span><span class="n">rvm_lib_path</span><span class="p">)</span> <span class="k">unless</span> <span class="vg">$LOAD_PATH</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">rvm_lib_path</span><span class="p">)</span>
+      <span class="nb">require</span> <span class="s1">&#39;rvm&#39;</span>
+      <span class="nb">require</span> <span class="s1">&#39;tmpdir&#39;</span>
+      <span class="vi">@rvm_setup</span> <span class="o">=</span> <span class="kp">true</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">namespace</span> <span class="ss">:install</span> <span class="k">do</span>
+
+    <span class="n">task</span> <span class="ss">:all</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:setup</span><span class="p">,</span><span class="ss">:rubies</span><span class="p">,</span><span class="ss">:odbc</span><span class="p">,</span><span class="ss">:gems</span><span class="o">]</span>
+
+    <span class="n">task</span> <span class="ss">:rubies</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
+      <span class="n">installed_rubies</span> <span class="o">=</span> <span class="no">RVM</span><span class="o">.</span><span class="n">list_strings</span>
+      <span class="no">MYPROJECT_RUBIES</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">rubie</span><span class="o">|</span>
+        <span class="k">if</span> <span class="n">installed_rubies</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">rubie</span><span class="p">)</span>
+          <span class="nb">puts</span> <span class="s2">&quot;info: Rubie </span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2"> already installed.&quot;</span>
+        <span class="k">else</span>
+          <span class="n">with_my_environment_vars</span> <span class="k">do</span>
+            <span class="n">good_msg</span> <span class="o">=</span> <span class="s2">&quot;info: Rubie </span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2"> installed.&quot;</span>
+            <span class="n">bad_msg</span> <span class="o">=</span> <span class="s2">&quot;Failed </span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2"> install! Check RVM logs here: </span><span class="si">#{</span><span class="no">RVM</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">/log/</span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="nb">puts</span> <span class="s2">&quot;info: Rubie </span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2"> installation inprogress. This could take awhile...&quot;</span>
+            <span class="no">RVM</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">rubie</span><span class="p">,</span><span class="n">rvm_install_options</span><span class="p">)</span> <span class="p">?</span> <span class="nb">puts</span><span class="p">(</span><span class="n">good_msg</span><span class="p">)</span> <span class="p">:</span> <span class="nb">abort</span><span class="p">(</span><span class="n">bad_msg</span><span class="p">)</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="no">RVM</span><span class="o">.</span><span class="n">alias_create</span> <span class="no">MYPROJECT_RUBIES</span><span class="o">[</span><span class="n">rubie</span><span class="o">][</span><span class="ss">:alias</span><span class="o">]</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2">@myproject&quot;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">task</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
+      <span class="n">rvm_each_rubie</span> <span class="k">do</span>
+        <span class="n">odbc</span> <span class="o">=</span> <span class="s2">&quot;ruby-odbc-</span><span class="si">#{</span><span class="n">myproject_current_rubie_info</span><span class="o">[</span><span class="ss">:odbc</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="no">RVM</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="no">Dir</span><span class="o">.</span><span class="n">tmpdir</span><span class="p">)</span> <span class="k">do</span>
+          <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;rm -rf </span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">*&quot;</span>
+          <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC downloading </span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">...&quot;</span>
+          <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;curl -O http://www.ch-werner.de/rubyodbc/</span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">.tar.gz&quot;</span>
+          <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC extracting clean work directory...&quot;</span>
+          <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;tar -xf </span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">.tar.gz&quot;</span>
+          <span class="no">RVM</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">/ext&quot;</span><span class="p">)</span> <span class="k">do</span>
+            <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC configuring...&quot;</span>
+            <span class="no">RVM</span><span class="o">.</span><span class="n">ruby</span> <span class="s1">&#39;extconf.rb&#39;</span><span class="p">,</span> <span class="s2">&quot;--with-odbc-dir=</span><span class="si">#{</span><span class="n">rvm_odbc_dir</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC make and installing for </span><span class="si">#{</span><span class="n">rvm_current_name</span><span class="si">}</span><span class="s2">...&quot;</span>
+            <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;make &amp;&amp; make install&quot;</span>
+          <span class="k">end</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">task</span> <span class="ss">:gems</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
+      <span class="nb">puts</span> <span class="s2">&quot;info: Installing our app gems.&quot;</span>
+      <span class="n">rvm_each_rubie</span> <span class="k">do</span>
+        <span class="n">myproject_gem_specs</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">spec</span><span class="o">|</span> <span class="n">rvm_install_gem</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="p">}</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">task</span> <span class="ss">:remove</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
+    <span class="n">myproject_rubies</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">rubie</span><span class="o">|</span> <span class="no">RVM</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">rubie</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+
+<span class="k">def</span> <span class="nf">myproject_rubies</span>
+  <span class="no">MYPROJECT_RUBIES</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">map</span><span class="p">{</span> <span class="o">|</span><span class="n">rubie</span><span class="o">|</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2">@myproject&quot;</span> <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">myproject_current_rubie_info</span>
+  <span class="no">MYPROJECT_RUBIES</span><span class="o">[</span><span class="n">rvm_current_rubie_name</span><span class="o">]</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">myproject_gem_specs</span>
+  <span class="o">[</span>
+    <span class="o">[</span><span class="s1">&#39;rails&#39;</span><span class="p">,</span><span class="s1">&#39;2.3.8&#39;</span><span class="o">]</span><span class="p">,</span>
+    <span class="o">[</span><span class="s1">&#39;activerecord-sqlserver-adapter&#39;</span><span class="p">,</span><span class="s1">&#39;2.3.8&#39;</span><span class="o">]</span><span class="p">,</span>
+    <span class="o">[</span><span class="s1">&#39;erubis&#39;</span><span class="p">,</span><span class="s1">&#39;2.6.6&#39;</span><span class="o">]</span><span class="p">,</span>
+    <span class="o">[</span><span class="s1">&#39;haml&#39;</span><span class="p">,</span><span class="s1">&#39;3.0.13&#39;</span><span class="o">]</span><span class="p">,</span>
+    <span class="o">[</span><span class="s1">&#39;mocha&#39;</span><span class="p">,</span><span class="s1">&#39;0.9.8&#39;</span><span class="o">]</span><span class="p">,</span>
+  <span class="o">]</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_each_rubie</span>
+  <span class="n">myproject_rubies</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">rubie</span><span class="o">|</span>
+    <span class="no">RVM</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">rubie</span><span class="p">)</span>
+    <span class="k">yield</span>
+  <span class="k">end</span>
+<span class="k">ensure</span>
+  <span class="no">RVM</span><span class="o">.</span><span class="n">reset_current!</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_current_rubie_name</span>
+  <span class="n">rvm_current_name</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;@myproject&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_current_name</span>
+  <span class="no">RVM</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">expanded_name</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_gem_available?</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="n">gem</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">spec</span>
+  <span class="no">RVM</span><span class="o">.</span><span class="n">ruby_eval</span><span class="p">(</span><span class="s2">&quot;require &#39;rubygems&#39; ; print Gem.available?(&#39;</span><span class="si">#{</span><span class="n">gem</span><span class="si">}</span><span class="s2">&#39;,&#39;</span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class="s2">&#39;)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">stdout</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_install_gem</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="n">gem</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">spec</span>
+  <span class="k">if</span> <span class="n">rvm_gem_available?</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">&quot;info: Gem </span><span class="si">#{</span><span class="n">gem</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class="s2"> already installed in </span><span class="si">#{</span><span class="n">rvm_current_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+  <span class="k">else</span>
+    <span class="nb">puts</span> <span class="s2">&quot;info: Installing gem </span><span class="si">#{</span><span class="n">gem</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class="s2"> in </span><span class="si">#{</span><span class="n">rvm_current_name</span><span class="si">}</span><span class="s2">...&quot;</span>
+    <span class="nb">puts</span> <span class="no">RVM</span><span class="o">.</span><span class="n">perform_set_operation</span><span class="p">(</span><span class="ss">:gem</span><span class="p">,</span><span class="s1">&#39;install&#39;</span><span class="p">,</span><span class="n">gem</span><span class="p">,</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span><span class="n">version</span><span class="p">)</span><span class="o">.</span><span class="n">stdout</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">for_macports?</span>
+  <span class="sb">`uname`</span><span class="o">.</span><span class="n">strip</span> <span class="o">==</span> <span class="s1">&#39;Darwin&#39;</span> <span class="o">&amp;&amp;</span> <span class="sb">`which port`</span><span class="o">.</span><span class="n">present?</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_install_options</span>
+  <span class="p">{}</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">my_environment_vars</span>
+  <span class="k">if</span> <span class="n">for_macports?</span>
+    <span class="p">{</span><span class="s1">&#39;CC&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/usr/bin/gcc-4.2&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;CFLAGS&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-O2 -arch x86_64&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;LDFLAGS&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-L/opt/local/lib -arch x86_64&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;CPPFLAGS&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-I/opt/local/include&#39;</span><span class="p">}</span>
+  <span class="k">else</span>
+    <span class="p">{}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">rvm_odbc_dir</span>
+  <span class="n">for_macports?</span> <span class="p">?</span> <span class="s1">&#39;/opt/local&#39;</span> <span class="p">:</span> <span class="s1">&#39;/usr/local&#39;</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">set_environment_vars</span><span class="p">(</span><span class="n">vars</span><span class="p">)</span>
+  <span class="n">vars</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="no">ENV</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">v</span> <span class="p">}</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">with_my_environment_vars</span>
+  <span class="n">my_vars</span> <span class="o">=</span> <span class="n">my_environment_vars</span>
+  <span class="n">current_vars</span> <span class="o">=</span> <span class="n">my_vars</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="p">{</span> <span class="o">|</span><span class="n">cvars</span><span class="p">,</span><span class="n">kv</span><span class="o">|</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="o">=</span> <span class="n">kv</span> <span class="p">;</span> <span class="n">cvars</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="p">;</span> <span class="n">cvars</span> <span class="p">}</span>
+  <span class="n">set_environment_vars</span><span class="p">(</span><span class="n">my_vars</span><span class="p">)</span>
+  <span class="k">yield</span>
+<span class="k">ensure</span>
+  <span class="n">set_environment_vars</span><span class="p">(</span><span class="n">current_vars</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+
+<h2>RVM Rake Task Breakdown</h2>
+
+<p>
+  This is the fun part - lets start from top to bottom. I'll focus only on the parts that are centric to why the RVM ruby API is so bad ass and the rake task in general. The following section is dedicated to RVM with the SQL Server Adapter stack. First, the :setup task, this is called before every other task. It simply sets up the load path so that the RVM API file can be required. That api file is located in your rvm repo path, typically in your ~/.rvm directory. Now every other task can use the <code>RVM</code> module which implements method missing for many commands.
+</p>
+
+<p>
+  Past this my rvm namespace is broken up into three main install tasks. The primary concerns are <code>rvm:install:rubies</code> and <code>rvm:install:gems</code> each invoked by the rake task. Starting with the :rubies task, this iterates over a collection of ruby version strings first checking if RVM knows its installed then installing it otherwise.
+</p>
+
+<p>
+  In the :gems task, things get a little interesting. I am using a few methods (seen toward the bottom) that give this a nice little DSL of my own around RVM. The first is a block method called <code>rvm_each_rubie</code>. This iterates over each of my project's ruby strings, tells RVM to use that ruby, hence dynamically switching to that ruby/gemset then yielding to the block. That means that each go around I will be in an completely different ruby/gem environment, each specific to my project using RVM gemsets. This allows the inner method for iterating over the required gems for my project and asking to install them with <code>rvm_install_gem</code>. This method uses <code>RVM.ruby_eval</code> to execute a string of ruby in the context of the current ruby version and gemset. In this case, finding out if a gem is installed already. If not, I use the <code>RVM.perform_set_operation</code> to install the gem, again in current context. I use perform_set_operation so I can read the STDOUT back to the rake task so a user sees exactly what is going of for the gem install.
+</p>
+
+<p>
+  Past that there are a few other details. Most can be picked up by reading the helper methods toward the bottom. Using the RVM ruby API is a bit of a chore if you rely on documentation. Sure it has some, but nothing beats reading the code to see what is available to you. Remember you can find the API library by opening up the <code>~/.rvm/lib</code> directory. I'm sure you can also find help on the <a href="http://rvm.beginrescueend.com/support/irc/">RVM IRC channel</a>.
+</p>
+
+<p>
+  Though it is not specific to general RVM API goodness, the :odbc task does show some great interfaces that RVM exposes for doing standard file system directory changing and running commands to the system.
+</p>
+
+
+<h2>Notes On RVM With The SQL Server Adapter Stack</h2>
+
+<p>
+  So you use the ActiveRecord SQLServerAdapter? That means you have some underlying components installed - namely FreeTDS, unixODBC, and RubyODBC right. If your like me and believe that MacPorts is the way to go and risking a Homebrew interleaved dependency with Apple's libraries is risky, this section is for you! So you have a MacPort base and you want to compile your RVM rubies in such a way that other dependencies such as Nokogiri and RubyODBC use your /opt/local installs. By default this does not happen because unless ruby was compiled the right way, it wont be able to allow built gems to know about your /opt/local directory. So this is what I came up with.
+</p>
+
+<p>
+  Take a look at the <code>my_environment_vars</code> method. This works in-conjunction with the <code>with_my_environment_vars</code> block method. Basically it temporarily set's MacPort specific environment variables before installing a ruby version via RVM. The ones shown are what I have found work best for my system. I think the most important are <code>LDFLAGS=-L/opt/local/lib -arch x86_64</code> and <code>CPPFLAGS=-I/opt/local/include</code>. Once ruby is built with those, it can easily reflect with standard 3rd party install methods that use <code>RbConfig</code>. To date any gem that I have had to compile, most importantly RubyODBC, does so perfectly against my /opt/local ports. This includes MySQL, Nokogiri, everything! I love it. I totally encourage anyone to use RVM and to get to know it's great ruby API for automating all sorts of things.
+</p>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://rvm.beginrescueend.com/">Ruby Version Manager (RVM)</a></li>
+  <li><a href="http://github.com/rails-sqlserver/activerecord-sqlserver-adapter">ActiveRecord SQL Server Adapter</a></li>
+  <li><a href="/2009/9/5/the-ultimate-os-x-snow-leopard-stack-for-rails-development-x86_64-macports-ruby-1-8-1-9-sql-server-more">The Ultimate OS X Snow Leopard Stack For Rails Development - x86_64, MacPorts, Ruby 1.8/1.9, SQL Server, SQLite3, MySQL & More</a></li>
+  <li><a href="http://wiki.github.com/rails-sqlserver/activerecord-sqlserver-adapter/">SQL Server Adapter Wiki</a></li>
+</ul>
 
 
 ]]>
