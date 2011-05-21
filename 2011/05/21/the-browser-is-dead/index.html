@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="author" content="Ken Collins">
     <title>
-      HomeMarks, My First Ruby On Rails Pet Project @MetaSkills.net
+      The Browser Is Dead? @MetaSkills.net
     </title>
     <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
     <link rel="author" href="mailto:ken@metaskills.net">
@@ -50,41 +50,52 @@
       <section id="content">
         <article id="post">
           <header>
-            <time pubdate datetime="2006-12-21T00:00:00-05:00">
-              <span class="day">21</span> <span class="month">Dec</span> <span class="year">2006</span>
+            <time pubdate datetime="2011-05-21T00:00:00-04:00">
+              <span class="day">21</span> <span class="month">May</span> <span class="year">2011</span>
             </time>
             <h1>
-              HomeMarks, My First Ruby On Rails Pet Project
+              The Browser Is Dead?
             </h1>
           </header>
-          <aside class="flash_warn">
-            UPDATE: HomeMarks is no longer an open source project available to download.
-          </aside>
           <p>
-            <img src="/assets/homemarks.png" alt="HomeMarks, Simple Project-Based Bookmarks" class="floatl mr20"> I've heard that the best web
-            applications are ones that usually start as a simple tool that meets the needs of its creator, in this case, myself. I have always been
-            close to Web Developers that code their own HTML start pages with links to the projects they are working on. So when the time came for me
-            to really get serious with my programing career using <a href="http://www.rubyonrails.org/">RAILS</a>, this was the first app that I
-            thought about building. From the site's copy...
+            <img class="floatr ml30 mr10" src="/assets/the_browser_is_dead.png" width="368" height="2969" alt=
+            "Converstation between DHH And Dave Thomas on Rails 3.1"> This <a href="https://twitter.com/#!/pragdave/status/62510978893492224">twitter
+            post by Dave Thomas</a> sparked an interesting back and forth with DHH on how Rails 3.1 could be more opinionated towards web development
+            for the browser. A short time before &ndash; it was announced that Rails would include CoffeeScript and Sass as defaults for JavaScript
+            and CSS authoring. FWIW, both of these new defaults are in my opinion the best of the breed fore each task. If you have not done so, I
+            suggest taking a quick read down this thread that I put together with screenshots from my Twitter.app.
           </p>
           <p>
-            HomeMarks is a unique application allowing everyone from novice to elite the ability to create their own bookmark start page using easy
-            drag and drop methods for sorting Columns, Boxes and Bookmarks. Our custom bookmarklet tool allows you to add links to your HomeMarks
-            start page while surfing and/or researching online. If you're a bookmark junkie with literally hundreds of saved links to your favorite
-            Internet haunts, HomeMarks is not for you. However, if youâ€™re looking for a clean, simple homepage to organize your most recent or
-            relevant links in an environment tailored to your needs and interests, <a href="http://www.homemarks.com/">give HomeMarks a try</a>.
-            After all, HomeMarks is where the heart is.
+            The topic is one I have thought often about over the past 6 years. I started writing Rails applications before 1.0 was released and I
+            have seen the changes and felt each one. Having written both web and native iOS apps for <a href="http://homemarks.com">HomeMarks.com</a>
+            and retooling the whole application for each major Rails version, I think it gives me a good insight into the pain here. For instance
+            when <a href="http://ajaxian.com/archives/rails-rjs-for-ajax-101">RJS in Rails</a> first came out, HomeMarks took extreme advantage of it
+            in very clever ways. Pushing rendered partials out and communicating to the browser's JavaScript environment was fun and rewarding at the
+            time. It also felt really DRY at times.
           </p>
           <p>
-            So it is not like <a href="http://www.techcrunch.com/2006/01/25/yes-this-weeks-ajax-homepage/">the world needs another AJAX homepage</a>,
-            there are plenty out there. My problem is that they seem to go to far and build to much into them, Netvibes is a great "poor" example. I
-            do not want XML Feeds, Images, News Headlines, or anything else in my start page. I just want links and only about 100 or so at maximum.
-            For me bookmarks are very transitory objects. They need to be direct links to the things that I am working on, or referencing at that
-            exact time. Once they are not, they get throw away and I can almost certainly find them in the 1st page of a Google result if I really
-            needed to. So this is what <a href="http://www.homemarks.com/">HomeMarks</a> is for me, simple software, using <a href=
-            "http://gettingreal.37signals.com/ch02_Build_Less.php">build less principals</a>. If you choose to use it, I hope you enjoy using it.
-            Note, only for Firefox or Safari/WebKit.
+            As I started to <a href="/2008/08/18/in-hell-oo-for-homemarks/">learn more advanced JavaScript techniques</a> for organizing my rich
+            client code, I ended up rewriting HomeMarks again under the poorly named moniker <a href="/2008/05/24/the-ajax-head-design-pattern/">"The
+            AJAX Head Design Pattern"</a>. It even caught a little bit of attention by the Ajaxian and <a href=
+            "http://voodootikigod.com/ajax-head-design-pattern">Chris Williams</a>. Essentially what I ended up building was my own minimal <a href=
+            "http://documentcloud.github.com/backbone/">backbone.js</a> in that I had a rich MVC layer all written in JavaScript. This usage of Rails
+            as an API foundation on top of a rich JavaScript application was in my opinion a few years ahead of the average curve. Though it was very
+            rewarding from a JavaScript as a language first, DOM second development perspective &amp; it yielded a very clean way to leverage the
+            same RESTful controller actions used by JavaScript in the browser with a <a href=
+            "/2010/02/12/synchronizing-core-data-with-rails-3-0-0-pre/">native iOS app that integrated with Core Data</a>, it still felt like an over
+            achievement or harder than it had to be.
           </p>
+          <p>
+            So as I embark on my third complete rewrite of HomeMarks, I have to think about my tools and techniques again and what the end goal may
+            look like. I have thrown away thousands of lines of OO-JavaScript written in Prototype.js and <a href=
+            "https://gist.github.com/973483">started rewriting them in CoffeeScript</a>. Though there are still some tough decisions to be made on
+            what my complete stack will look like and how HomeMarks v3 will hopefully again push the new web forward, I cant help bug agree with both
+            Dave and DHH. I also share James A Rosen's opinion summed up in <a href="http://twitter.com/#!/jamesarosen/status/70544535373086720">this
+            tweet</a>.
+          </p>
+          <blockquote style="width:220px;">
+            If I had known that RailsConf would be How-to-Use-Rails-as-a-Backend-for-Javascript-Conf, I would've gone!
+          </blockquote>
           <footer id="disqus_thread"></footer>
         </article>
       </section>
