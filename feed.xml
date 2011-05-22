@@ -4,7 +4,7 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2011-05-22T14:54:02-04:00</updated>
+ <updated>2011-05-22T15:10:06-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
@@ -113,7 +113,7 @@
 </p>
 
 <p>
-  So as I embark on my third complete rewrite of HomeMarks, I have to think about my tools and techniques again and what the end goal may look like. I have thrown away thousands of lines of OO-JavaScript written in Prototype.js and <a href="https://gist.github.com/973483">started rewriting them in CoffeeScript</a>. Though there are still some tough decisions to be made on what my complete stack will look like and how HomeMarks v3 will hopefully again push the new web forward, I cant help bug agree with both Dave and DHH. I also share James A Rosen's opinion summed up in <a href="http://twitter.com/#!/jamesarosen/status/70544535373086720">this tweet</a>.
+  So as I embark on my third complete rewrite of HomeMarks, I have to think about my tools and techniques again and what the end goal may look like. I have thrown away thousands of lines of OO-JavaScript written in Prototype.js and <a href="https://gist.github.com/973483">started rewriting them in CoffeeScript</a>. Though there are still some tough decisions to be made on what my complete stack will look like and how HomeMarks v3 will hopefully again push the new web forward, I cant help but to agree with both Dave and DHH. I also share James A Rosen's opinion summed up in <a href="http://twitter.com/#!/jamesarosen/status/70544535373086720">this tweet</a>.
   <blockquote style="width:220px;">
     If I had known that RailsConf would be How-to-Use-Rails-as-a-Backend-for-Javascript-Conf, I would've gone!
   </blockquote>
