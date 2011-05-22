@@ -4,7 +4,7 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2011-05-21T19:01:53-04:00</updated>
+ <updated>2011-05-22T11:43:17-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
@@ -19,7 +19,9 @@
    <id>http://metaskills.net/2011/05/21/the-browser-is-dead</id>
    <content type="html">
      <![CDATA[<p>
-  <img class="floatr ml30 mr10" src="/assets/the_browser_is_dead.png" width="368" height="2969" alt="Converstation between DHH And Dave Thomas on Rails 3.1"/>
+  <span class="photofancy floatr mr10 mb30 ml30">
+    <img class="" src="/assets/the_browser_is_dead.png" width="368" height="2969" alt="Converstation between DHH And Dave Thomas on Rails 3.1"/>
+  </span>
   This <a href="https://twitter.com/#!/pragdave/status/62510978893492224">twitter post by Dave Thomas</a> sparked an interesting back and forth with DHH on how Rails 3.1 could be more opinionated towards web development for the browser. A short time before &ndash; it was announced that Rails would include CoffeeScript and Sass as defaults for JavaScript and CSS authoring. FWIW, both of these new defaults are in my opinion the best of the breed fore each task. If you have not done so, I suggest taking a quick read down this thread that I put together with screenshots from my Twitter.app.
 </p>
 
@@ -32,7 +34,7 @@
 </p>
 
 <p>
-  So as I embark on my third complete rewrite of HomeMarks, I have to think about my tools and techniques again and what the end goal may look like. I have thrown away thousands of lines of OO-JavaScript written in Prototype.js and <a href="https://gist.github.com/973483">started rewriting them in CoffeeScript</a>. Though there are still some tough decisions to be made on what my complete stack will look like and how HomeMarks v3 will hopefully again push the new web forward, I cant help bug agree with both Dave and DHH. I also share James A Rosen's opinion summed up in <a href="http://twitter.com/#!/jamesarosen/status/70544535373086720">this tweet</a>. 
+  So as I embark on my third complete rewrite of HomeMarks, I have to think about my tools and techniques again and what the end goal may look like. I have thrown away thousands of lines of OO-JavaScript written in Prototype.js and <a href="https://gist.github.com/973483">started rewriting them in CoffeeScript</a>. Though there are still some tough decisions to be made on what my complete stack will look like and how HomeMarks v3 will hopefully again push the new web forward, I cant help bug agree with both Dave and DHH. I also share James A Rosen's opinion summed up in <a href="http://twitter.com/#!/jamesarosen/status/70544535373086720">this tweet</a>.
   <blockquote style="width:220px;">
     If I had known that RailsConf would be How-to-Use-Rails-as-a-Backend-for-Javascript-Conf, I would've gone!
   </blockquote>
