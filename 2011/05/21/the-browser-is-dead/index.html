@@ -1,0 +1,260 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <title>
+      The Browser Is Dead? @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/zepto.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="i">Colophon</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Follow</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate datetime="2011-05-21T00:00:00-04:00">
+              <span class="day">21</span> <span class="month">May</span> <span class="year">2011</span>
+            </time>
+            <h1>
+              The Browser Is Dead?
+            </h1>
+          </header>
+          <p>
+            <span class="photofancy floatr mr10 mb30 ml30"><img class="" src="/assets/the_browser_is_dead.png" width="368" height="2969" alt=
+            "Converstation between DHH And Dave Thomas on Rails 3.1"></span> This <a href=
+            "https://twitter.com/#!/pragdave/status/62510978893492224">twitter post by Dave Thomas</a> sparked an interesting back and forth with DHH
+            on how Rails 3.1 could be more opinionated towards web development for the browser. A short time before &ndash; it was announced that
+            Rails would include CoffeeScript and Sass as defaults for JavaScript and CSS authoring. FWIW, both of these new defaults are in my
+            opinion the best of the breed fore each task. If you have not done so, I suggest taking a quick read down this thread that I put together
+            with screenshots from my Twitter.app.
+          </p>
+          <p>
+            The topic is one I have thought often about over the past 6 years. I started writing Rails applications before 1.0 was released and I
+            have seen the changes and felt each one. Having written both web and native iOS apps for <a href="http://homemarks.com">HomeMarks.com</a>
+            and retooling the whole application for each major Rails version, I think it gives me a good insight into the pain here. For instance
+            when <a href="http://ajaxian.com/archives/rails-rjs-for-ajax-101">RJS in Rails</a> first came out, HomeMarks took extreme advantage of it
+            in very clever ways. Pushing rendered partials out and communicating to the browser's JavaScript environment was fun and rewarding at the
+            time. It also felt really DRY at times.
+          </p>
+          <p>
+            As I started to <a href="/2008/08/18/in-hell-oo-for-homemarks/">learn more advanced JavaScript techniques</a> for organizing my rich
+            client code, I ended up rewriting HomeMarks again under the poorly named moniker <a href="/2008/05/24/the-ajax-head-design-pattern/">"The
+            AJAX Head Design Pattern"</a>. It even caught a little bit of attention by the Ajaxian and <a href=
+            "http://voodootikigod.com/ajax-head-design-pattern">Chris Williams</a>. Essentially what I ended up building was my own minimal <a href=
+            "http://documentcloud.github.com/backbone/">backbone.js</a> in that I had a rich MVC layer all written in JavaScript. This usage of Rails
+            as an API foundation on top of a rich JavaScript application was in my opinion a few years ahead of the average curve. Though it was very
+            rewarding from a JavaScript as a language first, DOM second development perspective &amp; it yielded a very clean way to leverage the
+            same RESTful controller actions used by JavaScript in the browser with a <a href=
+            "/2010/02/12/synchronizing-core-data-with-rails-3-0-0-pre/">native iOS app that integrated with Core Data</a>, it still felt like an over
+            achievement or harder than it had to be.
+          </p>
+          <p>
+            So as I embark on my third complete rewrite of HomeMarks, I have to think about my tools and techniques again and what the end goal may
+            look like. I have thrown away thousands of lines of OO-JavaScript written in Prototype.js and <a href=
+            "https://gist.github.com/973483">started rewriting them in CoffeeScript</a>. Though there are still some tough decisions to be made on
+            what my complete stack will look like and how HomeMarks v3 will hopefully again push the new web forward, I cant help but to agree with
+            both Dave and DHH. I also share James A Rosen's opinion summed up in <a href=
+            "http://twitter.com/#!/jamesarosen/status/70544535373086720">this tweet</a>.
+          </p>
+          <blockquote style="width:220px;">
+            If I had known that RailsConf would be How-to-Use-Rails-as-a-Backend-for-Javascript-Conf, I would've gone!
+          </blockquote>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2011/05/21/the-browser-is-dead';
+            var disqus_title = 'The Browser Is Dead?';
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Free The Enterprise With Ruby & Master Your Own Domain
+            </h4>
+            <p>
+              <a href="/2011/07/01/free-the-enterprise-with-ruby-and-master-your-own-domain">For anyone that did not attend the first MADExpo
+              (Mid-Atlantic Developer Expo) this week, here are my slides posted on slideshare. This talk centers around 3 basic sections. The
+              first...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Bind jQuery Event Handlers To This Object With CoffeeScript
+            </h4>
+            <p>
+              <a href="/2011/05/22/bind-jquery-event-handlers-to-this-object-with-coffeescript">Friends have told me that rich domain objects are
+              seldom wielded when using jQuery to enhance behavior on web pages. I myself have always loved JavaScript as a rich dynamic...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              The Browser Is Dead?
+            </h4>
+            <p>
+              <a href="/2011/05/21/the-browser-is-dead">This twitter post by Dave Thomas sparked an interesting back and forth with DHH on how Rails
+              3.1 could be more opinionated towards web development for the browser. A short...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2011 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_slideshare" href="http://www.slideshare.net/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

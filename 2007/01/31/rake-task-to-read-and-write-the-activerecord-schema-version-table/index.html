@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <title>
+      Rake task to read and write the ActiveRecord schema version table. @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/zepto.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="i">Colophon</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Follow</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate datetime="2007-01-31T00:00:00-05:00">
+              <span class="day">31</span> <span class="month">Jan</span> <span class="year">2007</span>
+            </time>
+            <h1>
+              Rake task to read and write the ActiveRecord schema version table.
+            </h1>
+          </header>
+          <p>
+            After attending Rails Edge in Reston, Virginia I decided to move some common tasks from my <code>~/.irbrc</code> file and put them into
+            Rake. I thought I would share a task that reads and writes the ActiveRecord schema table. Sometimes in migrations this is either good to
+            know or manually change. Simply copy this in a foo.task file in your project/lib/tasks directory and use <code>rake -T</code> to see the
+            description and usage. I have placed these tasks in the db:version namespace.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">namespace</span> <span class="ss">:db</span> <span class="k">do</span>
+  <span class="n">namespace</span> <span class="ss">:version</span> <span class="k">do</span> 
+
+    <span class="n">desc</span> <span class="s2">&quot;Read the current version of the database.&quot;</span>
+    <span class="n">task</span> <span class="ss">:read</span> <span class="o">=&gt;</span> <span class="ss">:environment</span> <span class=
+"k">do</span>
+      <span class="nb">puts</span> <span class="s2">&quot;The </span><span class="si">#{</span><span class="no">RAILS_ENV</span><span class=
+"si">}</span><span class="s2">&#39; database version is: </span><span class="si">#{</span><span class="no">ActiveRecord</span><span class=
+"o">::</span><span class="no">Migrator</span><span class="o">.</span><span class="n">current_version</span><span class="si">}</span><span class=
+"s2">&quot;</span>
+    <span class="k">end</span>
+    
+    <span class="n">desc</span> <span class="s2">&quot;Manually set the schema version to a specific target version with VERSION=x&quot;</span>
+    <span class="n">task</span> <span class="ss">:write</span> <span class="o">=&gt;</span> <span class="ss">:environment</span> <span class=
+"k">do</span>
+      <span class="k">if</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;VERSION&#39;</span><span class="o">]</span>
+        <span class="k">if</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class=
+"o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class=
+"s2">&quot;UPDATE </span><span class="si">#{</span><span class="no">ActiveRecord</span><span class="o">::</span><span class=
+"no">Migrator</span><span class="o">.</span><span class="n">schema_info_table_name</span><span class="si">}</span><span class=
+"s2"> SET version = </span><span class="si">#{</span><span class="no">ENV</span><span class="o">[</span><span class=
+"s1">&#39;VERSION&#39;</span><span class="o">].</span><span class="n">to_i</span><span class="si">}</span><span class="s2">&quot;</span><span class=
+"p">)</span>
+          <span class="nb">puts</span> <span class="s2">&quot;SUCCESS: The &#39;</span><span class="si">#{</span><span class=
+"no">RAILS_ENV</span><span class="si">}</span><span class="s2">&#39; database version is now: </span><span class="si">#{</span><span class=
+"no">ActiveRecord</span><span class="o">::</span><span class="no">Migrator</span><span class="o">.</span><span class=
+"n">current_version</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span>
+          <span class="nb">puts</span> <span class="s2">&quot;FAILED: The &#39;</span><span class="si">#{</span><span class=
+"no">RAILS_ENV</span><span class="si">}</span><span class="s2">&#39; database version is still: </span><span class="si">#{</span><span class=
+"no">ActiveRecord</span><span class="o">::</span><span class="no">Migrator</span><span class="o">.</span><span class=
+"n">current_version</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">end</span>
+      <span class="k">else</span>
+        <span class="nb">puts</span> <span class=
+"s1">&#39;You must specify a VERSION=n argument to this command. Use rake db:version:read to get the current version.&#39;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+    
+  <span class="k">end</span>  
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2007/01/31/rake-task-to-read-and-write-the-activerecord-schema-version-table/';
+            var disqus_title = 'Rake task to read and write the ActiveRecord schema version table.';
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Free The Enterprise With Ruby & Master Your Own Domain
+            </h4>
+            <p>
+              <a href="/2011/07/01/free-the-enterprise-with-ruby-and-master-your-own-domain">For anyone that did not attend the first MADExpo
+              (Mid-Atlantic Developer Expo) this week, here are my slides posted on slideshare. This talk centers around 3 basic sections. The
+              first...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Bind jQuery Event Handlers To This Object With CoffeeScript
+            </h4>
+            <p>
+              <a href="/2011/05/22/bind-jquery-event-handlers-to-this-object-with-coffeescript">Friends have told me that rich domain objects are
+              seldom wielded when using jQuery to enhance behavior on web pages. I myself have always loved JavaScript as a rich dynamic...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              The Browser Is Dead?
+            </h4>
+            <p>
+              <a href="/2011/05/21/the-browser-is-dead">This twitter post by Dave Thomas sparked an interesting back and forth with DHH on how Rails
+              3.1 could be more opinionated towards web development for the browser. A short...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2011 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_slideshare" href="http://www.slideshare.net/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <title>
+      A MacPort/RubyODBC Update @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/zepto.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="i">Colophon</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Follow</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate datetime="2010-07-19T00:00:00-04:00">
+              <span class="day">19</span> <span class="month">Jul</span> <span class="year">2010</span>
+            </time>
+            <h1>
+              A MacPort/RubyODBC Update
+            </h1>
+          </header>
+          <aside class="flash_warn">
+            <a href="https://github.com/rails-sqlserver/tiny_tds">TinyTDS</a> is the upcoming de facto raw connection method for the SQL Server
+            adapter. Please read the <em><a href="https://github.com/rails-sqlserver/activerecord-sqlserver-adapter/wiki/Using-TinyTds">Using
+            TinyTDS</a></em> wiki page on the adapter for switching. No longer do you have to worry about compiling ODBC layers!
+          </aside>
+          <aside class="flash_info">
+            I have changed my mind about the UTF-8 version of RubyODBC. Please <a href=
+            "http://groups.google.com/group/rails-sqlserver-adapter/browse_thread/thread/367cf70b2b48d4a0?hl=en">read that section</a> in the the
+            rails 3 announcements for the SQL Server adapter.
+          </aside>
+          <p>
+            Quite a while ago I wrote a <a href=
+            "/2009/9/5/the-ultimate-os-x-snow-leopard-stack-for-rails-development-x86_64-macports-ruby-1-8-1-9-sql-server-more">soup to nuts article
+            on getting the full multi-ruby development stack installed</a> for those using the SQL Server adapter. The base package management system
+            used there was MacPorts. In it I described how to edit the outdated Portfile for the rb-odbc package and exclaimed how important it was
+            to use the +utf8 variant. I was totally wrong about that part.
+          </p>
+          <p>
+            This past week I started heavily exploring <a href="http://rvm.beginrescueend.com/">RVM</a> at the advice of friend while we visited the
+            Boston.rb user grooup. As an aside, I finally feel my unix-fu is strong enough to cover the edge cases needed to get the SQL Server stack
+            happy with RVM. Good news, but that's next weeks blog post. Anyways I found that while updating my core MacPort's rb-odbc package that
+            +utf8 was blowing up. I am currently using MacPorts 1.9.1 and was targeting 0.99991 of RubyODBC. Here is the updated port file. To edit
+            your current port file run <code>mate $(port file rb-odbc)</code> and paste this new one in. Details afterward.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="text"># $Id: Portfile 30250 2010-07-18 02:16:17Z ken@metaskills.net $
+PortSystem    1.0
+PortGroup     ruby 1.0
+
+ruby.setup          {odbc ruby-odbc} 0.99991 extconf.rb {README doc test} 
+maintainers         nomaintainer
+description         An extension library for ODBC from ruby.
+long_description    Extension library to use ODBC data sources from Ruby. \
+                    Supports Ruby 1.6.x and 1.8 on Win32 OSes and UN*X 
+checksums           md5 64eaf6089e7ca17eeff54c4fe052ac96
+homepage            http://www.ch-werner.de/rubyodbc
+master_sites        http://www.ch-werner.de/rubyodbc
+categories-append   databases
+platforms           darwin 
+
+configure.cmd             ${ruby.bin} -rvendor-specific -Cext extconf.rb
+build.pre_args-append     -C ext
+destroot.pre_args-append  -C ext
+
+variant utf8 {
+  configure.cmd             ${ruby.bin} -rvendor-specific -Cext/utf8 extconf.rb
+  build.pre_args-delete     -C ext
+  build.pre_args-append     -C ext/utf8
+  destroot.pre_args-delete  -C ext
+  destroot.pre_args-append  -C ext/utf8
+}
+</code>
+</pre>
+          </div>
+          <p>
+            So where did I go wrong on my old article? My first big mistake was thinking that the <code>+utf8</code> port variant was needed. Not
+            only is it <strong>NOT NEEDED</strong>, it may not work right at all. In fact, the old Portfile in MacPorts trunk technically did not
+            even configure/make/install the utf8 version either! Honestly â€“ I spent all day learning the MacPort's Portfile syntax and tested this.
+            Installing that variant just breaks with an error like <code>LoadError: dlsym(0x1010cd3b0, Init_odbc): symbol not found</code>.
+          </p>
+          <p>
+            So, even though my updated Portfile above now fixes that issue and supports actually building a utf8 version of RubyODBC, <strong>YOU DO
+            NOT NEED IT!</strong> In fact the entire SQL Server stack is tested with the plain non-utf8 package and passes with flying colors. This
+            includes passing tests where unicode columns return correctly utf8-encoded strings, among others. Though I have not tested it, I believe
+            the utf8 version would do more damage than good. The RubyODBC documentation says it would make every string utf8 encoded. Not good for an
+            adapter that has mixed data types. For my own personal notes, here is a diff of the Makefile below. I think the Init_odbc error was a
+            result of a missing flag in the Makefile.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="diff"># My notes
+# +CPPFLAGS = -DHAVE_LONG_LONG
+# +CPPFLAGS = -DHAVE_VERSION_H
+# +CPPFLAGS = -DHAVE_TYPE_SQLBIGINT
+# -CPPFLAGS = -DHAVE_SQLCONFIGDATASOURCEW
+# -CPPFLAGS = -DHAVE_SQLINSTALLERERRORW
+# -CPPFLAGS = -DHAVE_SQLWRITEFILEDSNW
+# -CPPFLAGS = -DHAVE_SQLREADFILEDSNW
+<span class="gd">--- Makefile(+utf8)  2010-07-18 12:00:24.000000000 -0400</span>
+<span class="gi">+++ Makefile(-utf8)  2010-07-18 12:49:32.000000000 -0400</span>
+<span class="gu">@@ -47,7 +47,7 @@</span>
+ CFLAGS   =  -fno-common -O2 -arch x86_64  -fno-common -pipe -fno-common $(cflags) -arch x86_64
+ INCFLAGS = -I. -I. -I/opt/local/lib/ruby/1.8/i686-darwin10 -I.
+ DEFS     = 
+<span class=
+"gd">-CPPFLAGS = -DHAVE_SQL_H -DHAVE_SQLEXT_H -DHAVE_TYPE_SQLTCHAR -DHAVE_TYPE_SQLLEN -DHAVE_TYPE_SQLULEN -DHAVE_ODBCINST_H -DHAVE_SQLCONFIGDATASOURCEW -DHAVE_SQLWRITEFILEDSNW -DHAVE_SQLREADFILEDSNW -DHAVE_SQLINSTALLERERROR -DHAVE_SQLINSTALLERERRORW -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include</span>
+<span class=
+"gi">+CPPFLAGS = -DHAVE_VERSION_H -DHAVE_SQL_H -DHAVE_SQLEXT_H -DHAVE_TYPE_SQLTCHAR -DHAVE_TYPE_SQLLEN -DHAVE_TYPE_SQLULEN -DHAVE_ODBCINST_H -DHAVE_SQLINSTALLERERROR -DHAVE_TYPE_SQLBIGINT -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -DHAVE_LONG_LONG</span>
+ CXXFLAGS = $(CFLAGS) 
+ ldflags  = -L. -L/opt/local/lib -arch x86_64
+ dldflags = 
+<span class="gu">@@ -89,7 +89,7 @@</span>
+ LIBS = $(LIBRUBYARG_SHARED) -lodbcinst -lodbc  -lpthread -ldl -lobjc  
+ SRCS = init.c odbc.c
+ OBJS = init.o odbc.o
+<span class="gd">-TARGET = odbc_utf8</span>
+<span class="gi">+TARGET = odbc</span>
+ DLLIB = $(TARGET).bundle
+ EXTSTATIC = 
+ STATIC_LIB =
+</code>
+</pre>
+          </div>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2010/07/19/a-macport-rubyodbc-update/';
+            var disqus_title = 'A MacPort/RubyODBC Update';
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Free The Enterprise With Ruby & Master Your Own Domain
+            </h4>
+            <p>
+              <a href="/2011/07/01/free-the-enterprise-with-ruby-and-master-your-own-domain">For anyone that did not attend the first MADExpo
+              (Mid-Atlantic Developer Expo) this week, here are my slides posted on slideshare. This talk centers around 3 basic sections. The
+              first...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Bind jQuery Event Handlers To This Object With CoffeeScript
+            </h4>
+            <p>
+              <a href="/2011/05/22/bind-jquery-event-handlers-to-this-object-with-coffeescript">Friends have told me that rich domain objects are
+              seldom wielded when using jQuery to enhance behavior on web pages. I myself have always loved JavaScript as a rich dynamic...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              The Browser Is Dead?
+            </h4>
+            <p>
+              <a href="/2011/05/21/the-browser-is-dead">This twitter post by Dave Thomas sparked an interesting back and forth with DHH on how Rails
+              3.1 could be more opinionated towards web development for the browser. A short...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2011 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_slideshare" href="http://www.slideshare.net/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

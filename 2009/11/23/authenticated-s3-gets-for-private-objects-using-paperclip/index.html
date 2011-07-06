@@ -1,0 +1,375 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <title>
+      Authenticated S3 GETs For Private Objects Using Paperclip @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/zepto.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="i">Colophon</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Follow</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate datetime="2009-11-23T00:00:00-05:00">
+              <span class="day">23</span> <span class="month">Nov</span> <span class="year">2009</span>
+            </time>
+            <h1>
+              Authenticated S3 GETs For Private Objects Using Paperclip
+            </h1>
+          </header>
+          <p>
+            Yea I know, I am probably the last person on earth that is just getting around to using <a href=
+            "http://github.com/thoughtbot/paperclip">Paperclip</a>. To be honest, most of my file upload code was written way before Paperclip or
+            even AttachementFu was ever conceived. And frankly, I do not do much social app coding on the side - so the need never came up. But that
+            changed recently and I wanted a really really good way of leveraging AWS::S3 storage with the best local app security while maintaining
+            tight control over the files.
+          </p>
+          <p>
+            So the Paperclip wiki has a few links that already dealt with some ways of protecting your app's attachments. One mentions a method I
+            totally love called security through obscurity. It uses a secure random token as part of the filename which combined with the original
+            filename and the id partition makes for great random URLs. The other is a great walk thru on how to use the :url option of paperclip to
+            point access control back to your own application for your normal biz logic.
+          </p>
+          <p>
+            The problem I see with both of these methods is that they do not allow you to maintain app control past the final URL handoff/redirect.
+            It also requires that your S3 bucket is public. For instance, if you were to use the <code>s3_permissions =&gt; :private</code> option of
+            Paperclip, then that URL given to you by Paperclip is pretty much worthless. I knew AWS::S3 had authenticated GETs that generated an
+            automatically expiring URL, but saw no way of accessing its features using the abstract <code>Paperclip::Attachment</code> object. So
+            this is what I did.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">class</span> <span class="nc">MyDownload</span>
+  
+  <span class="n">has_attached_file</span> <span class="ss">:attachment</span><span class="p">,</span> 
+                    <span class="ss">:storage</span> <span class="o">=&gt;</span> <span class="ss">:s3</span><span class="p">,</span> <span class=
+"ss">:bucket</span> <span class="o">=&gt;</span> <span class="s1">&#39;mybucket&#39;</span><span class="p">,</span>
+                    <span class="ss">:s3_credentials</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="o">.</span><span class=
+"n">.</span><span class="o">.</span><span class="p">},</span> <span class="ss">:s3_protocol</span> <span class="o">=&gt;</span> <span class=
+"s1">&#39;https&#39;</span><span class="p">,</span> 
+                    <span class="ss">:s3_permissions</span> <span class="o">=&gt;</span> <span class="ss">:private</span><span class="p">,</span>
+                    <span class="ss">:path</span> <span class="o">=&gt;</span> <span class="nb">lambda</span> <span class="p">{</span> <span class=
+"o">|</span><span class="n">attachment</span><span class="o">|</span> <span class="s2">&quot;:id_partition/</span><span class=
+"si">#{</span><span class="n">attachment</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class=
+"n">random_secret</span><span class="si">}</span><span class="s2">/:filename&quot;</span> <span class="p">},</span>
+                    <span class="ss">:processors</span> <span class="o">=&gt;</span> <span class="o">[</span><span class=
+"ss">:noop</span><span class="o">]</span>
+  
+  <span class="n">before_validation_on_create</span> <span class="ss">:set_random_secret</span>
+  
+  
+  <span class="k">def</span> <span class="nf">attachment_url</span>
+    <span class="s2">&quot;</span><span class="si">#{</span><span class="nb">self</span><span class="o">.</span><span class=
+"n">class</span><span class="o">.</span><span class="n">tableize</span><span class="si">}</span><span class="s2">/</span><span class=
+"si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class=
+"n">attachment_file_name</span><span class="si">}</span><span class="s2">&quot;</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">authenticated_s3_get_url</span><span class="p">(</span><span class="n">options</span><span class=
+"o">=</span><span class="p">{})</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">reverse_merge!</span> <span class="ss">:expires_in</span> <span class=
+"o">=&gt;</span> <span class="mi">10</span><span class="o">.</span><span class="n">minutes</span><span class="p">,</span> <span class=
+"ss">:use_ssl</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+    <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class=
+"no">S3Object</span><span class="o">.</span><span class="n">url_for</span> <span class="n">attachment</span><span class="o">.</span><span class=
+"n">path</span><span class="p">,</span> <span class="n">attachment</span><span class="o">.</span><span class="n">options</span><span class=
+"o">[</span><span class="ss">:bucket</span><span class="o">]</span><span class="p">,</span> <span class="n">options</span>
+  <span class="k">end</span>
+  
+  <span class="kp">private</span>
+  
+  <span class="k">def</span> <span class="nf">set_random_secret</span>
+    <span class="nb">self</span><span class="o">.</span><span class="n">random_secret</span> <span class="o">=</span> <span class=
+"no">ActiveSupport</span><span class="o">::</span><span class="no">SecureRandom</span><span class="o">.</span><span class="n">hex</span><span class=
+"p">(</span><span class="mi">8</span><span class="p">)</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Let me walk you thru some of the highlights of that class, the general concept following is that we are going to use the best of both
+            examples in security mentioned above. First, the secure token, that is what #set_random_secret will generate for each instance. The
+            <code>:path</code> option for Paperclip uses a proc to make sure each instance uses that attribute in the string that will be later
+            interpolated further down. You can also see how I use the id partition too. Next, I have added two public instance methods. The first is
+            #attachment_url and it will need a bit of explaining.
+          </p>
+          <p>
+            Currently in Paperclip, if you use the :url option and your :storage is set to :s3, then it is ignored. This could totally be
+            intentional. So in a typical setup where you want the file download running through your own access control, you wold have a :url option
+            like this <code>:url =&gt; '/:class/:id/:filename'</code>. So this is what #attachment_url mimics, it simply gets around that shortcoming
+            and points the download action back to your own controller. How that controller would work is beyond the scope of this article, see the
+            resources section below for those links.
+          </p>
+          <p>
+            The last example method is #authenticated_s3_get_url which dips right on down to the AWS::S3 library to get the URL for the object in the
+            bucket. AWS::S3's doc mention that it will automatically generate a secure GET url that expires in 5 minutes. However in my example, you
+            can see where I am changing that to 10 minutes and forcing the HTTPS protocol. This would be the URL that your own controller would do
+            the final redirect to. This URL is for your private objects in your S3 bucket and will only work for the amount of time you want it too!
+            Meaning your app stays in complete control. Putting it all together one more time...
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="c1"># A MyDownload instance.</span>
+<span class="o">&gt;&gt;</span> <span class="n">dl</span> <span class="o">=</span> <span class="no">MyDownload</span><span class=
+"o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># This is totally useless for private buckets/objects.</span>
+<span class="o">&gt;&gt;</span> <span class="n">dl</span><span class="o">.</span><span class="n">attachment</span><span class=
+"o">.</span><span class="n">url</span>
+<span class="o">=&gt;</span> <span class=
+"s2">&quot;https://s3.amazonaws.com/mybucket/000/000/004/147681c16fddc1e5/private.pdf?1258989107&quot;</span>
+
+<span class="c1"># This is what you use in your own views.</span>
+<span class="o">&gt;&gt;</span> <span class="n">dl</span><span class="o">.</span><span class="n">attachment_url</span>
+<span class="o">=&gt;</span> <span class="s2">&quot;my_downloads/4/private.pdf&quot;</span>
+
+<span class="c1"># Your controller would redirect to this secure GET.</span>
+<span class="o">&gt;&gt;</span> <span class="n">dl</span><span class="o">.</span><span class="n">authenticated_s3_get_url</span>
+<span class="o">=&gt;</span> <span class=
+"s2">&quot;https://s3.amazonaws.com/mybucket/000/000/004/147681c16fddc1e5/private.pdf?AWSAccessKeyId=0HJD3NS9CVWN2JV89K02&amp;Expires=1258990967&amp;Signature=8aWsq4o5gXfpIrRZyeETddnOeFw%3D&quot;</span>
+</code>
+</pre>
+          </div>
+          <h2>
+            What Is That Noop Processor
+          </h2>
+          <p>
+            Good eye! Did you see that I have a processor called Noop in the has_attached_file declaration? The default processor in Paperclip is the
+            Thumbnail processor, which no matter what calls the ImageMagick identify command to see if it can do something to the file. I did not
+            want that or any processing, just simple attachments. So I created this simple processor that just straight returns the file object. I
+            made a <a href="http://github.com/thoughtbot/paperclip/issues/#issue/118">ticket on the Paperclip's issue page</a> that hopefully would
+            allow a <code>:processors =&gt; false</code> option one day that would do this as well. So maybe one day it'll be a feature.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">module</span> <span class="nn">Paperclip</span>  
+  <span class="k">class</span> <span class="nc">Noop</span> <span class="o">&lt;</span> <span class="no">Processor</span>
+    
+    <span class="k">def</span> <span class="nf">make</span>
+      <span class="n">file</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <h2>
+            Resources
+          </h2>
+          <ul>
+            <li>
+              <a href="http://almosteffortless.com/2009/03/22/randomize-filename-in-paperclip/">Security Through Obscurity: Randomize Filename in
+              Paperclip</a>
+            </li>
+            <li>
+              <a href="http://thewebfellas.com/blog/2009/8/29/protecting-your-paperclip-downloads">Your Access Control: Protecting Your Paperclip
+              Downloads</a>
+            </li>
+            <li>
+              <a href="http://github.com/thoughtbot/paperclip/issues/#issue/118">Allow False Option For Processors</a>
+            </li>
+          </ul>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2009/11/23/authenticated-s3-gets-for-private-objects-using-paperclip/';
+            var disqus_title = 'Authenticated S3 GETs For Private Objects Using Paperclip';
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Free The Enterprise With Ruby & Master Your Own Domain
+            </h4>
+            <p>
+              <a href="/2011/07/01/free-the-enterprise-with-ruby-and-master-your-own-domain">For anyone that did not attend the first MADExpo
+              (Mid-Atlantic Developer Expo) this week, here are my slides posted on slideshare. This talk centers around 3 basic sections. The
+              first...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Bind jQuery Event Handlers To This Object With CoffeeScript
+            </h4>
+            <p>
+              <a href="/2011/05/22/bind-jquery-event-handlers-to-this-object-with-coffeescript">Friends have told me that rich domain objects are
+              seldom wielded when using jQuery to enhance behavior on web pages. I myself have always loved JavaScript as a rich dynamic...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              The Browser Is Dead?
+            </h4>
+            <p>
+              <a href="/2011/05/21/the-browser-is-dead">This twitter post by Dave Thomas sparked an interesting back and forth with DHH on how Rails
+              3.1 could be more opinionated towards web development for the browser. A short...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2011 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_slideshare" href="http://www.slideshare.net/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>
