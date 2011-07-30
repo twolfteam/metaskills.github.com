@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="author" content="Ken Collins">
     <title>
-      TinyTds - A modern, simple and fast FreeTDS library for Ruby using DB-Library @MetaSkills.net
+      Use Compass Sass Framework Files With The Rails 3.1.0.rc5 Asset Pipeline @MetaSkills.net
     </title>
     <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
     <link rel="author" href="mailto:ken@metaskills.net">
@@ -50,32 +50,76 @@
       <section id="content">
         <article id="post">
           <header>
-            <time pubdate datetime="2010-10-18T00:00:00-04:00">
-              <span class="day">18</span> <span class="month">Oct</span> <span class="year">2010</span>
+            <time pubdate datetime="2011-07-29T00:00:00-04:00">
+              <span class="day">29</span> <span class="month">Jul</span> <span class="year">2011</span>
             </time>
             <h1>
-              TinyTds - A modern, simple and fast FreeTDS library for Ruby using DB-Library
+              Use Compass Sass Framework Files With The Rails 3.1.0.rc5 Asset Pipeline
             </h1>
           </header>
           <p>
-            I just finished the first cut of learning C extensions for ruby and I <a href="http://github.com/rails-sqlserver/tiny_tds">present The
-            TinyTds gem</a>. It is meant to serve the extremely common use-case of connecting, querying and iterating over results to Microsoft SQL
-            Server databases from ruby. Even though it uses FreeTDS's DB-Library, it is NOT meant to serve as direct 1:1 mapping of that complex C
-            API
+            This is a simple update to my <a href="/2011/05/18/use-compass-sass-framework-files-with-the-rails-3.1-asset-pipeline/">original
+            article</a> for using compass's <code>.scss</code> files with the asset pipeline. This assumes you had this setup working in Rails
+            3.1.0.rc4, but should be helpful to anybody. The good news is that most everything is wired up.
           </p>
           <p>
-            The benefits are speed, automatic casting to ruby primitives, and proper encoding support. It converts all SQL Server datatypes to native
-            ruby objects supporting :utc or :local time zones for time-like types. To date it is the only ruby client library that allows client
-            encoding options, defaulting to UTF-8, while connecting to SQL Server. It also properly encodes all string and binary data. The
-            motivation for TinyTds is to become the de-facto low level connection mode for the SQL Server adapter for ActiveRecord. For further
-            details see the special thanks to Erik Bryn for his help, the authors/contributors of the Mysql2 gem for inspiration, and Yehuda Katz for
-            articulating ruby's need for proper encoding support. Please read up on it here.
+            First, you are going to need to update your Gemfile. Follow the latest conventions and make sure you have a <code>:assets</code> group.
+            Use the example below. With the exception of the compass addition to their "rails31" branch, this is what a Rails 3.1.0.rc5 project would
+            generate. It is a good idea to put all your asset pipeline related gems in this group. As the comment says, these would not be required
+            for production as the assumption is would precompile your static assets on deploys. Note, make sure your bundle for sass-rails installs
+            the matching rc5 too.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="c1"># Gems used only for assets and not required</span>
+<span class="c1"># in production environments by default.</span>
+<span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">&#39;sass-rails&#39;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 3.1.0.rc&quot;</span>
+  <span class="n">gem</span> <span class="s1">&#39;coffee-rails&#39;</span><span class="p">,</span> <span class=
+"s2">&quot;~&gt; 3.1.0.rc&quot;</span>
+  <span class="n">gem</span> <span class="s1">&#39;uglifier&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class="p">,</span> <span class="ss">:git</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;git://github.com/chriseppstein/compass.git&#39;</span><span class="p">,</span> <span class=
+"ss">:branch</span> <span class="o">=&gt;</span> <span class="s1">&#39;rails31&#39;</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Now here is a crazy gotcha. Rails 3.1.0.rc5 has changed the application.rb bundler line a little to account for this new :assets group.
+            Find the bundler line and make sure it looks like this.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="no">Bundler</span><span class="o">.</span><span class="n">require</span> <span class="o">*</span><span class=
+"no">Rails</span><span class="o">.</span><span class="n">groups</span><span class="p">(</span><span class="ss">:assets</span><span class=
+"p">)</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Bundler</span><span class="p">)</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Lastly, we need to get the compass files in the the load path. The sass-rails gem has set us up for this. I choose to hook into it using
+            my <code>config/initializers/sass.rb</code> like so. I imagine that compass will be doing this on its own at some point in the future
+            too. After this you should be all set!
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="no">Rails</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class=
+"n">sass</span><span class="o">.</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class=
+"n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class=
+"s2">&quot;</span><span class="si">#{</span><span class="no">Gem</span><span class="o">.</span><span class="n">loaded_specs</span><span class=
+"o">[</span><span class="s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class=
+"si">}</span><span class="s2">/frameworks/compass/stylesheets&quot;</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';
-            var disqus_identifier = '/2010/10/18/tinytds-a-modern-simple-and-fast-freetds-library-for-ruby-using-db-library/';
-            var disqus_title = 'TinyTds - A modern, simple and fast FreeTDS library for Ruby using DB-Library';
+            var disqus_identifier = '/2011/07/29/use-compass-sass-framework-files-with-the-rails-3.1.0.rc5-asset-pipeline';
+            var disqus_title = 'Use Compass Sass Framework Files With The Rails 3.1.0.rc5 Asset Pipeline';
             (function() {
             var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
             dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
