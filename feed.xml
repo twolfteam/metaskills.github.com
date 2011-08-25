@@ -4,13 +4,226 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2011-07-29T22:54:53-04:00</updated>
+ <updated>2011-08-24T22:15:25-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
    <email>ken@metaskills.net</email>
  </author>
 
+ 
+ <entry>
+   <title>jQuery Mobile &amp;amp; Rails</title>
+   <link href="http://metaskills.net/2011/08/24/jquery-mobile-and-rails"/>
+   <updated>2011-08-24T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/08/24/jquery-mobile-and-rails</id>
+   <content type="html">
+     <![CDATA[<p>
+  <img class="floatr" src="/assets/jquery_mobile_rails.png"/>
+  I just finished my first dive into using <a href="http://jquerymobile.com/">jQuery Mobile</a> with a Rails application and wanted to share some techniques that came out along the way. Hopefully these will help you if your are using jQuery Mobile with Rails or want to test your mobile application's integration layer. This post assumes you are somewhat familiar with jQuery Mobile and its basic concepts. So let's jump right in with a series of helpful tips.
+</p>
+
+
+
+<h2>A Mobile Layout</h2>
+
+<p>
+  In my application, I decided to use use a route namespace of "mobile" vs a sub-domain for all controllers and views to reside in. Do what works for you, but I find that using namespaces both helps keep my code organized and simple to maintain. Either way, you should have a layout specific for your mobile application. Mine is in <code>app/views/layout/mobile.html.haml</code>. As you can see here, I use HAML, so all view examples will be using it vs ERB. Here is a general layout.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
+<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">}</span>
+  <span class="o">%</span><span class="n">head</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;viewport&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="s1">&#39;width=device-width, initial-scale=1&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;format-detection&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="s1">&#39;telephone=no&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">title</span><span class="o">=</span> <span class="s1">&#39;My Mobile App&#39;</span>
+    <span class="o">%</span><span class="n">link</span><span class="p">{</span><span class="ss">:rel</span> <span class="o">=&gt;</span> <span class="s1">&#39;stylesheet&#39;</span><span class="p">,</span> <span class="ss">:href</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">script</span><span class="p">{</span><span class="ss">:src</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/jquery-1.6.2.min.js&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">script</span><span class="p">{</span><span class="ss">:src</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js&#39;</span><span class="p">}</span>
+  <span class="o">%</span><span class="n">body</span>
+    <span class="o">=</span> <span class="k">yield</span><span class="p">(</span><span class="ss">:layout</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>
+  A few key points here. First, the meta tag for the <code>viewport</code> is recommended as a good base. The other meta tag for <code>format-detection</code> is to disable automatic detection and linking of phone numbers. Phone number detection is way too aggressive and often just links random numbers with periods and hyphens. This means if you want a phone number to call when touched, you will have to use the <code>tel:</code> link format with the phone number afterward. I recommend the aid of something like the <a href="https://github.com/floere/phony">phony</a> gem for validating and parsing phone number formats. Lastly, the title attribute in the head is really moot. The jQuery Mobile framework will dynamically change the page title as new page DOM elements are loaded in.
+</p>
+
+
+
+<h2>Mobile Page IDs</h2>
+
+<p>
+  A typical jQuery Mobile app will have one full page load. All other pages thereafter are loaded via AJAX and inserted into the DOM. Their docs suggest that every page (and form) have a unique id attribute. These ids can be used to link to the DOM page element when navigating around preloaded pages. Simple apps can get by with a few ids like "#home", "#contact_us", "#etc". But if you have a large application, you need a better system to keep track of things.
+</p>
+
+<p>
+  Thankfully if you are building your Rails applications in a RESTful manner, it is easy to leverage the route link helpers to generate your page ids. In the example below, I created a method called <code>mobile_page_id</code> that I placed into a <a href="http://weblog.jamisbuck.org/2007/1/17/concerns-in-activerecord">shared concerns module directory</a>. From here I mix this into my test helper, and application's view helper. It is that damn useful! You are going to want to use this everywhere!
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># File: app/concerns/mobile_concerns.rb</span>
+<span class="k">module</span> <span class="nn">MobileConcerns</span>  
+  <span class="k">module</span> <span class="nn">Helpers</span>
+    <span class="k">def</span> <span class="nf">mobile_page_id</span><span class="p">(</span><span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+      <span class="n">path</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/\A\/mobile\//</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>  
+<span class="k">end</span>
+
+<span class="c1"># Mix into your applications helper.</span>
+<span class="k">module</span> <span class="nn">ApplicationHelper</span>
+  <span class="kp">include</span> <span class="no">MobileConcerns</span><span class="o">::</span><span class="no">Helpers</span>
+<span class="k">end</span>
+
+<span class="c1"># Mix into your test helper of choice.</span>
+<span class="k">class</span> <span class="nc">MobileStoriesTest</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">IntegrationTest</span>
+  <span class="kp">include</span> <span class="no">MobileConcerns</span><span class="o">::</span><span class="no">Helpers</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  The <code>mobile_page_id</code> method is primarily for views. I will cover its usage in testing further down. When called without an argument, it will take the current request path and translate it to a string suitable for a page id. So if you were rendering a <code>/mobile/users/10/avatar</code> page, the id would be <code>users_10_avatar</code>. If your application follows RESTful resources in your routes, this can pay dividends. When needed, you can pass a <code>*_path</code> helper method to get the same id. In this example the same id would come back for <code>mobile_page_id(mobile_user_avatar_path(@user))</code>. Remember, I am using a "mobile" namespace in my examples and hence my method above strips that out, flavor this helper to your needs. Here is an example of what you might find in <code>app/views/users/avatar.html.haml</code> using the mobile_page_id. You can see here that I am also setting a title local that is used in the <code>%h1</code> tag and the <code>data-title</code> page element attribute. Doing this will show the same title in the header bar as well as the page title.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">-</span> <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;User Profile&quot;</span>
+
+<span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="n">mobile_page_id</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="ss">:title</span> <span class="o">=&gt;</span> <span class="n">title</span><span class="p">}}</span>
+
+  <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;header&#39;</span><span class="p">}}</span>
+    <span class="o">%</span><span class="n">h1</span><span class="o">=</span> <span class="n">title</span>
+  <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;content&#39;</span><span class="p">}}</span>
+    <span class="n">edit</span> <span class="n">your</span> <span class="n">profile</span><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+  <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;footer&#39;</span><span class="p">}}</span><span class="sr"></span>
+<span class="sr">    /...</span>
+</code></pre>
+</div>
+
+
+
+<h2>Easy Data Attributes</h2>
+
+<p>
+  The jQuery Mobile framework will have you typing a lot of data-* attributes into your elements. It uses these from basic page behavior to UI themes. They are literally needed everywhere. If your typing out raw HTML these data attributes get old pretty quick. Thankfully both HAML and the latest Rails 3.1 tag helpers can keep things clean. Both allow hashes to be passed to the data attribute. Keys are dasherized and values are JSON-encoded except for string and symbols.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># HAML Shorthand For:</span>
+<span class="c1"># &lt;div id=&quot;foo&quot; data-role=&quot;page&quot; data-title=&quot;Title&quot; data-rel=&quot;dialog&quot;&gt;&lt;/div&gt;</span>
+
+<span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="ss">:title</span> <span class="o">=&gt;</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="ss">:rel</span> <span class="o">=&gt;</span> <span class="s1">&#39;dialog&#39;</span><span class="p">}}</span>
+
+<span class="c1"># Rails 3.1 Tag Helpers</span>
+<span class="c1"># &lt;div data-name=&quot;Stephen&quot; data-city-state=&quot;[&amp;quot;Chicago&amp;quot;,&amp;quot;IL&amp;quot;]&quot; /&gt;</span>
+
+<span class="n">tag</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Stephen&#39;</span><span class="p">,</span> <span class="ss">:city_state</span> <span class="o">=&gt;</span> <span class="sx">%w(Chicago IL)</span><span class="p">})</span>
+</code></pre>
+</div>
+
+
+
+<h2>Dynamically Setting Layout</h2>
+
+
+<p>
+  Remember how jQuery Mobile only loads the entire page once and then inserts all following pages using AJAX? This means that views after the initial page load do not need the layout when rendered. Depending on the setup of your mobile application, it could become a chore telling each action to conditionally render the layout or not. Imagine a page refresh or a user bookmarking a deep resource node of your mobile app. Thankfully with a little Rails-fu, we can conditionally set the layout to false if the request is an <code>HTTP GET</code> from an AJAX request. Below is an example of my base mobile controller that all mobile controllers inherit from. Now every action is able to load the entire mobile layout or not.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Mobile</span><span class="o">::</span><span class="no">BaseController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="no">LAYOUT</span> <span class="o">=</span> <span class="s1">&#39;mobile&#39;</span><span class="o">.</span><span class="n">freeze</span>
+  <span class="n">layout</span> <span class="no">LAYOUT</span>
+  <span class="n">around_filter</span> <span class="ss">:dynamically_assign_layout</span>
+  
+  <span class="kp">private</span>
+  
+  <span class="k">def</span> <span class="nf">dynamically_assign_layout</span>
+    <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">layout</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">get?</span> <span class="o">&amp;&amp;</span> <span class="n">request</span><span class="o">.</span><span class="n">xhr?</span>
+    <span class="k">yield</span>
+  <span class="k">ensure</span>
+    <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">layout</span> <span class="no">LAYOUT</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+</code></pre>
+</div>
+
+
+
+<h2>Integration Testing &amp; Capybara-Webkit</h2>
+
+<p>
+  Those that know me are familiar that I do not use RSpec or Test::Unit but instead opt for a simple testing framework built into Ruby 1.9, <a href="/2011/03/26/using-minitest-spec-with-rails/">MiniTest::Spec</a>. I also use the <a href="https://github.com/thoughtbot/capybara-webkit">Capybara-WebKit</a> driver for my acceptance testing in both <a href="https://github.com/metaskills/holygrail_rails23">Rails 2.3</a> and <a href="https://github.com/metaskills/holygrail_rails31">Rails 3.1</a>'s standard integration test layer. Reference the <code>integration_test_helper.rb</code> file in each link above to learn how to use Capybara-WebKit with your rails app. Thanks to Wyatt Greene for his <a href="http://techiferous.com/2010/04/using-capybara-in-rails-3/">original article</a> on the matter. 
+</p>
+
+<p>
+  So why the fuss? Well Capybara-WebKit is a headless WebKit browser that you can direct right from your test suite. What makes it so awesome is that it renders web pages with full JavaScript support and is much faster than selenium based Capybara drivers. Since jQuery Mobile is entirely based on JavaScript with HTML &amp; CSS3 - Capybara-WebKit is a perfect candidate to acceptance test your mobile application. The only gotcha is scoping your Capybara actions to a certain page that is dynamically loaded into the DOM. No problem! This is easily solvable using the page ids from the <code>mobile_page_id</code> helper method I mentioned above. So whatever your testing framework, here are a few helpers that are critical. Assume these are mixed into your test helper.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="kp">private</span>
+
+<span class="kp">include</span> <span class="no">MobileConcerns</span><span class="o">::</span><span class="no">Helpers</span> <span class="c1"># Mentioned above.</span>
+
+<span class="k">def</span> <span class="nf">current_page_id</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
+  <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">||</span> <span class="n">current_path</span>
+  <span class="s2">&quot;div#</span><span class="si">#{</span><span class="n">mobile_page_id</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">.ui-page-active&quot;</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">current_page</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
+  <span class="n">find</span><span class="p">(</span><span class="n">current_page_id</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">within_current_page</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
+  <span class="n">within</span><span class="p">(</span><span class="n">current_page_id</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="p">{</span> <span class="k">yield</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  So let's go over these. First is the <code>current_page_id</code> method. Most of the time you are going to pass a path argument to this method, since the Capybara's <code>current_path</code> will only work correctly on the first page load, not each following AJAX page load which would change the location hash. See how this is using the <code>mobile_page_id</code> helper mixed in and described above? Next is the <code>current_page</code> helper. It finds the passed path/id with Capybara's find method. The <code>within_current_page</code> leverages Capybara's <code>within</code> helper to scope your action to that particular DOM element. Here is a classic example using these.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">should</span> <span class="s1">&#39;be able to navigate to logged in user page and change email&#39;</span> <span class="k">do</span>
+  <span class="n">login_as</span> <span class="vi">@user</span>
+  <span class="n">visit</span> <span class="n">mobile_homepage_path</span>
+  <span class="n">click_on</span> <span class="s1">&#39;My Account&#39;</span>
+  <span class="n">user_path</span> <span class="o">=</span> <span class="n">mobile_user_path</span><span class="p">(</span><span class="vi">@user</span><span class="p">)</span>
+  <span class="n">assert</span> <span class="n">current_page</span><span class="p">(</span><span class="n">user_path</span><span class="p">)</span>
+  <span class="c1"># Change email</span>
+  <span class="n">new_email</span> <span class="o">=</span> <span class="no">Forgery</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">address</span>
+  <span class="n">within_current_page</span><span class="p">(</span><span class="n">user_path</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">fill_in</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="ss">:with</span> <span class="o">=&gt;</span> <span class="n">new_email</span>
+    <span class="n">click_button</span> <span class="s1">&#39;Save Changes&#39;</span>
+  <span class="k">end</span>
+  <span class="vi">@user</span><span class="o">.</span><span class="n">reload</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">must_equal</span> <span class="n">new_email</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Hopefully you can see how this simple page id foundation can help you better test your jQuery Mobile app with Capybara-WebKit. What an awesome tool! I sometimes find it hard to believe we are now at the point where we can easily test this much JavaScript in a headless browser directed by Ruby.
+</p>
+
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://jquerymobile.com/">jQuery Mobile</a></li>
+  <li><a href="http://weblog.jamisbuck.org/2007/1/17/concerns-in-activerecord">Concerns Module Pattern</a></li>
+  <li><a href="https://github.com/thoughtbot/capybara-webkit">Capybara-WebKit</a></li>
+  <li><a href="https://github.com/metaskills/holygrail_rails23">Rails 2.3 App w/Capybara-WebKit Integration</a></li>
+  <li><a href="https://github.com/metaskills/holygrail_rails31">Rails 3.1 App w/Capybara-WebKit Integration</a></li>
+  <li><a href="http://techiferous.com/2010/04/using-capybara-in-rails-3/">Wyatt Green's Using Capybara In Rails 3</a></li>
+  <li><a href="/2011/03/26/using-minitest-spec-with-rails/">Using MiniTest::Spec With Rails</a></li>
+</ul>
+
+
+
+
+]]>
+    </content>
+ </entry>
  
  <entry>
    <title>Use Compass Sass Framework Files With The Rails 3.1.0.rc5 Asset Pipeline</title>
@@ -466,11 +679,11 @@ $ which wkhtmltopdf
 <span class="nt">pre</span><span class="o">,</span><span class="nt">code</span><span class="o">,</span><span class="nt">form</span><span class="o">,</span><span class="nt">fieldset</span><span class="o">,</span><span class="nt">legend</span><span class="o">,</span><span class="nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span><span class="nt">p</span><span class="o">,</span><span class="nt">blockquote</span><span class="o">,</span><span class="nt">th</span><span class="o">,</span><span class="nt">td</span><span class="p">{</span><span class="k">margin</span><span class="o">:</span><span class="m">0</span><span class="p">;</span><span class="k">padding</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span>
 <span class="nt">table</span><span class="p">{</span><span class="k">border-collapse</span><span class="o">:</span><span class="k">collapse</span><span class="p">;</span><span class="k">border-spacing</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span><span class="nt">fieldset</span><span class="o">,</span><span class="nt">img</span><span class="p">{</span><span class="k">border</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span><span class="nt">address</span><span class="o">,</span><span class="nt">caption</span><span class="o">,</span>
 <span class="nt">cite</span><span class="o">,</span><span class="nt">code</span><span class="o">,</span><span class="nt">dfn</span><span class="o">,</span><span class="nt">em</span><span class="o">,</span><span class="nt">strong</span><span class="o">,</span><span class="nt">th</span><span class="o">,</span><span class="nt">var</span><span class="p">{</span><span class="k">font-style</span><span class="o">:</span><span class="k">normal</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span><span class="nt">li</span><span class="p">{</span><span class="k">list-style</span><span class="o">:</span><span class="k">none</span><span class="p">;}</span>
-<span class="nt">caption</span><span class="o">,</span><span class="nt">th</span><span class="p">{</span><span class="k">text-align</span><span class="o">:</span><span class="k">left</span><span class="p">;}</span><span class="nt">h1</span><span class="o">,</span><span class="nt">h2</span><span class="o">,</span><span class="nt">h3</span><span class="o">,</span><span class="nt">h4</span><span class="o">,</span><span class="nt">h5</span><span class="o">,</span><span class="nt">h6</span><span class="p">{</span><span class="k">font-size</span><span class="o">:</span><span class="m">100%</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span>
+<span class="nt">caption</span><span class="o">,</span><span class="nt">th</span><span class="p">{</span><span class="k">text-align</span><span class="o">:</span><span class="k">left</span><span class="p">;}</span><span class="nt">h1</span><span class="o">,</span><span class="nt">h2</span><span class="o">,</span><span class="nt">h3</span><span class="o">,</span><span class="nt">h4</span><span class="o">,</span><span class="nt">h5</span><span class="o">,</span><span class="nt">h6</span><span class="p">{</span><span class="k">font-size</span><span class="o">:</span><span class="m">100</span><span class="o">%</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span>
 <span class="nt">q</span><span class="nd">:before</span><span class="o">,</span><span class="nt">q</span><span class="nd">:after</span><span class="p">{</span><span class="k">content</span><span class="o">:</span><span class="s1">&#39;&#39;</span><span class="p">;}</span><span class="nt">abbr</span><span class="o">,</span><span class="nt">acronym</span><span class="p">{</span><span class="k">border</span><span class="o">:</span><span class="m">0</span><span class="p">;</span><span class="k">font-variant</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span>
 <span class="nt">sup</span><span class="p">{</span><span class="k">vertical-align</span><span class="o">:</span><span class="k">text</span><span class="o">-</span><span class="k">top</span><span class="p">;}</span><span class="nt">sub</span><span class="p">{</span><span class="k">vertical-align</span><span class="o">:</span><span class="k">text</span><span class="o">-</span><span class="k">bottom</span><span class="p">;}</span><span class="nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span>
 <span class="nt">select</span><span class="p">{</span><span class="k">font-family</span><span class="o">:</span><span class="k">inherit</span><span class="p">;</span><span class="k">font-size</span><span class="o">:</span><span class="k">inherit</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">inherit</span><span class="p">;}</span><span class="nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span>
-<span class="nt">select</span><span class="p">{</span><span class="o">*</span><span class="k">font-size</span><span class="o">:</span><span class="m">100%</span><span class="p">;}</span><span class="nt">legend</span><span class="p">{</span><span class="k">color</span><span class="o">:</span><span class="m">#000</span><span class="p">;}</span>
+<span class="nt">select</span><span class="p">{</span><span class="o">*</span><span class="k">font-size</span><span class="o">:</span><span class="m">100</span><span class="o">%</span><span class="p">;}</span><span class="nt">legend</span><span class="p">{</span><span class="k">color</span><span class="o">:</span><span class="m">#000</span><span class="p">;}</span>
 
 <span class="c">/* Your Base Foundation */</span>
 <span class="nt">html</span><span class="o">,</span><span class="nt">body</span> <span class="p">{</span> <span class="k">font-family</span><span class="o">:</span> <span class="k">sans-serif</span><span class="p">;</span> <span class="k">font-size</span><span class="o">:</span><span class="m">12px</span><span class="p">;</span> <span class="p">}</span>
@@ -917,123 +1130,6 @@ $ gem install mini_shoulda
   <li><a href="https://github.com/seattlerb/minitest/pull/9">The MiniTest Describe Pull Resuest</a> - HELP OUT! COMMENT!</li>
   <li><a href="http://cheat.errtheblog.com/s/minitest/1">MiniTest Cheat Sheet</a></li>
 </ul>
-]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>Automating Heroku PG Backups</title>
-   <link href="http://metaskills.net/2011/01/03/automating-heroku-pg-backups"/>
-   <updated>2011-01-03T00:00:00-05:00</updated>
-   <id>http://metaskills.net/2011/01/03/automating-heroku-pg-backups</id>
-   <content type="html">
-     <![CDATA[<p>
-  On December 1st, Heroku <a href="http://blog.heroku.com/archives/2010/12/1/bundles-deprecation/">deprecated their bundles add-on</a> in favor of <a href="http://blog.heroku.com/archives/2010/11/16/pgbackups/">their new PG Backups</a>. Even though there are <a href="http://groups.google.com/group/heroku/browse_thread/thread/25402694098d393a">other solutions</a> for automating backups using this new add-on, none of them met my needs. I like to have a daily DB backup history, just in case you find something bad that happened "n" days earlier. Below is a simple rake task suitable to place in your rails <code>lib/tasks/heroku.task</code> file. I'll explain some things I learned below when writing this.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;heroku&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;heroku/command&#39;</span>
-
-<span class="no">HEROKU_BACKUP_BUCKET</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Heroku</span><span class="o">::</span><span class="no">Command</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">selected_application</span><span class="si">}</span><span class="s2">-backups&quot;</span>
-
-<span class="n">namespace</span> <span class="ss">:heroku</span> <span class="k">do</span>
-  
-  <span class="n">desc</span> <span class="s2">&quot;Use the `heroku pgbackups` with my S3 bucket.&quot;</span>
-  <span class="n">task</span> <span class="ss">:backup</span> <span class="o">=&gt;</span> <span class="ss">:connect_to_s3</span> <span class="k">do</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="n">capture_heroku_command</span> <span class="s1">&#39;pgbackups&#39;</span>
-    <span class="k">if</span> <span class="n">heroku_existing_backup?</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
-      <span class="n">last_backup_info</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; | &quot;</span><span class="p">)</span>
-      <span class="n">last_backup_id</span> <span class="o">=</span> <span class="n">last_backup_info</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-      <span class="n">last_backup_time</span> <span class="o">=</span> <span class="n">last_backup_info</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
-      <span class="nb">puts</span> <span class="s2">&quot;Deleting last backup - ID: </span><span class="si">#{</span><span class="n">last_backup_id</span><span class="si">}</span><span class="s2"> BackupTime: </span><span class="si">#{</span><span class="n">last_backup_time</span><span class="si">}</span><span class="s2">&quot;</span>
-      <span class="n">heroku_command</span> <span class="s1">&#39;pgbackups:destroy&#39;</span><span class="p">,</span> <span class="n">last_backup_id</span>
-    <span class="k">end</span>
-    <span class="n">heroku_command</span> <span class="s1">&#39;pgbackups:capture&#39;</span>
-    <span class="n">backup_url</span> <span class="o">=</span> <span class="n">capture_heroku_command</span> <span class="s1">&#39;pgbackups:url&#39;</span>
-    <span class="n">backup_filename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Heroku</span><span class="o">::</span><span class="no">Command</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">selected_application</span><span class="si">}</span><span class="s2">_</span><span class="si">#{</span><span class="no">Time</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">xmlschema</span><span class="si">}</span><span class="s2">.dump&quot;</span>
-    <span class="n">backup_data</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class="no">HTTP</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="no">URI</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">backup_url</span><span class="p">))</span><span class="o">.</span><span class="n">body</span>
-    <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">S3Object</span><span class="o">.</span><span class="n">store</span> <span class="n">backup_filename</span><span class="p">,</span> <span class="n">backup_data</span><span class="p">,</span> <span class="no">HEROKU_BACKUP_BUCKET</span>
-  <span class="k">end</span>
-  
-  <span class="n">task</span> <span class="ss">:connect_to_s3</span> <span class="k">do</span>
-    <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">establish_connection!</span><span class="p">(</span>
-      <span class="ss">:access_key_id</span>     <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;AMAZON_ACCESS_KEY_ID&#39;</span><span class="o">]</span><span class="p">,</span>
-      <span class="ss">:secret_access_key</span> <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;AMAZON_SECRET_ACCESS_KEY&#39;</span><span class="o">]</span><span class="p">)</span>
-    <span class="k">begin</span>
-      <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">Bucket</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="no">HEROKU_BACKUP_BUCKET</span><span class="p">)</span>
-    <span class="k">rescue</span> <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">NoSuchBucket</span>
-      <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">Bucket</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="no">HEROKU_BACKUP_BUCKET</span><span class="p">)</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-  
-<span class="k">end</span>
-
-<span class="kp">private</span>
-
-<span class="k">def</span> <span class="nf">heroku_command</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">)</span>
-  <span class="no">Heroku</span><span class="o">::</span><span class="no">Command</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">)</span>
-<span class="k">end</span>
-
-<span class="k">def</span> <span class="nf">capture_heroku_command</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">)</span>
-  <span class="n">stdout</span> <span class="o">=</span> <span class="no">STDOUT</span>
-  <span class="no">StringIO</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">out</span><span class="o">|</span>
-    <span class="k">def</span> <span class="nc">out</span><span class="o">.</span><span class="nf">flush</span> <span class="p">;</span> <span class="k">end</span>
-    <span class="vg">$stdout</span> <span class="o">=</span> <span class="n">out</span>
-    <span class="n">heroku_command</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">)</span>
-  <span class="k">end</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">chomp</span>
-<span class="k">ensure</span>
-  <span class="vg">$stdout</span> <span class="o">=</span> <span class="n">stdout</span>
-<span class="k">end</span>
-
-<span class="k">def</span> <span class="nf">heroku_existing_backup?</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
-  <span class="n">info</span> <span class="o">!~</span> <span class="sr">/no backups/i</span>
-<span class="k">end</span>
-</code></pre>
-</div>
-
-
-<p>
-  Once installed you can run something like <code>bundle exec rake heroku:backup</code> or if you are not using bundler, <code>rake heroku:backup</code>. Assuming you have your S3 credentials setup in the ENV variables, it will find or create a private bucket on your S3 account and upload an app-named and time-stamped dump file to that new bucket. If necessary, it <strong>will delete your latest backup</strong> on Heroku to make room for this new one. The code should be easy to change, so flavor to taste.
-</p>
-
-<p>
-  I tried to use the Heroku commands built into their plugin without resorting to command interpolation. The only problem was that the Heroku gem always wants to print to standard out and flush the buffer. So I created a few private helper methods that temporarily shim in a <code>$stdout</code> replacement that does not flush. This let's me run the Heroku commands from code and capture what would have been printed to standard out.
-</p>
-
-<p>
-  Lastly, since I could not find a way to automate this on Heroku via their cron add-on, I simply added a <code>launchd</code> plist to my desktop Mac that hit a shell script in my project folder to run the rake task. It is way past my skills to try and get RVM to work in the <code>launchd.plist</code> system since it is not a true shell. This is why the shell script uses my system ruby (installed via MacPorts). Here is the shell script below and the launchd plist which I placed in <code>~/Library/LaunchAgents</code> with a name like <code>com.actionmoniker.backupMyApp.plist</code>. Just run <code>launchctl load ~/Library/LaunchAgents/com.actionmoniker.backupMyApp.plist</code> and this will run at 4am every morning. If any one finds out how to automate the execution of this rake task on Heroku, please drop me a line!
-</p>
-
-<div class="highlight"><pre><code class="bash"><span class="c">#! /bin/zsh</span>
-<span class="nb">source</span> /Users/kencollins/.zshenv
-<span class="nb">cd</span> /Users/kencollins/repos/myapp <span class="o">&amp;&amp;</span> /opt/local/bin/rake heroku:backup
-</code></pre>
-</div>
-
-<div class="highlight"><pre><code class="html"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
-<span class="cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
-<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
-<span class="nt">&lt;dict&gt;</span>
-  <span class="nt">&lt;key&gt;</span>Label<span class="nt">&lt;/key&gt;</span>
-  <span class="nt">&lt;string&gt;</span>com.actionmoniker.backupMyApp<span class="nt">&lt;/string&gt;</span>
-  <span class="nt">&lt;key&gt;</span>ProgramArguments<span class="nt">&lt;/key&gt;</span>
-  <span class="nt">&lt;array&gt;</span>
-    <span class="nt">&lt;string&gt;</span>/Users/kencollins/repos/myapp/lib/bin/backup.sh<span class="nt">&lt;/string&gt;</span>
-  <span class="nt">&lt;/array&gt;</span>
-  <span class="nt">&lt;key&gt;</span>StartCalendarInterval<span class="nt">&lt;/key&gt;</span>
-  <span class="nt">&lt;dict&gt;</span>
-    <span class="nt">&lt;key&gt;</span>Minute<span class="nt">&lt;/key&gt;</span>
-    <span class="nt">&lt;integer&gt;</span>0<span class="nt">&lt;/integer&gt;</span>
-    <span class="nt">&lt;key&gt;</span>Hour<span class="nt">&lt;/key&gt;</span>
-    <span class="nt">&lt;integer&gt;</span>4<span class="nt">&lt;/integer&gt;</span>
-  <span class="nt">&lt;/dict&gt;</span>
-<span class="nt">&lt;/dict&gt;</span>
-<span class="nt">&lt;/plist&gt;</span>
-</code></pre>
-</div>
-
-
-
 ]]>
     </content>
  </entry>
