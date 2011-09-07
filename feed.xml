@@ -4,13 +4,117 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2011-08-29T11:08:05-04:00</updated>
+ <updated>2011-09-06T20:31:59-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
    <email>ken@metaskills.net</email>
  </author>
 
+ 
+ <entry>
+   <title>How Do You Encapsulate Your JavaScript</title>
+   <link href="http://metaskills.net/2011/09/06/how-do-you-encapsulate-your-javascript"/>
+   <updated>2011-09-06T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/09/06/how-do-you-encapsulate-your-javascript</id>
+   <content type="html">
+     <![CDATA[<p>
+  I ask this question a lot! To Job candidates, friends, and almost any developer that says they work with JavaScript. I believe how you encapsulate your JavaScript is a good indicator on your level of expertise with the language. I find that most beginners have come to JavaScript via jQuery and often define their functions at the top level namespace in some application.js file. These functions are loosely organized and often have no way of sharing simple object state and behavior. A good object oriented programmer would never write their application code like that. JavaScript should be no different and I think jQuery has a part in the blame of those not knowing this.
+</p>
+
+<p>
+  I've <a href="/2008/08/18/in-hell-oo-for-homemarks/">been writing rich object oriented JavaScript</a> for the better part of 4 years now using <a href="http://www.prototypejs.org/">Prototype.js</a>. That framework has always championed encapsulating your web application's behavior using a <a href="http://prototypejs.org/learn/class-inheritance">standard class and inheritance notation</a>. Sam Stephenson, the author of Prototype.js, did a good job trying to educate what real JavaScript Object Notation (JSON) is about and how you can encapsulate behavior using Prototype's Class structure while paying homage to <a href="http://dean.edwards.name/weblog/2006/03/base/">Dean Edward's Base.js</a> to which it owes its origins.
+</p>
+
+<p>
+  So jQuery is the proper winner and choice for anyone wanting to use a JavaScript framework to make working with the DOM in web sites easier. It has awesome event handling and delegation. So many things that Prototype.js lacked. It even has great documentation. About the only bad thing about jQuery is the widely different interfaces to it's AJAX functions and the arguments passed to their callbacks. Oh, and they totally screwed new JavaScript developers by not sheperding them into learning some sort of way to encapsulate their object behavior. So this article is for those that are not using <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript's class system</a>, <a href="http://documentcloud.github.com/backbone/">Backbone.js's class system</a>, or jQuery's deeply nested plugin class system that is hidden away. So lets get to fixing that. Here is 32 lines of dirt simple JavaScript inheritance.
+</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="cm">/* Simple JavaScript Class</span>
+<span class="cm">   By John Resig. MIT Licensed. &lt;http://ejohn.org/blog/simple-javascript-inheritance/&gt; */</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="kd">var</span> <span class="nx">initializing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">fnTest</span> <span class="o">=</span> <span class="sr">/xyz/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span><span class="nx">xyz</span><span class="p">;})</span> <span class="o">?</span> <span class="sr">/\b_super\b/</span> <span class="o">:</span> <span class="sr">/.*/</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">JQClass</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){};</span>
+  <span class="nx">JQClass</span><span class="p">.</span><span class="nx">extend</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">_super</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+    <span class="nx">initializing</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="k">this</span><span class="p">();</span>
+    <span class="nx">initializing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">prototype</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">prop</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;function&quot;</span> <span class="o">&amp;&amp;</span> 
+        <span class="k">typeof</span> <span class="nx">_super</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;function&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">fnTest</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">prop</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="o">?</span>
+        <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">fn</span><span class="p">){</span>
+          <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_super</span> <span class="o">=</span> <span class="nx">_super</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+            <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>        
+            <span class="k">this</span><span class="p">.</span><span class="nx">_super</span> <span class="o">=</span> <span class="nx">tmp</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+          <span class="p">};</span>
+        <span class="p">})(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">prop</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="o">:</span>
+        <span class="nx">prop</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="kd">function</span> <span class="nx">JQClass</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">initializing</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">init</span> <span class="p">)</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">JQClass</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">prototype</span><span class="p">;</span>
+    <span class="nx">JQClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">JQClass</span><span class="p">;</span>
+    <span class="nx">JQClass</span><span class="p">.</span><span class="nx">extend</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">callee</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">JQClass</span><span class="p">;</span>
+  <span class="p">};</span>
+<span class="p">})();</span>
+</code></pre>
+</div>
+
+<p>
+  It is <a href="http://ejohn.org/blog/simple-javascript-inheritance/">worth reading the comments</a> John Resig's blog post for this piece of work as well as the full documentation. My code example above names this <code>JQClass</code> to avoid namespace collisions with other frameworks. Here is a simple example of its usage.
+</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="c1">// Your namespace.</span>
+
+<span class="kd">var</span> <span class="nx">MyApp</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">models</span><span class="o">:</span> <span class="p">{}</span>
+<span class="p">};</span>
+
+<span class="c1">// Simple object example for page flash.</span>
+
+<span class="nx">MyApp</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">flash</span> <span class="o">=</span> <span class="nx">JQClass</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">aPage</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">page</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">aPage</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">alertDiv</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">page</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;div.flash.alert&#39;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">noticeDiv</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">page</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;div.flash.notice&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+  
+  <span class="nx">alert</span><span class="o">:</span>  <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_doFlashFor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">alertDiv</span><span class="p">,</span><span class="nx">content</span><span class="p">);</span> <span class="p">},</span>
+  
+  <span class="nx">notice</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_doFlashFor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">noticeDiv</span><span class="p">,</span><span class="nx">content</span><span class="p">);</span> <span class="p">},</span>
+  
+  <span class="nx">clear</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="err">#</span> <span class="p">...</span>
+  <span class="p">},</span>
+  
+  <span class="nx">_doFlashFor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">flash</span><span class="p">,</span> <span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">silentScroll</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+    <span class="nx">flash</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+    <span class="nx">flash</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+  <span class="p">}</span>
+  
+<span class="p">});</span>
+</code></pre>
+</div>
+
+
+<p>
+  This code example is pulled from a jQuery mobile project I recently finished. The real usage of the flash objects would be numerous as there would be one per page and I have a top level delegate object that finds the active page and finds or create the flash DOM elements. But this should be a good enough example to show why you might choose a simple class and object inheritance system vs putting all your logic in <code>$(document).ready({})</code> scopes. There are tons of ways to write good OO JavaScript and I hope some find this useful and explore some other ways.
+</p>
+
+
+]]>
+    </content>
+ </entry>
  
  <entry>
    <title>jQuery Mobile &amp;amp; Rails</title>
@@ -1045,95 +1149,6 @@ $ tree MetaSupport
 </code></pre>
 </div>
 
-]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>From Test::Unit &amp; Shoulda To MiniTest::Spec &amp; MiniShoulda</title>
-   <link href="http://metaskills.net/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda"/>
-   <updated>2011-01-25T00:00:00-05:00</updated>
-   <id>http://metaskills.net/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda</id>
-   <content type="html">
-     <![CDATA[<aside class="flash_info">
-  UPDATE:  
-  <a href="/2011/03/26/using-minitest-spec-with-rails/">Using MiniTest::Spec With Rails</a> 
-  &amp;
-  <a href="/2011/03/26/using-minitest-spec-with-rails/">MiniBacktrace For MiniTest &amp; Rails</a>
-</aside>
-
-<p>
-  It seems the MiniTest replacement for Test::Unit in Ruby 1.9 has been presenting itself more and more in my daily readings. Recently was Jamis Buck's article titled <a href="http://37signals.com/svn/posts/2742-the-road-to-faster-tests">The road to faster tests</a> where he talks about optimizing basecamp's suite to run faster. And there again, some of the comments below mentioned MiniTest as a solution. That got me thinking on what would it take for me to switch from Test::Unit to MiniTest.
-</p>
-
-<p>
-  I love testing! But I am not nuts about large libraries. Looking at you RSpec! <a href="http://evan.tiggerpalace.com/articles/2010/12/18/ruby-test-unit-sucks-and-why-i-still-use-it/">Like others</a>, I believe that you do not need a bloated test framework to get good coverage with a lean and succinct style. A handful of assertions and a simple context structure provided by libraries like <a href="https://github.com/thoughtbot/shoulda">Shoulda</a> is really all I need for both unit and a certain level of functional testing. It is my firm believe that large libraries and semi-magical test code based on things like RSpec will wane in the coming years. Those that base very large test suites on them will suffer the penalty for when an upgrade or test refactor is needed. I could be wrong, time will tell. For now let's cover how to move to MiniTest for those that like simple Test::Unit and or Shoulda.
-</p>
-
-<p>
-  MiniTest provides a drop in replacement for Test::Unit, so I wont cover the details of those basics. What most do not know is that MiniTest comes with a simple MiniTest::Spec DSL that uses <code>describe</code> and <code>it</code> blocks much like Shoulda's <code>context</code> and <code>should</code> methods. The similarities were so close that I set out to move all my projects to MiniTest::Spec. The goal would be that none of my exiting suites context/should/before/after code would require a change. The result...
-</p>
-
-
-<h2>MiniShoulda</h2>
-
-<p>
-  <a href="https://github.com/metaskills/mini_shoulda">MiniShoulda</a> is a small ruby gem that puts a Shoulda DSL on top of MiniTest::Spec. All it really does it alias a few key methods. Here is the core of it now.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">MiniTest</span><span class="o">::</span><span class="no">Spec</span> <span class="o">&lt;</span> <span class="no">MiniTest</span><span class="o">::</span><span class="no">Unit</span><span class="o">::</span><span class="no">TestCase</span>
-  
-  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
-    <span class="k">alias</span> <span class="ss">:setup</span>    <span class="ss">:before</span>
-    <span class="k">alias</span> <span class="ss">:teardown</span> <span class="ss">:after</span>
-    <span class="k">alias</span> <span class="ss">:should</span>   <span class="ss">:it</span>
-    <span class="k">alias</span> <span class="ss">:context</span>  <span class="ss">:describe</span>
-  <span class="k">end</span>
-  
-  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">should_eventually</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
-    <span class="n">it</span><span class="p">(</span><span class="s2">&quot;should eventually </span><span class="si">#{</span><span class="n">desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">skip</span><span class="p">(</span><span class="s2">&quot;Should eventually </span><span class="si">#{</span><span class="n">desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">}</span>
-  <span class="k">end</span>
-  
-<span class="k">end</span>
-</code></pre>
-</div>
-
-<p>
-  For now, MiniShoulda performs only one monkey patch to MiniTest. There is a critical bug in MiniTest that does not allow the describe/context blocks to use the existing scope of the parent class. I have a <a href="https://github.com/seattlerb/minitest/pull/9">pull request</a> in for the project. Please help out and add a thoughtful comment based on the <a href="https://github.com/metaskills/minitest/commit/e7cde5bd9e61bc1ac13c7326ef4de23382e3467b">merits of the patch</a> and the <a href="https://gist.github.com/793330">description of the problem</a>. No author likes to see simple +1 comments.
-</p>
-
-
-<h2>The MiniTest Switch</h2>
-
-<pre class="command">
-$ gem install mini_shoulda
-</pre>
-
-<p>
-  Our gem spec will automatically pull in MiniTest version 2.0.2 or greater. Assuming you have a test helper file, the top requires will looks something like this. MiniTest needs that autorun file required or none of your tests will run.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;mini_shoulda&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;minitest/autorun&#39;</span>
-</code></pre>
-</div>
-
-<p>
-  What should I expect? For starters, expect a few of your tests to fail. Especially ones that were happenstantially running linearly and not exercised in isolation. I think there is a technical term for this? Anyways, MiniTest mixes up the test suite each run trough it using a random seed. So it is highly like to expose a few poorly written tests that depended on state leftover from a previous test. Also the MiniTest::Unit underneath MiniTest::Spec does not have a few assertions you may have used. One is <code>assert_raise</code> which is now the standard convention <code>assert_raises</code> with an "s". And finally <code>assert_nothing_raised</code> has been pulled completely since Test::Unit's documentation alluded to its uselessness for a long time.
-</p>
-
-<p>
-  What does MiniTest::Spec give you besides clean and powerful describe/it organization with before/after setups and teardowns? I highly recommend the <a href="http://cheat.errtheblog.com/s/minitest/1">MiniTest cheat sheet</a> to find out. See the spec and mock methods at the bottom? As much as I have always like the basic unit testing assertions, I am looking forward to using the must/wont object assertions.
-</p>
-
-
-<h2>Resources</h2>
-
-<ul>
-  <li><a href="https://github.com/metaskills/mini_shoulda">MiniShoulda Github Project</a></li>
-  <li><a href="https://github.com/seattlerb/minitest/pull/9">The MiniTest Describe Pull Resuest</a> - HELP OUT! COMMENT!</li>
-  <li><a href="http://cheat.errtheblog.com/s/minitest/1">MiniTest Cheat Sheet</a></li>
-</ul>
 ]]>
     </content>
  </entry>
