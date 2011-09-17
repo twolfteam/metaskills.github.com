@@ -4,13 +4,96 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2011-09-11T14:46:26-04:00</updated>
+ <updated>2011-09-17T09:08:24-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
    <email>ken@metaskills.net</email>
  </author>
 
+ 
+ <entry>
+   <title>Keep Trying</title>
+   <link href="http://metaskills.net/2011/09/17/keep-trying"/>
+   <updated>2011-09-17T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/09/17/keep-trying</id>
+   <content type="html">
+     <![CDATA[<p>
+  One part of Objective-C that I like is being able to send messages to nil objects safely and more so their <a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/KeyValueCoding/Articles/KeyValueCoding.html">KVC</a> and <a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/KeyValueObserving/KeyValueObserving.html">KVO</a> patterns. In Ruby I often use the <code>#try</code> method to safely send messages objects that may be nil at runtime. But one thing I always wanted was a nice way to send a key path, basically a string of methods signatures, to an object in the same way. I give you my simple <code>#try_keypath</code> method :)
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Object</span>
+  <span class="k">def</span> <span class="nf">try_keypath</span><span class="p">(</span><span class="nb">methods</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="nb">methods</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">result</span><span class="p">,</span> <span class="nb">method</span><span class="o">|</span> <span class="n">result</span><span class="o">.</span><span class="n">try</span><span class="p">(</span><span class="nb">method</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">NilClass</span>
+  <span class="k">def</span> <span class="nf">try_keypath</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="kp">nil</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Yup, it is that simple. Let's see how this would work. Here are a few basic classes that randomly return nested objects. So staring with the <code>Foo</code> object, we have the possibility to get to some deeply nested info.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Foo</span>
+  <span class="k">def</span> <span class="nf">bar</span>
+    <span class="nb">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">?</span> <span class="no">Bar</span><span class="o">.</span><span class="n">new</span> <span class="p">:</span> <span class="kp">nil</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Bar</span>
+  <span class="k">def</span> <span class="nf">batz</span>
+    <span class="s1">&#39;wohoo&#39;</span>
+  <span class="k">end</span>
+  <span class="k">def</span> <span class="nf">deep</span>
+    <span class="no">Deep</span><span class="o">.</span><span class="n">new</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Deep</span>
+  <span class="k">def</span> <span class="nf">info</span>
+    <span class="p">{</span><span class="ss">:winning</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Finally, here is how it would look and return different results. Man I love Ruby!
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7dfd0&gt;</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7ddf0&gt;</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7d4b8&gt;</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; nil</span>
+
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
+
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
+</code></pre>
+</div>
+
+
+]]>
+    </content>
+ </entry>
  
  <entry>
    <title>Revisiting My Design Past</title>
@@ -1119,31 +1202,6 @@ $ tree MetaSupport
   </aside>
 </p>
 
-
-
-]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>Modern SQL Server &amp; Ruby/Rails Installer For Windows</title>
-   <link href="http://metaskills.net/2011/02/10/modern-sql-server--rails"/>
-   <updated>2011-02-10T00:00:00-05:00</updated>
-   <id>http://metaskills.net/2011/02/10/modern-sql-server--rails</id>
-   <content type="html">
-     <![CDATA[<p>
-  <span class="photofancy floatr ml20 mb10">
-    <img src="/assets/mss_eyarticle.png" alt="My Modern SQL Server & Rails Engine Yard Article" width="400" height="293" />
-  </span>
-  If you have not done so, please go read my article <em><a href="http://www.engineyard.com/blog/2011/modern-sql-server-rails/">Modern SQL Server & Rails</a></em> on the Engine Yard blog. I want to thank Wayne E Seguin for inviting me to write the article. This article details many exciting things that have been happening for those using the SQL Server Adapter for Rails, most notably TinyTDS. The article outlines why everyone still using the ODBC connection mode should really switch over to TinyTDS.
-</p>
-
-<p>
-  <span class="photofancy floatr ml20 mb20">
-    <img src="/assets/mss_railsinstaller.png" alt="Ruby Rails Installer For Windows" width="400" height="293" />
-  </span>
-  Many exciting things are happening thanks to Wayne's new pet project, a <a href="http://railsinstaller.org/">ruby and rails installer for Windows</a>. The adapter and TinyTDS will hopefully dove tail into that. The plan is to include components in the one click installer that will allow Windows users to access their legacy databases using TinyTDS and the SQL Server Adapter. We had even talked on the mailing list about including a demo rails app with the ruby windows installer that would access the northwind database much the same way .Net demos would.
-</p>
 
 
 ]]>
