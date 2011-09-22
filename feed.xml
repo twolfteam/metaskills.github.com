@@ -4,7 +4,7 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2011-09-22T09:30:32-04:00</updated>
+ <updated>2011-09-22T09:31:32-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
@@ -704,7 +704,6 @@
    <content type="html">
      <![CDATA[<aside class="flash_info">
   UPDATE: Now that Rails 3.1 is out, just use the <a href="http://rubygems.org/gems/compass">latest compass</a> or pre-release. No hacks needed!
-  UPDATE: <a href="/2011/07/29/use-compass-sass-framework-files-with-the-rails-3.1.0.rc5-asset-pipeline/">Read the latest technique for Rails 3.1.0.rc5</a>.
 </aside>
 
 <p>
