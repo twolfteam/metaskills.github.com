@@ -1,0 +1,364 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      LESS Is More - Using Twitter's Bootstrap In The Rails 3.1 Asset Pipeline @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/zepto.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="i">Colophon</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Follow</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate datetime="2011-09-26T00:00:00-04:00">
+              <span class="day">26</span> <span class="month">Sep</span> <span class="year">2011</span>
+            </time>
+            <h1>
+              LESS Is More - Using Twitter's Bootstrap In The Rails 3.1 Asset Pipeline
+            </h1>
+          </header>
+          <p>
+            <span class="floatr ml20 mb20"><img src="/assets/less.png" alt="LESS - The Dynamic Stylesheet language" width="199" height="81"></span>
+            This weekend I decided to experiment with <a href="http://lesscss.org/">LESS CSS</a> by replacing the existing <a href=
+            "http://sass-lang.com/">Sass</a> and <a href="http://compass-style.org/">Compass</a> code that had been built thus far a small project.
+            Why? Three basic reasons. First, I wanted to see how LESS stacked up. Second, I was intrigued by some of LESS' features, in particular
+            <a href="http://lesscss.org/#-namespaces">their namespace support.</a> Lastly, I wanted to use <a href=
+            "http://twitter.github.com/bootstrap/">Twitter's Bootstrap</a> project as a baseline for my design. Since Rails 3.1 has been out for some
+            time, I was expecting the move move to LESS to go considerably smoother than my <a href=
+            "/2011/07/29/use-compass-sass-framework-files-with-the-rails-3.1.0.rc5-asset-pipeline/">pre-release attempts with Compass and Sass</a>. I
+            was wrong.
+          </p>
+          <p>
+            So the tilt gem already supported LESS templates and that means that Sprockets and the asset pipeline rendering technically did too. But
+            there was <a href="https://github.com/cowboyd/less.rb/issues/8">no official less-rails gem</a> that setup a standard configuration for
+            other gems to hook into. This meant that libraries that distributed the Twitter Bootstrap assets were often hard to use or had
+            inconsistent results. For example, it was not possible to load the Bootstrap's assets in such as way that let you build on top of the
+            LESS mixins they had build. Nor were those assets namespaced in such a way that would allow you to have a <code>modal.less</code> asset
+            as it would have conflicted with Bootstrap's version. So since I apparently have a bunch of free time and I hate building on top of a bad
+            foundation, I set out to learn both <code>Rails::Railtie</code> and <code>Rails::Engine</code> to build the proper for LESS and Bootstrap
+            in the Rails 3.1 asset pipeline.
+          </p>
+          <h2>
+            New LESS Gems
+          </h2>
+          <p>
+            I introduce you to both the new <a href="http://github.com/metaskills/less-rails">less-rails</a> and <a href=
+            "http://github.com/metaskills/less-rails-bootstrap">less-rails-bootstrap</a> gems. Take a look at the source code if you ever wanted to
+            learn how to implement a simple Rails::Railtie or Engine. But assuming you want to use Twitter's Bootstrap, here are a few examples to
+            get you started. First just bundle up to less-rails-bootstrap, it will automatically pull in less-rails and less.rb via their
+            dependencies. BTW, I am going to keep the semantic versioning of the less-rails-bootstrap gem in sync with the major and minor versions
+            of the Bootstrap project.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;less-rails-bootstrap&#39;</span><span class="p">,</span> <span class=
+"s1">&#39;~&gt; 1.3.0&#39;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            From here, the easiest way to use Bootstrap is to require it in your <code>application.css</code> file. Doing so will compile the
+            complete LESS libraries files for Bootstrap. Note how we namespace the files using a simple directory structure.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="css"><span class="c">/*</span>
+<span class="c"> *= require twitter/bootstrap</span>
+<span class="c">*/</span>
+
+<span class="nf">#foo</span> <span class="p">{</span>
+  <span class="c">/* Your styles... */</span>
+<span class="p">}</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Alternatively, in a file with the <code>.css.less</code> extension, you can import the entire Bootstrap LESS framework. This will allow
+            you to use Bootstrap's variables and mixins in your CSS that follows. Remember, unlike other CSS frameworks, requiring or importing
+            Bootstrap will include all the CSS for building a bootstrapped website. If you only want variables or mixins, you will have to import
+            those discreet files, see next section.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="css"><span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap&quot;</span><span class="p">;</span>
+
+<span class="nf">#foo</span> <span class="p">{</span>
+  <span class="o">.</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="p">(</span><span class=
+"m">4px</span><span class="p">);</span>
+<span class="p">}</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Maybe all you want to use are the variables and mixins that come with Twitter Bootstrap. No problem, just import them individually from
+            you own <code>.css.less</code> file. In this case only the <code>#foo</code> selector is output.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="css"><span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap/variables&quot;</span><span class="p">;</span>
+<span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap/mixins&quot;</span><span class="p">;</span>
+
+<span class="nc">.myButton</span><span class="o">(</span><span class="k">@radius</span><span class="o">:</span> <span class=
+"nt">5px</span><span class="o">)</span> <span class="p">{</span>
+  <span class="nc">.border-radius</span><span class="o">(</span><span class="k">@radius</span><span class="o">)</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#foo</span> <span class="p">{</span>
+  <span class="o">.</span><span class="n">myButton</span><span class="p">(</span><span class="m">10px</span><span class="p">);</span>
+<span class="p">}</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Using the <a href="http://twitter.github.com/bootstrap/#javascript">Bootstrap JavaScript</a> files is just as easy. Again, you can
+            include all them with a single directive from your <code>application.js</code> file. Optionally, you can require only the files you need
+            like <code>require twitter/bootstrap/modal</code>.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="javascript"><span class="c1">//= require twitter/bootstrap</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class=
+"p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="c1">//...</span>
+<span class="p">});</span>
+</code>
+</pre>
+          </div>
+          <p>
+            The less-rails project has already started getting some good feedback. Soon we hope to implement all the features that you may have used
+            in the sass-rails project, <a href="https://github.com/metaskills/less-rails/issues/1">like asset pipeline helpers</a>. One last thing, I
+            wanted to say thanks to <a href="https://github.com/nmerouze">Nicolas Mérouze</a> for opening up the old less-rails gem space on
+            rubygems.org for the new gem!
+          </p>
+          <h2>
+            Resources
+          </h2>
+          <ul>
+            <li>
+              <a href="http://lesscss.org/">LESS - The Dynamic Stylesheet Language</a>
+            </li>
+            <li>
+              <a href="http://github.com/metaskills/less-rails">LESS-Rails - Official Support For LESS In Rails</a>
+            </li>
+            <li>
+              <a href="http://github.com/metaskills/less-rails-bootstrap">LESS-Rails-Bootstrap - CSS toolkit from Twitter For Rails 3.1 Asset
+              Pipeline</a>
+            </li>
+            <li>
+              <a href="http://github.com/cowboyd/less.rb">LESS.rb - LESS CSS Rendering From Ruby</a>
+            </li>
+            <li>
+              <a href="http://sass-lang.com/">Sass - Syntactically Awesome Stylesheets</a>
+            </li>
+            <li>
+              <a href="http://github.com/rails/sass-rails">Sass-Rails - Official Support For Sass In Rails</a>
+            </li>
+            <li>
+              <a href="http://compass-style.org/">Compass - An Open-Source CSS Authoring Framework</a>
+            </li>
+            <li>
+              <a href="http://twitter.github.com/bootstrap/">Bootstrap - A Toolkit From Twitter Designed To Kickstart Development</a>
+            </li>
+          </ul>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2011/09/26/less-is-more-using-twitter-bootstrap-in-the-rails-3-1-asset-pipeline';
+            var disqus_title = 'LESS Is More - Using Twitter's Bootstrap In The Rails 3.1 Asset Pipeline';
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              LESS Is More - Using Twitter's Bootstrap In The Rails 3.1 Asset Pipeline
+            </h4>
+            <p>
+              <a href="/2011/09/26/less-is-more-using-twitter-bootstrap-in-the-rails-3-1-asset-pipeline">This weekend I decided to experiment with
+              LESS CSS by replacing the existing Sass and Compass code that had been built thus far a small project. Why? Three basic reasons....</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Keep Trying
+            </h4>
+            <p>
+              <a href="/2011/09/17/keep-trying">One part of Objective-C that I like is being able to send messages to nil objects safely and more so
+              their KVC and KVO patterns. In Ruby I often use...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Revisiting My Design Past
+            </h4>
+            <p>
+              <a href="/2011/09/11/revisiting-my-design-past">Not many people know that I used to be a designer back in the mid 90's. Some of you all
+              may have ventured deep into the colophon section of my...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2011 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_slideshare" href="http://www.slideshare.net/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>
