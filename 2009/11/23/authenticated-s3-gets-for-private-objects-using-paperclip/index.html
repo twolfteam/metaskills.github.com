@@ -58,6 +58,9 @@
               Authenticated S3 GETs For Private Objects Using Paperclip
             </h1>
           </header>
+          <aside class="flash_info">
+            UPDATE: [10/18/2011] I now use Fog vs AWS::S3 with Paperclip. I have included a Fog specific example below.
+          </aside>
           <p>
             Yea I know, I am probably the last person on earth that is just getting around to using <a href=
             "http://github.com/thoughtbot/paperclip">Paperclip</a>. To be honest, most of my file upload code was written way before Paperclip or
@@ -193,6 +196,49 @@
     <span class="k">end</span>
 
   <span class="k">end</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <h2>
+            UPDATE: Fog Example
+          </h2>
+          <p>
+            Here is an updated <code>#authenticated_s3_get_url</code> that I use with Fog as the backend storage for S3. This example illustrates 2
+            things. First that the bucket is named as your CNAME record which is also enforced in the <code>:fog_host</code>. I do this so that I can
+            generate URLs via Paperclip or Fog and always have my custom domain in place. When I gsub the "s3.amazonaws.com" out, I am left with just
+            my CNAME domain/bucket name. Lastly, if you want to generate "https" URLs, use the <code>#get_https_url</code> method.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">class</span> <span class="nc">MyDownload</span>
+
+  <span class="n">has_attached_file</span> <span class="ss">:attachment</span><span class="p">,</span> 
+                    <span class="ss">:storage</span> <span class="o">=&gt;</span> <span class="ss">:fog</span><span class="p">,</span> 
+                    <span class="ss">:fog_credentials</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
+"o">.</span><span class="n">.</span><span class="o">.</span><span class="p">},</span>
+                    <span class="ss">:fog_directory</span> <span class="o">=&gt;</span> <span class=
+"s1">&#39;mybucket.domain.net&#39;</span><span class="p">,</span>
+                    <span class="ss">:fog_public</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+                    <span class="ss">:fog_host</span> <span class="o">=&gt;</span> <span class=
+"s1">&#39;http://mybucket.domain.net&#39;</span><span class="p">,</span>
+                    <span class="ss">:path</span> <span class="o">=&gt;</span> <span class="nb">lambda</span> <span class="p">{</span> <span class=
+"o">|</span><span class="n">attachment</span><span class="o">|</span> <span class="s2">&quot;:id_partition/</span><span class=
+"si">#{</span><span class="n">attachment</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class=
+"n">random_secret</span><span class="si">}</span><span class="s2">/:filename&quot;</span> <span class="p">}</span>  
+  
+  <span class="k">def</span> <span class="nf">authenticated_s3_get_url</span><span class="p">(</span><span class="n">expires</span> <span class=
+"o">=</span> <span class="kp">nil</span><span class="p">)</span>
+    <span class="n">expires</span> <span class="o">||=</span> <span class="mi">10</span><span class="o">.</span><span class=
+"n">minutes</span><span class="o">.</span><span class="n">from_now</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">attachment</span><span class="o">.</span><span class=
+"n">send</span><span class="p">(</span><span class="ss">:directory</span><span class="p">)</span><span class="o">.</span><span class=
+"n">files</span><span class="o">.</span><span class="n">get_http_url</span> <span class="n">attachment</span><span class="o">.</span><span class=
+"n">path</span><span class="p">,</span> <span class="n">expires</span>
+    <span class="n">url</span><span class="o">.</span><span class="n">gsub!</span> <span class="sr">/s3.amazonaws.com\//</span><span class=
+"p">,</span> <span class="s1">&#39;&#39;</span>
+  <span class="k">end</span>
+  
 <span class="k">end</span>
 </code>
 </pre>
