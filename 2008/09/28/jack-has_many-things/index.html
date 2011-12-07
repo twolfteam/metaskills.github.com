@@ -58,6 +58,10 @@
               Jack has_many :things
             </h1>
           </header>
+          <aside class="flash_info">
+            UPDATE: [12/06/2011] The <a href="https://github.com/metaskills/grouped_scope">GroupedScope</a> plugin has been updated for Rails 3.1.
+            Many new features have been added with a few mentioned below. Check the project's readme for complete details.
+          </aside>
           <p>
             <span class="photofancy floatl mr20"><img src="/assets/jack.png" alt="Jack Has Many Things" width="320" height="214"></span> I am Jack's
             sofa, stereo and wardrobe... I make Jack's life complete. I reside in a ActiveRecord table called "things" and Jack is the only one that
@@ -80,7 +84,7 @@
             The problem is that the ActiveRecord has_many association is scoped to an individual. No matter what conditions are tacked on, they are
             always <a href="http://en.wikipedia.org/wiki/Pwn">pwned</a> by the proxy owner. The things they own have ended up owning you! Sure we
             could model some groupable schema and go through it, ActiveRecord is beautiful that way. But what about our hard work in all those
-            existing has_many associations and named_scopes?
+            existing has_many associations and scopes?
           </p>
           <h2>
             I felt like destroying something beautiful.
@@ -88,33 +92,40 @@
           <p>
             The solution is on everyone's face, it is on the tip of everyone's tongue. I just gave it a name. It is called <a href=
             "http://github.com/metaskills/grouped_scope/tree/master">GroupedScope</a> and it will fundamentally change the constructed SQL for the
-            has_many associations you want to share. The best part is that it will leave those associations untouched for continued use. GroupedScope
-            even works with your existing association extensions and any named scopes. Let's have a session.
+            has_many associations you want to share. The best part, it will leave those associations untouched for continued use. GroupedScope even
+            works with your existing association extensions and any scopes. Let's have a session.
           </p>
           <p>
-            First we need to install the plugin.
+            First we need to install the gem. So bundle up in your Gemfile.
           </p>
-          <pre class="command">
-$ ./script/plugin install git://github.com/metaskills/grouped_scope.git
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;grouped_scope&#39;</span><span class="p">,</span> <span class=
+"s1">&#39;~&gt; 3.1.0&#39;</span>
+</code>
 </pre>
+          </div>
           <p>
-            Now let's open up our Person model and schema, so Jack can share.
+            Now let's open up our people schema and the Person model, so Jack can share. First we add a group_id column to the people table.
           </p>
           <div class="highlight">
             <pre>
 <code class="ruby"><span class="k">class</span> <span class="nc">PeopleCanChooseAGroup</span> <span class="o">&lt;</span> <span class=
 "no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
-  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">up</span>
+  <span class="k">def</span> <span class="nf">up</span>
     <span class="n">add_column</span> <span class="ss">:people</span><span class="p">,</span> <span class="ss">:group_id</span><span class=
 "p">,</span> <span class="ss">:integer</span>
   <span class="k">end</span>
-  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">down</span>
+  <span class="k">def</span> <span class="nf">down</span>
     <span class="n">remove_column</span> <span class="ss">:people</span><span class="p">,</span> <span class="ss">:group_id</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code>
 </pre>
           </div>
+          <p>
+            Next we declare grouped_scope on a few associations.
+          </p>
           <div class="highlight">
             <pre>
 <code class="ruby"><span class="k">class</span> <span class="nc">Person</span> <span class="o">&lt;</span> <span class=
@@ -138,9 +149,10 @@ $ ./script/plugin install git://github.com/metaskills/grouped_scope.git
 </pre>
           </div>
           <p>
-            Every Person object in our app is now ready to share their :things and their :problems. I have also just arbitrarily put Jack and Bob
-            into the same group. Declaring <code>grouped_scope</code> in the model generates a new <code>group</code> instance method that will allow
-            us to iterate over its members.
+            So now every Person object in our app is now ready to share their <code>:things</code> and their <code>:problems</code>. I have also just
+            arbitrarily put Jack and Bob into the same group. Declaring <code>grouped_scope</code> in the model generates a new <code>group</code>
+            instance method that will allow us to either reflect on the group or delegate to the associations we have declared as now haveing grouped
+            scope.
           </p>
           <div class="highlight">
             <pre>
@@ -153,10 +165,10 @@ $ ./script/plugin install git://github.com/metaskills/grouped_scope.git
             We all started seeing things differently.
           </h2>
           <p>
-            The object returned by the group method, an instance of GroupedScope::SelfGrouping, is far cooler than you think. It looks and acts as an
-            enumerable array, but in reality it is a proxy object that can delegate to generated grouped association reflections which mimic their
-            originals. Essentially giving the group access to all associated objects of its members, in this case their :things and :problems. Did I
-            loose you?
+            The object returned by the group method, is an instance of <code>GroupedScope::SelfGrouping</code>. It is far cooler than you think. It
+            looks and acts as an enumerable array, but in reality it is a <code>ActiveRecord::Relation</code> object that can delegate to generated
+            grouped association reflections which mimic their originals. Essentially giving the group access to all associated objects of its
+            members, in this case their <code>:things</code> and <code>:problems</code>. Did I loose you?
           </p>
           <div class="highlight">
             <pre>
@@ -176,14 +188,15 @@ $ ./script/plugin install git://github.com/metaskills/grouped_scope.git
           </div>
           <p>
             Without going into the detail of Jack's and Bob's problems, we can see that within the group, they are all shared. This is what the
-            GroupedScope plugin is really all about. It allows existing has_many associations to be called on the group which changes the SQL
-            generated to be owned by the group, essentially from <code>id = 1</code> to <code>id IN (1,2)</code>.
+            GroupedScope gem is really all about. It allows existing has_many associations to be called on the group which changes the SQL generated
+            to be owned by the group, essentially from <code>id = 1</code> to <code>id IN (SELECT id FROM people WHERE group_id = 1)</code>.
           </p>
           <p>
-            The way it accomplishes this is pretty sweet. GroupedScope creates an association reflection and accessor that will proxy all critical
-            reflection calls back to the original association reflection. This means that it can be really smart and maintain all the logic in the
-            existing association which could include custom options like :class_name, :foreign_key, :though, and :extend, very handy for
-            legacy/custom associations. It also lets you chain named scopes on the grouped scope. Here is very contrived example:
+            The way it accomplishes this is pretty sweet. GroupedScope creates reflections that use a custom association scope method which uses a
+            little Arel magic to build predicate conditions. Since it copies all your existing association reflection options, it can be really smart
+            by maintaining all the logic in the existing association. So options like <code>:class_name</code>, <code>:foreign_key</code>,
+            <code>:though</code>, and <code>:extend</code> will just work! It also lets you chain scopes existing scopes or use your custom
+            association extensions on the original associations. Here is very contrived example:
           </p>
           <div class="highlight">
             <pre>
@@ -193,9 +206,8 @@ $ ./script/plugin install git://github.com/metaskills/grouped_scope.git
 "o">=&gt;</span> <span class="s2">&quot;MentalState&quot;</span><span class="p">,</span> <span class="ss">:foreign_key</span> <span class=
 "o">=&gt;</span> <span class="ss">:name</span> <span class="k">do</span>
     <span class="k">def</span> <span class="nf">dangerous</span>
-      <span class="n">find</span> <span class="ss">:all</span><span class="p">,</span> <span class="ss">:conditions</span> <span class=
-"o">=&gt;</span> <span class="p">{</span><span class="ss">:snap_tolerance</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class=
-"p">}</span>
+      <span class="n">where</span><span class="p">(</span><span class="ss">:snap_tolerance</span> <span class="o">=&gt;</span> <span class=
+"mi">10</span><span class="p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>
   <span class="n">grouped_scope</span> <span class="ss">:mental_issues</span>
@@ -203,12 +215,10 @@ $ ./script/plugin install git://github.com/metaskills/grouped_scope.git
 
 <span class="k">class</span> <span class="nc">MentalState</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class=
 "o">::</span><span class="no">Base</span>
-  <span class="n">named_scope</span> <span class="ss">:treatable_by</span><span class="p">,</span> <span class="nb">lambda</span> <span class=
-"p">{</span> <span class="o">|</span><span class="n">doctor</span><span class="o">|</span> 
-    <span class="p">{</span><span class="ss">:conditions</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
-"ss">:doctor_id</span> <span class="o">=&gt;</span> <span class="n">doctor</span><span class="o">.</span><span class="n">id</span><span class=
-"p">}}</span>
-  <span class="p">}</span>
+  <span class="n">scope</span> <span class="ss">:treatable_by</span><span class="p">,</span> <span class="nb">lambda</span> <span class=
+"p">{</span> <span class="o">|</span><span class="n">doctor</span><span class="o">|</span> <span class="n">where</span><span class=
+"p">(</span><span class="ss">:doctor_id</span> <span class="o">=</span> <span class="n">doctor</span><span class="o">.</span><span class=
+"n">id</span><span class="p">)</span> <span class="p">}</span>
 <span class="k">end</span>
 
 <span class="vi">@jack</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class=
@@ -222,31 +232,32 @@ $ ./script/plugin install git://github.com/metaskills/grouped_scope.git
             This is probably one of those "cry for help" things.
           </h2>
           <p>
-            <span class="photofancy floatr ml20"><img src="/assets/marla.png" alt="Marla" width="320" height="214"></span> The GroupedScope plugin is
-            not done. It is however well tested and can do what I have outlined in both rails 1.2.6 and 2.1.1. I have marked some TODO's in the
-            project README but I thought I would cover a few here in detail.
+            <span class="photofancy floatr ml20"><img src="/assets/marla.png" alt="Marla" width="320" height="214"></span>The GroupedScope gem is
+            never quite done. It is however well tested and can do exactly all that I have outlined in ActiveRecord 3.1.0. I even have older gem
+            versions that track our legacy 2-3-stable git branch.
           </p>
           <p>
-            First, every model that declares <code>grouped_scope</code> also generates a <code>belongs_to :grouping</code> association that can be
-            used to get to the GroupedScope::Grouping object. This object has no underlying schema and is not being used right now. Eventually this
-            will be the place where you write your own <a href="http://errtheblog.com/posts/67-evil-twin-plugin">evil twin plugin</a> that defines
-            your business logic to what a group (not the selfgrouping proxy) can do. For now, it would be a good idea to generate a "groupings" table
-            and create rows and use those IDs when assigning group_ids.
+            Also, you may have noticed that <code>GroupedScope</code> does not try to solve what your group business logic may look like. This is
+            intentional and left to the end user to implement a <code>Group</code> object. This object would be the primary key owner of the
+            <code>group_id</code> column in your models that declare grouped scope. You would also need to declare some sort of
+            <code>belongs_to</code> association to your custom group model too.
           </p>
           <p>
-            Also, you may have noticed that GroupedScope focuses on a single group and that no single owner can essentially have many groups. I think
-            at some point I might like to see this and work like all the examples above. Have other ideas? Send me an email. I'm ken at this domain
-            dot com.
+            Lastly, if we you see something you might like in features or notice a bug, open a issue <a href=
+            "https://github.com/metaskills/grouped_scope">on our Github project</a> page.
           </p>
           <h2>
             I'd like to thank the Academy.
           </h2>
           <ul>
             <li>
-              <a href="http://github.com/metaskills/grouped_scope/tree/master">The GroupedScope plugin on my Github account.</a>
+              <a href="http://github.com/metaskills/grouped_scope/tree/master">GroupedScope Gem On Github.</a>
             </li>
             <li>
               <a href="http://en.wikipedia.org/wiki/Fight_Club">About the movie Fight Club.</a>
+            </li>
+            <li>
+              <a href="http://decisiv.net/">My Workplace, Decisiv.</a>
             </li>
           </ul>
           <footer id="disqus_thread">
