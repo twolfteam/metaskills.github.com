@@ -4,6 +4,27 @@
         xmlns:video="http://www.sitemaps.org/schemas/sitemap-video/1.1">
   
   <url> 
+    <loc>http://metaskills.net/2012/01/17/rails-and-spine-js-jasmine-testing-part-2</loc> 
+    
+    <lastmod>2012-01-17T00:00:00-05:00</lastmod>
+    
+  </url>
+  
+  <url> 
+    <loc>http://metaskills.net/2012/01/16/rails-and-spine-js-jasmine-testing-part-1</loc> 
+    
+    <lastmod>2012-01-16T00:00:00-05:00</lastmod>
+    
+  </url>
+  
+  <url> 
+    <loc>http://metaskills.net/2012/01/15/rails-and-spine-js-using-the-coffeescript-source</loc> 
+    
+    <lastmod>2012-01-15T00:00:00-05:00</lastmod>
+    
+  </url>
+  
+  <url> 
     <loc>http://metaskills.net/2011/09/26/less-is-more-using-twitter-bootstrap-in-the-rails-3-1-asset-pipeline</loc> 
     
     <lastmod>2011-09-26T00:00:00-04:00</lastmod>

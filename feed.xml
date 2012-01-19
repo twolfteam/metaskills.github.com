@@ -4,13 +4,374 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2011-12-09T09:49:18-05:00</updated>
+ <updated>2012-01-19T11:12:02-05:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
    <email>ken@metaskills.net</email>
  </author>
 
+ 
+ <entry>
+   <title>Rails &amp;amp; Spine.JS - Jasmine Testing Part 2</title>
+   <link href="http://metaskills.net/2012/01/17/rails-and-spine-js-jasmine-testing-part-2"/>
+   <updated>2012-01-17T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2012/01/17/rails-and-spine-js-jasmine-testing-part-2</id>
+   <content type="html">
+     <![CDATA[<p>
+  So this is the third part to my mini series on Rails and <a href="http://spinejs.com/">Spine.JS</a>. Part one <a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">covers an initial setup</a> and how to include Spine.JS into your Rails project while part two is actually the <a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">first of a tome on how to test</a> your Spine.JS application. Assuming you have covered the bases there, lets get right down to business and review some of the elegant hacks &trade; yours truly came up with while testing my own Spine.jS application using <a href="http://github.com/guard/guard">Guard</a> and <a href="http://github.com/bradphelan/jasminerice">Jasminerice</a>. 
+</p>
+
+
+<h2>That Engine Is Gonna Need An Overhaul</h2>
+
+<p>
+  So did I mention that Jasminerice is a Rails engine and that you can run your tests by accessing the <code>/jasmine</code> URL in your development environment's browser? Good. As uncool as browser testing is, sometimes that it useful. For instance <code>console.log</code> statements will not show up in your Guard's test output. But hopefully that is an edge case and you are really using <a href="http://github.com/netzpirat/guard-jasmine">guard-jasmine</a> and watching your specs run in the terminal window. The question now becomes how can I leverage Jasminerice and its associated engine to really test my Spine.JS application with a full-fledged DOM? The answer is simple, let's hack the Jasminerice engine to load up our application while running the Jasmine specs.
+</p>
+
+
+<h2>A Review Of Jasmine And HTML Fixtures</h2>
+
+<p>
+  This might be a bit contraversial (or may me just wrong) but I would like to examine why we might hack the Jasminerice engine for a few minutes. Jasmine bills itself as behavior-driven development for JavaScript, to which I disagree. I think Jasmine first and foremost is an all-purpose testing framework. Depending on how you use it determines what it becomes. In my case, I have been doing a lot of unit testing of my Spine.JS models and supporting libs as I learn the framework and build my system. So my usage now could be called TDD at both a unit and functional level. Later on, I plan on doing higher level integration testing with Jasmine, at this time it will be my BDD tool. Normally I do not get caught up in symantics but I think it is important to understand a few lexical terms before I start showing off how I use Jasmine to test my Spine.JS application. 
+</p>
+
+<p>
+  Now that I have set my higher order bit for Jasmine as my unit, functional and itegration testing framework for Spine.JS &ndash; I would like to show how my solution below might differ from other practices. Experienced Jasmine users rave about extensions that allow you to load HTML fixtures to functionally test units of code. In fact, the Jasminerice gem includes a custom version of the <a href="https://github.com/velesin/jasmine-jquery">jasmine-jquery</a> library which among other things allows you to do just that. Let me be clear on this, there is nothing wrong with that! As with all things software, proper solutions depends on what you are doing and need. In my case, I believe that testing your Spine.JS application with Rails only needs to hook into your existing application without the need for fixtures and excessive mocking and stubbing.
+</p>
+
+<p>
+  My basis for this argument is founded on a few principas that I believe all rich client side JavaScript applications should follow. Most important, the application is a single page load and all other calls to the server happen from that one page via AJAX. Every other part of your Rails application then becomes an API client to the JavaScript application. All views are client side only, most likely in a <code>JST</code> namespace.
+</p>
+
+
+<h2>Hacking Jasminerice</h2>
+
+<p>
+  Turns out this is really easy since Jasminerice is just a simple Rails engine with few moving parts. It has a <code>SpecController</code> that renders a basic layout which requires your application's JavaScript assets along with Jasmine. The goal is to tell it to render your single application page that loads up your Spine.JS app with a few additional hacks. When done, we are going to have Jasminerice in your full control. This means we get the same CSS and JavaScript as our real application along with a solid foundation to extend Jasminerice at our whim. This leaves us with a clean canvas suitable for Jasmine unit, functional and integraiton testing all wrapped up into one.
+</p>
+
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In: config/initializers/jasminerice.rb</span>
+
+<span class="k">module</span> <span class="nn">Jasminerice</span>
+  
+  <span class="k">module</span> <span class="nn">MyApplication</span>
+    <span class="kp">extend</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Concern</span>
+    <span class="n">included</span> <span class="k">do</span>
+      <span class="n">delegate</span> <span class="ss">:foo_path</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="o">::</span><span class="no">Rails</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">routes_url_helpers</span>
+    <span class="k">end</span>
+    <span class="k">def</span> <span class="nf">jasminerice?</span>
+      <span class="kp">true</span>
+    <span class="k">end</span>
+    <span class="k">def</span> <span class="nf">current_user</span>
+      <span class="vi">@current_user</span> <span class="o">||=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  <span class="no">ApplicationHelper</span><span class="o">.</span><span class="n">send</span> <span class="ss">:include</span><span class="p">,</span> <span class="no">MyApplication</span>
+  
+  <span class="k">class</span> <span class="nc">SpecController</span> <span class="o">&lt;</span> <span class="no">Jasminerice</span><span class="o">::</span><span class="no">ApplicationController</span>
+    <span class="k">def</span> <span class="nf">index</span>
+      <span class="n">render</span> <span class="n">template</span><span class="p">:</span> <span class="s1">&#39;users/home&#39;</span><span class="p">,</span> <span class="n">layout</span><span class="p">:</span> <span class="s1">&#39;application&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>
+  There we go, a simple example pulled from my current project. What we are doing here is freedom-patching that spec controller's index action to render both a template and layout from your application. I also have a <code>MyApplication</code> module which I include in the <code>Jasminerice::ApplicationHelper</code> for a few methods that my application view code would expect. In this case a <code>current_user</code> method and some delegation of URL helpers to the root Rails application. Do not get hung up on what user is returned there too. It is mostly moot as all AJAX calls will be stubbed. Lastly, I made a <code>jasminerice?</code> view helper and a matching one that I have in my own <code>ApplicationHelper</code> which returns false. I will show why and how this all fits together later on.
+</p>
+
+<p>
+  Now that we have full control and some reflection for Jasminerice, let's reviw our appliation's main layout. Here is an example of my <code>app/views/layouts/application.html.haml</code> file.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
+<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">}</span>
+  <span class="o">%</span><span class="n">head</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
+    <span class="o">=</span> <span class="n">csrf_meta_tags</span>
+    <span class="o">%</span><span class="n">title</span> <span class="no">My</span> <span class="no">Application</span>
+    <span class="o">-</span> <span class="k">if</span> <span class="n">jasminerice?</span>
+      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">&#39;spec&#39;</span>
+      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">&#39;spec&#39;</span>
+    <span class="o">-</span> <span class="k">else</span>
+      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">&#39;application&#39;</span>
+      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">&#39;application&#39;</span>
+      <span class="o">%</span><span class="n">script</span> <span class="n">jQuery</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span> <span class="no">MyApp</span><span class="o">.</span><span class="n">App</span><span class="o">.</span><span class="n">Home</span><span class="o">.</span><span class="n">init</span><span class="p">();</span> <span class="p">});</span>
+  <span class="o">%</span><span class="n">body</span>
+    <span class="o">%</span><span class="n">section</span><span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">}}</span>
+</code></pre>
+</div>
+
+<p>
+  It is really that simple! It has a single condition that says if Jasminerice is loading this page, use the top level <code>spec</code> CSS and JavaScript asset manifest. If not, render my main application's CSS and JavaScript manifests. You will also notice that I decouple my Spine's application initialization from the main JS files and only initialize the app on page load when not running in Jasminerce. This allows us to stub AJAX calls in specs then initialization the Spine.JS app when we are fully ready. So now, let us take a look at what both the <code>spec/javascripts/spec.css</code> and <code>spec/javascripts/spec.js</code> manifests may look like.
+</p>
+
+<div class="highlight"><pre><code class="css"><span class="c">/*</span>
+<span class="c"> *= require jasmine</span>
+<span class="c"> *= require application</span>
+<span class="c"> */</span>
+<span class="nc">.jasmine_reporter</span> <span class="p">{</span> <span class="k">display</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<div class="highlight"><pre><code class="javascript"><span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasminerice</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">mock</span><span class="o">-</span><span class="nx">ajax</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">application</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasmine</span><span class="o">-</span><span class="nx">myapp</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">models</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">controllers</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span>
+</code></pre>
+</div>
+
+<p>
+  These should be self explanatory. The <code>spec.css</code> manifest requires the jasmine styles, then our application's styles. It then hides the Jasmine reporter element. The <code>spec.js</code> manifest does something similiar, It first requires the jasminerice manifest, a Jasmine helper called <a href="https://github.com/pivotal/jasmine-ajax">jasmine-ajax</a> but poorly named mock-ajax, then your application's JavaScript followed by a personal Jasmine helper that we will discuss later. The last lines include all the spec files in each of the lib, models, controller and views directories located in the parent <code>spec/javascripts</code> directory.
+</p>
+
+<p>
+  Congratulations! You are now in full control of both Spine.JS and Jasmine(rice) and how your specs are executed. You have a fully styled DOM that you can happily ignore as you test your unit code. And when the time comes, you can leverage that and you full Spine.JS application from a high level integration perspective. Tune in for my last part which will give some working examples of how to test your Spine.JS application with Jasmine.
+</p>
+
+
+<h2>Related</h2>
+
+<ul>
+  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
+  <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
+</ul>
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://spinejs.com/">Spine.JS - Build Awesome JavaScript MVC Applications</a></li>
+  <li><a href="http://github.com/bradphelan/jasminerice">Jasminerice - Pain free CoffeeScript testing under Rails 3.1</a></li>
+  <li><a href="http://github.com/pivotal/jasmine-ajax">Jasmine AJAX - A library for faking Ajax responses in your Jasmine suite.</a></li>
+  <li><a href="hhh">aaa</a></li>
+</ul>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Rails &amp;amp; Spine.JS - Jasmine Testing Part 1</title>
+   <link href="http://metaskills.net/2012/01/16/rails-and-spine-js-jasmine-testing-part-1"/>
+   <updated>2012-01-16T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2012/01/16/rails-and-spine-js-jasmine-testing-part-1</id>
+   <content type="html">
+     <![CDATA[<p>
+  In my <a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">previous article</a> I talked a little bit about why I decided to use Spine.JS and how to include the CoffeeScript source into your Rails project using git submodules. Now I would like to talk about testing your brand new Spine.JS application. Afterward, be sure to <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">read the second part</a> to this article which covers more advanced aspects of your Spine.JS application specs.
+</p>
+
+
+<h2>Testing JavaScript</h2>
+
+<p>
+  OK, so like any good programmer, you want to test your JavaScript web application, but how? Like most, I kept finding that <a href="http://pivotal.github.com/jasmine/">Jasmine</a> was the de facto testing framework that most Rails developers were using. For the newly aquatinted, Jasmine describes itself as behavior-driven and sports a clean spec style using <code>describe</code> and <code>it</code> blocks similar to RSpec or MiniTest::Spec. But maybe you, like me, quickly dismissed Jasmine since you sure as hell were not going to hit refresh or F5 in your browser every time you wanted to run your damn specs. After all, this is 2012 and Rails developers do not test with a browser! So why should I start now?
+</p>
+
+<p>
+  Luckily I am a big fan of Ruby's <a href="https://github.com/guard/guard">Guard</a> gem, a simple library that responds to file system events. The guard project literally has TONS of other guard gems that automate everything from running test files to restarting your development server. Thankfully my search for JavaScript testing with Guard in mind brought me right back to Jasmine. Enter the <a href="https://github.com/netzpirat/guard-jasmine">guard-jasmine</a> gem and the wonderful world of a headless JavaScript testing piped right down to your terminal window!
+</p>
+
+
+
+<h2>Guard, Jasmine &amp; Jasminerice</h2>
+
+<p>
+  So this is our holy trinity and to be honest, there are a lot of moving parts under the stack. Things will seem to get complicated quick, but don't worry. I will give you a brief overview of the moving parts and then get right down to the basics of how you can start using Guard and Jasmine to test your Sine.JS application. 
+</p>
+
+<p>
+  First, let's cover Guard. It is a simple gem that uses a <code>Guardfile</code> at the root of your project to control how other guards are triggered. I'll give you an example Guardfile later. But for starters, <a href="https://github.com/guard/guard">read the documentation</a> on what special libraries may be needed for file system events or notifications on your specific platform. In my case, I us Mac OS X and purchased the latest Growl 1.3. So my example <code>Gemfile</code> below will have the <a href="https://rubygems.org/gems/ruby_gntp">ruby_gntp</a> gem included in the spec.
+</p>
+
+<p>
+  Next up is the guard-jasmine gem. My instructions assume you are running a Rails 3.1 or 3.2 app and that you are taking full advantage of the asset pipeline and CoffeeScript. Many of these details can be found on the <a href="https://github.com/netzpirat/guard-jasmine">guard-jamine's Rails 3.1 setup</a> section of their readme page. The underlying components of guard-jasmine are two a libs named <a href="https://github.com/bradphelan/jasminerice">Jasminerice</a> and <a href="http://www.phantomjs.org/">PhantomJS</a>. Jasminerice is a simple Rails engine that brings in the Jasmine source files to the asset pipeline while running a rack app mounted to <code>/jasmine</code> to run your specs from your current application. PhantomJS is yet another headless WebKit based on Qt that has a rich JavaScript API which guard-jasmine delegates to. Is your head spinning? Mine was too.
+</p>
+
+
+<h2>Put It All Together</h2>
+
+<p>
+  Here is the bullet train to getting this stack up and running. First, you will need to get PhantomJS installed. If Homebrew is your thing, just do <code>$ brew install phantomjs</code>. Or you can <a href="http://code.google.com/p/phantomjs/downloads/list">download one of their precompiled binaries</a> for your specific platform. This is what I opted to do and I just placed the phantomjs in my <code>PATH</code> somewhere.
+</p>
+
+<p>
+  Next, we need to get the gems in our <code>Gemfile</code>. Here is how mine are setup. I have them in both the <code>:develpment</code> and <code>:test</code> groups since Jasminerice runs in both of those Rails environments. I also have that ruby_gntp dependency since I am using Growl on Mac OS X, YMMV.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:test</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">&#39;jasminerice&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;guard-jasmine&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;ruby_gntp&#39;</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  So that was easy, now on to our <code>Guardfile</code>. Here is mine below. Notice how I put my JavaScript related guards into a <code>js</code> group? This is a seldom used feature of Guard and it means I can monitor only my jasmine specs by starting guard off using <code>$ guard -g js</code> and my other guards in my <code>ruby</code> group, like minitest, will be ignored.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="s1">&#39;js&#39;</span> <span class="k">do</span>
+
+  <span class="n">guard</span> <span class="s1">&#39;jasmine&#39;</span> <span class="k">do</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/index\.js\.coffee$}</span><span class="p">)</span>  <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/(.+)\.js\.coffee$}</span><span class="p">)</span>   <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">&quot;spec/javascripts/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_spec.js.coffee&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/(.+)_spec\.js\.coffee$}</span><span class="p">)</span>          <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">&quot;spec/javascripts/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_spec.js.coffee&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/spec\.js$}</span><span class="p">)</span>                       <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/spec_helper\.js$}</span><span class="p">)</span>                <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/jasmine-myapp.*}</span><span class="p">)</span>                 <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  This setup assumes a few things. First that you are only testing your Spine.JS application and that those files are in the <code>app/assets/javascripts/myapp</code> directory. That myapp directory could just be <code>app</code> in your case if you used the <a href="http://github.com/maccman/spine-rails">spine-rails</a> gem without the <code>--app</code> option. In my case, that folder is named <code>homemarks</code>. This Guardfile also assumes that your JavaScript app and specs are CoffeeScript files and that specs are in the <code>spec/javascripts</code> folder specified by Jasminerice. You are going to want to follow some file naming convention now too. For example if you have a Spine.JS app file in <code>app/assets/javascripts/myapp/models/post.js.coffee</code>, then you are going to want the matching spec in <code>spec/javascripts/models/post_spec.js.coffee</code>. So saving each of those files will trigger that specific spec to run. There are also so some watchers on important root files like your spec.js sprockets manifest and your Spine.JS app index. Changing any of those files will result in your entire spec suite running again. 
+</p>
+
+
+<h2>To Be Continued...</h2>
+
+<p>
+  I will go into more details on the <code>spec_helper.js</code> and <code>jasmine-myapp</code> files above in <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">the second part</a> of this article. For now you should be set to start writing specs like the one below and seeing them run by either visiting the <code>/jasmine</code> URL of your running Rails application or by using Guard in your terminal window.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  
+  <span class="n">it</span> <span class="s1">&#39;sets el&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">el</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="err">$</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span>
+
+  <span class="n">it</span> <span class="s1">&#39;sets the userId as a property on itself&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">userId</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="vi">@bob</span><span class="o">.</span><span class="n">id</span>
+</code></pre>
+</div>
+
+<p>
+  <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Continue to part two...</a>
+</p>
+
+
+
+<h2>Related</h2>
+
+<ul>
+  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+  <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
+</ul>
+
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://spinejs.com/">Spine.JS - Build Awesome JavaScript
+  MVC Applications</a></li>
+  <li><a href="http://pivotal.github.com/jasmine/">Jasmine - BDD for JavaScript. (I disagree, TDD too!)</a></li>
+  <li><a href="http://github.com/netzpirat/guard-jasmine">Guard Jasmine - Automated Jasmine tests to your console.</a></li>
+  <li><a href="http://github.com/bradphelan/jasminerice">Jasminerice - Pain free CoffeeScript testing under Rails 3.1</a></li>
+  <li><a href="http://www.phantomjs.org/">PhantomJS - Headless WebKit with JavaScript API.</a></li>
+</ul>
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Rails &amp;amp; Spine.JS - Using The CoffeeScript Source</title>
+   <link href="http://metaskills.net/2012/01/15/rails-and-spine-js-using-the-coffeescript-source"/>
+   <updated>2012-01-15T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2012/01/15/rails-and-spine-js-using-the-coffeescript-source</id>
+   <content type="html">
+     <![CDATA[<p>
+  Our <a href="http://addyosmani.com/blog/short-musings-on-javascript-mv-tech-stacks/">options for JavaScript MVC frameworks</a> are numerous these days. While working on the third major rewrite of my personal bookmarking application, <a href="http://homemarks.com/">HomeMarks</a>, I decided to learn <a href="http://documentcloud.github.com/backbone/">Backbone.js</a>. Thankfully a local friend of mine <a href="https://twitter.com/#!/brennandunn/status/153487553062907905">recommended</a> that I try <a href="http://spinejs.com/">Spine.JS</a>. I was immediately hooked! 
+</p>
+
+
+<h2>Why Spine.JS?</h2>
+
+<p>
+  Spine.JS is is authored in <a href="http://coffeescript.org/">CoffeeScript</a> and that is a big deal for me. I will never write raw JavaScript again, which I consider, the deprecated syntax. So a JavaScript MVC framework that is written in CoffeeScript means I can read the source, learn from it and even debug it if necessary. Sure, I can read raw JavaScript or just rely on documentation. But nothing beats reading source code. A practice I think good developers follow. So here is an example of the <a href="https://github.com/documentcloud/backbone/blob/master/backbone.js#L151">Backbone.js model source</a> compared to reading <a href="https://github.com/maccman/spine/blob/master/src/spine.coffee#L83">Spine.JS model source</a> and I think you will see the difference.
+</p>
+
+<p>
+  Source code legibilty is not the only reason to use Spine.JS. It is also very lightweight and requires no other JavaScript dependencies. Take for example Backbone.js which requies the use of <a href="http://documentcloud.github.com/underscore/">Underscore.js</a> and think for a moment why. Underscore.js makes mundane tasks in JavaScript like itterators and event binding much more friendly. But this is all moot when you are using CoffeeScipt's loops and comprehensions. And take my advice, CoffeeScript has so much more to offer. One of my personal favorites is the existential operator!
+</p>
+
+
+
+<h2>Coffee Time!</h2>
+
+<p>
+  So, are you with me and want to try out Spine? Great! But do not rush in and use the <a href="http://github.com/maccman/spine-rails">spine-rails</a> gem. Sure it gives you a nice way to require the Spine JavaScript files in the asset pipeline and some fancy generators. But when you break it down, there are better ways to get Spine's source files and who the hell uses generators? I mean, the only useful one is the initial <code>rails g spine:new</code> generator. Past the initial project setup, the spine-rails gem really does nothing but lock you down to an explicit version of Spine tied to that gem release. 
+</p>
+
+<p>
+  I highly advise that new-comers to Spine start off with the spine-rails gem and its new project generator. Then quickly switch to just including the spine source using a git submodule. This will give you the benefit of using the source CoffeeScript files and tracking Spine's git repo which is getting good active development. So let's live on the edge and read some source. First uninstall the spine-rails gem if you have it and add the Spine project as a git submodule to your git repo.
+</p>
+
+<pre class="command">
+$ mkdir -p vendor/assets/javascripts
+$ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts/spine
+</pre>
+
+<p>
+  This adds the Spine project to your <code>vendor/assets/javascripts/spine</code> directory. Which means it can now be leveraged by Rails asset pipeline using Sprockets. So if you had used the spine-rails generator above and had your spine requires in <code>app/assets/javascripts/app/index.js.coffee</code>, you would now be able to change what should have looked like this:
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1">#= require spine</span>
+<span class="c1">#= require spine/manager</span>
+<span class="c1">#= require spine/ajax</span>
+<span class="c1">#= require spine/route</span>
+</code></pre>
+</div>
+
+<p>
+  To something like the following. Since the <code>spine/lib</code> directory is where the source CoffeeScript files from our submodule above and Sprockets will render these just fine, it all just works!
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1">#= require spine/lib/spine</span>
+<span class="c1">#= require spine/lib/manager</span>
+<span class="c1">#= require spine/lib/ajax</span>
+<span class="c1">#= require spine/lib/route</span>
+</code></pre>
+</div>
+
+<p>
+  So now you can easily update your Spine dependency using a simple git workflow with the added benefit that you can open up any of the source CoffeeScript files and learn Spine from the inside out. You can even change the source or put in console debugging to see what is happening and your application files will recompile via Sprockets on the next request.
+</p>
+
+
+<h2>Related</h2>
+
+<ul>
+  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
+  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+</ul>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://spinejs.com/">Spine.JS - Build Awesome JavaScript
+  MVC Applications</a></li>
+  <li><a href="http://coffeescript.org/">CoffeeScript - A little language that compiles into JavaScript.</a></li>
+  <li><a href="http://github.com/maccman/spine-rails">The Spine Rails Gem</a></li>
+</ul>
+
+
+]]>
+    </content>
+ </entry>
  
  <entry>
    <title>LESS Is More - Using Twitter's Bootstrap In The Rails 3.1 Asset Pipeline</title>
@@ -956,292 +1317,6 @@
 <p>
   I have only tested the above stack in the latest Rails edge, 3.1.beta and ruby 1.9.2. I doubt there are issues on older versions of Rails with different Ruby versions. If you apply these gems to success, I would love to hear about it. Happy testing!
 </p>
-
-]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>MiniBacktrace - For MiniTest &amp; Rails</title>
-   <link href="http://metaskills.net/2011/03/22/mini-backtrace-for-minitest-and-rails"/>
-   <updated>2011-03-22T00:00:00-04:00</updated>
-   <id>http://metaskills.net/2011/03/22/mini-backtrace-for-minitest-and-rails</id>
-   <content type="html">
-     <![CDATA[<aside class="flash_info">
-  UPDATE:  
-  <a href="/2011/03/26/using-minitest-spec-with-rails/">Using MiniTest::Spec With Rails</a> 
-  &amp;
-  <a href="/2011/03/26/using-minitest-spec-with-rails/">From Test::Unit &amp; Shoulda To MiniTest::Spec &amp; MiniShoulda</a>
-</aside>
-
-<p>
-  <a href="https://github.com/metaskills/mini_backtrace">MiniBacktrace</a> allows you to take advantage of the Rails.backtrace_cleaner when using MiniTest. This includes everyone using Rails 3 with Ruby 1.9.
-</p>
-
-<p>
-  Just add 'mini_backtrace' to your Gemfile's :test group and your should automatically see a huge difference. Any additions to the Rails.backtrace_cleaner should now work.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="no">Rails</span><span class="o">.</span><span class="n">backtrace_cleaner</span><span class="o">.</span><span class="n">add_silencer</span> <span class="p">{</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span> <span class="n">line</span> <span class="o">=~</span> <span class="sr">/my_noisy_library/</span> <span class="p">}</span>
-</code></pre>
-</div>
-
-]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>PDFKit Overview &amp; Advanced Usage</title>
-   <link href="http://metaskills.net/2011/03/20/pdfkit-overview-and-advanced-usage"/>
-   <updated>2011-03-20T00:00:00-04:00</updated>
-   <id>http://metaskills.net/2011/03/20/pdfkit-overview-and-advanced-usage</id>
-   <content type="html">
-     <![CDATA[<p>
-  Last week I had the pleasure of rewriting 4 years of legacy PDF::Writer code to <a href="http://github.com/jdpace/PDFKit">PDFKit</a>. Why? Well drawing pdfs in ruby using libraries like PDF::Writer is like composing a webpage with an Etch A Sketch. In short, its a damn chore that involves a bunch of code that mixes both data and presentation. Sure there are gems like <a href="http://prawn.majesticseacreature.com/">Prawn</a> that make this much easier, but nothing beats drawing your pdf code in native HTML and CSS, and that is where <a href="http://code.google.com/p/wkhtmltopdf/">wkhtmltopdf</a> comes in.
-</p>
-
-<p>
-  Wkhtmltopdf is an open source project that uses the <a href="http://www.webkit.org/">WebKit</a> rendering engine to convert HTML to native PDF code. This is the muscle behind the PDFKit gem and other projects like <a href="https://github.com/mileszs/wicked_pdf">WickedPdf</a>. In this article I am only going to focus on PDFKit with Rails. But many topics will apply to both PDFKit and WickedPdf since they use wkhtmltopdf on the backside.
-</p>
-
-
-<h2>Installation</h2>
-
-<p>
-  Installing the PDFKit gem is a no brainer. The hard part is getting the wkhtmltopdf binaries for you platform installed. Thankfully the google project page hosts a batch of static binaries that work on just about every platform. So <a href="http://code.google.com/p/wkhtmltopdf/downloads/list">go to their download page</a> and pick the statically compiled binary that meets your needs. I highly suggest that you get the latest 0.10.0rc2 since some topics below take advantage of recent bug fixes. I have tested both the OSX and i386 on RHEL with success and the release candidate seems very production ready. I suggest placing wkhtmltopdf in <code>/usr/local/bin/wkhtmltopdf</code>.
-</p>
-
-<pre class="command">
-$ which wkhtmltopdf
-/usr/local/bin/wkhtmltopdf
-</pre>
-
-<h2>The Basic Requirements</h2>
-
-<p>
-  I knew that HTML to PDF generation has its drawbacks, specifically with common headers/footers and page breaks. I happily found out that wkhtmltopdf has a solution for all these problems and can layout PDF pages with pixel perfect precision. So let's skip over the <a href="https://github.com/jdpace/PDFKit/wiki">basics</a> and get right down to using PDFKit like a pro. We are going to build out the Rails HTML/CSS layouts and templates that will solve a series of common problems.
-</p>
-
-<p>
-  The major reason to use PDFKit and wkhtmltopdf is that we can use the same templating system in Rails that we use to generate other views. This means that we test our PDF view code just like any other Rails code using its built-in functional or integration test cases. Let me say that again, we can TEST our PDF code! A huge win if you have complex conditional view code. So let's get to it.
-</p>
-
-
-<h2>The Main PDF Layout</h2>
-
-<p>
-  Sometimes it is useful to start at the end. So the first thing we need is a new layout for all of our pdf templates to use. Here is a <a href="http://haml-lang.com/">HAML</a> file that I recommend you name <code>app/views/layouts/pdf.html.pdf.haml</code>. Did you see that name? <strong>This is important!</strong> because Rails allows us to specify template names that can service more than one mime type format. So in this case, the layout will be found when rendering both HTML and .pdf formats. 
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
-<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">}</span>
-  <span class="o">%</span><span class="n">head</span>
-    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
-    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdfkit-footer_html&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="n">pdf_footer_url</span><span class="p">}</span>
-    <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">request</span><span class="o">.</span><span class="n">protocol</span><span class="si">}#{</span><span class="n">request</span><span class="o">.</span><span class="n">host_with_port</span><span class="si">}</span><span class="s2">/stylesheets/pdf.css&quot;</span>
-  <span class="o">%</span><span class="n">body</span>
-    <span class="o">=</span> <span class="k">yield</span><span class="p">(</span><span class="ss">:layout</span><span class="p">)</span>
-</code></pre>
-</div>
-
-<p>
-  <strong>I recommend that all PDF layouts, templates, and partials use the dual mime type naming convention.</strong> This will allow you to test your rendered HTML to PDF view code using common DOM techniques. Like <code>assert_select</code> in rails or maybe <a href="https://github.com/jnicklas/capybara">capybara's</a> <code>has_selector?</code>. So given that you may have a print action for your orders controller, you would use <code>print_orders_path(@order)</code> for your functional tests with DOM assertions and <code>print_orders_path(@order,:format=>:pdf)</code> for real world usage and/or integration tests. Both formats will render the same partials, templates and layouts if you use that naming structure.
-</p>
-
-<p>
-  So that layout file is a real basic HTML5 doctype (which WebKit handles just fine) plus a few special elements. I'll cover that <code>pdfkit-footer_html</code> meta tag later on. For now, let's focus on that <code>pdf.css</code> stylesheet.
-</p>
-
-
-<h2>Your PDF CSS</h2>
-
-<p>
-  You might be tempted to utilize your existing site's stylesheets for a base and then use media/print techniques to override and customize your printed versions. I am of the opinion that your PDF stylesheets should be very basic and easy to layout. To this end, I highly suggest that you start with an HTML reset CSS. In the example below, I have used <a href="http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css">Yahoo's CSS reset</a>. This makes it so that every bit of layout is under your strict control with a common rendering of no margin or padding to throw you off.
-</p>
-
-<div class="highlight"><pre><code class="css"><span class="c">/* Reset CSS. http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css  */</span>
-<span class="nt">html</span><span class="p">{</span><span class="k">color</span><span class="o">:</span><span class="m">#000</span><span class="p">;</span><span class="k">background</span><span class="o">:</span><span class="m">#FFF</span><span class="p">;}</span><span class="nt">body</span><span class="o">,</span><span class="nt">div</span><span class="o">,</span><span class="nt">dl</span><span class="o">,</span><span class="nt">dt</span><span class="o">,</span><span class="nt">dd</span><span class="o">,</span><span class="nt">ul</span><span class="o">,</span><span class="nt">ol</span><span class="o">,</span><span class="nt">li</span><span class="o">,</span><span class="nt">h1</span><span class="o">,</span><span class="nt">h2</span><span class="o">,</span><span class="nt">h3</span><span class="o">,</span><span class="nt">h4</span><span class="o">,</span><span class="nt">h5</span><span class="o">,</span><span class="nt">h6</span><span class="o">,</span>
-<span class="nt">pre</span><span class="o">,</span><span class="nt">code</span><span class="o">,</span><span class="nt">form</span><span class="o">,</span><span class="nt">fieldset</span><span class="o">,</span><span class="nt">legend</span><span class="o">,</span><span class="nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span><span class="nt">p</span><span class="o">,</span><span class="nt">blockquote</span><span class="o">,</span><span class="nt">th</span><span class="o">,</span><span class="nt">td</span><span class="p">{</span><span class="k">margin</span><span class="o">:</span><span class="m">0</span><span class="p">;</span><span class="k">padding</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span>
-<span class="nt">table</span><span class="p">{</span><span class="k">border-collapse</span><span class="o">:</span><span class="k">collapse</span><span class="p">;</span><span class="k">border-spacing</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span><span class="nt">fieldset</span><span class="o">,</span><span class="nt">img</span><span class="p">{</span><span class="k">border</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span><span class="nt">address</span><span class="o">,</span><span class="nt">caption</span><span class="o">,</span>
-<span class="nt">cite</span><span class="o">,</span><span class="nt">code</span><span class="o">,</span><span class="nt">dfn</span><span class="o">,</span><span class="nt">em</span><span class="o">,</span><span class="nt">strong</span><span class="o">,</span><span class="nt">th</span><span class="o">,</span><span class="nt">var</span><span class="p">{</span><span class="k">font-style</span><span class="o">:</span><span class="k">normal</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span><span class="nt">li</span><span class="p">{</span><span class="k">list-style</span><span class="o">:</span><span class="k">none</span><span class="p">;}</span>
-<span class="nt">caption</span><span class="o">,</span><span class="nt">th</span><span class="p">{</span><span class="k">text-align</span><span class="o">:</span><span class="k">left</span><span class="p">;}</span><span class="nt">h1</span><span class="o">,</span><span class="nt">h2</span><span class="o">,</span><span class="nt">h3</span><span class="o">,</span><span class="nt">h4</span><span class="o">,</span><span class="nt">h5</span><span class="o">,</span><span class="nt">h6</span><span class="p">{</span><span class="k">font-size</span><span class="o">:</span><span class="m">100</span><span class="o">%</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span>
-<span class="nt">q</span><span class="nd">:before</span><span class="o">,</span><span class="nt">q</span><span class="nd">:after</span><span class="p">{</span><span class="k">content</span><span class="o">:</span><span class="s1">&#39;&#39;</span><span class="p">;}</span><span class="nt">abbr</span><span class="o">,</span><span class="nt">acronym</span><span class="p">{</span><span class="k">border</span><span class="o">:</span><span class="m">0</span><span class="p">;</span><span class="k">font-variant</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span>
-<span class="nt">sup</span><span class="p">{</span><span class="k">vertical-align</span><span class="o">:</span><span class="k">text</span><span class="o">-</span><span class="k">top</span><span class="p">;}</span><span class="nt">sub</span><span class="p">{</span><span class="k">vertical-align</span><span class="o">:</span><span class="k">text</span><span class="o">-</span><span class="k">bottom</span><span class="p">;}</span><span class="nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span>
-<span class="nt">select</span><span class="p">{</span><span class="k">font-family</span><span class="o">:</span><span class="k">inherit</span><span class="p">;</span><span class="k">font-size</span><span class="o">:</span><span class="k">inherit</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">inherit</span><span class="p">;}</span><span class="nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span>
-<span class="nt">select</span><span class="p">{</span><span class="o">*</span><span class="k">font-size</span><span class="o">:</span><span class="m">100</span><span class="o">%</span><span class="p">;}</span><span class="nt">legend</span><span class="p">{</span><span class="k">color</span><span class="o">:</span><span class="m">#000</span><span class="p">;}</span>
-
-<span class="c">/* Your Base Foundation */</span>
-<span class="nt">html</span><span class="o">,</span><span class="nt">body</span> <span class="p">{</span> <span class="k">font-family</span><span class="o">:</span> <span class="k">sans-serif</span><span class="p">;</span> <span class="k">font-size</span><span class="o">:</span><span class="m">12px</span><span class="p">;</span> <span class="p">}</span>
-<span class="nt">h1</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">18px</span><span class="p">;</span> <span class="p">}</span>
-<span class="nt">h2</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">16px</span><span class="p">;</span> <span class="p">}</span>
-<span class="nt">h3</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">14px</span><span class="p">;</span> <span class="p">}</span>
-<span class="nt">h4</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">12px</span><span class="p">;</span> <span class="p">}</span>
-<span class="nt">strong</span> <span class="p">{</span> <span class="k">font-weight</span><span class="o">:</span><span class="m">900</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
-<span class="nt">hr</span>     <span class="p">{</span> <span class="k">border</span><span class="o">:</span><span class="m">0</span><span class="p">;</span> <span class="k">margin</span><span class="o">:</span><span class="m">0</span><span class="p">;</span> <span class="k">padding</span><span class="o">:</span><span class="m">0</span><span class="p">;</span> <span class="k">height</span><span class="o">:</span><span class="m">1px</span><span class="p">;</span> <span class="k">color</span><span class="o">:</span><span class="m">#000</span><span class="p">;</span> <span class="k">background-color</span><span class="o">:</span><span class="m">#000</span><span class="p">;</span> <span class="p">}</span>
-
-<span class="c">/* Page Breaks */</span>
-<span class="nc">.pb_before</span> <span class="p">{</span> <span class="k">page</span><span class="o">-</span><span class="n">break</span><span class="o">-</span><span class="n">before</span><span class="o">:</span><span class="k">always</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
-<span class="nc">.pb_after</span>  <span class="p">{</span> <span class="k">page</span><span class="o">-</span><span class="n">break</span><span class="o">-</span><span class="n">after</span><span class="o">:</span><span class="k">always</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
-<span class="nc">.pbi_avoid</span> <span class="p">{</span> <span class="k">page</span><span class="o">-</span><span class="n">break</span><span class="o">-</span><span class="k">inside</span><span class="o">:</span><span class="k">avoid</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
-</code></pre>
-</div>
-
-<p>
-  The second section of the CSS above is the place where you can put in a few custom styles that fit your needs. In my example I set a series of header font sizes, a base sans-serif font face and an hr tag that can be used as a simple rule. Feel free to add others here like basic styles for data tables, etc. The last section of the CSS file above are page break helpers. The latest version of wkhtmltopdf never breaks text in the middle of the line anymore. So most of the time the default page break behavior will work fine. But for those situations where you need more control, these 3 CSS declarations will serve most of your needs. Let's take a look at a few examples of their usage. Full details on <a href="http://www.w3.org/TR/css3-page/">CSS paged media</a> can be found on the W3C's site.
-</p>
-
-<p>
-  Use the <code>.pbi_avoid</code> class on any block level element that you want to make sure is never broken across multiple pages. A great usage would be on each element of an orders line items. It can also be used on any large page element that will certainly fit on one page, but should never be broken up. This is perfect in places where you might have measured the remaining page space before drawing said element. The <code>.pb_before</code> class will always break to a new page. I found this very useful when printing composite PDF files that combined multiple other PDF actions. So here is another HAML template that renders 3 other PDF full page partials. Each partial can be 1 to many pages. By enclosing each in a <code><div></code> tag that forces a new page break makes sure that we always start a new page when rendering each document.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="o">%</span><span class="n">div</span><span class="o">.</span><span class="n">pb_before</span>
-  <span class="o">=</span> <span class="n">render</span> <span class="ss">:partial</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdf/orders/print&#39;</span>
-<span class="o">%</span><span class="n">div</span><span class="o">.</span><span class="n">pb_before</span>
-  <span class="o">=</span> <span class="n">render</span> <span class="ss">:partial</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdf/orders/invoice&#39;</span>
-<span class="o">%</span><span class="n">div</span><span class="o">.</span><span class="n">pb_before</span>
-  <span class="o">=</span> <span class="n">render</span> <span class="ss">:partial</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdf/orders/picklist&#39;</span>
-</code></pre>
-</div>
-
-
-<h2>Custom Headers/Footers</h2>
-
-<p>
-  PDFKit and specifically wkhtmltopdf handles common page headers and footers just wonderfully, though it did take me some time to figure it out. I'll try to spare you the same pain by detailing the process for a custom footer on each page. In this example we will expect that our custom footer will be approximately .2 inches tall with a current page number next to a total page count. 
-</p>
-
-<p>
-  Remember that <code>pdfkit-footer_html</code> meta tag in the pdf layout above? If not, here it is again.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdfkit-footer_html&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="n">pdf_footer_url</span><span class="p">}</span>
-</code></pre>
-</div>
-
-<p>
-  So what is going on here? Two things really. The first is a way for PDFKit to customize the command arguments passed down to wkhtmltopdf when the page is converted. PDFKit will take any meta tag with a name prefixed using "pdfkit-" and pass down the content attribute as the value to the suffix of the name attribute. In this case <code>--foter-html http://myapp.com/pdf/footer</code> will be used as a command argument to wkhtmltopdf when rendering templates using that layout file. Note, it is important to use fully qualified URLs for header and footer arguments.
-</p>
-
-<p>
-  When it comes to headers and footers, wkhtmltopdf takes the URL to an HTML page, renders it to native PDF code and embeds it automatically for you below or above your page margin. You can control the placement of these in one of two ways. The first is by adjusting the layout of the header/footer HTML page. The second is by adjusting the margin of the parent document. In my case, since I knew my footer was around .2 inches tall, I gave it's template an internal top margin of 10 pixels and told PDFKit to increase my global .5 inch page margins by .2 inches for the bottom margin using a rails initializer.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="no">PDFKit</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-  <span class="n">config</span><span class="o">.</span><span class="n">default_options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="ss">:page_size</span>     <span class="o">=&gt;</span> <span class="s1">&#39;Letter&#39;</span><span class="p">,</span>
-    <span class="ss">:margin_top</span>    <span class="o">=&gt;</span> <span class="s1">&#39;0.5in&#39;</span><span class="p">,</span>
-    <span class="ss">:margin_right</span>  <span class="o">=&gt;</span> <span class="s1">&#39;0.5in&#39;</span><span class="p">,</span>
-    <span class="ss">:margin_bottom</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.7in&#39;</span><span class="p">,</span>
-    <span class="ss">:margin_left</span>   <span class="o">=&gt;</span> <span class="s1">&#39;0.5in&#39;</span>
-  <span class="p">}</span>
-<span class="k">end</span>
-</code></pre>
-</div>
-
-<p>
-  So now I know that whatever content I render in my <code>http://myapp.com/pdf/footer</code> page will fit just nicely on the bottom of each page. But how to generate that content and the custom page numbers? First, let's make a single pdf resource in our rails route file with a collection action for #footer. Now here is a controller for that resource with a single footer action.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">PdfController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
-  
-  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">perform_caching</span> <span class="p">;</span> <span class="kp">true</span> <span class="p">;</span> <span class="k">end</span>
-  <span class="n">caches_page</span> <span class="ss">:footer</span>
-  
-  <span class="k">def</span> <span class="nf">footer</span>
-    <span class="n">render</span> <span class="ss">:layout</span> <span class="o">=&gt;</span> <span class="kp">false</span>
-  <span class="k">end</span>
-  
-  <span class="kp">private</span>
-  
-  <span class="k">def</span> <span class="nf">perform_caching</span>
-    <span class="kp">true</span>
-  <span class="k">end</span>
-
-<span class="k">end</span>
-</code></pre>
-</div>
-
-<p>
-  There is not much here past rendering a basic template file with no layout. All the rest is to achieve an important set of caching rules. Ideally the URL argument to <code>--footer-html</code> would be a static HTML file. However, if want to use Rails templating to render that file, it is important to cache the results. The parent document will request this URL for each page it renders, so you can see how one process could deadlock another if your were not careful. In my example above, I override ActionController's perform_caching class and instance methods so that all actions in this controller would cache. I recommend committing a cached footer html page to any source control you have for deployment.
-</p>
-
-<p>
-  With that out of the way, what about the content of the footer HTML page? Again, here is a HAML template I used. This is very much like my pdf layout with one important difference, some JavaScript that is used to parse the query parameters that wkhtmltopdf tacks onto each header/footer URL request. In the example below I am only using the current page <code>page</code> and total page count <code>topage</code> params and inserting those values into to elements. For a full list of all the query parameters, consult the wkhtmltopdf expanded help page.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
-<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">}</span>
-  <span class="o">%</span><span class="n">head</span>
-    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
-    <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">request</span><span class="o">.</span><span class="n">protocol</span><span class="si">}#{</span><span class="n">request</span><span class="o">.</span><span class="n">host_with_port</span><span class="si">}</span><span class="s2">/stylesheets/pdf.css&quot;</span>
-    <span class="ss">:javascript</span>
-      <span class="n">var</span> <span class="n">pdfInfo</span> <span class="o">=</span> <span class="p">{};</span>
-      <span class="n">var</span> <span class="n">x</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">location</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class="n">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">);</span>
-      <span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">i</span> <span class="k">in</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span> <span class="n">var</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span> <span class="n">pdfInfo</span><span class="o">[</span><span class="n">z</span><span class="o">[</span><span class="mi">0</span><span class="o">]]</span> <span class="o">=</span> <span class="n">unescape</span><span class="p">(</span><span class="n">z</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">);</span> <span class="p">}</span>
-      <span class="n">function</span> <span class="n">getPdfInfo</span><span class="p">()</span> <span class="p">{</span>
-        <span class="n">var</span> <span class="n">page</span> <span class="o">=</span> <span class="n">pdfInfo</span><span class="o">.</span><span class="n">page</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="n">var</span> <span class="n">pageCount</span> <span class="o">=</span> <span class="n">pdfInfo</span><span class="o">.</span><span class="n">topage</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class="s1">&#39;pdfkit_page_current&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">textContent</span> <span class="o">=</span> <span class="n">page</span><span class="p">;</span>
-        <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class="s1">&#39;pdfkit_page_count&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">textContent</span> <span class="o">=</span> <span class="n">pageCount</span><span class="p">;</span>
-      <span class="p">}</span>
-  <span class="o">%</span><span class="n">body</span><span class="p">{</span><span class="ss">:onload</span> <span class="o">=&gt;</span> <span class="s1">&#39;getPdfInfo()&#39;</span><span class="p">}</span>
-    <span class="o">%</span><span class="n">div</span><span class="c1">#pdfkit_page_numbers</span>
-      <span class="o">%</span><span class="n">span</span> <span class="no">Page</span><span class="p">:</span> 
-      <span class="o">%</span><span class="n">span</span><span class="c1">#pdfkit_page_current</span>
-      <span class="o">%</span><span class="n">span</span> <span class="n">of</span> 
-      <span class="o">%</span><span class="n">span</span><span class="c1">#pdfkit_page_count</span>
-</code></pre>
-</div>
-
-<p>
-  Hopefully this helps anyone looking to use PDFKit or any system that leverages the wkhtmltopdf project. If I missed anything or can help, please leave me a comment. Thanks!
-</p>
-
-
-
-]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>GC Tune Ruby 1.9.2 With RVM</title>
-   <link href="http://metaskills.net/2011/03/09/gc-tune-ruby-1.9.2-with-rvm"/>
-   <updated>2011-03-09T00:00:00-05:00</updated>
-   <id>http://metaskills.net/2011/03/09/gc-tune-ruby-1.9.2-with-rvm</id>
-   <content type="html">
-     <![CDATA[<p>
-  Here is a <a href="https://gist.github.com/856296">gist</a> by Sokolov Yura (funny-falcon) that allows you to GC tune Ruby 1.9.2 just like Ruby Enterprise Edition (REE). So all of us using <a href="http://rvm.beginrescueend.com/">RVM</a> have no reason not start using this right away. Here are the steps.
-</p>
-
-<pre class="command">
-  $ curl https://gist.github.com/raw/856296/patch-1.9.2-gc.patch > ~/192-gc.patch
-  $ rvm uninstall 1.9.2
-  $ rvm install 1.9.2 --patch ~/192-gc.patch
-</pre>
-
-<p>
-  I have used this RVM hook below for awhile now. It automatically sets and unsets the proper ENV vars to GC tunes my REE. I have now updated it to apply the same GC settings to my newly patched 1.9.2 as well. I recommend this go into <code>~/.rvm/hooks/after_use</code>. 
-</p>
-
-<div class="highlight"><pre><code class="bash"><span class="k">case</span> <span class="s2">&quot;$rvm_ruby_string&quot;</span> in
-  *ree*|*ruby-1.9.2*<span class="o">)</span>
-    <span class="nb">export </span><span class="nv">RUBY_HEAP_MIN_SLOTS</span><span class="o">=</span>1000000
-    <span class="nb">export </span><span class="nv">RUBY_HEAP_SLOTS_INCREMENT</span><span class="o">=</span>1000000
-    <span class="nb">export </span><span class="nv">RUBY_HEAP_SLOTS_GROWTH_FACTOR</span><span class="o">=</span>1
-    <span class="nb">export </span><span class="nv">RUBY_GC_MALLOC_LIMIT</span><span class="o">=</span>1000000000
-    <span class="nb">export </span><span class="nv">RUBY_HEAP_FREE_MIN</span><span class="o">=</span>500000
-    <span class="nb">export </span><span class="nv">RUBY_FREE_MIN</span><span class="o">=</span><span class="nv">$RUBY_HEAP_FREE_MIN</span>
-  ;;
-  *<span class="o">)</span>
-    <span class="nb">unset </span>RUBY_HEAP_MIN_SLOTS RUBY_HEAP_SLOTS_INCREMENT RUBY_HEAP_SLOTS_GROWTH_FACTOR RUBY_GC_MALLOC_LIMIT RUBY_HEAP_FREE_MIN RUBY_FREE_MIN
-  ;;                                                                                                                                                                                                                                                                                                                        
-<span class="k">esac</span>
-</code></pre>
-</div>
-
-
-
-
 
 ]]>
     </content>
