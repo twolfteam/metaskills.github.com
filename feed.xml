@@ -4,13 +4,205 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2012-01-19T11:16:18-05:00</updated>
+ <updated>2012-02-01T09:59:58-05:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
    <email>ken@metaskills.net</email>
  </author>
 
+ 
+ <entry>
+   <title>Pretty Console Logging With Guard::Jasmine &amp;amp; Black Coffee</title>
+   <link href="http://metaskills.net/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee"/>
+   <updated>2012-02-01T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee</id>
+   <content type="html">
+     <![CDATA[<p>
+  OK I know I promised that we would start the dive into <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">testing your Spine.JS application using Jasmine(rice) in my last article</a>, but this is a good diversion. If you are new to my latest series on Spine.JS and Jasmine, scroll on down to the bottom to the related section and read back. However, for those that might be more familiar with Jasmine and specifically <a href="https://github.com/netzpirat/guard-jasmine">Guard::Jasmine</a> and ever felt the pain that debugging from that terminal window was lacking, read on! Even if your new to Guard::Jasmine and <a href="http://github.com/bradphelan/jasminerice">Jasminerice</a> I still suggest you setup these elegant hacks to make your testing go that much smoother.
+</p>
+
+
+<h2>So What Is The Problem?</h2>
+
+<p>
+  Guard::Jasmine allows you to continuously test your JavaScript right from the terminal window just like your Ruby code. The only drawback is that the console debugging is less than helpful. Guard::Jasmine will not allow you do view a string version of every object nor see line numbers of calling files. Both of these are invaluable when your stuck in a testing hole and just need to inspect a few objects. So if you are tired of seeing <code>[object Object]</code> in your Guard::Jasmine output, let's fix it right away.
+</p>
+
+
+<p>
+  The first place we need to patch things up is Guard::Jasmine itself. In my <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">last article</a> I covered how to monkey patch Jasminerice in a <code>config/initializers/jasminerice.rb</code> file. My Guard::Jasmine freedom patch will be placed in that same file. Pasted below, this does two things vs the <a href="http://github.com/netzpirat/guard-jasmine/blob/master/lib/guard/jasmine/runner.rb">original</a>. First it changes the <code>report_specdoc_logs</code> method to not pass <code>true</code> to the <code>format_log_message</code> method. Second, the <code>format_log_message</code> method itself now has the message regular expression changed to a multi-line scan. It will also look out for a custom prefix tag and allow it to pass through. This is for our pretty objects. Anything else now outputs the message with the file and line number, something previously stripped by Guard::Jasmine.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># coding: utf-8</span>
+<span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+
+  <span class="c1"># Other Jasminerice patches from:</span>
+  <span class="c1"># http://metaskills.net/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/</span>
+  <span class="c1"># ...</span>
+  
+  <span class="c1"># Patch Guard::Jasmine to use a custom formatter for log messages that</span>
+  <span class="c1"># allows multi-line objects to be printed with the line numbers.</span>
+  <span class="k">module</span> <span class="nn">Guard</span>
+    <span class="k">class</span> <span class="nc">Jasmine</span>
+      <span class="k">module</span> <span class="nn">Runner</span>
+        <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+        
+          <span class="k">def</span> <span class="nf">report_specdoc_logs</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">spec</span><span class="o">[</span><span class="s1">&#39;logs&#39;</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:console</span><span class="o">]</span> <span class="o">==</span> <span class="ss">:always</span> <span class="o">||</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:console</span><span class="o">]</span> <span class="o">==</span> <span class="ss">:failure</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">spec</span><span class="o">[</span><span class="s1">&#39;passed&#39;</span><span class="o">]</span><span class="p">))</span>
+              <span class="n">spec</span><span class="o">[</span><span class="s1">&#39;logs&#39;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">log</span><span class="o">|</span>
+                <span class="no">Formatter</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="s2">&quot;    • </span><span class="si">#{</span> <span class="n">format_log_message</span><span class="p">(</span><span class="n">log</span><span class="p">)</span> <span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="p">))</span>
+              <span class="k">end</span>
+            <span class="k">end</span>
+          <span class="k">end</span>
+          
+          <span class="k">def</span> <span class="nf">format_log_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">message</span> <span class="o">=~</span> <span class="sr">/(.*?) in http.+?assets\/(.*)\?body=\d+\s\((line\s\d+)/m</span>
+              <span class="n">pp_prefix</span> <span class="o">=</span> <span class="s1">&#39;[myLog]&#39;</span>
+              <span class="n">msg</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="vg">$1</span><span class="p">,</span> <span class="vg">$2</span><span class="p">,</span> <span class="vg">$3</span>
+              <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">starts_with?</span> <span class="n">pp_prefix</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">sub</span> <span class="n">pp_prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+              <span class="k">else</span>
+                <span class="s2">&quot;</span><span class="si">#{</span><span class="n">msg</span><span class="si">}</span><span class="s2"> in </span><span class="si">#{</span><span class="n">file</span><span class="si">}</span><span class="s2"> on </span><span class="si">#{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span>
+              <span class="k">end</span>
+            <span class="k">else</span>
+              <span class="n">message</span>
+            <span class="k">end</span>
+          <span class="k">end</span>
+          
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+</code></pre>
+</div>
+
+
+<h2>A JavaScript Pretty Print Library</h2>
+
+<p>
+  So now that we have Guard::Jasmine not stripping multi-line console messages to one line and printing file and line numbers, we are ready to hook into it. But first we need a JavaScript library that pretty prints objects for us and wrap this all up behind our own interface to <code>console.log</code>. During my research I found a library called jsDump and decided to <a href="https://github.com/NV/jsDump">use a fork of the project on github</a>. So go download that file and place it in <code>vendor/assets/javascripts/jsDump.js</code> of your Rails project. Next you will want to add it to your <code>spec/javascripts/spec.js</code> manifest like so. My below example is pulled right from my previous article and I have placed jsDump right after my jasmine files.
+</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasminerice</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">mock</span><span class="o">-</span><span class="nx">ajax</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jsDump</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">application</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasmine</span><span class="o">-</span><span class="nx">myapp</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">models</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">controllers</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span>
+</code></pre>
+</div>
+
+
+<h2>Logging Helpers - Using BlackCoffee</h2>
+
+<p>
+  In my last article I mentioned how I would talk more about the <code>jasmine-myapp</code> file in the manifest above. Now is the time. I recommend that this file is place to write all your top level helpers and functions for Jasmine or any other testing libraries in your JavaScript stack. Think of this file as your Ruby <code>test_helper.rb</code> or your own extensions to <code>ActiveSupport::TestCase</code>. My advice is that these functions all be written to pollute the time level namespace as other Jasmine helpers do, like the <code>beforeEach</code> and <code>clearAjaxRequests</code>. This makes things easier but be conscious of that decision and write functions keeping that in mind.
+</p>
+
+<p>
+  The only thing working against is is Sprockets/Tilt rendering CoffeeScript files in their own closure. Which is something you should really not fight! But in this case I think it is fine to have this particular file avoid that. Which allows us to (a) write our helper code in CoffeeScript and (b) use these functions as helpers in the global space like other Jasmine helpers. So enter my <a href="http://github.com/metaskills/sprockets-blackcoffee">Sprockets BlackCoffee</a> gem. This is a simple gem that exposes a CoffeeScript template that uses the <code>--bare</code> option to keep your file from being wrapped in a closure. All you have to do is give the file a <code>.js.black_coffee</code> extension and it will just work. So let's assume you have a <code>spec/javascripts/jasmine-myapp.js.black_coffee</code> created and the gem installed like so.
+</p>
+
+
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
+  <span class="c1"># ...</span>
+  <span class="n">gem</span> <span class="s1">&#39;sprockets-blackcoffee&#39;</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Finally, here are examples of my logging helpers in the <code>jasmine-myapp</code> file. The <code>myLogParser</code> uses jsDump to get back a pretty formatted string of any object if that object is not already a string. The primary logging helper <code>myLog</code> will prefix your message with <code>[myLog]</code> so the Guard::Jasmine recognizes the message and outputs only the object. The last helper <code>myLogLine</code> will do just like the other, but will allow the file and line number tobe printed too.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">myLog</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">console</span><span class="o">.</span><span class="n">log</span> <span class="s2">&quot;[myLog]</span><span class="si">#{</span><span class="n">myLogParser</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="n">myLogLine</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">hmLogParser</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="n">myLogParser</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="k">if</span> <span class="n">typeof</span> <span class="n">obj</span> <span class="n">is</span> <span class="s1">&#39;string&#39;</span> <span class="k">then</span> <span class="n">obj</span> <span class="k">else</span> <span class="n">jsDump</span><span class="o">.</span><span class="n">parse</span> <span class="n">obj</span>
+</code></pre>
+</div>
+
+
+<h2>In Practice</h2>
+
+<p>
+  Here is an example of a Jasmine spec where I was using console.log before the patches above and what it would output to the terminal.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1">#= include spec_helper</span>
+
+<span class="n">describe</span> <span class="s1">&#39;User&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+
+  <span class="n">it</span> <span class="s1">&#39;has been configured with proper attributes&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="vi">@user</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">User</span> <span class="nb">id</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="s1">&#39;bob@test.com&#39;</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span> <span class="vi">@user</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span>
+    <span class="n">expect</span><span class="p">(</span><span class="vi">@user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="s1">&#39;bob@test.com&#39;</span>
+</code></pre>
+</div>
+
+<pre class="code">
+User
+  ✘ has been configured with proper attributes
+    ➤ Expected 'foo@bar.com' to equal 'bob@test.com'.
+    • [object Object]
+ERROR: 1 specs, 1 failures
+in 0.653 seconds  
+</pre>
+
+<p>
+  There is the totally helpful <code>[object Object]</code>. But if we now change our code to leverage out patches and change console.log to <code>hmLog @user.attributes()</code> to use our helper. We will get this. If you need a pretty object with line numbers. Just use <code>hmLogLine</code>.
+</p>
+
+<pre class="code">
+User
+  ✘ has been configured with proper attributes
+    ➤ Expected 'foo@bar.com' to equal 'bob@test.com'.
+    • {
+       "email": "foo@bar.com",
+       "id": 2
+    }
+ERROR: 1 specs, 1 failures
+in 0.653 seconds
+</pre>
+
+
+<p>
+  I hope this is helpful to anyone using Guard::Jasmine with a desire to see better output. If you continue to follow my series, my next post will be a deeper dive into Jasmine testing of Spine.JS applications.
+</p>
+
+
+
+<h2>Related</h2>
+
+<ul>
+  <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
+  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
+  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+  <li><a href="/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee/">Pretty Console Logging With Guard::Jasmine &amp; BlackCoffee</a></li>  
+</ul>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://github.com/metaskills/sprockets-blackcoffee">Sprockets BlackCoffee Gem</a></li>
+  <li><a href="http://github.com/netzpirat/guard-jasmine">Guard::Jasmine - Automatically tests your Jasmine specs on Rails.</a></li>
+  <li><a href="http://github.com/bradphelan/jasminerice">Jasminerice - Pain free CoffeeScript testing under Rails 3.1.</a></li>
+</ul>
+
+]]>
+    </content>
+ </entry>
  
  <entry>
    <title>Rails &amp;amp; Spine.JS - Jasmine Testing Part 2</title>
@@ -142,9 +334,12 @@
 <h2>Related</h2>
 
 <ul>
-  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
   <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
+  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
+  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+  <li><a href="/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee/">Pretty Console Logging With Guard::Jasmine &amp; BlackCoffee</a></li>  
 </ul>
+
 
 <h2>Resources</h2>
 
@@ -152,7 +347,6 @@
   <li><a href="http://spinejs.com/">Spine.JS - Build Awesome JavaScript MVC Applications</a></li>
   <li><a href="http://github.com/bradphelan/jasminerice">Jasminerice - Pain free CoffeeScript testing under Rails 3.1</a></li>
   <li><a href="http://github.com/pivotal/jasmine-ajax">Jasmine AJAX - A library for faking Ajax responses in your Jasmine suite.</a></li>
-  <li><a href="hhh">aaa</a></li>
 </ul>
 
 
@@ -265,10 +459,11 @@
 <h2>Related</h2>
 
 <ul>
-  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
   <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
+  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
+  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+  <li><a href="/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee/">Pretty Console Logging With Guard::Jasmine &amp; BlackCoffee</a></li>  
 </ul>
-
 
 
 <h2>Resources</h2>
@@ -354,8 +549,10 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
 <h2>Related</h2>
 
 <ul>
+  <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
   <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
   <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+  <li><a href="/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee/">Pretty Console Logging With Guard::Jasmine &amp; BlackCoffee</a></li>  
 </ul>
 
 
@@ -1249,74 +1446,6 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
 <p>Lastly, I will review the bleeding edge tools being actively created for Windows developers to ease the transition to Ruby, Rails and OSS from a POSIX driven world. Many things have changed. It is time to learn and perform some occupational maintenance.</p>
 
 
-
-]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>Using MiniTest::Spec With Rails</title>
-   <link href="http://metaskills.net/2011/03/26/using-minitest-spec-with-rails"/>
-   <updated>2011-03-26T00:00:00-04:00</updated>
-   <id>http://metaskills.net/2011/03/26/using-minitest-spec-with-rails</id>
-   <content type="html">
-     <![CDATA[<p>
-  So after a few blog post on the subject of MiniTest::Spec, I finally have a simple testing stack for Rails 3 that leverages MiniTest's spec DSL. I introduce to you the <a href="http://github.com/metaskills/mini_specunit">MiniSpecUnit</a> gem. MiniSpecUnit defines a <code>Test::Unit::TestCase</code> class that subclasses MiniTest::Spec. It implements only what is needed to make rails happy. It is not a drop in replacement for the real Test::Unit::TestCase that is included with ruby 1.9.
-</p>
-
-<p>
-  Once you bundle the gem in your Rails application, it will satisfy the <code>require "test/unit/testcase"</code> from ActiveSupport's test case. Tricking it to use MiniTest::Spec instead of MiniTest::Unit. Here is an example Gemfile that shows the usage of MiniSpecUnit as well as two other MiniTest gems that I have made. The first is <a href="/2011/03/22/mini-backtrace-for-minitest-and-rails/">MiniBacktrace</a> which allows you to leverage the <code>Rails.backtrace_cleaner</code> using MiniTest. The other is <a href="/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda/">MiniShoulda</a> which builds a simple Shoulda syntax on top of MiniTest::Spec.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="ss">:test</span> <span class="k">do</span>
-  <span class="n">gem</span> <span class="s1">&#39;minitest&#39;</span>          <span class="c1"># At least v2.0.2 if using MiniShoulda.</span>
-  <span class="n">gem</span> <span class="s1">&#39;mini_specunit&#39;</span>     <span class="c1"># The goods! Force MiniTest::Spec instead of MiniTest::Unit.</span>
-  <span class="n">gem</span> <span class="s1">&#39;mini_backtrace&#39;</span>    <span class="c1"># Use Rails.backtrace_cleaner with MiniTest.</span>
-  <span class="n">gem</span> <span class="s1">&#39;mini_shoulda&#39;</span>      <span class="c1"># A small Shoulda syntax on top of MiniTest::Spec.</span>
-<span class="k">end</span>
-</code></pre>
-</div>
-
-<p>
-  Since MinitTest::Spec is built on top of MiniTest::Unit, there is not a lot that can go wrong. With MiniSpecUnit, we finally have a working solution by replacing MiniTest::Spec as the superclass for ActiveSupport::TestCase when using Rails. This solution is drop dead simple and does not require you to recreate a new test case in your <code>test_helper.rb</code> and change all your cases to subclass that new test case. About the only gotcha is a few missing assertions available in Test::Unit. If you encounter these, I encourage you to rewrite them to the modern MiniTest::Spec assertion style. I commonly use this <a href="http://cheat.errtheblog.com/s/minitest/1">cheat sheet</a> to remember them. For example:
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="c1"># This:</span>
-<span class="n">assert_not_nil</span> <span class="vi">@foo</span><span class="o">.</span><span class="n">bar</span>
-
-<span class="c1"># Would Become This:</span>
-<span class="vi">@foo</span><span class="o">.</span><span class="n">bar</span><span class="o">.</span><span class="n">wont_be_nil</span>
-</code></pre>
-</div>
-
-
-
-<h2>Functional Tests With ActionController::TestCase</h2>
-
-<p>
-  One problem you may have with your functional tests is a nil <code>@controller</code> instance variable in <code>describe</code> or <code>context</code> blocks. Resulting in the "<em>RuntimeError: @controller is nil: make sure you set it in your test's setup method.</em>" message. This is easy to fix, all you have to do is be explicit about your controller that you are testing like so.
-</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">UsersControllerTest</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">TestCase</span>
-  <span class="n">tests</span> <span class="no">UsersController</span>
-  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
-<span class="k">end</span>
-</code></pre>
-</div>
-
-
-<h2>Broken Describe Scopes</h2>
-
-<p>
-  In my article, <a href="/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda/"><em>From Test::Unit & Shoulda To MiniTest::Spec & MiniShoulda</em></a>, I cover a patch to MiniTest that would fix "undefined local variable or method" errors when using describe/context scopes. I submitted a <a href="https://github.com/seattlerb/minitest/pull/9">patch and pull request</a> to Ryan Davis that I believe was applied. At the time of this article, there is no release version of MiniTest that includes <a href="http://github.com/metaskills/mini_shoulda/blob/master/lib/mini_shoulda/minitest_describe_patch.rb">this patch</a> that I have in MiniShoulda. So if you find yourself with errors in describe/context blocks, consider bundling the MiniSholda gem to fix it till a new version of MiniTest is released.
-</p>
-
-
-<h2>In Closing</h2>
-
-<p>
-  I have only tested the above stack in the latest Rails edge, 3.1.beta and ruby 1.9.2. I doubt there are issues on older versions of Rails with different Ruby versions. If you apply these gems to success, I would love to hear about it. Happy testing!
-</p>
 
 ]]>
     </content>

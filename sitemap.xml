@@ -4,6 +4,13 @@
         xmlns:video="http://www.sitemaps.org/schemas/sitemap-video/1.1">
   
   <url> 
+    <loc>http://metaskills.net/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee</loc> 
+    
+    <lastmod>2012-02-01T00:00:00-05:00</lastmod>
+    
+  </url>
+  
+  <url> 
     <loc>http://metaskills.net/2012/01/17/rails-and-spine-js-jasmine-testing-part-2</loc> 
     
     <lastmod>2012-01-17T00:00:00-05:00</lastmod>
