@@ -4,7 +4,7 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2012-02-28T11:11:39-05:00</updated>
+ <updated>2012-02-28T11:20:02-05:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
@@ -46,18 +46,18 @@
   Some of the bugs I encountered were fixed, like parsing errors for CSS3 keyframes. Others had horrible workarounds that used more code while at the same time lowering legibility. Finally, I came across the one issue on the hundreds of those that exists on LESS' github page that stopped me cold. It was titled <a href="http://github.com/cloudhead/less.js/issues/36">variable property</a> and after learning about it, I decided to stop using LESS for my Rails projects. What are variable properties anyway. Let me show you a common pattern both I and Compass use in a basic contrived example. You may also want to read my comments in that github issue link too. Imagine I have some global colors that I want to mixin to other classes based on a dynamic property. So given this SCSS below:
 </p>
 
-<div class="highlight"><pre><code class="css"><span class="k">@myWhite</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class="o">)</span><span class="p">;</span>
-<span class="k">@myGray</span><span class="o">:</span>  <span class="nt">rgb</span><span class="o">(</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">)</span><span class="p">;</span>
-<span class="k">@myBlack</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">)</span><span class="p">;</span>
+<div class="highlight"><pre><code class="css"><span class="err">$</span><span class="nt">myWhite</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class="o">);</span>
+<span class="err">$</span><span class="nt">myGray</span><span class="o">:</span>  <span class="nt">rgb</span><span class="o">(</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">);</span>
+<span class="err">$</span><span class="nt">myBlack</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">);</span>
 
-<span class="nc">.myColorClasses</span><span class="o">(</span><span class="k">@property</span><span class="o">)</span> <span class="p">{</span>
-  <span class="o">&amp;</span><span class="nc">.white</span>   <span class="p">{</span> <span class="o">@</span><span class="n">property</span><span class="o">:</span> <span class="o">@</span><span class="n">myWhite</span><span class="p">;</span> <span class="p">}</span>
-  <span class="o">&amp;</span><span class="nc">.gray</span>    <span class="p">{</span> <span class="o">@</span><span class="n">property</span><span class="o">:</span> <span class="o">@</span><span class="n">myGray</span><span class="p">;</span> <span class="p">}</span>
-  <span class="o">&amp;</span><span class="nc">.black</span>   <span class="p">{</span> <span class="o">@</span><span class="n">property</span><span class="o">:</span> <span class="o">@</span><span class="n">myBlack</span><span class="p">;</span> <span class="p">}</span>
+<span class="k">@mixin</span> <span class="nt">myColorClasses</span><span class="o">(</span><span class="err">$</span><span class="nt">property</span><span class="o">)</span> <span class="p">{</span>
+  <span class="o">&amp;</span><span class="nc">.white</span>   <span class="p">{</span> <span class="err">$</span><span class="n">property</span><span class="o">:</span> <span class="err">$</span><span class="n">myWhite</span><span class="p">;</span> <span class="p">}</span>
+  <span class="o">&amp;</span><span class="nc">.gray</span>    <span class="p">{</span> <span class="err">$</span><span class="n">property</span><span class="o">:</span> <span class="err">$</span><span class="n">myGray</span><span class="p">;</span> <span class="p">}</span>
+  <span class="o">&amp;</span><span class="nc">.black</span>   <span class="p">{</span> <span class="err">$</span><span class="n">property</span><span class="o">:</span> <span class="err">$</span><span class="n">myBlack</span><span class="p">;</span> <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="nc">.box</span> <span class="p">{</span>
-  <span class="o">.</span><span class="n">myColorClasses</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">);</span>
+  <span class="o">@</span><span class="n">include</span> <span class="n">myColorClasses</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre>
 </div>
