@@ -121,17 +121,20 @@
 
 <span class="k">@mixin</span> <span class="nt">myColorClasses</span><span class="o">(</span><span class="err">$</span><span class=
 "nt">property</span><span class="o">)</span> <span class="p">{</span>
-  <span class="o">&amp;</span><span class="nc">.white</span>   <span class="p">{</span> <span class="err">$</span><span class=
-"n">property</span><span class="o">:</span> <span class="err">$</span><span class="n">myWhite</span><span class="p">;</span> <span class="p">}</span>
-  <span class="o">&amp;</span><span class="nc">.gray</span>    <span class="p">{</span> <span class="err">$</span><span class=
-"n">property</span><span class="o">:</span> <span class="err">$</span><span class="n">myGray</span><span class="p">;</span> <span class="p">}</span>
-  <span class="o">&amp;</span><span class="nc">.black</span>   <span class="p">{</span> <span class="err">$</span><span class=
-"n">property</span><span class="o">:</span> <span class="err">$</span><span class="n">myBlack</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
+  <span class="o">&amp;</span><span class="nc">.white</span>   <span class="p">{</span> <span class="err">#{$</span><span class=
+"n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myWhite</span><span class=
+"o">;</span> <span class="p">}</span>
+  <span class="o">&amp;</span><span class="nc">.gray</span>    <span class="p">{</span> <span class="err">#{$</span><span class=
+"n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myGray</span><span class=
+"o">;</span> <span class="err">}</span>
+  <span class="o">&amp;</span><span class="nc">.black</span>   <span class="p">{</span> <span class="err">#{$</span><span class=
+"n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myBlack</span><span class=
+"o">;</span> <span class="err">}</span>
+<span class="err">}</span>
 
 <span class="nc">.box</span> <span class="p">{</span>
   <span class="o">@</span><span class="n">include</span> <span class="n">myColorClasses</span><span class="p">(</span><span class=
-"s2">&quot;background-color&quot;</span><span class="p">);</span>
+"k">background-color</span><span class="p">);</span>
 <span class="p">}</span>
 </code>
 </pre>
