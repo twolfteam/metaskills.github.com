@@ -4,7 +4,7 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2012-03-05T18:58:53-05:00</updated>
+ <updated>2012-03-12T16:08:06-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
@@ -18,8 +18,8 @@
    <updated>2012-02-27T00:00:00-05:00</updated>
    <id>http://metaskills.net/2012/02/27/too-less-should-you-be-using-sass</id>
    <content type="html">
-     <![CDATA[<aside class="flash_info">
-  This <a href="http://github.com/cloudhead/less.js/commit/93b23d2c24936d5bd829ba1f725ef442e9475747">commit</a> one week after this article was published now brings variable properties to LESS and thereby opening up a ton of metaprogramming possibilities. Good news for the next version of LESS and those that love it!
+     <![CDATA[<aside class="flash_warn">
+  Previously I had updated this article to say that this <a href="http://github.com/cloudhead/less.js/commit/93b23d2c24936d5bd829ba1f725ef442e9475747">commit</a> looked like it gives you real variable properties in LESS. I was wrong! So even in LESS v1.3 you are still screwed for doing metaprogramming and working with a real CSS preprocessor. That may change for LESS v1.4 and if you want to help make that happen. I suggst you put your weight behind <a href="https://github.com/cloudhead/less.js/pull/698">this github pull request</a>.
 </aside>
 
 
