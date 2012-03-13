@@ -64,10 +64,10 @@
             </header>
             <p>
               When ActiveRecord 3.2 was released there was a small addition called ActiveRecord::Store which bills itself as a simple key/value store
-              for your models. The example usage code looks like this. class User &lt; ActiveRecord::Base store :settings, accessors: [:color,
-              :homepage] end @user = User.new(color: &#39;black&#39;, homepage: &#39;37signals.com&#39;) @user.color # =&gt; &#39;black&#39;
-              @user.settings[:color] # =&gt; &#39;black&#39; @user.settings[:remember_me] = true Most people know that I love simple tools. But when
-              I found myself considering ActiveRecord::Store, I found it seriously lacking for my particular...
+              for your models. The code below is pulled right from their example usage. class User &lt; ActiveRecord::Base store :settings,
+              accessors: [:color, :homepage] end @user = User.new(color: &#39;black&#39;, homepage: &#39;37signals.com&#39;) @user.color # =&gt;
+              &#39;black&#39; @user.settings[:color] # =&gt; &#39;black&#39; @user.settings[:remember_me] = true Most people know that I love simple
+              tools. But when I found myself considering ActiveRecord::Store, I found it seriously lacking...
             </p>
           </article>
           <article class="excerpt">
@@ -354,8 +354,7 @@
             </h4>
             <p>
               <a href="/2012/03/12/store-configurable-a-lesson-in-recursion-in-ruby">When ActiveRecord 3.2 was released there was a small addition
-              called ActiveRecord::Store which bills itself as a simple key/value store for your models. The example usage code looks like
-              this....</a>
+              called ActiveRecord::Store which bills itself as a simple key/value store for your models. The code below is pulled right from...</a>
             </p>
           </article>
           <article>
