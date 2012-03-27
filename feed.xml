@@ -4,7 +4,7 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2012-03-27T09:17:46-04:00</updated>
+ <updated>2012-03-27T13:41:07-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
@@ -1538,7 +1538,7 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
   
   <span class="n">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@myDomElement</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class="s1">&#39;#myDomElement&#39;</span><span class="p">)</span>
-    <span class="err">@</span><span class="o">.</span><span class="n">_initBehavior</span>
+    <span class="err">@</span><span class="o">.</span><span class="n">_initBehavior</span><span class="p">()</span>
 
   <span class="n">handler</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">=&gt;</span>
     <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
