@@ -109,6 +109,10 @@ $ which wkhtmltopdf
             that name? <strong>This is important!</strong> because Rails allows us to specify template names that can service more than one mime type
             format. So in this case, the layout will be found when rendering both HTML and .pdf formats.
           </p>
+          <aside class="flash_warn">
+            Somewhere along the way to Rails 3, dual mime type support was lost. Now to render a template/partial for multiple mime types you must
+            remove them all together from the name. Thereby making the file a catch-all for any mime type. In this case, pdf.haml would work.
+          </aside>
           <div class="highlight">
             <pre>
 <code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
