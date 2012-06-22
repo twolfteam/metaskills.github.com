@@ -4,7 +4,7 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2012-06-13T13:56:37-04:00</updated>
+ <updated>2012-06-22T06:56:25-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
@@ -1023,15 +1023,16 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
 </div>
 
 <p>
-  To something like the following. Since the <code>spine/lib</code> directory is where the source CoffeeScript files from our submodule above and Sprockets will render these just fine, it all just works!
+  To something like the following. Since the <code>spine/src</code> directory is where the source CoffeeScript files from our submodule above and Sprockets will render these just fine, it all just works!
 </p>
 
-<div class="highlight"><pre><code class="ruby"><span class="c1">#= require spine/lib/spine</span>
-<span class="c1">#= require spine/lib/manager</span>
-<span class="c1">#= require spine/lib/ajax</span>
-<span class="c1">#= require spine/lib/route</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1">#= require spine/src/spine</span>
+<span class="c1">#= require spine/src/manager</span>
+<span class="c1">#= require spine/src/ajax</span>
+<span class="c1">#= require spine/src/route</span>
 </code></pre>
 </div>
+
 
 <p>
   So now you can easily update your Spine dependency using a simple git workflow with the added benefit that you can open up any of the source CoffeeScript files and learn Spine from the inside out. You can even change the source or put in console debugging to see what is happening and your application files will recompile via Sprockets on the next request.

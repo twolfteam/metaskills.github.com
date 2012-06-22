@@ -118,15 +118,15 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
 </pre>
           </div>
           <p>
-            To something like the following. Since the <code>spine/lib</code> directory is where the source CoffeeScript files from our submodule
+            To something like the following. Since the <code>spine/src</code> directory is where the source CoffeeScript files from our submodule
             above and Sprockets will render these just fine, it all just works!
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1">#= require spine/lib/spine</span>
-<span class="c1">#= require spine/lib/manager</span>
-<span class="c1">#= require spine/lib/ajax</span>
-<span class="c1">#= require spine/lib/route</span>
+<code class="ruby"><span class="c1">#= require spine/src/spine</span>
+<span class="c1">#= require spine/src/manager</span>
+<span class="c1">#= require spine/src/ajax</span>
+<span class="c1">#= require spine/src/route</span>
 </code>
 </pre>
           </div>
