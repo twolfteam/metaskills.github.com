@@ -5,7 +5,7 @@
     <meta name="author" content="Ken Collins">
     <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
     <title>
-      Bind jQuery Event Handlers To This Object With CoffeeScript @MetaSkills.net
+      Rails, Moment.js And Time Zones @MetaSkills.net
     </title>
     <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
     <link rel="author" href="mailto:ken@metaskills.net">
@@ -51,108 +51,115 @@
       <section id="content">
         <article id="post">
           <header>
-            <time pubdate datetime="2011-05-22T00:00:00-04:00">
-              <span class="day">22</span> <span class="month">May</span> <span class="year">2011</span>
+            <time pubdate datetime="2012-08-05T00:00:00-04:00">
+              <span class="day">05</span> <span class="month">Aug</span> <span class="year">2012</span>
             </time>
             <h1>
-              Bind jQuery Event Handlers To This Object With CoffeeScript
+              Rails, Moment.js And Time Zones
             </h1>
           </header>
           <p>
-            Friends have told me that rich domain objects are seldom wielded when using jQuery to enhance behavior on web pages. I myself have always
-            loved JavaScript as a rich dynamic language first and something for the DOM second. Hence most of my client-side JavaScript follows a
-            robust object-oriented approach similar to Ruby. This is the main reason I have used Prototype.js for so long.
+            Here are a few quick tips for the time zone aware Rails developer that finds themselves deep into JavaScript date objects. First, use the
+            <a href="http://momentjs.com">Moment.js</a> JavaScrpt date library! Moment.js has a very <a href="http://momentjs.com/docs/">rich API for
+            parsing and working with times</a>, very similiar to ActiveSupport's extensions. However, it does not have a solid way of moving times
+            across zones. Especially if those zones may or may not observer daylight savings time (DST).
           </p>
           <p>
-            Since Rails announced both jQuery and CoffeeScript as the defaults in version 3.1, I decided it was high time I starting learning both. I
-            had always known that jQuery bound the <code>this</code> keyword in event handlers to the DOM object. Something I found totally confusing
-            and unacceptable to someone dealing with their own objects to encapsulate behavior. Today I found two ways of dealing with my problem, a
-            jQuery way and a CoffeeScript way. First a code example.
+            Many JavaScript time zone libraries require a huge set of geographic data to both identify zones and their observance of DST. These data
+            files can add a significant overhead to JavaScript. But wouldn't it be great if there was a simple way of leveraging your Rails model's
+            time zone settings? There is, but first we need to serialize an <code>ActiveSupport::TimeZone</code> object in JSON. Easy, just define an
+            <code>#as_json</code> method like the one below. I suggest adding this to an initializer in your Rails
+            <code>config/initializers/active_support.rb</code> directory. The key attribute here is the <code>utc_total_offset</code>. This will be a
+            number in minutes that properly observes DST.
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">MyObject</span>
-  
-  <span class="n">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="vi">@myDomElement</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class=
-"s1">&#39;#myDomElement&#39;</span><span class="p">)</span>
-    <span class="err">@</span><span class="o">.</span><span class="n">_initBehavior</span><span class="p">()</span>
+<code class="ruby"><span class="k">module</span> <span class="nn">ActiveSupport</span>
+  <span class="k">class</span> <span class="nc">TimeZone</span>
 
-  <span class="n">handler</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">this</span><span class=
-"p">)</span>
-    <span class="kp">false</span>
+    <span class="k">def</span> <span class="nf">as_json</span><span class="p">(</span><span class="n">options</span><span class=
+"o">=</span><span class="kp">nil</span><span class="p">)</span>
+      <span class="p">{</span> <span class="ss">:name</span>                <span class="o">=&gt;</span> <span class="nb">name</span><span class=
+"p">,</span> 
+        <span class="ss">:identifier</span>          <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class=
+"n">identifier</span><span class="p">,</span>
+        <span class="ss">:friendly_identifier</span> <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class=
+"n">friendly_identifier</span><span class="p">,</span>
+        <span class="ss">:utc_offset</span>          <span class="o">=&gt;</span> <span class="n">utc_offset</span><span class="p">,</span>
+        <span class="ss">:utc_total_offset</span>    <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class=
+"n">current_period</span><span class="o">.</span><span class="n">utc_total_offset</span> <span class="p">}</span>
+    <span class="k">end</span>
 
-  <span class="n">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
-"n">resize</span> <span class="vi">@handler</span>
-
-<span class="n">jQuery</span> <span class="o">-&gt;</span>
-  <span class="n">window</span><span class="o">.</span><span class="n">myObject</span> <span class="o">=</span> <span class=
-"kp">new</span> <span class="no">MyObject</span><span class="p">();</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 </code>
 </pre>
           </div>
           <p>
-            Here is a simple class using CoffeeScript's methods. It initializes itself with a static property <code>this.myDomElement</code> to some
-            DOM element on the page with an id of "myDomElement". It then attaches an event handler to the window's resize event and logs
-            <code>this</code> along the way. Simple stuff, the only problem will be that the object logged will not be an instance of MyObject, but
-            the raw DOM element, in this case the window object. One way of fixing this is to use <a href=
-            "http://api.jquery.com/jQuery.proxy/">jQuery's proxy</a> function like so
+            Now assuming you have serialized a models time zone attribute using the full <code>ActiveSupport::TimeZone</code> object, we can easily
+            use this information client side via a quick extension to Moment.js' prototype. Here is a <code>moment.js.coffee</code> file I have
+            required in my Rails applications.
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="n">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
-  <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
-"n">resize</span> <span class="n">jQuery</span><span class="o">.</span><span class="n">proxy</span><span class="p">(</span><span class=
-"vi">@handler</span><span class="p">,</span><span class="n">this</span><span class="p">)</span>
+<code class="coffeescript"><span class="nv">moment.fn.forTimeZone = </span><span class="nf">(timeZone) -&gt;</span>
+  <span class="nv">currentOffset = </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class=
+"nx">zone</span><span class="p">()</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class=
+"o">*</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="nv">adjustedOfffset = </span><span class="k">if</span> <span class="nx">currentOffset</span> <span class="o">&gt;</span> <span class=
+"nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span> 
+                      <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span> <span class=
+"o">-</span> <span class="nx">currentOffset</span> 
+                    <span class="k">else</span> 
+                      <span class="nx">currentOffset</span> <span class="o">-</span> <span class="nx">timeZone</span><span class=
+"p">.</span><span class="nx">utc_total_offset</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">clone</span><span class="p">().</span><span class="nx">add</span> <span class=
+"s1">&#39;seconds&#39;</span><span class="p">,</span> <span class="nx">adjustedOfffset</span>
 </code>
 </pre>
           </div>
           <p>
-            This works, but seems a little verbose to me and can clutter up your event initialization code. The other way is to use CoffeeScript's
-            fat arrow operator. An <a href="http://jashkenas.github.com/coffee-script/">excerpt from their project page</a> explains it well.
-          </p>
-          <blockquote>
-            The fat arrow =&gt; can be used to both define a function, and to bind it to the current value of this, right on the spot. This is
-            helpful when using callback-based libraries like Prototype or jQuery, for creating iterator functions to pass to each, or event-handler
-            functions to use with bind. Functions created with the fat arrow are able to access properties of the this where they're defined.
-          </blockquote>
-          <p>
-            So all we have to do is change <code>-&gt;</code> to <code>=&gt;</code> for any of our callbacks or event handlers and now
-            <code>this</code> is our own object and not the DOM element. Hot damn!
+            So we let Ruby do all the hard work of telling us what time zones are observing DST without all the bloat to our JavaScript for parsing
+            zone identifiers. Some sample output.
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">MyObject</span>
-  
-  <span class="n">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="vi">@myDomElement</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class=
-"s1">&#39;#myDomElement&#39;</span><span class="p">)</span>
-    <span class="err">@</span><span class="o">.</span><span class="n">_initBehavior</span><span class="p">()</span>
+<code class="javascript"><span class="nx">eastern</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">friendly_identifier</span><span class="o">:</span> <span class="s2">&quot;America - New York&quot;</span><span class="p">,</span>
+  <span class="nx">identifier</span><span class="o">:</span> <span class="s2">&quot;America/New_York&quot;</span><span class="p">,</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Eastern Time (US &amp; Canada)&quot;</span><span class="p">,</span>
+  <span class="nx">utc_offset</span><span class="o">:</span> <span class="o">-</span><span class="mi">18000</span><span class="p">,</span>
+  <span class="nx">utc_total_offset</span><span class="o">:</span> <span class="o">-</span><span class="mi">14400</span>
+<span class="p">}</span>
 
-  <span class="n">handler</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">=&gt;</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">this</span><span class=
-"p">)</span>
-    <span class="kp">false</span>
+<span class="nx">noonPacific</span> <span class="o">=</span> <span class="mi">1344279600000</span> <span class=
+"c1">// &quot;2012-08-06T12:00:00-07:00&quot;</span>
+<span class="nx">format</span> <span class="o">=</span> <span class="s1">&#39;MMMM Do, YYYY \\at h:mma&#39;</span>
 
-  <span class="n">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
-"n">resize</span> <span class="vi">@handler</span>
+<span class="nx">moment</span><span class="p">(</span><span class="nx">noonPacific</span><span class="p">).</span><span class=
+"nx">format</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span>
+<span class="c1">// &quot;August 6th, 2012 at 12:00pm&quot;</span>
 
-<span class="n">jQuery</span> <span class="o">-&gt;</span>
-  <span class="n">window</span><span class="o">.</span><span class="n">myObject</span> <span class="o">=</span> <span class=
-"kp">new</span> <span class="no">MyObject</span><span class="p">();</span>
+<span class="nx">moment</span><span class="p">(</span><span class="nx">noonPacific</span><span class="p">).</span><span class=
+"nx">forTimeZone</span><span class="p">(</span><span class="nx">eastern</span><span class="p">).</span><span class="nx">format</span><span class=
+"p">(</span><span class="nx">format</span><span class="p">)</span>
+<span class="c1">// &quot;August 6th, 2012 at 3:00pm&quot;</span>
 </code>
 </pre>
           </div>
+          <h2>
+            Resources
+          </h2>
+          <ul>
+            <li>
+              <a href="http://momentjs.com">Moment.js - A lightweight JavaScript date library.</a>
+            </li>
+          </ul>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';
-            var disqus_identifier = '/2011/05/22/bind-jquery-event-handlers-to-this-object-with-coffeescript';
-            var disqus_title = "Bind jQuery Event Handlers To This Object With CoffeeScript";
+            var disqus_identifier = '/2012/08/05/rails-moment-js-and-time-zones';
+            var disqus_title = "Rails, Moment.js And Time Zones";
             (function() {
             var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
             dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';

@@ -4,6 +4,13 @@
         xmlns:video="http://www.sitemaps.org/schemas/sitemap-video/1.1">
   
   <url> 
+    <loc>http://metaskills.net/2012/08/05/rails-moment-js-and-time-zones</loc> 
+    
+    <lastmod>2012-08-05T00:00:00-04:00</lastmod>
+    
+  </url>
+  
+  <url> 
     <loc>http://metaskills.net/2012/05/22/view-controller-patterns-with-spine-js-and-spacepen</loc> 
     
     <lastmod>2012-05-22T00:00:00-04:00</lastmod>
