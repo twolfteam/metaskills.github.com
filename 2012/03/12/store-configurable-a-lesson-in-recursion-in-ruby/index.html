@@ -1,0 +1,422 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      StoreConfigurable - A Lesson In Recursion In Ruby @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/jquery-1.7.1.min.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="U">About Me</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="/pages/resume.html" class="button" data-icon="N">Resume</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Twitter</a>
+            </li>
+            <li>
+              <a href="/archive.html" class="button" data-icon="l">Archives</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate datetime="2012-03-12T00:00:00-04:00">
+              <span class="day">12</span> <span class="month">Mar</span> <span class="year">2012</span>
+            </time>
+            <h1>
+              StoreConfigurable - A Lesson In Recursion In Ruby
+            </h1>
+          </header>
+          <p>
+            When ActiveRecord 3.2 was released there was a small addition called <a href=
+            "http://api.rubyonrails.org/classes/ActiveRecord/Store.html">ActiveRecord::Store</a> which bills itself as a simple key/value store for
+            your models. The code below is pulled right from their example usage.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class=
+"no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">store</span> <span class="ss">:settings</span><span class="p">,</span> <span class="n">accessors</span><span class=
+"p">:</span> <span class="o">[</span><span class="ss">:color</span><span class="p">,</span> <span class="ss">:homepage</span><span class="o">]</span>
+<span class="k">end</span>
+
+<span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class=
+"p">(</span><span class="n">color</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class=
+"n">homepage</span><span class="p">:</span> <span class="s1">&#39;37signals.com&#39;</span><span class="p">)</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">color</span>            <span class="c1"># =&gt; &#39;black&#39;</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class=
+"ss">:color</span><span class="o">]</span> <span class="c1"># =&gt; &#39;black&#39;</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class=
+"ss">:remember_me</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Most people know that I love simple tools. But when I found myself considering <code>ActiveRecord::Store</code>, I found it seriously
+            lacking for my particular use case. What I wanted was a config for a user class that could do the following:
+          </p>
+          <ul>
+            <li>Interchange property dot notation with indifferent string/symbol lookup.
+            </li>
+            <li>Automatically grow as needed. For namespaces and nested organization.
+            </li>
+            <li>Report state changes to the model from any node.
+            </li>
+          </ul>
+          <h2>
+            StoreConfigurable
+          </h2>
+          <p>
+            <span class="photofancy floatr ml20 mb10"><img src="http://cdn.actionmoniker.com/share/recursive_kitty_small.jpg" width="220" height=
+            "136"></span> The lack of these features is why I set out to build a little gem I call <a href=
+            "https://github.com/metaskills/store_configurable">StoreConfigurable</a>. A zero-configuration recursive Hash for storing a tree of
+            options in a serialized ActiveRecord column which includes self-aware hooks that delegate dirty/changed state to your configs owner.
+            Perfect right? Here is a simple example of its usage below. If you want to learn more, checkout the <a href=
+            "https://github.com/metaskills/store_configurable">project on github</a> with the full README.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class=
+"no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">store_configurable</span>
+<span class="k">end</span>
+
+<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class=
+"n">remember_me</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class=
+"n">sortable_tables</span><span class="o">.</span><span class="n">column</span>    <span class="o">=</span> <span class=
+"s1">&#39;created_at&#39;</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class=
+"n">sortable_tables</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;asc&#39;</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">you</span><span class=
+"o">.</span><span class="n">should</span><span class="o">.</span><span class="n">never</span><span class="o">.</span><span class=
+"n">need</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">do</span><span class="o">.</span><span class=
+"n">this</span><span class="o">.</span><span class="n">but</span><span class="o">.</span><span class="n">you</span><span class=
+"o">.</span><span class="n">could</span><span class="o">.</span><span class="n">if</span><span class="o">.</span><span class=
+"n">you</span><span class="o">.</span><span class="n">wanted</span><span class="o">.</span><span class="n">to</span> <span class=
+"o">=</span> <span class="s1">&#39;deep_value&#39;</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">config_changed?</span> <span class="c1"># =&gt; true</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Rather than talking about how StoreConfigurable might be a good fit for you, I would instead like to discuss how my first practical usage
+            of recursion in Ruby is implemented in StoreConfigurable. That along with how to leverage default Hash values is the topic for this post.
+          </p>
+          <h2>
+            Default Hash Values
+          </h2>
+          <p>
+            So first up, a little known feature of Ruby's <a href="http://www.ruby-doc.org/core-1.9.3/Hash.html">Hash</a> class is the ability for a
+            default value to be returned when a key is missing. If you stop and think about this, the default is <code>nil</code>, which is a valid
+            object in Ruby. But you can tell Hash objects to return other values when a key is missing. The first way to do this is to pass the
+            default value as an argument to <code>Hash.new()</code>. The second is to pass a block to the new method which would return the default
+            value. That block is passed in the current hash object and the key that is missing so you can do some fancy things if needed. Here are
+            some quick examples of both techniques.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="c1"># Default value passed to new.</span>
+
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class=
+"p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>  <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class=
+"c1"># =&gt; &quot;default&quot;</span>
+
+<span class="c1"># Default value from new&#39;s block.</span>
+
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class=
+"p">{</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class=
+"o">|</span> <span class="s2">&quot;Missing </span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class=
+"s2"> for hash with id </span><span class="si">#{</span><span class="nb">hash</span><span class="o">.</span><span class=
+"n">object_id</span><span class="si">}</span><span class="s2">.&quot;</span> <span class="p">}</span>
+<span class="nb">hash</span>                        <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class=
+"c1"># =&gt; &quot;Missing foo for hash with id 283829283.&quot;</span>
+</code>
+</pre>
+          </div>
+          <h2>
+            Recursion
+          </h2>
+          <p>
+            Recurion in Ruby can take many forms. My solution for StoreConfigurable was to always make the hash returned by the proxy object self
+            replicate itself for key misses. Here is a fundamental example to make your own Hash object return new instances of itself when keys are
+            missing.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">class</span> <span class="nc">RecursiveHash</span> <span class="o">&lt;</span> <span class="no">Hash</span>
+  <span class="no">Recursive</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class=
+"o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class=
+"o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class=
+"n">class</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="k">super</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Recursive</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">RecursiveHash</span><span class="o">.</span><span class=
+"n">new</span>  <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="o">.</span><span class="n">class</span>                <span class="c1"># =&gt; RecursiveHash</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                <span class=
+"c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">].</span><span class=
+"n">class</span>          <span class="c1"># =&gt; RecursiveHash</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:a</span><span class="o">][</span><span class="ss">:b</span><span class=
+"o">][</span><span class="ss">:c</span><span class="o">]</span>          <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span>                      <span class="c1"># =&gt; {:foo=&gt;{}, :a=&gt;{:b=&gt;{:c=&gt;{}}}}</span>
+</code>
+</pre>
+          </div>
+          <p>
+            In this example, I create a <a href="http://www.ruby-doc.org/core-1.9.3/Proc.html">Proc</a> object via the lambda keyword and I use this
+            as the block argument when you create an instance of <code>RecursiveHash</code> via the super method. Here I am using the
+            <code>&amp;</code> syntax to pass an existing Proc as a block. Hope I have not lost you so far :)
+          </p>
+          <p>
+            So default hashes in Ruby and simple recursion techniques are what make up some of the key points of StoreConfigurable. I also use
+            recursion when loading the hash values from the YAML stored in the database. Here is what that technique looks like.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">loader</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class=
+"o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class=
+"n">value</span><span class="o">|</span>
+  <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class=
+"no">Hash</span><span class="p">)</span>
+    <span class="n">value</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class=
+"n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class=
+"o">.</span><span class="n">call</span><span class="p">(</span><span class="nb">hash</span><span class="o">.</span><span class=
+"n">send</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">k</span><span class=
+"p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">else</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">send</span> <span class="s2">&quot;</span><span class=
+"si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="n">value</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class=
+"n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class=
+"o">.</span><span class="n">call</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class=
+"n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Hopefully this dive into Ruby or maybe StoreConfigurable is helpful!
+          </p>
+          <h2>
+            Resources
+          </h2>
+          <ul>
+            <li>
+              <a href="https://github.com/metaskills/store_configurable">StoreConfigurable</a> - A zero-configuration recursive Hash for storing a
+              tree of options in a serialized ActiveRecord column with self-aware hooks that delegate dirty/changed state to your configs owner.
+            </li>
+            <li>
+              <a href="http://api.rubyonrails.org/classes/ActiveRecord/Store.html">ActiveRecord::Store</a> - Simple key/value store for your models.
+            </li>
+          </ul>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2012/03/12/store-configurable-a-lesson-in-recursion-in-ruby';
+            var disqus_title = "StoreConfigurable - A Lesson In Recursion In Ruby";
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Synchronized Times In Ruby &amp; JavaScript Acceptance Tests Using Capybara, Timecop &amp; Sinon.JS
+            </h4>
+            <p>
+              <a href="/2012/08/07/synchronized-times-in-ruby-and-javascript-acceptance-tests-using-capybara-timecop-and-sinon.js">Any good Ruby
+              developer that tests time-dependent code has used the Timecop gem. Timecop provides dead simple time travel and freezing capabilities
+              to Ruby's standard library. But what if you...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Rails, Moment.js And Time Zones
+            </h4>
+            <p>
+              <a href="/2012/08/05/rails-moment-js-and-time-zones">Here are a few quick tips for the time zone aware Rails developer that finds
+              themselves deep into JavaScript date objects. First, use the Moment.js JavaScrpt date library! Moment.js has...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              View Controller Patterns With Spine.JS &amp; SpacePen
+            </h4>
+            <p>
+              <a href="/2012/05/22/view-controller-patterns-with-spine-js-and-spacepen">The VC in 'MVC' As Addy Osmani points out in his Scaling Your
+              JavaScript Applications presentation, all JavaScript 'MVC' frameworks interpret MVC differently. These differences are an academic
+              rabbit hole...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2012 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://www.meetup.com/ruby-130/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://fearoffish.com">Jamie van Dyke</a>
+            </li>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

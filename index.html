@@ -1,0 +1,462 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      Welcome! @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/jquery-1.7.1.min.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="U">About Me</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="/pages/resume.html" class="button" data-icon="N">Resume</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Twitter</a>
+            </li>
+            <li>
+              <a href="/archive.html" class="button" data-icon="l">Archives</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <h1>
+          Welcome!
+        </h1>
+        <section id="category">
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2012/08/07/synchronized-times-in-ruby-and-javascript-acceptance-tests-using-capybara-timecop-and-sinon.js">Synchronized
+                Times In Ruby &amp; JavaScript Acceptance Tests Using Capybara, Timecop &amp; Sinon.JS</a>
+              </h3>
+              <time pubdate datetime="2012-08-07T00:00:00-04:00">
+                07 Aug 2012
+              </time>
+            </header>
+            <p>
+              Any good Ruby developer that tests time-dependent code has used the Timecop gem. Timecop provides dead simple time travel and freezing
+              capabilities to Ruby's standard library. But what if you are working on a rich JavaScript application that is backed and tested by
+              something like a Rails application and you want to alter the test browser's clock as well? The answer is pretty simple, but let's first
+              examine all the parts at play here. Rails &amp; Capybara My examples leverage...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2012/08/05/rails-moment-js-and-time-zones">Rails, Moment.js And Time Zones</a>
+              </h3>
+              <time pubdate datetime="2012-08-05T00:00:00-04:00">
+                05 Aug 2012
+              </time>
+            </header>
+            <p>
+              Here are a few quick tips for the time zone aware Rails developer that finds themselves deep into JavaScript date objects. First, use
+              the Moment.js JavaScrpt date library! Moment.js has a very rich API for parsing and working with times, very similiar to
+              ActiveSupport's extensions. However, it does not have a solid way of moving times across zones. Especially if those zones may or may
+              not observer daylight savings time (DST). Many JavaScript time zone libraries require a huge set...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2012/05/22/view-controller-patterns-with-spine-js-and-spacepen">View Controller Patterns With Spine.JS &amp; SpacePen</a>
+              </h3>
+              <time pubdate datetime="2012-05-22T00:00:00-04:00">
+                22 May 2012
+              </time>
+            </header>
+            <p>
+              The VC in 'MVC' As Addy Osmani points out in his Scaling Your JavaScript Applications presentation, all JavaScript 'MVC' frameworks
+              interpret MVC differently. These differences are an academic rabbit hole and if you are really interested about them, I recommend
+              reading some of the resource links at the bottom of this post. One in particular by Jonas Nicklas really outlined how I think client
+              side JavaScript applications should be developed. It is titled Why Serenade.js and in it, Jonas describes...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2012/03/12/store-configurable-a-lesson-in-recursion-in-ruby">StoreConfigurable - A Lesson In Recursion In Ruby</a>
+              </h3>
+              <time pubdate datetime="2012-03-12T00:00:00-04:00">
+                12 Mar 2012
+              </time>
+            </header>
+            <p>
+              When ActiveRecord 3.2 was released there was a small addition called ActiveRecord::Store which bills itself as a simple key/value store
+              for your models. The code below is pulled right from their example usage. class User &lt; ActiveRecord::Base store :settings,
+              accessors: [:color, :homepage] end @user = User.new(color: &#39;black&#39;, homepage: &#39;37signals.com&#39;) @user.color # =&gt;
+              &#39;black&#39; @user.settings[:color] # =&gt; &#39;black&#39; @user.settings[:remember_me] = true Most people know that I love simple
+              tools. But when I found myself considering ActiveRecord::Store, I found it seriously lacking...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2012/02/27/too-less-should-you-be-using-sass">Too LESS? Should You Be Using Sass?</a>
+              </h3>
+              <time pubdate datetime="2012-02-27T00:00:00-05:00">
+                27 Feb 2012
+              </time>
+            </header>
+            <p>
+              Previously I had updated this article to say that this commit looked like it gives you real variable properties in LESS. I was wrong!
+              So even in LESS v1.3 you are still screwed for doing metaprogramming and working with a real CSS preprocessor. That may change for LESS
+              v1.4 and if you want to help make that happen. I suggst you put your weight behind this github pull request. First, a little bit of
+              background. A while back ago I...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee">Pretty Console Logging With Guard::Jasmine &amp; Black
+                Coffee</a>
+              </h3>
+              <time pubdate datetime="2012-02-01T00:00:00-05:00">
+                01 Feb 2012
+              </time>
+            </header>
+            <p>
+              OK I know I promised that we would start the dive into testing your Spine.JS application using Jasmine(rice) in my last article, but
+              this is a good diversion. If you are new to my latest series on Spine.JS and Jasmine, scroll on down to the bottom to the related
+              section and read back. However, for those that might be more familiar with Jasmine and specifically Guard::Jasmine and ever felt the
+              pain that debugging from that terminal window was lacking, read...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2">Rails &amp; Spine.JS - Jasmine Testing Part 2</a>
+              </h3>
+              <time pubdate datetime="2012-01-17T00:00:00-05:00">
+                17 Jan 2012
+              </time>
+            </header>
+            <p>
+              So this is the third part to my mini series on Rails and Spine.JS. Part one covers an initial setup and how to include Spine.JS into
+              your Rails project while part two is actually the first of a tome on how to test your Spine.JS application. Assuming you have covered
+              the bases there, lets get right down to business and review some of the elegant hacks &trade; yours truly came up with while testing my
+              own Spine.jS application using Guard...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1">Rails &amp; Spine.JS - Jasmine Testing Part 1</a>
+              </h3>
+              <time pubdate datetime="2012-01-16T00:00:00-05:00">
+                16 Jan 2012
+              </time>
+            </header>
+            <p>
+              In my previous article I talked a little bit about why I decided to use Spine.JS and how to include the CoffeeScript source into your
+              Rails project using git submodules. Now I would like to talk about testing your brand new Spine.JS application. Afterward, be sure to
+              read the second part to this article which covers more advanced aspects of your Spine.JS application specs. Testing JavaScript OK, so
+              like any good programmer, you want to test your JavaScript web application,...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source">Rails &amp; Spine.JS - Using The CoffeeScript Source</a>
+              </h3>
+              <time pubdate datetime="2012-01-15T00:00:00-05:00">
+                15 Jan 2012
+              </time>
+            </header>
+            <p>
+              Our options for JavaScript MVC frameworks are numerous these days. While working on the third major rewrite of my personal bookmarking
+              application, HomeMarks, I decided to learn Backbone.js. Thankfully a local friend of mine recommended that I try Spine.JS. I was
+              immediately hooked! Why Spine.JS? Spine.JS is is authored in CoffeeScript and that is a big deal for me. I will never write raw
+              JavaScript again, which I consider, the deprecated syntax. So a JavaScript MVC framework that is written...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/09/26/less-is-more-using-twitter-bootstrap-in-the-rails-3-1-asset-pipeline">LESS Is More - Using Twitter's Bootstrap
+                In The Rails 3.1 Asset Pipeline</a>
+              </h3>
+              <time pubdate datetime="2011-09-26T00:00:00-04:00">
+                26 Sep 2011
+              </time>
+            </header>
+            <p>
+              This weekend I decided to experiment with LESS CSS by replacing the existing Sass and Compass code that had been built thus far a small
+              project. Why? Three basic reasons. First, I wanted to see how LESS stacked up. Second, I was intrigued by some of LESS' features, in
+              particular their namespace support. Lastly, I wanted to use Twitter's Bootstrap project as a baseline for my design. Since Rails 3.1
+              has been out for some time, I was expecting the...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/09/17/keep-trying">Keep Trying</a>
+              </h3>
+              <time pubdate datetime="2011-09-17T00:00:00-04:00">
+                17 Sep 2011
+              </time>
+            </header>
+            <p>
+              One part of Objective-C that I like is being able to send messages to nil objects safely and more so their KVC and KVO patterns. In
+              Ruby I often use the #try method to safely send messages to objects that may be nil at runtime. But one thing I always wanted was a
+              nice way to send a key path, basically a string of methods signatures, to an object in the same way. I give you my simple #try_keypath
+              method...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/09/11/revisiting-my-design-past">Revisiting My Design Past</a>
+              </h3>
+              <time pubdate datetime="2011-09-11T00:00:00-04:00">
+                11 Sep 2011
+              </time>
+            </header>
+            <p>
+              Not many people know that I used to be a designer back in the mid 90's. Some of you all may have ventured deep into the colophon
+              section of my site and read my resume which has visual clues of that history. Either way, this page is dedicated to those that had no
+              idea a programmer like myself could come from a design background. Besides, I think it would be cool to share some of my old portfolio
+              pieces. Beer...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/09/06/how-do-you-encapsulate-your-javascript">How Do You Encapsulate Your JavaScript</a>
+              </h3>
+              <time pubdate datetime="2011-09-06T00:00:00-04:00">
+                06 Sep 2011
+              </time>
+            </header>
+            <p>
+              I ask this question a lot! To Job candidates, friends, and almost any developer that says they work with JavaScript. I believe how you
+              encapsulate your JavaScript is a good indicator on your level of expertise with the language. I find that most beginners have come to
+              JavaScript via jQuery and often define their functions at the top level namespace in some application.js file. These functions are
+              loosely organized and often have no way of sharing simple object state and...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/08/24/jquery-mobile-and-rails">jQuery Mobile &amp; Rails</a>
+              </h3>
+              <time pubdate datetime="2011-08-24T00:00:00-04:00">
+                24 Aug 2011
+              </time>
+            </header>
+            <p>
+              I just finished my first dive into using jQuery Mobile with a Rails application and wanted to share some techniques that came out along
+              the way. Hopefully these will help you if your are using jQuery Mobile with Rails or want to test your mobile application's integration
+              layer. This post assumes you are somewhat familiar with jQuery Mobile and its basic concepts. So let's jump right in with a series of
+              helpful tips. A Mobile Layout In my application, I...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/07/29/use-compass-sass-framework-files-with-the-rails-3.1.0.rc5-asset-pipeline">Use Compass Sass Framework Files With
+                The Rails 3.1.0.rc5 Asset Pipeline</a>
+              </h3>
+              <time pubdate datetime="2011-07-29T00:00:00-04:00">
+                29 Jul 2011
+              </time>
+            </header>
+            <p>
+              UPDATE: Now that Rails 3.1 is out, just use the latest compass or pre-release. No hacks needed! This is a simple update to my original
+              article for using compass's .scss files with the asset pipeline. This assumes you had this setup working in Rails 3.1.0.rc4, but should
+              be helpful to anybody. The good news is that most everything is wired up. First, you are going to need to update your Gemfile. Follow
+              the latest conventions and make sure you have...
+            </p>
+          </article>
+          <div class="floatr mr20">
+            <a href="/archive.html">&laquo; Archives</a>
+          </div>
+        </section>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Synchronized Times In Ruby &amp; JavaScript Acceptance Tests Using Capybara, Timecop &amp; Sinon.JS
+            </h4>
+            <p>
+              <a href="/2012/08/07/synchronized-times-in-ruby-and-javascript-acceptance-tests-using-capybara-timecop-and-sinon.js">Any good Ruby
+              developer that tests time-dependent code has used the Timecop gem. Timecop provides dead simple time travel and freezing capabilities
+              to Ruby's standard library. But what if you...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Rails, Moment.js And Time Zones
+            </h4>
+            <p>
+              <a href="/2012/08/05/rails-moment-js-and-time-zones">Here are a few quick tips for the time zone aware Rails developer that finds
+              themselves deep into JavaScript date objects. First, use the Moment.js JavaScrpt date library! Moment.js has...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              View Controller Patterns With Spine.JS &amp; SpacePen
+            </h4>
+            <p>
+              <a href="/2012/05/22/view-controller-patterns-with-spine-js-and-spacepen">The VC in 'MVC' As Addy Osmani points out in his Scaling Your
+              JavaScript Applications presentation, all JavaScript 'MVC' frameworks interpret MVC differently. These differences are an academic
+              rabbit hole...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2012 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://www.meetup.com/ruby-130/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://fearoffish.com">Jamie van Dyke</a>
+            </li>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

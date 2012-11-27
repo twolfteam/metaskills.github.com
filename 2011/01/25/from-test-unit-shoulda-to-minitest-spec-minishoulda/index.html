@@ -1,0 +1,341 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      From Test::Unit & Shoulda To MiniTest::Spec & MiniShoulda @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/jquery-1.7.1.min.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="U">About Me</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="/pages/resume.html" class="button" data-icon="N">Resume</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Twitter</a>
+            </li>
+            <li>
+              <a href="/archive.html" class="button" data-icon="l">Archives</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate datetime="2011-01-25T00:00:00-05:00">
+              <span class="day">25</span> <span class="month">Jan</span> <span class="year">2011</span>
+            </time>
+            <h1>
+              From Test::Unit & Shoulda To MiniTest::Spec & MiniShoulda
+            </h1>
+          </header>
+          <aside class="flash_info">
+            UPDATE: If you want to use <a href="/2011/03/26/using-minitest-spec-with-rails/">MiniTest::Spec with Rails please read my updated post
+            and how to use the minitest-spec-rails gem</a>.
+          </aside>
+          <p>
+            It seems the MiniTest replacement for Test::Unit in Ruby 1.9 has been presenting itself more and more in my daily readings. Recently was
+            Jamis Buck's article titled <a href="http://37signals.com/svn/posts/2742-the-road-to-faster-tests">The road to faster tests</a> where he
+            talks about optimizing basecamp's suite to run faster. And there again, some of the comments below mentioned MiniTest as a solution. That
+            got me thinking on what would it take for me to switch from Test::Unit to MiniTest.
+          </p>
+          <p>
+            I love testing! But I am not nuts about large libraries. Looking at you RSpec! <a href=
+            "http://evan.tiggerpalace.com/articles/2010/12/18/ruby-test-unit-sucks-and-why-i-still-use-it/">Like others</a>, I believe that you do
+            not need a bloated test framework to get good coverage with a lean and succinct style. A handful of assertions and a simple context
+            structure provided by libraries like <a href="https://github.com/thoughtbot/shoulda">Shoulda</a> is really all I need for both unit and a
+            certain level of functional testing. It is my firm believe that large libraries and semi-magical test code based on things like RSpec
+            will wane in the coming years. Those that base very large test suites on them will suffer the penalty for when an upgrade or test
+            refactor is needed. I could be wrong, time will tell. For now let's cover how to move to MiniTest for those that like simple Test::Unit
+            and or Shoulda.
+          </p>
+          <p>
+            MiniTest provides a drop in replacement for Test::Unit, so I wont cover the details of those basics. What most do not know is that
+            MiniTest comes with a simple MiniTest::Spec DSL that uses <code>describe</code> and <code>it</code> blocks much like Shoulda's
+            <code>context</code> and <code>should</code> methods. The similarities were so close that I set out to move all my projects to
+            MiniTest::Spec. The goal would be that none of my exiting suites context/should/before/after code would require a change. The result...
+          </p>
+          <h2>
+            MiniShoulda
+          </h2>
+          <p>
+            <a href="https://github.com/metaskills/mini_shoulda">MiniShoulda</a> is a small ruby gem that puts a Shoulda DSL on top of
+            MiniTest::Spec. All it really does it alias a few key methods. Here is the core of it now.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">class</span> <span class="nc">MiniTest</span><span class="o">::</span><span class="no">Spec</span> <span class=
+"o">&lt;</span> <span class="no">MiniTest</span><span class="o">::</span><span class="no">Unit</span><span class="o">::</span><span class=
+"no">TestCase</span>
+  
+  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+    <span class="k">alias</span> <span class="ss">:setup</span>    <span class="ss">:before</span>
+    <span class="k">alias</span> <span class="ss">:teardown</span> <span class="ss">:after</span>
+    <span class="k">alias</span> <span class="ss">:should</span>   <span class="ss">:it</span>
+    <span class="k">alias</span> <span class="ss">:context</span>  <span class="ss">:describe</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">should_eventually</span><span class=
+"p">(</span><span class="n">desc</span><span class="p">)</span>
+    <span class="n">it</span><span class="p">(</span><span class="s2">&quot;should eventually </span><span class="si">#{</span><span class=
+"n">desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">{</span> <span class=
+"n">skip</span><span class="p">(</span><span class="s2">&quot;Should eventually </span><span class="si">#{</span><span class=
+"n">desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            For now, MiniShoulda performs only one monkey patch to MiniTest. There is a critical bug in MiniTest that does not allow the
+            describe/context blocks to use the existing scope of the parent class. I have a <a href=
+            "https://github.com/seattlerb/minitest/pull/9">pull request</a> in for the project. Please help out and add a thoughtful comment based on
+            the <a href="https://github.com/metaskills/minitest/commit/e7cde5bd9e61bc1ac13c7326ef4de23382e3467b">merits of the patch</a> and the
+            <a href="https://gist.github.com/793330">description of the problem</a>. No author likes to see simple +1 comments.
+          </p>
+          <h2>
+            The MiniTest Switch
+          </h2>
+          <pre class="command">
+$ gem install mini_shoulda
+</pre>
+          <p>
+            Our gem spec will automatically pull in MiniTest version 2.0.2 or greater. Assuming you have a test helper file, the top requires will
+            looks something like this. MiniTest needs that autorun file required or none of your tests will run.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="nb">require</span> <span class="s1">&#39;mini_shoulda&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;minitest/autorun&#39;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            What should I expect? For starters, expect a few of your tests to fail. Especially ones that were happenstantially running linearly and
+            not exercised in isolation. I think there is a technical term for this? Anyways, MiniTest mixes up the test suite each run trough it
+            using a random seed. So it is highly like to expose a few poorly written tests that depended on state leftover from a previous test. Also
+            the MiniTest::Unit underneath MiniTest::Spec does not have a few assertions you may have used. One is <code>assert_raise</code> which is
+            now the standard convention <code>assert_raises</code> with an "s". And finally <code>assert_nothing_raised</code> has been pulled
+            completely since Test::Unit's documentation alluded to its uselessness for a long time.
+          </p>
+          <p>
+            What does MiniTest::Spec give you besides clean and powerful describe/it organization with before/after setups and teardowns? I highly
+            recommend the <a href="http://cheat.errtheblog.com/s/minitest/1">MiniTest cheat sheet</a> to find out. See the spec and mock methods at
+            the bottom? As much as I have always like the basic unit testing assertions, I am looking forward to using the must/wont object
+            assertions.
+          </p>
+          <h2>
+            Resources
+          </h2>
+          <ul>
+            <li>
+              <a href="https://github.com/metaskills/mini_shoulda">MiniShoulda Github Project</a>
+            </li>
+            <li>
+              <a href="https://github.com/seattlerb/minitest/pull/9">The MiniTest Describe Pull Resuest</a> - HELP OUT! COMMENT!
+            </li>
+            <li>
+              <a href="http://cheat.errtheblog.com/s/minitest/1">MiniTest Cheat Sheet</a>
+            </li>
+          </ul>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda';
+            var disqus_title = "From Test::Unit & Shoulda To MiniTest::Spec & MiniShoulda";
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Synchronized Times In Ruby &amp; JavaScript Acceptance Tests Using Capybara, Timecop &amp; Sinon.JS
+            </h4>
+            <p>
+              <a href="/2012/08/07/synchronized-times-in-ruby-and-javascript-acceptance-tests-using-capybara-timecop-and-sinon.js">Any good Ruby
+              developer that tests time-dependent code has used the Timecop gem. Timecop provides dead simple time travel and freezing capabilities
+              to Ruby's standard library. But what if you...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Rails, Moment.js And Time Zones
+            </h4>
+            <p>
+              <a href="/2012/08/05/rails-moment-js-and-time-zones">Here are a few quick tips for the time zone aware Rails developer that finds
+              themselves deep into JavaScript date objects. First, use the Moment.js JavaScrpt date library! Moment.js has...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              View Controller Patterns With Spine.JS &amp; SpacePen
+            </h4>
+            <p>
+              <a href="/2012/05/22/view-controller-patterns-with-spine-js-and-spacepen">The VC in 'MVC' As Addy Osmani points out in his Scaling Your
+              JavaScript Applications presentation, all JavaScript 'MVC' frameworks interpret MVC differently. These differences are an academic
+              rabbit hole...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2012 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://www.meetup.com/ruby-130/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://fearoffish.com">Jamie van Dyke</a>
+            </li>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

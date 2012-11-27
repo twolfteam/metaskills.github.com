@@ -1,0 +1,407 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      Database @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/jquery-1.7.1.min.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="U">About Me</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="/pages/resume.html" class="button" data-icon="N">Resume</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Twitter</a>
+            </li>
+            <li>
+              <a href="/archive.html" class="button" data-icon="l">Archives</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <h1>
+          Database
+        </h1>
+        <section id="category">
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/05/06/speaking_at_madexpo">Speaking At MADExpo</a>
+              </h3>
+              <time pubdate datetime="2011-05-06T00:00:00-04:00">
+                06 May 2011
+              </time>
+            </header>
+            <p>
+              Over the past few months I have been actively working with both Luis Lavena and Wayne E Seguin to incorporate both TinyTDS and the SQL
+              Server Adapter into the latest release of the Rails Installer for Windows. Like them, I firmly believe that Ruby's success is tightly
+              bound to how well we can bring these tools to the Windows platform. So despite that I have no love for the Windows – I do want to see
+              Ruby succeed and help...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2011/01/03/automating-heroku-pg-backups">Automating Heroku PG Backups</a>
+              </h3>
+              <time pubdate datetime="2011-01-03T00:00:00-05:00">
+                03 Jan 2011
+              </time>
+            </header>
+            <p>
+              On December 1st, Heroku deprecated their bundles add-on in favor of their new PG Backups. Even though there are other solutions for
+              automating backups using this new add-on, none of them met my needs. I like to have a daily DB backup history, just in case you find
+              something bad that happened "n" days earlier. Below is a simple rake task suitable to place in your rails lib/tasks/heroku.task file.
+              I'll explain some things I learned below when writing this. require...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/10/18/tinytds-a-modern-simple-and-fast-freetds-library-for-ruby-using-db-library">TinyTds - A modern, simple and fast
+                FreeTDS library for Ruby using DB-Library</a>
+              </h3>
+              <time pubdate datetime="2010-10-18T00:00:00-04:00">
+                18 Oct 2010
+              </time>
+            </header>
+            <p>
+              I just finished the first cut of learning C extensions for ruby and I present The TinyTds gem. It is meant to serve the extremely
+              common use-case of connecting, querying and iterating over results to Microsoft SQL Server databases from ruby. Even though it uses
+              FreeTDS's DB-Library, it is NOT meant to serve as direct 1:1 mapping of that complex C API The benefits are speed, automatic casting to
+              ruby primitives, and proper encoding support. It converts all SQL Server...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/07/19/a-macport-rubyodbc-update">A MacPort/RubyODBC Update</a>
+              </h3>
+              <time pubdate datetime="2010-07-19T00:00:00-04:00">
+                19 Jul 2010
+              </time>
+            </header>
+            <p>
+              TinyTDS is the upcoming de facto raw connection method for the SQL Server adapter. Please read the Using TinyTDS wiki page on the
+              adapter for switching. No longer do you have to worry about compiling ODBC layers! I have changed my mind about the UTF-8 version of
+              RubyODBC. Please read that section in the the rails 3 announcements for the SQL Server adapter. Quite a while ago I wrote a soup to
+              nuts article on getting the full multi-ruby development...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2009/10/27/installing-ree-with-the-snow-leopard-sql-server-stack">Installing REE With The Snow Leopard SQL Server Stack</a>
+              </h3>
+              <time pubdate datetime="2009-10-27T00:00:00-04:00">
+                27 Oct 2009
+              </time>
+            </header>
+            <p>
+              Today I noticed that Ruby Enterprise Edition 2009.10 was released and I have really been wanting to see if I could get the SQL Server
+              adapter tested and running under it. I am really curious how the speed improvements might look and will share my results below. This
+              article assumes that you read my previous guide titled The Ultimate OS X Snow Leopard Stack For Rails Development - x86_64, MacPorts,
+              Ruby 1.8/1.9, SQL Server, SQLite3, MySQL & More as I...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2009/09/05/the-ultimate-os-x-snow-leopard-stack-for-rails-development-x86_64-macports-ruby-1-8-1-9-sql-server-more">The
+                Ultimate OS X Snow Leopard Stack For Rails Development - x86_64, MacPorts, Ruby 1.8/1.9, SQL Server, SQLite3, MySQL & More</a>
+              </h3>
+              <time pubdate datetime="2009-09-05T00:00:00-04:00">
+                05 Sep 2009
+              </time>
+            </header>
+            <p>
+              If you are interested in using RVM with a MacPort base for the SQL Server stack, check out this article. TinyTDS is the upcoming de
+              facto raw connection method for the SQL Server adapter. Please read the Using TinyTDS wiki page on the adapter for switching. No longer
+              do you have to worry about compiling ODBC layers! I have written an updated article on the MacPorts installation of the latest
+              RubyODBC. It includes information pertaining to utf8 support. This guide...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2008/11/23/sql-server-adapter-for-rails-2-2">SQL Server Adapter For Rails 2.2</a>
+              </h3>
+              <time pubdate datetime="2008-11-23T00:00:00-05:00">
+                23 Nov 2008
+              </time>
+            </header>
+            <p>
+              So that about sums up what I've been doing for the past 4 weeks. A total rewrite of the SQL Server Adapter for Rails. On top of passing
+              all the Rails 2.2.2 tests, which is MAJOR news, it includes tons of new features. Unicode column support, pessimistic locking,
+              date/time column casting, DDL transactions and way more. On top of that. It was nice being mentioned on the rubyonrails.org website not
+              for my first, second, but a THIRD time. Thanks Gregg!...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2008/10/11/plug-it-in-plug-it-in">Plug It In Plug It In</a>
+              </h3>
+              <time pubdate datetime="2008-10-11T00:00:00-04:00">
+                11 Oct 2008
+              </time>
+            </header>
+            <p>
+              I've been busy putting together some plugins form misc work. If you did not catch my latest article Jack has_many :things where I
+              covered GroupeScope, by all means check it out. I've also just finished up a pretty solid backport of NamedScope that can be found on
+              my Github page. It bills itself as a well tested complete back port for rails 1.2.6 and 2.0.4. One thing that has been a real help
+              while I've been developing these plugins is...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2008/09/28/jack-has_many-things">Jack has_many :things</a>
+              </h3>
+              <time pubdate datetime="2008-09-28T00:00:00-04:00">
+                28 Sep 2008
+              </time>
+            </header>
+            <p>
+              UPDATE: [12/06/2011] The GroupedScope gem has been updated for Rails 3.1. Many new features have been added with a few mentioned below.
+              Check the project's readme for complete details. I am Jack's sofa, stereo and wardrobe... I make Jack's life complete. I reside in a
+              ActiveRecord table called "things" and Jack is the only one that has the key. This is Jack's life, and it's ending one minute at a
+              time. As rails developers, we have done this simple relationship...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2006/05/29/my-own-soup-to-nuts-recipe-for-ruby-on-rails-on-os-x">My Own Soup to Nuts Recipe for Ruby on Rails on OS X</a>
+              </h3>
+              <time pubdate datetime="2006-05-29T00:00:00-04:00">
+                29 May 2006
+              </time>
+            </header>
+            <p>
+              Tim Toady tells us that (There Is More Than One Way To Do It) and I am sure this is not the first and not likely the last blog post you
+              will ever see that tells you the best way to install RAILS on OS X. Some people would just rather than go the simple path but I implore
+              you, do it this way. Gaining the experience of compiling your own software will help you down the road when it...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2006/03/05/learn-to-program-in-ruby-and-basic-sql">Learn To Program in Ruby and Basic SQL</a>
+              </h3>
+              <time pubdate datetime="2006-03-05T00:00:00-05:00">
+                05 Mar 2006
+              </time>
+            </header>
+            <p>
+              I've been learning to or &quot;trying to learn&quot; Ruby on Rails for a few months now and things have always kept me from finishing
+              the book that I purchased from those great publishers at the pragmatic bookshelf. My problem has been that sometimes other work has
+              gotten in the way, but mostly it was because I did not have the core understanding of the basics for building web applications.
+              Especially in the areas of object oriented programming and database languages....
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2005/12/19/how-to-setup-a-simple-mysql-backup-script">How To Setup a Simple MySQL Backup Script</a>
+              </h3>
+              <time pubdate datetime="2005-12-19T00:00:00-05:00">
+                19 Dec 2005
+              </time>
+            </header>
+            <p>
+              Lately, I've been loving all things that can be solved by using RsyncX. It's my de facto backup utility and I just keep finding more
+              and more tasks for it as each day goes by. It has become the hammer for all my system's needs. So when it came time for me to implement
+              a nice little backup routine for the MySQL databases hosted here at ActionMoniker.com, it was the first tool I considered. My
+              requirements were simple, I needed...
+            </p>
+          </article>
+        </section>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Synchronized Times In Ruby &amp; JavaScript Acceptance Tests Using Capybara, Timecop &amp; Sinon.JS
+            </h4>
+            <p>
+              <a href="/2012/08/07/synchronized-times-in-ruby-and-javascript-acceptance-tests-using-capybara-timecop-and-sinon.js">Any good Ruby
+              developer that tests time-dependent code has used the Timecop gem. Timecop provides dead simple time travel and freezing capabilities
+              to Ruby's standard library. But what if you...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Rails, Moment.js And Time Zones
+            </h4>
+            <p>
+              <a href="/2012/08/05/rails-moment-js-and-time-zones">Here are a few quick tips for the time zone aware Rails developer that finds
+              themselves deep into JavaScript date objects. First, use the Moment.js JavaScrpt date library! Moment.js has...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              View Controller Patterns With Spine.JS &amp; SpacePen
+            </h4>
+            <p>
+              <a href="/2012/05/22/view-controller-patterns-with-spine-js-and-spacepen">The VC in 'MVC' As Addy Osmani points out in his Scaling Your
+              JavaScript Applications presentation, all JavaScript 'MVC' frameworks interpret MVC differently. These differences are an academic
+              rabbit hole...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2012 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://www.meetup.com/ruby-130/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://fearoffish.com">Jamie van Dyke</a>
+            </li>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

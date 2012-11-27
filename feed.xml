@@ -1,0 +1,1932 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>MetaSkills.net</title>
+ <link href="http://metaskills.net/feed.xml" rel="self"/>
+ <link href="http://metaskills.net/"/>
+ <updated>2012-08-31T15:00:37-04:00</updated>
+ <id>http://metaskills.net/</id>
+ <author>
+   <name>Ken Collins</name>
+   <email>ken@metaskills.net</email>
+ </author>
+
+ 
+ <entry>
+   <title>Synchronized Times In Ruby &amp;amp; JavaScript Acceptance Tests Using Capybara, Timecop &amp;amp; Sinon.JS</title>
+   <link href="http://metaskills.net/2012/08/07/synchronized-times-in-ruby-and-javascript-acceptance-tests-using-capybara-timecop-and-sinon.js"/>
+   <updated>2012-08-07T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2012/08/07/synchronized-times-in-ruby-and-javascript-acceptance-tests-using-capybara-timecop-and-sinon.js</id>
+   <content type="html">
+     <![CDATA[<p>
+  Any good Ruby developer that tests time-dependent code has used the <a href="http://github.com/jtrupiano/timecop">Timecop</a> gem. Timecop provides dead simple time travel and freezing capabilities to Ruby's standard library. But what if you are working on a rich JavaScript application that is backed and tested by something like a Rails application and you want to alter the test browser's clock as well? The answer is pretty simple, but let's first examine all the parts at play here.
+</p>
+
+
+<h2>Rails &amp; Capybara</h2>
+
+<p>
+  My examples leverage a very simple Rails integration test setup using <a href="http://github.com/jnicklas/capybara/#the-dsl">Capybara's DSL</a> within a basic Rails integration test case. Much like <a href="http://techiferous.com/2010/04/using-capybara-in-rails-3/">Wyatt has described here</a> and I have shown in a <a href="http://github.com/metaskills/holygrail_rails31">demo project on github</a>. So if your integration test setup is different, transpose my code to fit your needs. Also, there are a few drivers for Capybara that support full JavaScript integration, most notably capybara-webkit. But the latest on the scene is <a href="http://github.com/jonleighton/poltergeist">Poltergeist</a> which uses the badass PhantomJS project. I highly recommend you switch to this driver! That said, any Capybara driver that fully supports Capybara's <code>#execute_script</code> should work just fine.
+</p>
+
+
+<h2>Ruby &amp; JavaScript Times</h2>
+
+<p>
+  JavaScript date values represent time in milliseconds since Unix Epoch. Many 3rd-party JavaScript date libraries use millisecond integers for both instantiating and altering these objects. Ruby on the other hand has a much higher precision and thanks to ActiveSupport's core extensions to Ruby's date and time classes we can easily represent these values for JavaScript. Specifically, ActiveSupport adds a <code>#to_i</code> method that returns an integer which represents that date or time in seconds since Unix Epoch. In my example code, you will see that I multiple this by 1000 to get the millisecond representation.
+</p>
+
+<p>
+  ActiveSupport also provides an <code>#advance</code> core extension to all date and time classes. This method is Valuable As Fuck&trade; since it returns a new time instance that has moved backwards or forwards given a hash of options. For example, returning a time instance moved forward by 20 minutes would look like this <code>@time.advance(minutes:20)</code>. See the <a href="http://api.rubyonrails.org/classes/Time.html#method-i-advance">documentation</a> for all the options and remember, you can provide negative values to move backward. In short, the advance method is awesome!
+</p>
+
+
+<h2>Faking Time With Sinon.JS</h2>
+
+<aside class="flash_info">
+  <a href="http://pivotal.github.com/jasmine/#section-Mocking_the_JavaScript_Clock">Jasmine 1.2 now has a similiar mocking technique for the JavaScript clock.</a>
+</aside>
+
+<p>
+  <a href="http://sinonjs.org">Sinon.JS</a> is a small stand-alone library that provides spies, stubs and mocks for your JavaScript. To be honest, I use Jasmine and supporting extensions for most of these features. However, Sinon.JS has one killer feature, faking time! Yup, it allows you to freeze JavaScript's clock to a specific time and tick it forward as needed. I want you to ponder the benefits of that for awhile. Imagine you have time sensitive JavaScript code that uses <code>setInterval()</code> or the like. Sinon.JS will actually allow you to tick time forward and still maintain compatibility with that code's behavior! Basically Sinon.JS is equal to our Ruby Timecop gem and then some! Check out their <a href="http://sinonjs.org/docs/#clock-api">clock API</a> or read the code if you want to learn more. Remember, it is safe to include Sinon.JS in any existing JavaScript project since it will not do anything unless you ask it too. So no fear in it clashing with your other JavaScript test setup.
+</p>
+
+
+<h2>Putting It All Together</h2>
+
+<p>
+  So now the fun part, some code examples. First, you need to get Sinon.JS in your Rails JavaScript manifest. If you are smart, you have already setup a system where you can specify top level asset manifests for your JavaScript application per test environment. If not, you might want to take a look at two posts I previously published on setting up Jasminerice for testing Spine.JS applications.
+</p>
+
+<ul>
+  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
+  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+</ul>
+
+<p>
+  These file snippets below assume you have an <code>integration.js</code> manifest which includes both a vendored Sinon.JS then a sub file which actually initializes Sinon.JS for our integration test run. In this case below, we are first processing a CoffeeScript file with ERB and then initializing Sinon.JS' fake timers to a default time. In my case, this is 8:30am central standard time. Now we can assure that Capybara's browser engine will be frozen at that time and ready to move forward for each test.
+</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="c1">// File app/assets/javascripts/integration.js</span>
+
+<span class="c1">//= require sinon-1.4.2</span>
+<span class="c1">//= require integration/sinon</span>
+<span class="c1">//= require application</span>
+</code></pre>
+</div>
+
+
+<div class="highlight"><pre><code class="coffeescript"><span class="c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb</span>
+
+<span class="o">&lt;%</span> <span class="nv">central = </span><span class="nx">ActiveSupport</span><span class="o">::</span><span class="nx">TimeZone</span><span class="p">[</span><span class="s1">&#39;Central Time (US &amp; Canada)&#39;</span><span class="p">]</span> <span class="o">%&gt;</span>
+<span class="o">&lt;%</span> <span class="nv">today = </span><span class="nx">central</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="s1">&#39;8:30am&#39;</span><span class="p">).</span><span class="nx">to_i</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">%&gt;</span>
+
+<span class="nb">window</span><span class="p">.</span><span class="nv">clock = </span><span class="nx">sinon</span><span class="p">.</span><span class="nx">useFakeTimers</span> <span class="o">&lt;%=</span> <span class="nx">today</span> <span class="o">%&gt;</span>
+</code></pre>
+</div>
+
+
+<p>
+  Now, the Ruby code. Here is slimmed down version of my base integration test case which <a href="/2011/03/26/using-minitest-spec-with-rails/">uses MiniTest::Spec</a> to drive Capybara tests. The first thing I do before any integration test is use Timecop to travel to 8:30am. This means that both Ruby and JavaScript are synced to the exact millisecond in time. Any test that needs to move time forward must call the <code>#advance_time</code> test helper. This method takes a hash of options which is passed directly to the <code>#advance</code> method I previously talked about. It measures the milliseconds between now and the advancement and sends that directly to Sinon.JS' fake timers using Capybara's <code>#execute_script</code> method. So calling <code>advance_time(seconds:20)</code> in Ruby now moves time forward in both Ruby and JavaScript. Epic win!!!
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># File test/test_helper_integration.rb</span>
+
+<span class="nb">require</span> <span class="s2">&quot;test_helper&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;capybara/rails&quot;</span>
+
+<span class="k">module</span> <span class="nn">ActionDispatch</span>
+  <span class="k">class</span> <span class="nc">IntegrationTest</span>
+
+  <span class="kp">include</span> <span class="no">Capybara</span><span class="o">::</span><span class="no">DSL</span>
+
+  <span class="n">before</span> <span class="p">{</span> <span class="n">travel</span> <span class="s1">&#39;8:30am&#39;</span> <span class="p">}</span>
+  <span class="n">after</span>  <span class="p">{</span> <span class="no">Capybara</span><span class="o">.</span><span class="n">reset_sessions!</span> <span class="p">}</span>
+  
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">travel</span><span class="p">(</span><span class="n">parseable_time</span><span class="p">)</span>
+    <span class="no">Timecop</span><span class="o">.</span><span class="n">return</span>
+    <span class="no">Timecop</span><span class="o">.</span><span class="n">travel</span> <span class="n">parse_time</span><span class="p">(</span><span class="n">parseable_time</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">parse_time</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span> <span class="p">?</span> <span class="no">Chronic</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="p">:</span> <span class="n">time</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">advance_time</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">now_ms</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">to_i</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="no">Timecop</span><span class="o">.</span><span class="n">travel</span> <span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">traveled_ms</span> <span class="o">=</span> <span class="p">(</span><span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">to_i</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">-</span> <span class="n">now_ms</span>
+    <span class="n">advance_sinon</span> <span class="n">traveled_ms</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">advance_sinon</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>
+    <span class="n">page</span><span class="o">.</span><span class="n">execute_script</span> <span class="s2">&quot;if (window.clock) { window.clock.tick(</span><span class="si">#{</span><span class="n">ms</span><span class="si">}</span><span class="s2">); }&quot;</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre>
+</div>
+
+
+<p>
+  I have found the following technique critical to fully testing a recent time based JavaScript application I have developed. I hope you find this technique useful as well and as always, please contribute your thoughts or questions below. Cheers!
+</p>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://github.com/jtrupiano/timecop">Timecop - A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code.</a></li>
+  <li><a href="http://github.com/jnicklas/capybara/">Capybara - Acceptance test framework for web applications.</a></li>
+  <li><a href="http://github.com/jonleighton/poltergeist">Poltergeist - A PhantomJS driver for Capybara.</a></li>
+  <li><a href="http://sinonjs.org">Sinon.JS - Standalone test spies, stubs and mocks for JavaScript.</a></li>
+</ul>
+
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Rails, Moment.js And Time Zones</title>
+   <link href="http://metaskills.net/2012/08/05/rails-moment-js-and-time-zones"/>
+   <updated>2012-08-05T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2012/08/05/rails-moment-js-and-time-zones</id>
+   <content type="html">
+     <![CDATA[<p>
+  Here are a few quick tips for the time zone aware Rails developer that finds themselves deep into JavaScript date objects. First, use the <a href="http://momentjs.com">Moment.js</a> JavaScrpt date library! Moment.js has a very <a href="http://momentjs.com/docs/">rich API for parsing and working with times</a>, very similiar to ActiveSupport's extensions. However, it does not have a solid way of moving times across zones. Especially if those zones may or may not observer daylight savings time (DST).
+</p>
+
+<p>
+  Many JavaScript time zone libraries require a huge set of geographic data to both identify zones and their observance of DST. These data files can add a significant overhead to JavaScript. But wouldn't it be great if there was a simple way of leveraging your Rails model's time zone settings? There is, but first we need to serialize an <code>ActiveSupport::TimeZone</code> object in JSON. Easy, just define an <code>#as_json</code> method like the one below. I suggest adding this to an initializer in your Rails <code>config/initializers/active_support.rb</code> directory. The key attribute here is the <code>utc_total_offset</code>. This will be a number in minutes that properly observes DST.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">module</span> <span class="nn">ActiveSupport</span>
+  <span class="k">class</span> <span class="nc">TimeZone</span>
+
+    <span class="k">def</span> <span class="nf">as_json</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
+      <span class="p">{</span> <span class="ss">:name</span>                <span class="o">=&gt;</span> <span class="nb">name</span><span class="p">,</span> 
+        <span class="ss">:identifier</span>          <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span>
+        <span class="ss">:friendly_identifier</span> <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class="n">friendly_identifier</span><span class="p">,</span>
+        <span class="ss">:utc_offset</span>          <span class="o">=&gt;</span> <span class="n">utc_offset</span><span class="p">,</span>
+        <span class="ss">:utc_total_offset</span>    <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class="n">current_period</span><span class="o">.</span><span class="n">utc_total_offset</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+
+<p>
+  Now assuming you have serialized a models time zone attribute using the full <code>ActiveSupport::TimeZone</code> object, we can easily use this information client side via a quick extension to Moment.js' prototype. Here is a <code>moment.js.coffee</code> file I have required in my Rails applications.
+</p>
+
+<div class="highlight"><pre><code class="coffeescript"><span class="nv">moment.fn.forTimeZone = </span><span class="nf">(timeZone) -&gt;</span>
+  <span class="nv">currentOffset = </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">zone</span><span class="p">()</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="nv">adjustedOfffset = </span><span class="k">if</span> <span class="nx">currentOffset</span> <span class="o">&gt;</span> <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span> 
+                      <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span> <span class="o">-</span> <span class="nx">currentOffset</span> 
+                    <span class="k">else</span> 
+                      <span class="nx">currentOffset</span> <span class="o">-</span> <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">clone</span><span class="p">().</span><span class="nx">add</span> <span class="s1">&#39;seconds&#39;</span><span class="p">,</span> <span class="nx">adjustedOfffset</span>
+</code></pre>
+</div>
+
+
+<p>
+  So we let Ruby do all the hard work of telling us what time zones are observing DST without all the bloat to our JavaScript for parsing zone identifiers. Some sample output.
+</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="nx">eastern</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">friendly_identifier</span><span class="o">:</span> <span class="s2">&quot;America - New York&quot;</span><span class="p">,</span>
+  <span class="nx">identifier</span><span class="o">:</span> <span class="s2">&quot;America/New_York&quot;</span><span class="p">,</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Eastern Time (US &amp; Canada)&quot;</span><span class="p">,</span>
+  <span class="nx">utc_offset</span><span class="o">:</span> <span class="o">-</span><span class="mi">18000</span><span class="p">,</span>
+  <span class="nx">utc_total_offset</span><span class="o">:</span> <span class="o">-</span><span class="mi">14400</span>
+<span class="p">}</span>
+
+<span class="nx">noonPacific</span> <span class="o">=</span> <span class="mi">1344279600000</span> <span class="c1">// &quot;2012-08-06T12:00:00-07:00&quot;</span>
+<span class="nx">format</span> <span class="o">=</span> <span class="s1">&#39;MMMM Do, YYYY \\at h:mma&#39;</span>
+
+<span class="nx">moment</span><span class="p">(</span><span class="nx">noonPacific</span><span class="p">).</span><span class="nx">format</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span>
+<span class="c1">// &quot;August 6th, 2012 at 12:00pm&quot;</span>
+
+<span class="nx">moment</span><span class="p">(</span><span class="nx">noonPacific</span><span class="p">).</span><span class="nx">forTimeZone</span><span class="p">(</span><span class="nx">eastern</span><span class="p">).</span><span class="nx">format</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span>
+<span class="c1">// &quot;August 6th, 2012 at 3:00pm&quot;</span>
+</code></pre>
+</div>
+
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://momentjs.com">Moment.js - A lightweight JavaScript date library.</a></li>
+</ul>
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>View Controller Patterns With Spine.JS &amp;amp; SpacePen</title>
+   <link href="http://metaskills.net/2012/05/22/view-controller-patterns-with-spine-js-and-spacepen"/>
+   <updated>2012-05-22T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2012/05/22/view-controller-patterns-with-spine-js-and-spacepen</id>
+   <content type="html">
+     <![CDATA[<h2>The VC in 'MVC'</h2>
+
+<p>
+  As Addy Osmani points out in his <a href="http://speakerdeck.com/u/addyosmani/p/scaling-your-javascript-applications">Scaling Your JavaScript Applications</a> presentation, all JavaScript 'MVC' frameworks interpret MVC differently. These differences are an academic rabbit hole and if you are really interested about them, I recommend reading some of the resource links at the bottom of this post. One in particular by Jonas Nicklas really outlined how I think client side JavaScript applications should be developed. It is titled <a href="http://elabs.se/blog/33-why-serenade-js">Why Serenade.js</a> and in it, Jonas describes his reasons for yet another JavaScript MVC framework. In doing so, he outlines the responsibilities of the MVC triad as follows:
+</p>
+
+<p>
+  <strong>Views:</strong> Present data from the model and update it if it changes, notify controllers of user interaction events. <strong>Controllers:</strong> React to user interaction events by instructing the model to perform certain actions. <strong>Models:</strong> Handle business logic and persistence, notify the view of any changes to the data.
+</p>
+
+<p>
+  <!--<span class="floatr" style="margin:0 0 15px 15px; -moz-box-shadow: 5px 5px 5px rgba(0,0,0,0.5); -webkit-box-shadow: 5px 5px 5px rgba(0,0,0,0.5); box-shadow: 5px 5px 5px rgba(0,0,0,0.5); -moz-transform: rotate(-2deg); -webkit-transform: rotate(-2deg); transform: rotate(-2deg);">
+    <img src="/assets/todomvc.png" alt="TodoMVC JavaScript Frameworks" width="354" height="263" />
+  </span>-->
+  Seems straight forward right? In actuality it is easy to stray from and there is a lot of wiggle room for both the MV* framework authors and their developers to re-interpret one or all of these components. The two that I think are most open for debate are the View and the Controller stacks. For example, how many <a href="http://addyosmani.github.com/todomvc/">JavaScript frameworks</a> do you know allow you to choose your own view framework? How many times have you heard too that views should be "logic-less" and how does each of these play into helping newcomers understand the proper way to code these precious views and controllers together? My answer, ask Apple!
+</p>
+
+<h2>Apple's View Controller Programming Guide</h2>
+
+<p>
+  Some might be surprised that JavaScript applications for the browser can and should be coded much like modern desktop applications. Having developed iOS applications before, many of the same MVC principals and application structure apply. Apple has tons of documentation about general application design and one of my favorites is their <a href="http://developer.apple.com/library/ios/#featuredarticles/ViewControllerPGforiPhoneOS/Introduction/Introduction.html">View Controller Programming Guide</a>. I highly recommend anyone developing MVC JavaScript applications to read this guide. I'll paraphrase a few points:
+</p>
+
+<blockquote style="margin-left: 95px; margin-right: 95px;">
+  A view controller manages a discrete portion of your app’s user interface. Often that view is the root view for a more complex hierarchy of other views. View controllers typically fall in one of two categories, either content or container. Content view controllers are great for things like lists and images. Container view controllers coordinate with other view controllers like tab view controllers or navigation controllers.
+</blockquote>
+
+<p>
+  It is also worth reading both the <a href="https://developer.apple.com/library/ios/#documentation/uikit/reference/UIViewController_Class/Reference/Reference.html">UIViewController</a> and <a href="https://developer.apple.com/library/ios/#documentation/uikit/reference/uiview_class/UIView/UIView.html">UIView</a> class references too. So what should be your major take away from reading those? The first is that every controller in your JavaScript application manages a view. That view is going to be a DOM node that will most likely have a complex hierarchy of other views possibly managed by other controllers which themselves champion a node with a specific application concern. Second is that views are themselves valid objects built by classes with their own methods. It's best to think of UIViews as an instance of a jQuery object. Views should not be dumb either. They sometimes have handles back to model objects so they can establish bindings for updates. Views can also expose an interface that canonize how controllers should work with them and most often will have helper methods that break up their complexity. All of this is a good thing. If you disagree, stop reading now!
+</p>
+
+<h2>SpacePen - Markup On The Final Frontier</h2>
+
+<p>
+  I found the <a href="https://github.com/nathansobo/space-pen">SpacePen project on github</a> a few months ago and I have never looked at another templating solution since. For the first time my JavaScript application's view and controller stacks feel natural. No longer do I find myself writing any view related code in my controllers. SpacePen allows me to write view objects that encapsulate their concerns, stay DRY and build Spine.JS web applications that hit the MVC mark. So what is SpacePen? Basically a CoffeeScript subclass of a jQuery object.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
+
+  <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
+    <span class="vi">@div</span> <span class="o">=&gt;</span>
+      <span class="vi">@h1</span> <span class="s2">&quot;Space Ships&quot;</span>
+      <span class="vi">@ol</span> <span class="o">=&gt;</span>
+        <span class="vi">@li</span> <span class="s2">&quot;Apollo&quot;</span>
+        <span class="vi">@li</span> <span class="s2">&quot;Soyuz&quot;</span>
+        <span class="vi">@li</span> <span class="s2">&quot;Space Shuttle&quot;</span>
+</code></pre>
+</div>
+
+
+<div class="highlight"><pre><code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
+<span class="n">view</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ol&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;li&gt;Star Destroyer&lt;/li&gt;&#39;</span><span class="p">)</span>
+
+<span class="n">view</span><span class="o">.</span><span class="n">click</span> <span class="s1">&#39;li&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  <span class="n">alert</span> <span class="s2">&quot;You clicked on </span><span class="si">#{</span><span class="err">$</span><span class="p">(</span><span class="n">this</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre>
+</div>
+
+
+<p>
+  This simple example shows how your SpacePen view class defines its markup in a <code>@content</code> class function. This function yields a builder syntax where you can easily add attributes and values. My advice is to do basic structure only in your <code>@content</code> function and rarely take advantage of the fact that it also takes the same parameters argument passed to your constructor. I will explain more on that advice later. But first, I did say that views should expose interfaces to controllers and are first class code citizens that champion their own concerns right? Let's look at a common pattern, views building new nodes within itself.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
+
+  <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
+    <span class="vi">@div</span> <span class="o">=&gt;</span>
+      <span class="vi">@h1</span> <span class="s2">&quot;SpacePort&quot;</span>
+      <span class="vi">@ol</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;shipList&#39;</span>
+
+  <span class="n">addShip</span><span class="p">:</span> <span class="p">(</span><span class="n">ship</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@shipList</span><span class="o">.</span><span class="n">append</span> <span class="s2">&quot;&lt;li&gt;</span><span class="si">#{</span><span class="n">ship</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/li&gt;&quot;</span>
+</code></pre>
+</div>
+
+
+<div class="highlight"><pre><code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
+<span class="n">view</span><span class="o">.</span><span class="n">addShip</span> <span class="s2">&quot;Enterprise&quot;</span>
+</code></pre>
+</div>
+
+
+<p>
+  The example has been changed slightly so that the view now exposes a public function called <code>addShip()</code> which takes an object to add to the view. It can easily implement this because I have declared the ordered list to be an outlet called <code>shipList</code> which will automatically be assigned as a property on each view instance. Calling append on that node is possible because like the view object itself, any outlet is a jQuery object as well.
+</p>
+
+<p>
+  Though contrived, this example illustrates a powerful technique. If the view was refactored to some other structure besides an ordered list with items, the controller interface would stay the same. Pulling the thread, it is easy to see how a complex view hierarchy could have views building and managing messages to their subviews too. This is the crux of my article, but first, lets talk about controllers.
+</p>
+
+<h2>Spine.JS Controllers</h2>
+
+<p>
+  Spine.JS is my goto JavaScript MVC framework and if you are unfamiliar with it, check out their <a href="http://spinejs.com/docs/introduction">introduction</a> or read <a href="http://destroytoday.com/blog/reasons-for-spinejs/">why others</a> have chosen to use it. The main reasons I love Spine.JS can be summed up like so. First, it is authored in CoffeeScript, which means I can read the code to learn it. Second, all model instances will reflect changes by any other instance. Lastly, the controllers are minimally implemented and nicely abstract managing a view and the way controllers respond to events that bubble up to it.
+</p>
+
+<p>
+  A Spine.JS controller always has an element associated to it which can be accessed via the <code>el</code> property. This element represents the view that controller manages. It will either be created for you or it can be assigned via the constructor. Many patterns in Spine.JS rely on appending elements to a controller and most of the functions for adding these subviews either take an element or an object that has an <code>el</code> property. This means building complex view/controller hierarchies by stacking Spine.JS controllers is both idiomatic and almost identical to how iOS view controllers work.
+</p>
+
+<h2>Using SpacePen Views With Spine.JS Controllers</h2>
+
+<p>
+  With the overview of these components out of the way, let's jump right into how they can work together to punch the VC up a notch in your next JavaScript MVC application. These examples below are pared down version of a scheduler application I just completed. The model is similar to an iCal day interface for calendar events. In such, there would be a view controller that manages the presentation of your schedule "by day". This controller's view would have a header for the current day and a set of controls for going to the previous day, today and the next day. This controller would act as a navigation controller and correlate to Apple's notion of a "container" view controller. When needed, it would find or create a day controller and append it to one of its subviews. The code for that container controller and view is out of the scope of this article, but its one of many day "content" controllers and view are perfect examples. Here we go!
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
+
+<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class="n">Controller</span>
+  
+  <span class="n">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span>
+    <span class="k">super</span> <span class="n">el</span><span class="p">:</span> <span class="vi">@view</span>
+</code></pre>
+</div>
+
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
+
+<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
+  
+  <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@div</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="o">=&gt;</span>
+      <span class="c1"># ...</span>
+
+  <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">moment</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+
+<p>
+  So rule number one, always create an instance of a SpacePen view and assign that to the <code>@view</code> property of every Spine.JS controller. That <code>@view</code> will be assigned to the controller's <code>@el</code> property when it supers up. 
+</p>
+
+<p>
+  Rule number two, keep the <code>@content</code> function for your views concerned with building the structure only. In my example, I set the date for the event using the <code>initialize</code> hook provided by SpacePen. This rule is important when you want to bind views to model events and update that view accordingly. All customization of the view to a model object should be done in a set/update helper of that view.
+</p>
+
+<h2>In Greater Detail</h2>
+
+<p>
+  Here is the same controller and view example with a bit more detail. First up, the view. This day view CoffeeScript file has a public <code>App.Views.Day</code> view and a private <code>EventView</code> that represents a subview and would be bound to a model instance. This public day view exposes a few public functions for a controller to hook into. The <code>addEvent</code> function will actually build a new SpacePen views for the passed model and append it as a subview. Notice too the <code>findEvent</code> helper function which can find the DOM element for a model object and then use the <code>view()</code> function provided by SpacePen to get to the SpacePen instance for this node.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
+  
+  <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@div</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="o">=&gt;</span>
+      <span class="c1"># ...</span>
+      <span class="vi">@div</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span>
+      <span class="c1"># ...</span>
+  
+  <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">moment</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="vi">@date</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
+    
+  <span class="n">addEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">EventView</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+    <span class="vi">@events</span><span class="o">.</span><span class="n">append</span>
+  
+  <span class="n">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+  <span class="n">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+  
+  <span class="c1"># Private</span>
+  
+  <span class="n">findEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="n">selector</span> <span class="o">=</span> <span class="s2">&quot;.event[data-event-id=&#39;</span><span class="si">#{</span><span class="n">event</span><span class="o">.</span><span class="n">startsAtFormat</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;]&quot;</span>
+    <span class="vi">@events</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+
+  <span class="n">afterAttach</span><span class="p">:</span> <span class="o">-&gt;</span> 
+    <span class="vi">@startSpinner</span><span class="p">()</span>
+    <span class="vi">@loadEvents</span><span class="p">()</span>
+  
+  <span class="c1"># ...</span>
+
+<span class="k">class</span> <span class="nc">EventView</span> <span class="n">extends</span> <span class="no">View</span>
+  
+  <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@div</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;.event&#39;</span><span class="p">,</span> <span class="s1">&#39;data-event-id&#39;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">id</span> <span class="o">=&gt;</span>
+      <span class="vi">@div</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;description&#39;</span>
+      <span class="vi">@div</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;duration&#39;</span>
+  
+  <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@update</span> <span class="n">event</span>
+  
+  <span class="n">update</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@attr</span> <span class="s1">&#39;data-starts-at&#39;</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">startsAtFormat</span><span class="p">()</span>
+    <span class="vi">@description</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class="o">.</span><span class="n">description</span>
+    <span class="vi">@duration</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class="o">.</span><span class="n">duration</span>
+</code></pre>
+</div>
+
+
+<p>
+  Next up, the expanded day controller example that manages the view above. In this example we bind to two of the the Spine.JS <code>CalendarEvent</code> model events. One for update and one for destroy. These events are then pushed down to the view and will do any work necessary. Just in case this controller is ever discarded for performance reasons, we hook into the <code>release()</code> function provided by Spine.JS controllers to remove the event listeners.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class="n">Controller</span>
+  
+  <span class="vi">@events</span><span class="p">:</span> 
+    <span class="s1">&#39;click .event&#39;</span><span class="p">:</span> <span class="s1">&#39;selectEvent&#39;</span>
+  
+  <span class="n">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">moment</span>
+    <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">moment</span><span class="p">:</span> <span class="vi">@date</span>
+    <span class="k">super</span> <span class="n">el</span><span class="p">:</span> <span class="vi">@view</span>
+    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">bind</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="vi">@updateEvent</span>
+    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">bind</span> <span class="s1">&#39;beforeDestroy&#39;</span><span class="p">,</span> <span class="vi">@destroyEvent</span>
+  
+  <span class="n">release</span><span class="p">:</span>
+    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">unbind</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="vi">@updateEvent</span>
+    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">unbind</span> <span class="s1">&#39;beforeDestroy&#39;</span><span class="p">,</span> <span class="vi">@removeEvent</span>
+    <span class="k">super</span>
+
+  <span class="c1"># Private</span>
+
+  <span class="n">selectEvent</span><span class="p">:</span> <span class="o">-&gt;</span>
+    <span class="c1"># ...</span>
+
+  <span class="n">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@view</span><span class="o">.</span><span class="n">updateEvent</span> <span class="n">event</span>
+    <span class="c1"># ...</span>
+
+  <span class="n">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@view</span><span class="o">.</span><span class="n">removeEvent</span> <span class="n">event</span>
+    <span class="c1"># ...</span>
+</code></pre>
+</div>
+
+
+<p>
+  Hope you found this mini introduction to SpacePen and Spine.JS controllers useful. There is literally tons of ways you can use these tools together to make your controllers and views fun to build and maintainable. Be excellent and let me know what works for you!
+</p>
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://elabs.se/blog/33-why-serenade-js">Why Serenade.js</a></li>
+  <li><a href="http://addyosmani.com/blog/understanding-mvvm-a-guide-for-javascript-developers/">Understanding MVVM - A Guide For JavaScript Developers</a></li>
+  <li><a href="http://addyosmani.com/blog/understanding-mvc-and-mvp-for-javascript-and-backbone-developers/">Understanding MVC And MVP (For JavaScript And Backbone Developers)</a></li>
+  <li><a href="http://developer.apple.com/library/ios/#featuredarticles/ViewControllerPGforiPhoneOS/Introduction/Introduction.html">View Controller Programming Guide for iOS</a></li>
+  <li><a href="https://github.com/nathansobo/space-pen">SpacePen - Markup On The Final Frontier</a></li>
+  <li><a href="http://spinejs.com/docs/introduction">An Introduction To Spine.JS</a></li>
+  <li><a href="http://destroytoday.com/blog/reasons-for-spinejs/">10 Reasons Why I Switched To Spine.JS</a></li>
+  <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
+</ul>
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>StoreConfigurable - A Lesson In Recursion In Ruby</title>
+   <link href="http://metaskills.net/2012/03/12/store-configurable-a-lesson-in-recursion-in-ruby"/>
+   <updated>2012-03-12T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2012/03/12/store-configurable-a-lesson-in-recursion-in-ruby</id>
+   <content type="html">
+     <![CDATA[<p>
+  When ActiveRecord 3.2 was released there was a small addition called <a href="http://api.rubyonrails.org/classes/ActiveRecord/Store.html">ActiveRecord::Store</a> which bills itself as a simple key/value store for your models. The code below is pulled right from their example usage.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">store</span> <span class="ss">:settings</span><span class="p">,</span> <span class="n">accessors</span><span class="p">:</span> <span class="o">[</span><span class="ss">:color</span><span class="p">,</span> <span class="ss">:homepage</span><span class="o">]</span>
+<span class="k">end</span>
+
+<span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">color</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">homepage</span><span class="p">:</span> <span class="s1">&#39;37signals.com&#39;</span><span class="p">)</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">color</span>            <span class="c1"># =&gt; &#39;black&#39;</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:color</span><span class="o">]</span> <span class="c1"># =&gt; &#39;black&#39;</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:remember_me</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
+</code></pre>
+</div>
+
+<p>
+  Most people know that I love simple tools. But when I found myself considering <code>ActiveRecord::Store</code>, I found it seriously lacking for my particular use case. What I wanted was a config for a user class that could do the following:
+</p>
+
+<ul>
+  <li>Interchange property dot notation with indifferent string/symbol lookup.</li>
+  <li>Automatically grow as needed. For namespaces and nested organization.</li>
+  <li>Report state changes to the model from any node.</li>
+</ul>
+
+
+<h2>StoreConfigurable</h2>
+
+<p>
+  <span class="photofancy floatr ml20 mb10">
+    <img src="http://cdn.actionmoniker.com/share/recursive_kitty_small.jpg" width="220" height="136">
+  </span>
+  The lack of these features is why I set out to build a little gem I call <a href="https://github.com/metaskills/store_configurable">StoreConfigurable</a>. A zero-configuration recursive Hash for storing a tree of options in a serialized ActiveRecord column which includes self-aware hooks that delegate dirty/changed state to your configs owner. Perfect right? Here is a simple example of its usage below. If you want to learn more, checkout the <a href="https://github.com/metaskills/store_configurable">project on github</a> with the full README. 
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">store_configurable</span>
+<span class="k">end</span>
+
+<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">remember_me</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">sortable_tables</span><span class="o">.</span><span class="n">column</span>    <span class="o">=</span> <span class="s1">&#39;created_at&#39;</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">sortable_tables</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;asc&#39;</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">you</span><span class="o">.</span><span class="n">should</span><span class="o">.</span><span class="n">never</span><span class="o">.</span><span class="n">need</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">do</span><span class="o">.</span><span class="n">this</span><span class="o">.</span><span class="n">but</span><span class="o">.</span><span class="n">you</span><span class="o">.</span><span class="n">could</span><span class="o">.</span><span class="n">if</span><span class="o">.</span><span class="n">you</span><span class="o">.</span><span class="n">wanted</span><span class="o">.</span><span class="n">to</span> <span class="o">=</span> <span class="s1">&#39;deep_value&#39;</span>
+<span class="vi">@user</span><span class="o">.</span><span class="n">config_changed?</span> <span class="c1"># =&gt; true</span>
+</code></pre>
+</div>
+
+<p>
+  Rather than talking about how StoreConfigurable might be a good fit for you, I would instead like to discuss how my first practical usage of recursion in Ruby is implemented in StoreConfigurable. That along with how to leverage default Hash values is the topic for this post.
+</p>
+
+
+<h2>Default Hash Values</h2>
+
+<p>
+  So first up, a little known feature of Ruby's <a href="http://www.ruby-doc.org/core-1.9.3/Hash.html">Hash</a> class is the ability for a default value to be returned when a key is missing. If you stop and think about this, the default is <code>nil</code>, which is a valid object in Ruby. But you can tell Hash objects to return other values when a key is missing. The first way to do this is to pass the default value as an argument to <code>Hash.new()</code>. The second is to pass a block to the new method which would return the default value. That block is passed in the current hash object and the key that is missing so you can do some fancy things if needed. Here are some quick examples of both techniques. 
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># Default value passed to new.</span>
+
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>  <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class="c1"># =&gt; &quot;default&quot;</span>
+
+<span class="c1"># Default value from new&#39;s block.</span>
+
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="o">|</span> <span class="s2">&quot;Missing </span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2"> for hash with id </span><span class="si">#{</span><span class="nb">hash</span><span class="o">.</span><span class="n">object_id</span><span class="si">}</span><span class="s2">.&quot;</span> <span class="p">}</span>
+<span class="nb">hash</span>                        <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class="c1"># =&gt; &quot;Missing foo for hash with id 283829283.&quot;</span>
+</code></pre>
+</div>
+
+
+<h2>Recursion</h2>
+
+<p>
+  Recurion in Ruby can take many forms. My solution for StoreConfigurable was to always make the hash returned by the proxy object self replicate itself for key misses. Here is a fundamental example to make your own Hash object return new instances of itself when keys are missing.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">RecursiveHash</span> <span class="o">&lt;</span> <span class="no">Hash</span>
+  <span class="no">Recursive</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
+  <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="k">super</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Recursive</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">RecursiveHash</span><span class="o">.</span><span class="n">new</span>  <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="o">.</span><span class="n">class</span>                <span class="c1"># =&gt; RecursiveHash</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">].</span><span class="n">class</span>          <span class="c1"># =&gt; RecursiveHash</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:a</span><span class="o">][</span><span class="ss">:b</span><span class="o">][</span><span class="ss">:c</span><span class="o">]</span>          <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span>                      <span class="c1"># =&gt; {:foo=&gt;{}, :a=&gt;{:b=&gt;{:c=&gt;{}}}}</span>
+</code></pre>
+</div>
+
+<p>
+  In this example, I create a <a href="http://www.ruby-doc.org/core-1.9.3/Proc.html">Proc</a> object via the lambda keyword and I use this as the block argument when you create an instance of <code>RecursiveHash</code> via the super method. Here I am using the <code>&amp;</code> syntax to pass an existing Proc as a block. Hope I have not lost you so far :)
+</p>
+
+<p>
+  So default hashes in Ruby and simple recursion techniques are what make up some of the key points of StoreConfigurable. I also use recursion when loading the hash values from the YAML stored in the database. Here is what that technique looks like.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">loader</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+  <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Hash</span><span class="p">)</span>
+    <span class="n">value</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="nb">hash</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">else</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">send</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="n">value</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>
+  Hopefully this dive into Ruby or maybe StoreConfigurable is helpful!
+</p>
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="https://github.com/metaskills/store_configurable">StoreConfigurable</a> - A zero-configuration recursive Hash for storing a tree of options in a serialized ActiveRecord column with self-aware hooks that delegate dirty/changed state to your configs owner.</li>
+  <li><a href="http://api.rubyonrails.org/classes/ActiveRecord/Store.html">ActiveRecord::Store</a> - Simple key/value store for your models.</li>
+</ul>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Too LESS? Should You Be Using Sass?</title>
+   <link href="http://metaskills.net/2012/02/27/too-less-should-you-be-using-sass"/>
+   <updated>2012-02-27T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2012/02/27/too-less-should-you-be-using-sass</id>
+   <content type="html">
+     <![CDATA[<aside class="flash_warn">
+  Previously I had updated this article to say that this <a href="http://github.com/cloudhead/less.js/commit/93b23d2c24936d5bd829ba1f725ef442e9475747">commit</a> looked like it gives you real variable properties in LESS. I was wrong! So even in LESS v1.3 you are still screwed for doing metaprogramming and working with a real CSS preprocessor. That may change for LESS v1.4 and if you want to help make that happen. I suggst you put your weight behind <a href="https://github.com/cloudhead/less.js/pull/698">this github pull request</a>.
+</aside>
+
+
+<p>
+  First, a little bit of background. A while back ago I took a great deal of my personal time to try out Twitter's Bootstrap project for a Rails application of mine. This meant that I was willing to throw away some of the work I had done in Sass and rewrite it using LESS. No problem I thought, at first glance LESS and Sass look almost identical in functionality. So after some weeks of improving the toolchain for LESS with Ruby and then Rails, I set out to do just that &ndash; and what a miserable failure it was. My goal is to share my experiences to anyone considering using LESS and why it might be wrong for your Rails project.
+</p>
+
+
+<h2>Why Should My Opinion Matter?</h2>
+
+<p>
+  For staters, I am the author of <a href="http://github.com/metaskills/less-rails">less-rails</a>, the gem that allows you to effectively use LESS in the Rails asset pipeline. This gem made other gems of mine like <a href="http://github.com/metaskills/less-rails-bootstrap">less-rails-bootstrap</a> possible. So now full LESS frameworks such as Twitter's Bootstrap could be leverage natively within the Rails ecosystem. Both of these gems greatly reduced the barrier to using LESS for the average Rails developer and I wrote them for one simple reason. I wanted to make sure LESS was as close to par with Sass in the Rails asset pipeline as possible. So before I rewrote one single line of Sass to LESS, it was going to have a fair shake. This was no small feat! Especially considering that LESS is the only JavaScript based CSS language to be extended with Rails' asset helpers like <code>asset-data-url()</code>. Meaning you can hook into assets from any other place in the pipeline directly from LESS, just as you would with Sass.
+</p>
+
+
+<p>
+  Other qualifications? Well I fancy myself a CSS nut and put my skills slightly above average. Most know me as an ActiveRecord or database nerd. But I am just as comfortable doing client side JavaScript and design implementation, especially using HTML5 and CSS3. Very few people know of my <a href="/2011/09/11/revisiting-my-design-past/">design background</a> nor that I have been writing proper presentation layer CSS for over 8 years. Here in the past few years, I have learned to leverage both Sass and the Compass framework like a pro, <a href="/2010/12/27/let-it-go-moving-from-mephisto-to-jekyll/">even for this blog</a>. Here lately, in the project I intended to move to LESS, my Sass usage has become quite impressive. I have extended Sass' color objects to allow <a href="http://gist.github.com/1932866">HSV from RGB</a> conversions for presentation code parity with similar iOS CoreGraphics drawing code in my native iPhone applications. I have even learned to <a href="http://gist.github.com/1932882">write Sass mixins</a> using custom functions and tricks I picked up while reading the Compass source. All this placed the bar pretty high for me on how LESS could take the place of Sass in my little experiment.
+</p>
+
+
+<h2>What Went Wrong?</h2>
+
+<p>
+  So my bar was pretty high. I set out to not only rewrite my current Sass to LESS, but I fully expected to duplicate much of the things I learned to love about the Compass framework in LESS as well. And like a good open-source citizen, I even prepared a new project that I dubed <a href="http://github.com/metaskills/protractor">protractor</a> on github to share all my work. So what went wrong? Plenty! Every day, mixin by mixin, line by line, I felt MORE pain. LESS was fighting me and it was winning. 
+</p>
+
+<p>
+  <span class="photofancy floatr ml20"><img src="/assets/less_variable_property.png" alt="Does LESS have property interpolation?" width="400" height="199" /></span>
+  Some of the bugs I encountered were fixed, like parsing errors for CSS3 keyframes. Others had horrible workarounds that used more code while at the same time lowering legibility. Finally, I came across the one issue on the hundreds of those that exists on LESS' github page that stopped me cold. It was titled <a href="http://github.com/cloudhead/less.js/issues/36">variable property</a> and after learning about it, I decided to stop using LESS for my Rails projects. What are variable properties anyway. Let me show you a common pattern both I and Compass use in a basic contrived example. You may also want to read my comments in that github issue link too. Imagine I have some global colors that I want to mixin to other classes based on a dynamic property. So given this SCSS below:
+</p>
+
+<div class="highlight"><pre><code class="css"><span class="err">$</span><span class="nt">myWhite</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class="o">);</span>
+<span class="err">$</span><span class="nt">myGray</span><span class="o">:</span>  <span class="nt">rgb</span><span class="o">(</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">);</span>
+<span class="err">$</span><span class="nt">myBlack</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">);</span>
+
+<span class="k">@mixin</span> <span class="nt">myColorClasses</span><span class="o">(</span><span class="err">$</span><span class="nt">property</span><span class="o">)</span> <span class="p">{</span>
+  <span class="o">&amp;</span><span class="nc">.white</span>   <span class="p">{</span> <span class="err">#{$</span><span class="n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myWhite</span><span class="o">;</span> <span class="p">}</span>
+  <span class="o">&amp;</span><span class="nc">.gray</span>    <span class="p">{</span> <span class="err">#{$</span><span class="n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myGray</span><span class="o">;</span> <span class="err">}</span>
+  <span class="o">&amp;</span><span class="nc">.black</span>   <span class="p">{</span> <span class="err">#{$</span><span class="n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myBlack</span><span class="o">;</span> <span class="err">}</span>
+<span class="err">}</span>
+
+<span class="nc">.box</span> <span class="p">{</span>
+  <span class="o">@</span><span class="n">include</span> <span class="n">myColorClasses</span><span class="p">(</span><span class="k">background-color</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>
+  It would output something like the following. Notice how I use the variable string <code>background-color</code> and generate dynamic properties?
+</p>
+
+<div class="highlight"><pre><code class="css"><span class="nc">.box.white</span> <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class="m">#f0f0f0</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.box.gray</span>  <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class="m">#8c8c8c</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.box.black</span> <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class="m">#1e1e1e</span><span class="p">;</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<p>
+  Astute observers may point out that you can achieve the same with sub classes and be more efficient in the generated CSS too. You would be correct. I did say this was a contrived example. The point is that LESS is not a CSS preprocessor and without the ability to dynamically define property values you will be limited in the ways your LESS based CSS framework can compete with frameworks like Compass. Simply put, LESS will never stack up to Sass.
+</p>
+
+
+<h2>In All Fairness</h2>
+
+<p>
+  I have mad respect for Alexis Sellier (<a href="https://twitter.com/#!/cloudhead">@cloudhead</a>). By far his skills and open source contributions well outrank my own. As software developers we need to recognize that there are no absolutes and as such, there is no one tool that is right. You have to weight a ton of other factors and choose the tools that are right for you. I firmly believe that as Ruby and or Rails developers that you should choose to learn Sass and Compass vs. LESS and I am basing my opinion heavily on three criteria.
+</p>
+
+<p>
+  First is that from a Ruby perspective, Sass will always be more easy to extend and hook into. Second, that LESS lacks a critical feature that I require to author CSS. Lastly, that LESS is not a CSS preprocessors by design and I believe they are the way forward to a <a href="https://twitter.com/#!/chriseppstein/status/171697822012416000">better future via the CSSWG</a>. This is what Sass does very very well. I want to treat CSS as a language and use features like loops, lists and custom functions.
+</p>
+
+<p>
+   Your mileage may vary and please make your own decisions. I would be more than happy to followup with any questions on this topic too, so please ask away in the comments below. Lastly, here are a few other articles that talk about LESS and Sass.
+</p>
+
+<ul>
+  <li><a href="http://nittygrittyjs.com/blog/why-less-is-a-pain-in-the-sass/">Why LESS Is a Pain in the Sass</a></li>
+  <li><a href="http://coding.smashingmagazine.com/2011/09/09/an-introduction-to-less-and-comparison-to-sass/">An Introduction To LESS, And Comparison To Sass</a></li>
+</ul>
+
+
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Pretty Console Logging With Guard::Jasmine &amp;amp; Black Coffee</title>
+   <link href="http://metaskills.net/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee"/>
+   <updated>2012-02-01T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee</id>
+   <content type="html">
+     <![CDATA[<p>
+  OK I know I promised that we would start the dive into <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">testing your Spine.JS application using Jasmine(rice) in my last article</a>, but this is a good diversion. If you are new to my latest series on Spine.JS and Jasmine, scroll on down to the bottom to the related section and read back. However, for those that might be more familiar with Jasmine and specifically <a href="https://github.com/netzpirat/guard-jasmine">Guard::Jasmine</a> and ever felt the pain that debugging from that terminal window was lacking, read on! Even if your new to Guard::Jasmine and <a href="http://github.com/bradphelan/jasminerice">Jasminerice</a> I still suggest you setup these elegant hacks to make your testing go that much smoother.
+</p>
+
+
+<h2>So What Is The Problem?</h2>
+
+<p>
+  Guard::Jasmine allows you to continuously test your JavaScript right from the terminal window just like your Ruby code. The only drawback is that the console debugging is less than helpful. Guard::Jasmine will not allow you do view a string version of every object nor see line numbers of calling files. Both of these are invaluable when your stuck in a testing hole and just need to inspect a few objects. So if you are tired of seeing <code>[object Object]</code> in your Guard::Jasmine output, let's fix it right away.
+</p>
+
+
+<p>
+  The first place we need to patch things up is Guard::Jasmine itself. In my <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">last article</a> I covered how to monkey patch Jasminerice in a <code>config/initializers/jasminerice.rb</code> file. My Guard::Jasmine freedom patch will be placed in that same file. Pasted below, this does two things vs the <a href="http://github.com/netzpirat/guard-jasmine/blob/master/lib/guard/jasmine/runner.rb">original</a>. First it changes the <code>report_specdoc_logs</code> method to not pass <code>true</code> to the <code>format_log_message</code> method. Second, the <code>format_log_message</code> method itself now has the message regular expression changed to a multi-line scan. It will also look out for a custom prefix tag and allow it to pass through. This is for our pretty objects. Anything else now outputs the message with the file and line number, something previously stripped by Guard::Jasmine.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># coding: utf-8</span>
+<span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+
+  <span class="c1"># Other Jasminerice patches from:</span>
+  <span class="c1"># http://metaskills.net/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/</span>
+  <span class="c1"># ...</span>
+  
+  <span class="c1"># Patch Guard::Jasmine to use a custom formatter for log messages that</span>
+  <span class="c1"># allows multi-line objects to be printed with the line numbers.</span>
+  <span class="k">module</span> <span class="nn">Guard</span>
+    <span class="k">class</span> <span class="nc">Jasmine</span>
+      <span class="k">module</span> <span class="nn">Runner</span>
+        <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+        
+          <span class="k">def</span> <span class="nf">report_specdoc_logs</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">spec</span><span class="o">[</span><span class="s1">&#39;logs&#39;</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:console</span><span class="o">]</span> <span class="o">==</span> <span class="ss">:always</span> <span class="o">||</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:console</span><span class="o">]</span> <span class="o">==</span> <span class="ss">:failure</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">spec</span><span class="o">[</span><span class="s1">&#39;passed&#39;</span><span class="o">]</span><span class="p">))</span>
+              <span class="n">spec</span><span class="o">[</span><span class="s1">&#39;logs&#39;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">log</span><span class="o">|</span>
+                <span class="no">Formatter</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="s2">&quot;    • </span><span class="si">#{</span> <span class="n">format_log_message</span><span class="p">(</span><span class="n">log</span><span class="p">)</span> <span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="p">))</span>
+              <span class="k">end</span>
+            <span class="k">end</span>
+          <span class="k">end</span>
+          
+          <span class="k">def</span> <span class="nf">format_log_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">message</span> <span class="o">=~</span> <span class="sr">/(.*?) in http.+?assets\/(.*)\?body=\d+\s\((line\s\d+)/m</span>
+              <span class="n">pp_prefix</span> <span class="o">=</span> <span class="s1">&#39;[myLog]&#39;</span>
+              <span class="n">msg</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="vg">$1</span><span class="p">,</span> <span class="vg">$2</span><span class="p">,</span> <span class="vg">$3</span>
+              <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">starts_with?</span> <span class="n">pp_prefix</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">sub</span> <span class="n">pp_prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+              <span class="k">else</span>
+                <span class="s2">&quot;</span><span class="si">#{</span><span class="n">msg</span><span class="si">}</span><span class="s2"> in </span><span class="si">#{</span><span class="n">file</span><span class="si">}</span><span class="s2"> on </span><span class="si">#{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span>
+              <span class="k">end</span>
+            <span class="k">else</span>
+              <span class="n">message</span>
+            <span class="k">end</span>
+          <span class="k">end</span>
+          
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+</code></pre>
+</div>
+
+
+<h2>A JavaScript Pretty Print Library</h2>
+
+<p>
+  So now that we have Guard::Jasmine not stripping multi-line console messages to one line and printing file and line numbers, we are ready to hook into it. But first we need a JavaScript library that pretty prints objects for us and wrap this all up behind our own interface to <code>console.log</code>. During my research I found a library called jsDump and decided to <a href="https://github.com/NV/jsDump">use a fork of the project on github</a>. So go download that file and place it in <code>vendor/assets/javascripts/jsDump.js</code> of your Rails project. Next you will want to add it to your <code>spec/javascripts/spec.js</code> manifest like so. My below example is pulled right from my previous article and I have placed jsDump right after my jasmine files.
+</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasminerice</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">mock</span><span class="o">-</span><span class="nx">ajax</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jsDump</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">application</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasmine</span><span class="o">-</span><span class="nx">myapp</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">models</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">controllers</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span>
+</code></pre>
+</div>
+
+
+<h2>Logging Helpers - Using BlackCoffee</h2>
+
+<p>
+  In my last article I mentioned how I would talk more about the <code>jasmine-myapp</code> file in the manifest above. Now is the time. I recommend that this file is place to write all your top level helpers and functions for Jasmine or any other testing libraries in your JavaScript stack. Think of this file as your Ruby <code>test_helper.rb</code> or your own extensions to <code>ActiveSupport::TestCase</code>. My advice is that these functions all be written to pollute the time level namespace as other Jasmine helpers do, like the <code>beforeEach</code> and <code>clearAjaxRequests</code>. This makes things easier but be conscious of that decision and write functions keeping that in mind.
+</p>
+
+<p>
+  The only thing working against is is Sprockets/Tilt rendering CoffeeScript files in their own closure. Which is something you should really not fight! But in this case I think it is fine to have this particular file avoid that. Which allows us to (a) write our helper code in CoffeeScript and (b) use these functions as helpers in the global space like other Jasmine helpers. So enter my <a href="http://github.com/metaskills/sprockets-blackcoffee">Sprockets BlackCoffee</a> gem. This is a simple gem that exposes a CoffeeScript template that uses the <code>--bare</code> option to keep your file from being wrapped in a closure. All you have to do is give the file a <code>.js.black_coffee</code> extension and it will just work. So let's assume you have a <code>spec/javascripts/jasmine-myapp.js.black_coffee</code> created and the gem installed like so.
+</p>
+
+
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
+  <span class="c1"># ...</span>
+  <span class="n">gem</span> <span class="s1">&#39;sprockets-blackcoffee&#39;</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Finally, here are examples of my logging helpers in the <code>jasmine-myapp</code> file. The <code>myLogParser</code> uses jsDump to get back a pretty formatted string of any object if that object is not already a string. The primary logging helper <code>myLog</code> will prefix your message with <code>[myLog]</code> so the Guard::Jasmine recognizes the message and outputs only the object. The last helper <code>myLogLine</code> will do just like the other, but will allow the file and line number tobe printed too.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">myLog</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">console</span><span class="o">.</span><span class="n">log</span> <span class="s2">&quot;[myLog]</span><span class="si">#{</span><span class="n">myLogParser</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="n">myLogLine</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">hmLogParser</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="n">myLogParser</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="k">if</span> <span class="n">typeof</span> <span class="n">obj</span> <span class="n">is</span> <span class="s1">&#39;string&#39;</span> <span class="k">then</span> <span class="n">obj</span> <span class="k">else</span> <span class="n">jsDump</span><span class="o">.</span><span class="n">parse</span> <span class="n">obj</span>
+</code></pre>
+</div>
+
+
+<h2>In Practice</h2>
+
+<p>
+  Here is an example of a Jasmine spec where I was using console.log before the patches above and what it would output to the terminal.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1">#= include spec_helper</span>
+
+<span class="n">describe</span> <span class="s1">&#39;User&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+
+  <span class="n">it</span> <span class="s1">&#39;has been configured with proper attributes&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="vi">@user</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">User</span> <span class="nb">id</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span> <span class="s1">&#39;bob@test.com&#39;</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span> <span class="vi">@user</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span>
+    <span class="n">expect</span><span class="p">(</span><span class="vi">@user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="s1">&#39;bob@test.com&#39;</span>
+</code></pre>
+</div>
+
+<pre class="code">
+User
+  ✘ has been configured with proper attributes
+    ➤ Expected 'foo@bar.com' to equal 'bob@test.com'.
+    • [object Object]
+ERROR: 1 specs, 1 failures
+in 0.653 seconds  
+</pre>
+
+<p>
+  There is the totally helpful <code>[object Object]</code>. But if we now change our code to leverage out patches and change console.log to <code>hmLog @user.attributes()</code> to use our helper. We will get this. If you need a pretty object with line numbers. Just use <code>hmLogLine</code>.
+</p>
+
+<pre class="code">
+User
+  ✘ has been configured with proper attributes
+    ➤ Expected 'foo@bar.com' to equal 'bob@test.com'.
+    • {
+       "email": "foo@bar.com",
+       "id": 2
+    }
+ERROR: 1 specs, 1 failures
+in 0.653 seconds
+</pre>
+
+
+<p>
+  I hope this is helpful to anyone using Guard::Jasmine with a desire to see better output. If you continue to follow my series, my next post will be a deeper dive into Jasmine testing of Spine.JS applications.
+</p>
+
+
+
+<h2>Related</h2>
+
+<ul>
+  <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
+  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
+  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+  <li><a href="/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee/">Pretty Console Logging With Guard::Jasmine &amp; BlackCoffee</a></li>  
+</ul>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://github.com/metaskills/sprockets-blackcoffee">Sprockets BlackCoffee Gem</a></li>
+  <li><a href="http://github.com/netzpirat/guard-jasmine">Guard::Jasmine - Automatically tests your Jasmine specs on Rails.</a></li>
+  <li><a href="http://github.com/bradphelan/jasminerice">Jasminerice - Pain free CoffeeScript testing under Rails 3.1.</a></li>
+</ul>
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Rails &amp;amp; Spine.JS - Jasmine Testing Part 2</title>
+   <link href="http://metaskills.net/2012/01/17/rails-and-spine-js-jasmine-testing-part-2"/>
+   <updated>2012-01-17T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2012/01/17/rails-and-spine-js-jasmine-testing-part-2</id>
+   <content type="html">
+     <![CDATA[<p>
+  So this is the third part to my mini series on Rails and <a href="http://spinejs.com/">Spine.JS</a>. Part one <a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">covers an initial setup</a> and how to include Spine.JS into your Rails project while part two is actually the <a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">first of a tome on how to test</a> your Spine.JS application. Assuming you have covered the bases there, lets get right down to business and review some of the elegant hacks &trade; yours truly came up with while testing my own Spine.jS application using <a href="http://github.com/guard/guard">Guard</a> and <a href="http://github.com/bradphelan/jasminerice">Jasminerice</a>. 
+</p>
+
+
+<h2>That Engine Is Gonna Need An Overhaul</h2>
+
+<p>
+  So did I mention that Jasminerice is a Rails engine and that you can run your tests by accessing the <code>/jasmine</code> URL in your development environment's browser? Good. As uncool as browser testing is, sometimes that it useful. For instance <code>console.log</code> statements will not show up in your Guard's test output. But hopefully that is an edge case and you are really using <a href="http://github.com/netzpirat/guard-jasmine">guard-jasmine</a> and watching your specs run in the terminal window. The question now becomes how can I leverage Jasminerice and its associated engine to really test my Spine.JS application with a full-fledged DOM? The answer is simple, let's hack the Jasminerice engine to load up our application while running the Jasmine specs.
+</p>
+
+
+<h2>A Review Of Jasmine And HTML Fixtures</h2>
+
+<p>
+  This might be a bit contraversial (or maybe just wrong) but I would like to examine why we might hack the Jasminerice engine for a few minutes. Jasmine bills itself as behavior-driven development for JavaScript, to which I disagree. I think Jasmine first and foremost is an all-purpose testing framework. Depending on how you use it determines what it becomes. In my case, I have been doing a lot of unit testing of my Spine.JS models and supporting libs as I learn the framework and build my system. So my usage now could be called TDD at both a unit and functional level. Later on, I plan on doing higher level integration testing with Jasmine, at this time it will be my BDD tool. Normally I do not get caught up in symantics but I think it is important to understand a few lexical terms before I start showing off how I use Jasmine to test my Spine.JS application. 
+</p>
+
+<p>
+  Now that I have set my higher order bit for Jasmine as my unit, functional and itegration testing framework for Spine.JS &ndash; I would like to show how my solution below might differ from other practices. Experienced Jasmine users rave about extensions that allow you to load HTML fixtures to functionally test units of code. In fact, the Jasminerice gem includes a custom version of the <a href="https://github.com/velesin/jasmine-jquery">jasmine-jquery</a> library which among other things allows you to do just that. Let me be clear on this, there is nothing wrong with that! As with all things software, proper solutions depends on what you are doing and need. In my case, I believe that testing your Spine.JS application with Rails only needs to hook into your existing application without the need for fixtures and excessive mocking and stubbing.
+</p>
+
+<p>
+  My basis for this argument is founded on a few principas that I believe all rich client side JavaScript applications should follow. Most important, the application is a single page load and all other calls to the server happen from that one page via AJAX. Every other part of your Rails application then becomes an API client to the JavaScript application. All views are client side only, most likely in a <code>JST</code> namespace.
+</p>
+
+
+<h2>Hacking Jasminerice</h2>
+
+<p>
+  Turns out this is really easy since Jasminerice is just a simple Rails engine with few moving parts. It has a <code>SpecController</code> that renders a basic layout which requires your application's JavaScript assets along with Jasmine. The goal is to tell it to render your single application page that loads up your Spine.JS app with a few additional hacks. When done, we are going to have Jasminerice in your full control. This means we get the same CSS and JavaScript as our real application along with a solid foundation to extend Jasminerice at our whim. This leaves us with a clean canvas suitable for Jasmine unit, functional and integraiton testing all wrapped up into one.
+</p>
+
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In: config/initializers/jasminerice.rb</span>
+
+<span class="k">module</span> <span class="nn">Jasminerice</span>
+  
+  <span class="k">module</span> <span class="nn">MyApplication</span>
+    <span class="kp">extend</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Concern</span>
+    <span class="n">included</span> <span class="k">do</span>
+      <span class="n">delegate</span> <span class="ss">:foo_path</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="o">::</span><span class="no">Rails</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">routes_url_helpers</span>
+    <span class="k">end</span>
+    <span class="k">def</span> <span class="nf">jasminerice?</span>
+      <span class="kp">true</span>
+    <span class="k">end</span>
+    <span class="k">def</span> <span class="nf">current_user</span>
+      <span class="vi">@current_user</span> <span class="o">||=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  <span class="no">ApplicationHelper</span><span class="o">.</span><span class="n">send</span> <span class="ss">:include</span><span class="p">,</span> <span class="no">MyApplication</span>
+  
+  <span class="k">class</span> <span class="nc">SpecController</span> <span class="o">&lt;</span> <span class="no">Jasminerice</span><span class="o">::</span><span class="no">ApplicationController</span>
+    <span class="k">def</span> <span class="nf">index</span>
+      <span class="n">render</span> <span class="n">template</span><span class="p">:</span> <span class="s1">&#39;users/home&#39;</span><span class="p">,</span> <span class="n">layout</span><span class="p">:</span> <span class="s1">&#39;application&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>
+  There we go, a simple example pulled from my current project. What we are doing here is freedom-patching that spec controller's index action to render both a template and layout from your application. I also have a <code>MyApplication</code> module which I include in the <code>Jasminerice::ApplicationHelper</code> for a few methods that my application view code would expect. In this case a <code>current_user</code> method and some delegation of URL helpers to the root Rails application. Do not get hung up on what user is returned there too. It is mostly moot as all AJAX calls will be stubbed. Lastly, I made a <code>jasminerice?</code> view helper and a matching one that I have in my own <code>ApplicationHelper</code> which returns false. I will show why and how this all fits together later on.
+</p>
+
+<p>
+  Now that we have full control and some reflection for Jasminerice, let's reviw our appliation's main layout. Here is an example of my <code>app/views/layouts/application.html.haml</code> file.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
+<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">}</span>
+  <span class="o">%</span><span class="n">head</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
+    <span class="o">=</span> <span class="n">csrf_meta_tags</span>
+    <span class="o">%</span><span class="n">title</span> <span class="no">My</span> <span class="no">Application</span>
+    <span class="o">-</span> <span class="k">if</span> <span class="n">jasminerice?</span>
+      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">&#39;spec&#39;</span>
+      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">&#39;spec&#39;</span>
+    <span class="o">-</span> <span class="k">else</span>
+      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">&#39;application&#39;</span>
+      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">&#39;application&#39;</span>
+      <span class="o">%</span><span class="n">script</span> <span class="n">jQuery</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span> <span class="no">MyApp</span><span class="o">.</span><span class="n">App</span><span class="o">.</span><span class="n">Home</span><span class="o">.</span><span class="n">init</span><span class="p">();</span> <span class="p">});</span>
+  <span class="o">%</span><span class="n">body</span>
+    <span class="o">%</span><span class="n">section</span><span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">}}</span>
+</code></pre>
+</div>
+
+<p>
+  It is really that simple! It has a single condition that says if Jasminerice is loading this page, use the top level <code>spec</code> CSS and JavaScript asset manifest. If not, render my main application's CSS and JavaScript manifests. You will also notice that I decouple my Spine's application initialization from the main JS files and only initialize the app on page load when not running in Jasminerce. This allows us to stub AJAX calls in specs then initialization the Spine.JS app when we are fully ready. So now, let us take a look at what both the <code>spec/javascripts/spec.css</code> and <code>spec/javascripts/spec.js</code> manifests may look like.
+</p>
+
+<div class="highlight"><pre><code class="css"><span class="c">/*</span>
+<span class="c"> *= require jasmine</span>
+<span class="c"> *= require application</span>
+<span class="c"> */</span>
+<span class="nc">.jasmine_reporter</span> <span class="p">{</span> <span class="k">display</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span> <span class="p">}</span>
+</code></pre>
+</div>
+
+<div class="highlight"><pre><code class="javascript"><span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasminerice</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">mock</span><span class="o">-</span><span class="nx">ajax</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">application</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasmine</span><span class="o">-</span><span class="nx">myapp</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">lib</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">models</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">controllers</span><span class="o">/</span>
+<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span>
+</code></pre>
+</div>
+
+<p>
+  These should be self explanatory. The <code>spec.css</code> manifest requires the jasmine styles, then our application's styles. It then hides the Jasmine reporter element. The <code>spec.js</code> manifest does something similiar, It first requires the jasminerice manifest, a Jasmine helper called <a href="https://github.com/pivotal/jasmine-ajax">jasmine-ajax</a> but poorly named mock-ajax, then your application's JavaScript followed by a personal Jasmine helper that we will discuss later. The last lines include all the spec files in each of the lib, models, controller and views directories located in the parent <code>spec/javascripts</code> directory.
+</p>
+
+<p>
+  Congratulations! You are now in full control of both Spine.JS and Jasmine(rice) and how your specs are executed. You have a fully styled DOM that you can happily ignore as you test your unit code. And when the time comes, you can leverage that and you full Spine.JS application from a high level integration perspective. Tune in for my last part which will give some working examples of how to test your Spine.JS application with Jasmine.
+</p>
+
+
+<h2>Related</h2>
+
+<ul>
+  <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
+  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
+  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+  <li><a href="/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee/">Pretty Console Logging With Guard::Jasmine &amp; BlackCoffee</a></li>  
+</ul>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://spinejs.com/">Spine.JS - Build Awesome JavaScript MVC Applications</a></li>
+  <li><a href="http://github.com/bradphelan/jasminerice">Jasminerice - Pain free CoffeeScript testing under Rails 3.1</a></li>
+  <li><a href="http://github.com/pivotal/jasmine-ajax">Jasmine AJAX - A library for faking Ajax responses in your Jasmine suite.</a></li>
+</ul>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Rails &amp;amp; Spine.JS - Jasmine Testing Part 1</title>
+   <link href="http://metaskills.net/2012/01/16/rails-and-spine-js-jasmine-testing-part-1"/>
+   <updated>2012-01-16T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2012/01/16/rails-and-spine-js-jasmine-testing-part-1</id>
+   <content type="html">
+     <![CDATA[<p>
+  In my <a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">previous article</a> I talked a little bit about why I decided to use Spine.JS and how to include the CoffeeScript source into your Rails project using git submodules. Now I would like to talk about testing your brand new Spine.JS application. Afterward, be sure to <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">read the second part</a> to this article which covers more advanced aspects of your Spine.JS application specs.
+</p>
+
+
+<h2>Testing JavaScript</h2>
+
+<p>
+  OK, so like any good programmer, you want to test your JavaScript web application, but how? Like most, I kept finding that <a href="http://pivotal.github.com/jasmine/">Jasmine</a> was the de facto testing framework that most Rails developers were using. For the newly aquatinted, Jasmine describes itself as behavior-driven and sports a clean spec style using <code>describe</code> and <code>it</code> blocks similar to RSpec or MiniTest::Spec. But maybe you, like me, quickly dismissed Jasmine since you sure as hell were not going to hit refresh or F5 in your browser every time you wanted to run your damn specs. After all, this is 2012 and Rails developers do not test with a browser! So why should I start now?
+</p>
+
+<p>
+  Luckily I am a big fan of Ruby's <a href="https://github.com/guard/guard">Guard</a> gem, a simple library that responds to file system events. The guard project literally has TONS of other guard gems that automate everything from running test files to restarting your development server. Thankfully my search for JavaScript testing with Guard in mind brought me right back to Jasmine. Enter the <a href="https://github.com/netzpirat/guard-jasmine">guard-jasmine</a> gem and the wonderful world of a headless JavaScript testing piped right down to your terminal window!
+</p>
+
+
+
+<h2>Guard, Jasmine &amp; Jasminerice</h2>
+
+<p>
+  So this is our holy trinity and to be honest, there are a lot of moving parts under the stack. Things will seem to get complicated quick, but don't worry. I will give you a brief overview of the moving parts and then get right down to the basics of how you can start using Guard and Jasmine to test your Sine.JS application. 
+</p>
+
+<p>
+  First, let's cover Guard. It is a simple gem that uses a <code>Guardfile</code> at the root of your project to control how other guards are triggered. I'll give you an example Guardfile later. But for starters, <a href="https://github.com/guard/guard">read the documentation</a> on what special libraries may be needed for file system events or notifications on your specific platform. In my case, I us Mac OS X and purchased the latest Growl 1.3. So my example <code>Gemfile</code> below will have the <a href="https://rubygems.org/gems/ruby_gntp">ruby_gntp</a> gem included in the spec.
+</p>
+
+<p>
+  Next up is the guard-jasmine gem. My instructions assume you are running a Rails 3.1 or 3.2 app and that you are taking full advantage of the asset pipeline and CoffeeScript. Many of these details can be found on the <a href="https://github.com/netzpirat/guard-jasmine">guard-jamine's Rails 3.1 setup</a> section of their readme page. The underlying components of guard-jasmine are two a libs named <a href="https://github.com/bradphelan/jasminerice">Jasminerice</a> and <a href="http://www.phantomjs.org/">PhantomJS</a>. Jasminerice is a simple Rails engine that brings in the Jasmine source files to the asset pipeline while running a rack app mounted to <code>/jasmine</code> to run your specs from your current application. PhantomJS is yet another headless WebKit based on Qt that has a rich JavaScript API which guard-jasmine delegates to. Is your head spinning? Mine was too.
+</p>
+
+
+<h2>Put It All Together</h2>
+
+<p>
+  Here is the bullet train to getting this stack up and running. First, you will need to get PhantomJS installed. If Homebrew is your thing, just do <code>$ brew install phantomjs</code>. Or you can <a href="http://code.google.com/p/phantomjs/downloads/list">download one of their precompiled binaries</a> for your specific platform. This is what I opted to do and I just placed the phantomjs in my <code>PATH</code> somewhere.
+</p>
+
+<p>
+  Next, we need to get the gems in our <code>Gemfile</code>. Here is how mine are setup. I have them in both the <code>:develpment</code> and <code>:test</code> groups since Jasminerice runs in both of those Rails environments. I also have that ruby_gntp dependency since I am using Growl on Mac OS X, YMMV.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:test</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">&#39;jasminerice&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;guard-jasmine&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;ruby_gntp&#39;</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  So that was easy, now on to our <code>Guardfile</code>. Here is mine below. Notice how I put my JavaScript related guards into a <code>js</code> group? This is a seldom used feature of Guard and it means I can monitor only my jasmine specs by starting guard off using <code>$ guard -g js</code> and my other guards in my <code>ruby</code> group, like minitest, will be ignored.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="s1">&#39;js&#39;</span> <span class="k">do</span>
+
+  <span class="n">guard</span> <span class="s1">&#39;jasmine&#39;</span> <span class="k">do</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/index\.js\.coffee$}</span><span class="p">)</span>  <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/(.+)\.js\.coffee$}</span><span class="p">)</span>   <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">&quot;spec/javascripts/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_spec.js.coffee&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/(.+)_spec\.js\.coffee$}</span><span class="p">)</span>          <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">&quot;spec/javascripts/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_spec.js.coffee&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/spec\.js$}</span><span class="p">)</span>                       <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/spec_helper\.js$}</span><span class="p">)</span>                <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/jasmine-myapp.*}</span><span class="p">)</span>                 <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  This setup assumes a few things. First that you are only testing your Spine.JS application and that those files are in the <code>app/assets/javascripts/myapp</code> directory. That myapp directory could just be <code>app</code> in your case if you used the <a href="http://github.com/maccman/spine-rails">spine-rails</a> gem without the <code>--app</code> option. In my case, that folder is named <code>homemarks</code>. This Guardfile also assumes that your JavaScript app and specs are CoffeeScript files and that specs are in the <code>spec/javascripts</code> folder specified by Jasminerice. You are going to want to follow some file naming convention now too. For example if you have a Spine.JS app file in <code>app/assets/javascripts/myapp/models/post.js.coffee</code>, then you are going to want the matching spec in <code>spec/javascripts/models/post_spec.js.coffee</code>. So saving each of those files will trigger that specific spec to run. There are also so some watchers on important root files like your spec.js sprockets manifest and your Spine.JS app index. Changing any of those files will result in your entire spec suite running again. 
+</p>
+
+
+<h2>To Be Continued...</h2>
+
+<p>
+  I will go into more details on the <code>spec_helper.js</code> and <code>jasmine-myapp</code> files above in <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">the second part</a> of this article. For now you should be set to start writing specs like the one below and seeing them run by either visiting the <code>/jasmine</code> URL of your running Rails application or by using Guard in your terminal window.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  
+  <span class="n">it</span> <span class="s1">&#39;sets el&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">el</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="err">$</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span>
+
+  <span class="n">it</span> <span class="s1">&#39;sets the userId as a property on itself&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">userId</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="vi">@bob</span><span class="o">.</span><span class="n">id</span>
+</code></pre>
+</div>
+
+<p>
+  <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Continue to part two...</a>
+</p>
+
+
+
+<h2>Related</h2>
+
+<ul>
+  <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
+  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
+  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+  <li><a href="/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee/">Pretty Console Logging With Guard::Jasmine &amp; BlackCoffee</a></li>  
+</ul>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://spinejs.com/">Spine.JS - Build Awesome JavaScript
+  MVC Applications</a></li>
+  <li><a href="http://pivotal.github.com/jasmine/">Jasmine - BDD for JavaScript. (I disagree, TDD too!)</a></li>
+  <li><a href="http://github.com/netzpirat/guard-jasmine">Guard Jasmine - Automated Jasmine tests to your console.</a></li>
+  <li><a href="http://github.com/bradphelan/jasminerice">Jasminerice - Pain free CoffeeScript testing under Rails 3.1</a></li>
+  <li><a href="http://www.phantomjs.org/">PhantomJS - Headless WebKit with JavaScript API.</a></li>
+</ul>
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Rails &amp;amp; Spine.JS - Using The CoffeeScript Source</title>
+   <link href="http://metaskills.net/2012/01/15/rails-and-spine-js-using-the-coffeescript-source"/>
+   <updated>2012-01-15T00:00:00-05:00</updated>
+   <id>http://metaskills.net/2012/01/15/rails-and-spine-js-using-the-coffeescript-source</id>
+   <content type="html">
+     <![CDATA[<p>
+  Our <a href="http://addyosmani.com/blog/short-musings-on-javascript-mv-tech-stacks/">options for JavaScript MVC frameworks</a> are numerous these days. While working on the third major rewrite of my personal bookmarking application, <a href="http://homemarks.com/">HomeMarks</a>, I decided to learn <a href="http://documentcloud.github.com/backbone/">Backbone.js</a>. Thankfully a local friend of mine <a href="https://twitter.com/#!/brennandunn/status/153487553062907905">recommended</a> that I try <a href="http://spinejs.com/">Spine.JS</a>. I was immediately hooked! 
+</p>
+
+
+<h2>Why Spine.JS?</h2>
+
+<p>
+  Spine.JS is is authored in <a href="http://coffeescript.org/">CoffeeScript</a> and that is a big deal for me. I will never write raw JavaScript again, which I consider, the deprecated syntax. So a JavaScript MVC framework that is written in CoffeeScript means I can read the source, learn from it and even debug it if necessary. Sure, I can read raw JavaScript or just rely on documentation. But nothing beats reading source code. A practice I think good developers follow. So here is an example of the <a href="https://github.com/documentcloud/backbone/blob/master/backbone.js#L151">Backbone.js model source</a> compared to reading <a href="https://github.com/maccman/spine/blob/master/src/spine.coffee#L83">Spine.JS model source</a> and I think you will see the difference.
+</p>
+
+<p>
+  Source code legibilty is not the only reason to use Spine.JS. It is also very lightweight and requires no other JavaScript dependencies. Take for example Backbone.js which requies the use of <a href="http://documentcloud.github.com/underscore/">Underscore.js</a> and think for a moment why. Underscore.js makes mundane tasks in JavaScript like itterators and event binding much more friendly. But this is all moot when you are using CoffeeScipt's loops and comprehensions. And take my advice, CoffeeScript has so much more to offer. One of my personal favorites is the existential operator!
+</p>
+
+
+
+<h2>Coffee Time!</h2>
+
+<p>
+  So, are you with me and want to try out Spine? Great! But do not rush in and use the <a href="http://github.com/maccman/spine-rails">spine-rails</a> gem. Sure it gives you a nice way to require the Spine JavaScript files in the asset pipeline and some fancy generators. But when you break it down, there are better ways to get Spine's source files and who the hell uses generators? I mean, the only useful one is the initial <code>rails g spine:new</code> generator. Past the initial project setup, the spine-rails gem really does nothing but lock you down to an explicit version of Spine tied to that gem release. 
+</p>
+
+<p>
+  I highly advise that new-comers to Spine start off with the spine-rails gem and its new project generator. Then quickly switch to just including the spine source using a git submodule. This will give you the benefit of using the source CoffeeScript files and tracking Spine's git repo which is getting good active development. So let's live on the edge and read some source. First uninstall the spine-rails gem if you have it and add the Spine project as a git submodule to your git repo.
+</p>
+
+<pre class="command">
+$ mkdir -p vendor/assets/javascripts
+$ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts/spine
+</pre>
+
+<p>
+  This adds the Spine project to your <code>vendor/assets/javascripts/spine</code> directory. Which means it can now be leveraged by Rails asset pipeline using Sprockets. So if you had used the spine-rails generator above and had your spine requires in <code>app/assets/javascripts/app/index.js.coffee</code>, you would now be able to change what should have looked like this:
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1">#= require spine</span>
+<span class="c1">#= require spine/manager</span>
+<span class="c1">#= require spine/ajax</span>
+<span class="c1">#= require spine/route</span>
+</code></pre>
+</div>
+
+<p>
+  To something like the following. Since the <code>spine/src</code> directory is where the source CoffeeScript files from our submodule above and Sprockets will render these just fine, it all just works!
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1">#= require spine/src/spine</span>
+<span class="c1">#= require spine/src/manager</span>
+<span class="c1">#= require spine/src/ajax</span>
+<span class="c1">#= require spine/src/route</span>
+</code></pre>
+</div>
+
+
+<p>
+  So now you can easily update your Spine dependency using a simple git workflow with the added benefit that you can open up any of the source CoffeeScript files and learn Spine from the inside out. You can even change the source or put in console debugging to see what is happening and your application files will recompile via Sprockets on the next request.
+</p>
+
+
+<h2>Related</h2>
+
+<ul>
+  <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
+  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
+  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
+  <li><a href="/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee/">Pretty Console Logging With Guard::Jasmine &amp; BlackCoffee</a></li>  
+</ul>
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://spinejs.com/">Spine.JS - Build Awesome JavaScript
+  MVC Applications</a></li>
+  <li><a href="http://coffeescript.org/">CoffeeScript - A little language that compiles into JavaScript.</a></li>
+  <li><a href="http://github.com/maccman/spine-rails">The Spine Rails Gem</a></li>
+</ul>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>LESS Is More - Using Twitter's Bootstrap In The Rails 3.1 Asset Pipeline</title>
+   <link href="http://metaskills.net/2011/09/26/less-is-more-using-twitter-bootstrap-in-the-rails-3-1-asset-pipeline"/>
+   <updated>2011-09-26T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/09/26/less-is-more-using-twitter-bootstrap-in-the-rails-3-1-asset-pipeline</id>
+   <content type="html">
+     <![CDATA[<p>
+  <span class="floatr ml20 mb20">
+    <img src="/assets/less.png" alt="LESS - The Dynamic Stylesheet language" width="199" height="81" />
+  </span>
+  This weekend I decided to experiment with <a href="http://lesscss.org/">LESS CSS</a> by replacing the existing <a href="http://sass-lang.com/">Sass</a> and <a href="http://compass-style.org/">Compass</a> code that had been built thus far a small project. Why? Three basic reasons. First, I wanted to see how LESS stacked up. Second, I was intrigued by some of LESS' features, in particular <a href="http://lesscss.org/#-namespaces">their namespace support.</a> Lastly, I wanted to use <a href="http://twitter.github.com/bootstrap/">Twitter's Bootstrap</a> project as a baseline for my design. Since Rails 3.1 has been out for some time, I was expecting the move to LESS to go considerably smoother than my <a href="/2011/07/29/use-compass-sass-framework-files-with-the-rails-3.1.0.rc5-asset-pipeline/">pre-release attempts with Compass and Sass<a/>. I was wrong.
+</p>
+
+<p>
+  So the tilt gem already supported LESS templates and that means that Sprockets and the asset pipeline rendering technically did too. But there was <a href="https://github.com/cowboyd/less.rb/issues/8">no official less-rails gem</a> that setup a standard configuration for other gems to hook into. This meant that libraries that distributed the Twitter Bootstrap assets were often hard to use or had inconsistent results. For example, it was not possible to load the Bootstrap's assets in such as way that let you build on top of the LESS mixins they had build. Nor were those assets namespaced in such a way that would allow you to have a <code>modal.less</code> asset as it would have conflicted with Bootstrap's version. So since I apparently have a bunch of free time and I hate building on top of a bad foundation, I set out to learn both <code>Rails::Railtie</code> and <code>Rails::Engine</code> to build the proper tools for LESS and Bootstrap in the Rails 3.1 asset pipeline.
+</p>
+
+
+<h2>New LESS Gems</h2>
+
+<p>
+  I introduce you to both the new <a href="http://github.com/metaskills/less-rails">less-rails</a> and <a href="http://github.com/metaskills/less-rails-bootstrap">less-rails-bootstrap</a> gems. Take a look at the source code if you ever wanted to learn how to implement a simple Rails::Railtie or Engine. But assuming you want to use Twitter's Bootstrap, here are a few examples to get you started. First just bundle up to less-rails-bootstrap, it will automatically pull in less-rails and less.rb via their dependencies. BTW, I am going to keep the semantic versioning of the less-rails-bootstrap gem in sync with the major and minor versions of the Bootstrap project.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">gem</span> <span class="s1">&#39;less-rails-bootstrap&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.3.0&#39;</span>
+</code></pre>
+</div>
+
+<p>
+  From here, the easiest way to use Bootstrap is to require it in your <code>application.css</code> file. Doing so will compile the complete LESS libraries files for Bootstrap. Note how we namespace the files using a simple directory structure.
+</p>
+
+<div class="highlight"><pre><code class="css"><span class="c">/*</span>
+<span class="c"> *= require twitter/bootstrap</span>
+<span class="c">*/</span>
+
+<span class="nf">#foo</span> <span class="p">{</span>
+  <span class="c">/* Your styles... */</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>
+  Alternatively, in a file with the <code>.css.less</code> extension, you can import the entire Bootstrap LESS framework. This will allow you to use Bootstrap's variables and mixins in your CSS that follows. Remember, unlike other CSS frameworks, requiring or importing Bootstrap will include all the CSS for building a bootstrapped website. If you only want variables or mixins, you will have to import those discreet files, see next section.
+</p>
+
+<div class="highlight"><pre><code class="css"><span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap&quot;</span><span class="p">;</span>
+
+<span class="nf">#foo</span> <span class="p">{</span>
+  <span class="o">.</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="p">(</span><span class="m">4px</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>
+  Maybe all you want to use are the variables and mixins that come with Twitter Bootstrap. No problem, just import them individually from you own <code>.css.less</code> file. In this case only the <code>#foo</code> selector is output.
+</p>
+
+<div class="highlight"><pre><code class="css"><span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap/variables&quot;</span><span class="p">;</span>
+<span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap/mixins&quot;</span><span class="p">;</span>
+
+<span class="nc">.myButton</span><span class="o">(</span><span class="k">@radius</span><span class="o">:</span> <span class="nt">5px</span><span class="o">)</span> <span class="p">{</span>
+  <span class="nc">.border-radius</span><span class="o">(</span><span class="k">@radius</span><span class="o">)</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nf">#foo</span> <span class="p">{</span>
+  <span class="o">.</span><span class="n">myButton</span><span class="p">(</span><span class="m">10px</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>
+  Using the <a href="http://twitter.github.com/bootstrap/#javascript">Bootstrap JavaScript</a> files is just as easy. Again, you can include all them with a single directive from your <code>application.js</code> file. Optionally, you can require only the files you need like <code>require twitter/bootstrap/modal</code>.
+</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="c1">//= require twitter/bootstrap</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="c1">//...</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+
+<p>
+  The less-rails project has already started getting some good feedback. Soon we hope to implement all the features that you may have used in the sass-rails project, <a href="https://github.com/metaskills/less-rails/issues/1">like asset pipeline helpers</a>. One last thing, I wanted to say thanks to <a href="https://github.com/nmerouze">Nicolas Mérouze</a> for opening up the old less-rails gem space on rubygems.org for the new gem!
+</p>
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://lesscss.org/">LESS - The Dynamic Stylesheet Language</a></li>
+  <li><a href="http://github.com/metaskills/less-rails">LESS-Rails - Official Support For LESS In Rails</a></li>
+  <li><a href="http://github.com/metaskills/less-rails-bootstrap">LESS-Rails-Bootstrap - CSS toolkit from Twitter For Rails 3.1 Asset Pipeline</a></li>
+  <li><a href="http://github.com/cowboyd/less.rb">LESS.rb - LESS CSS Rendering From Ruby</a></li>
+  <li><a href="http://sass-lang.com/">Sass - Syntactically Awesome Stylesheets</a></li>
+  <li><a href="http://github.com/rails/sass-rails">Sass-Rails - Official Support For Sass In Rails</a></li>
+  <li><a href="http://compass-style.org/">Compass - An Open-Source CSS Authoring Framework</a></li>
+  <li><a href="http://twitter.github.com/bootstrap/">Bootstrap - A Toolkit From Twitter Designed To Kickstart Development</a></li>
+</ul>
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Keep Trying</title>
+   <link href="http://metaskills.net/2011/09/17/keep-trying"/>
+   <updated>2011-09-17T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/09/17/keep-trying</id>
+   <content type="html">
+     <![CDATA[<p>
+  <span class="photofancy floatr ml20 mb20">
+    <img src="/assets/evilruby.jpg" alt="Ruby Is Evil!" width="248" height="195" />
+  </span>
+  One part of Objective-C that I like is being able to send messages to nil objects safely and more so their <a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/KeyValueCoding/Articles/KeyValueCoding.html">KVC</a> and <a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/KeyValueObserving/KeyValueObserving.html">KVO</a> patterns. In Ruby I often use the <code>#try</code> method to safely send messages to objects that may be nil at runtime. But one thing I always wanted was a nice way to send a key path, basically a string of methods signatures, to an object in the same way. I give you my simple <code>#try_keypath</code> method :)
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Object</span>
+  <span class="k">def</span> <span class="nf">try_keypath</span><span class="p">(</span><span class="nb">methods</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="nb">methods</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">result</span><span class="p">,</span> <span class="nb">method</span><span class="o">|</span> <span class="n">result</span><span class="o">.</span><span class="n">try</span><span class="p">(</span><span class="nb">method</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">NilClass</span>
+  <span class="k">def</span> <span class="nf">try_keypath</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="kp">nil</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Yup, it is that simple. Let's see how this would work. Here are a few basic classes that randomly return nested objects. So staring with the <code>Foo</code> object, we have the possibility to get to some deeply nested info.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Foo</span>
+  <span class="k">def</span> <span class="nf">bar</span>
+    <span class="nb">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">?</span> <span class="no">Bar</span><span class="o">.</span><span class="n">new</span> <span class="p">:</span> <span class="kp">nil</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Bar</span>
+  <span class="k">def</span> <span class="nf">batz</span>
+    <span class="s1">&#39;wohoo&#39;</span>
+  <span class="k">end</span>
+  <span class="k">def</span> <span class="nf">deep</span>
+    <span class="no">Deep</span><span class="o">.</span><span class="n">new</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Deep</span>
+  <span class="k">def</span> <span class="nf">info</span>
+    <span class="p">{</span><span class="ss">:winning</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Finally, here is how it would look and return different results. Man I love Ruby!
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7dfd0&gt;</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7ddf0&gt;</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7d4b8&gt;</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; nil</span>
+
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
+
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
+<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
+</code></pre>
+</div>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Revisiting My Design Past</title>
+   <link href="http://metaskills.net/2011/09/11/revisiting-my-design-past"/>
+   <updated>2011-09-11T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/09/11/revisiting-my-design-past</id>
+   <content type="html">
+     <![CDATA[<p>
+  Not many people know that I used to be a designer back in the mid 90's. Some of you all may have ventured deep into the colophon section of my site and read <a href="/pages/resume.html">my resume</a> which has visual clues of that history. Either way, this page is dedicated to those that had no idea a programmer like myself could come from a design background. Besides, I think it would be cool to share some of my old portfolio pieces.
+</p>
+
+<h2>Beer Labels</h2>
+
+<p>
+  Every good starving artist needs a watering hole. Mine used to be the <a href="http://maps.google.com/maps/place?client=safari&rls=en&oe=UTF-8&um=1&ie=UTF-8&q=Taphouse+Grill+Norfolk&fb=1&gl=us&hq=Taphouse+Grill&hnear=0x89ba973a5322ca45:0xab99107fce7a1e0a,Norfolk,+VA&cid=13700420888534827238">Tap House Grill At Ghent</a>. Doing menu and beer tap design was a great way to pay for the basic staples of life, food and beer! Most of my friends worked there as well. Even after all these years, The Taphouse Grill still seems to be going strong in the same location. So here are a few of those beer tap designs. The "Sex Ina Canoe" tap was a joke against Yuengling Lager and referenced the joke, What does American beer and sex in canoe have in common?
+</p>
+
+<img src="/assets/design/beer_labels.png" alt="My Beer Label Designs For The Taphouse Grill In Norfolk, Virginia" width="774" height="327" />
+
+
+<h2>Logos</h2>
+
+<p>
+  On top of doing tons of 4-color brochure and package design, I used to love doing logo work. The one for the Virginia Stage Company was never used and the middle was a logo for my old online moniker before MetaSkills. The last logo was for a friend's Mother's clothing company with heavy art direction.
+</p>
+
+<img src="/assets/design/logos.png" alt="My Misc Logo Work" width="774" height="273" />
+
+
+<h2>Drawing Collaborations</h2>
+
+<p>
+  One thing I really enjoyed doing was working with illustrations by my friend Jeff Stephenson. He sketched tons of different things while making his way thru the day. I believe some of his drawings were purely cathartic or helped him cope in one way or another. Most times I would rescue them from the trash bin and scan them in for artwork. The first below is a t-shirt design for the Taphouse Grill's Cindo De Micro event. I remember piecing different illustrations together with some heavily inspired artwork I gathered while shopping for frozen burritos to eat that night. The end result was awesome. Lastly, what can I about Superfly Bundt Cackes? I think the wings came out nicely.
+</p>
+
+<div class="center mb20">
+  <span class="photofancy">
+    <img src="/assets/design/cinco_de_micro.jpg" alt="The Cinco De Micro Taphouse Grill T-Shirt Collaboration With Jeff Stephenson" width="542" height="390" />
+  </span>
+</div>
+
+<div class="center">
+  <span class="photofancy">
+    <img src="/assets/design/superfly_bundt_cakes.jpg" alt="Superfly Bundt Cakes Was Just A Silly Experiment" width="561" height="426" />
+  </span>
+</div>
+
+
+<h2>Experimental</h2>
+
+<p>
+  Even designers have to perform occupational maintenance. I was always reading design articles (before blogs were invented) and learning the different techniques and power of PhotoShop 4 and its numerous plug-ins. Below is a mixed bag of those results.
+</p>
+
+<div class="center mb20">
+  <span class="photofancy">
+    <img src="/assets/design/shocking.jpg" alt="Shocking Design Expierment For Lighting Effect In PhotoShop" width="695" height="132" />
+  </span>
+</div>
+
+<div class="center mb20">
+  <span class="photofancy">
+    <img src="/assets/design/virus.jpg" alt="Virus Design Expierment With Text And Backgrounds" width="559" height="419" />
+  </span>
+</div>
+
+<div class="center">
+  <span class="photofancy">
+    <img src="/assets/design/laugh_soup.jpg" alt="A Laugh Soup CD Design Expierment With Text And Backgrounds" width="462" height="450" />
+  </span>
+</div>
+
+
+<h2>Design Is Important</h2>
+
+<p>
+  I think it is critical that every designer or programmer have a basic skill in the other field. It adds tons of value and streamlines communication across the disciplines. For me however, I have made a career decision that I will never open a PSD file again or try to facilitate the design role. I can if I have to, but not doing it all the time means that the time I do spend designing is not as efficient as someone else in that role. My place is now spent pushing pixels via code!
+</p>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>How Do You Encapsulate Your JavaScript</title>
+   <link href="http://metaskills.net/2011/09/06/how-do-you-encapsulate-your-javascript"/>
+   <updated>2011-09-06T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/09/06/how-do-you-encapsulate-your-javascript</id>
+   <content type="html">
+     <![CDATA[<p>
+  I ask this question a lot! To Job candidates, friends, and almost any developer that says they work with JavaScript. I believe how you encapsulate your JavaScript is a good indicator on your level of expertise with the language. I find that most beginners have come to JavaScript via jQuery and often define their functions at the top level namespace in some application.js file. These functions are loosely organized and often have no way of sharing simple object state and behavior. A good object oriented programmer would never write their application code like that. JavaScript should be no different and I think jQuery has a part in the blame of those not knowing this.
+</p>
+
+<p>
+  I've <a href="/2008/08/18/in-hell-oo-for-homemarks/">been writing rich object oriented JavaScript</a> for the better part of 4 years now using <a href="http://www.prototypejs.org/">Prototype.js</a>. That framework has always championed encapsulating your web application's behavior using a <a href="http://prototypejs.org/learn/class-inheritance">standard class and inheritance notation</a>. Sam Stephenson, the author of Prototype.js, did a good job trying to educate what real JavaScript Object Notation (JSON) is about and how you can encapsulate behavior using Prototype's Class structure while paying homage to <a href="http://dean.edwards.name/weblog/2006/03/base/">Dean Edward's Base.js</a> to which it owes its origins.
+</p>
+
+<p>
+  So jQuery is the proper winner and choice for anyone wanting to use a JavaScript framework to make working with the DOM in web sites easier. It has awesome event handling and delegation. So many things that Prototype.js lacked. It even has great documentation. About the only bad thing about jQuery is the widely different interfaces to it's AJAX functions and the arguments passed to their callbacks. Oh, and they totally screwed new JavaScript developers by not sheperding them into learning some sort of way to encapsulate their object behavior. So this article is for those that are not using <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript's class system</a>, <a href="http://documentcloud.github.com/backbone/">Backbone.js's class system</a>, or jQuery's deeply nested plugin class system that is hidden away. So lets get to fixing that. Here is 32 lines of dirt simple JavaScript inheritance.
+</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="cm">/* Simple JavaScript Class</span>
+<span class="cm">   By John Resig. MIT Licensed. &lt;http://ejohn.org/blog/simple-javascript-inheritance/&gt; */</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="kd">var</span> <span class="nx">initializing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">fnTest</span> <span class="o">=</span> <span class="sr">/xyz/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span><span class="nx">xyz</span><span class="p">;})</span> <span class="o">?</span> <span class="sr">/\b_super\b/</span> <span class="o">:</span> <span class="sr">/.*/</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">JQClass</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){};</span>
+  <span class="nx">JQClass</span><span class="p">.</span><span class="nx">extend</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">_super</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+    <span class="nx">initializing</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="k">this</span><span class="p">();</span>
+    <span class="nx">initializing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">prototype</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">prop</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;function&quot;</span> <span class="o">&amp;&amp;</span> 
+        <span class="k">typeof</span> <span class="nx">_super</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;function&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">fnTest</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">prop</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="o">?</span>
+        <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">fn</span><span class="p">){</span>
+          <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_super</span> <span class="o">=</span> <span class="nx">_super</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+            <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>        
+            <span class="k">this</span><span class="p">.</span><span class="nx">_super</span> <span class="o">=</span> <span class="nx">tmp</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+          <span class="p">};</span>
+        <span class="p">})(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">prop</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="o">:</span>
+        <span class="nx">prop</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="kd">function</span> <span class="nx">JQClass</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">initializing</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">init</span> <span class="p">)</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">JQClass</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">prototype</span><span class="p">;</span>
+    <span class="nx">JQClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">JQClass</span><span class="p">;</span>
+    <span class="nx">JQClass</span><span class="p">.</span><span class="nx">extend</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">callee</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">JQClass</span><span class="p">;</span>
+  <span class="p">};</span>
+<span class="p">})();</span>
+</code></pre>
+</div>
+
+<p>
+  It is <a href="http://ejohn.org/blog/simple-javascript-inheritance/">worth reading the comments</a> John Resig's blog post for this piece of work as well as the full documentation. My code example above names this <code>JQClass</code> to avoid namespace collisions with other frameworks. Here is a simple example of its usage.
+</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="c1">// Your namespace.</span>
+
+<span class="kd">var</span> <span class="nx">MyApp</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">models</span><span class="o">:</span> <span class="p">{}</span>
+<span class="p">};</span>
+
+<span class="c1">// Simple object example for page flash.</span>
+
+<span class="nx">MyApp</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">flash</span> <span class="o">=</span> <span class="nx">JQClass</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">aPage</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">page</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">aPage</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">alertDiv</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">page</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;div.flash.alert&#39;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">noticeDiv</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">page</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;div.flash.notice&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+  
+  <span class="nx">alert</span><span class="o">:</span>  <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_doFlashFor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">alertDiv</span><span class="p">,</span><span class="nx">content</span><span class="p">);</span> <span class="p">},</span>
+  
+  <span class="nx">notice</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_doFlashFor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">noticeDiv</span><span class="p">,</span><span class="nx">content</span><span class="p">);</span> <span class="p">},</span>
+  
+  <span class="nx">clear</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="err">#</span> <span class="p">...</span>
+  <span class="p">},</span>
+  
+  <span class="nx">_doFlashFor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">flash</span><span class="p">,</span> <span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class="nx">silentScroll</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+    <span class="nx">flash</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+    <span class="nx">flash</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+  <span class="p">}</span>
+  
+<span class="p">});</span>
+</code></pre>
+</div>
+
+
+<p>
+  This code example is pulled from a jQuery mobile project I recently finished. The real usage of the flash objects would be numerous as there would be one per page and I have a top level delegate object that finds the active page and finds or create the flash DOM elements. But this should be a good enough example to show why you might choose a simple class and object inheritance system vs putting all your logic in <code>$(document).ready({})</code> scopes. There are tons of ways to write good OO JavaScript and I hope some find this useful and explore some other ways.
+</p>
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>jQuery Mobile &amp;amp; Rails</title>
+   <link href="http://metaskills.net/2011/08/24/jquery-mobile-and-rails"/>
+   <updated>2011-08-24T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/08/24/jquery-mobile-and-rails</id>
+   <content type="html">
+     <![CDATA[<p>
+  <img class="floatr" src="/assets/jquery_mobile_rails.png"/>
+  I just finished my first dive into using <a href="http://jquerymobile.com/">jQuery Mobile</a> with a Rails application and wanted to share some techniques that came out along the way. Hopefully these will help you if your are using jQuery Mobile with Rails or want to test your mobile application's integration layer. This post assumes you are somewhat familiar with jQuery Mobile and its basic concepts. So let's jump right in with a series of helpful tips.
+</p>
+
+
+
+<h2>A Mobile Layout</h2>
+
+<p>
+  In my application, I decided to use use a route namespace of "mobile" vs a sub-domain for all controllers and views to reside in. Do what works for you, but I find that using namespaces both helps keep my code organized and simple to maintain. Either way, you should have a layout specific for your mobile application. Mine is in <code>app/views/layout/mobile.html.haml</code>. As you can see here, I use HAML, so all view examples will be using it vs ERB. Here is a general layout.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
+<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">}</span>
+  <span class="o">%</span><span class="n">head</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;viewport&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="s1">&#39;width=device-width, initial-scale=1&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;format-detection&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class="o">=&gt;</span> <span class="s1">&#39;telephone=no&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">title</span><span class="o">=</span> <span class="s1">&#39;My Mobile App&#39;</span>
+    <span class="o">%</span><span class="n">link</span><span class="p">{</span><span class="ss">:rel</span> <span class="o">=&gt;</span> <span class="s1">&#39;stylesheet&#39;</span><span class="p">,</span> <span class="ss">:href</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">script</span><span class="p">{</span><span class="ss">:src</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/jquery-1.6.2.min.js&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">script</span><span class="p">{</span><span class="ss">:src</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js&#39;</span><span class="p">}</span>
+  <span class="o">%</span><span class="n">body</span>
+    <span class="o">=</span> <span class="k">yield</span><span class="p">(</span><span class="ss">:layout</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>
+  A few key points here. First, the meta tag for the <code>viewport</code> is recommended as a good base. The other meta tag for <code>format-detection</code> is to disable automatic detection and linking of phone numbers. Phone number detection is way too aggressive and often just links random numbers with periods and hyphens. This means if you want a phone number to call when touched, you will have to use the <code>tel:</code> link format with the phone number afterward. I recommend the aid of something like the <a href="https://github.com/floere/phony">phony</a> gem for validating and parsing phone number formats. Lastly, the title attribute in the head is really moot. The jQuery Mobile framework will dynamically change the page title as new page DOM elements are loaded in.
+</p>
+
+
+
+<h2>Mobile Page IDs</h2>
+
+<p>
+  A typical jQuery Mobile app will have one full page load. All other pages thereafter are loaded via AJAX and inserted into the DOM. Their docs suggest that every page (and form) have a unique id attribute. These ids can be used to link to the DOM page element when navigating around preloaded pages. Simple apps can get by with a few ids like "#home", "#contact_us", "#etc". But if you have a large application, you need a better system to keep track of things.
+</p>
+
+<p>
+  Thankfully if you are building your Rails applications in a RESTful manner, it is easy to leverage the route link helpers to generate your page ids. In the example below, I created a method called <code>mobile_page_id</code> that I placed into a <a href="http://weblog.jamisbuck.org/2007/1/17/concerns-in-activerecord">shared concerns module directory</a>. From here I mix this into my test helper, and application's view helper. It is that damn useful! You are going to want to use this everywhere!
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># File: app/concerns/mobile_concerns.rb</span>
+<span class="k">module</span> <span class="nn">MobileConcerns</span>  
+  <span class="k">module</span> <span class="nn">Helpers</span>
+    <span class="k">def</span> <span class="nf">mobile_page_id</span><span class="p">(</span><span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+      <span class="n">path</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sr">/\A\/mobile\//</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>  
+<span class="k">end</span>
+
+<span class="c1"># Mix into your applications helper.</span>
+<span class="k">module</span> <span class="nn">ApplicationHelper</span>
+  <span class="kp">include</span> <span class="no">MobileConcerns</span><span class="o">::</span><span class="no">Helpers</span>
+<span class="k">end</span>
+
+<span class="c1"># Mix into your test helper of choice.</span>
+<span class="k">class</span> <span class="nc">MobileStoriesTest</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">IntegrationTest</span>
+  <span class="kp">include</span> <span class="no">MobileConcerns</span><span class="o">::</span><span class="no">Helpers</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  The <code>mobile_page_id</code> method is primarily for views. I will cover its usage in testing further down. When called without an argument, it will take the current request path and translate it to a string suitable for a page id. So if you were rendering a <code>/mobile/users/10/avatar</code> page, the id would be <code>users_10_avatar</code>. If your application follows RESTful resources in your routes, this can pay dividends. When needed, you can pass a <code>*_path</code> helper method to get the same id. In this example the same id would come back for <code>mobile_page_id(mobile_user_avatar_path(@user))</code>. Remember, I am using a "mobile" namespace in my examples and hence my method above strips that out, flavor this helper to your needs. Here is an example of what you might find in <code>app/views/users/avatar.html.haml</code> using the mobile_page_id. You can see here that I am also setting a title local that is used in the <code>%h1</code> tag and the <code>data-title</code> page element attribute. Doing this will show the same title in the header bar as well as the page title.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="o">-</span> <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;User Profile&quot;</span>
+
+<span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="n">mobile_page_id</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="ss">:title</span> <span class="o">=&gt;</span> <span class="n">title</span><span class="p">}}</span>
+
+  <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;header&#39;</span><span class="p">}}</span>
+    <span class="o">%</span><span class="n">h1</span><span class="o">=</span> <span class="n">title</span>
+  <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;content&#39;</span><span class="p">}}</span>
+    <span class="n">edit</span> <span class="n">your</span> <span class="n">profile</span><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+  <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;footer&#39;</span><span class="p">}}</span><span class="sr"></span>
+<span class="sr">    /...</span>
+</code></pre>
+</div>
+
+
+
+<h2>Easy Data Attributes</h2>
+
+<p>
+  The jQuery Mobile framework will have you typing a lot of data-* attributes into your elements. It uses these from basic page behavior to UI themes. They are literally needed everywhere. If your typing out raw HTML these data attributes get old pretty quick. Thankfully both HAML and the latest Rails 3.1 tag helpers can keep things clean. Both allow hashes to be passed to the data attribute. Keys are dasherized and values are JSON-encoded except for string and symbols.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># HAML Shorthand For:</span>
+<span class="c1"># &lt;div id=&quot;foo&quot; data-role=&quot;page&quot; data-title=&quot;Title&quot; data-rel=&quot;dialog&quot;&gt;&lt;/div&gt;</span>
+
+<span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class="ss">:title</span> <span class="o">=&gt;</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="ss">:rel</span> <span class="o">=&gt;</span> <span class="s1">&#39;dialog&#39;</span><span class="p">}}</span>
+
+<span class="c1"># Rails 3.1 Tag Helpers</span>
+<span class="c1"># &lt;div data-name=&quot;Stephen&quot; data-city-state=&quot;[&amp;quot;Chicago&amp;quot;,&amp;quot;IL&amp;quot;]&quot; /&gt;</span>
+
+<span class="n">tag</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;Stephen&#39;</span><span class="p">,</span> <span class="ss">:city_state</span> <span class="o">=&gt;</span> <span class="sx">%w(Chicago IL)</span><span class="p">})</span>
+</code></pre>
+</div>
+
+
+
+<h2>Dynamically Setting Layout</h2>
+
+
+<p>
+  Remember how jQuery Mobile only loads the entire page once and then inserts all following pages using AJAX? This means that views after the initial page load do not need the layout when rendered. Depending on the setup of your mobile application, it could become a chore telling each action to conditionally render the layout or not. Imagine a page refresh or a user bookmarking a deep resource node of your mobile app. Thankfully with a little Rails-fu, we can conditionally set the layout to false if the request is an <code>HTTP GET</code> from an AJAX request. Below is an example of my base mobile controller that all mobile controllers inherit from. Now every action is able to load the entire mobile layout or not.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Mobile</span><span class="o">::</span><span class="no">BaseController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="no">LAYOUT</span> <span class="o">=</span> <span class="s1">&#39;mobile&#39;</span><span class="o">.</span><span class="n">freeze</span>
+  <span class="n">layout</span> <span class="no">LAYOUT</span>
+  <span class="n">around_filter</span> <span class="ss">:dynamically_assign_layout</span>
+  
+  <span class="kp">private</span>
+  
+  <span class="k">def</span> <span class="nf">dynamically_assign_layout</span>
+    <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">layout</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">get?</span> <span class="o">&amp;&amp;</span> <span class="n">request</span><span class="o">.</span><span class="n">xhr?</span>
+    <span class="k">yield</span>
+  <span class="k">ensure</span>
+    <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">layout</span> <span class="no">LAYOUT</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+</code></pre>
+</div>
+
+
+
+<h2>Integration Testing &amp; Capybara-Webkit</h2>
+
+<aside class="flash_info">
+  UPDATE: After this article I posted a gist titled <a href="https://gist.github.com/1172519">Never sleep() using Capybara!</a> that details how to deal with CSS animations and AJAX requests using Capybara. Check it out too!
+</aside>
+
+<p>
+  Those that know me are familiar that I do not use RSpec or Test::Unit but instead opt for a simple testing framework built into Ruby 1.9, <a href="/2011/03/26/using-minitest-spec-with-rails/">MiniTest::Spec</a>. I also use the <a href="https://github.com/thoughtbot/capybara-webkit">Capybara-WebKit</a> driver for my acceptance testing in both <a href="https://github.com/metaskills/holygrail_rails23">Rails 2.3</a> and <a href="https://github.com/metaskills/holygrail_rails31">Rails 3.1</a>'s standard integration test layer. Reference the <code>integration_test_helper.rb</code> file in each link above to learn how to use Capybara-WebKit with your rails app. Thanks to Wyatt Greene for his <a href="http://techiferous.com/2010/04/using-capybara-in-rails-3/">original article</a> on the matter. 
+</p>
+
+<p>
+  So why the fuss? Well Capybara-WebKit is a headless WebKit browser that you can direct right from your test suite. What makes it so awesome is that it renders web pages with full JavaScript support and is much faster than selenium based Capybara drivers. Since jQuery Mobile is entirely based on JavaScript with HTML &amp; CSS3 - Capybara-WebKit is a perfect candidate to acceptance test your mobile application. The only gotcha is scoping your Capybara actions to a certain page that is dynamically loaded into the DOM. No problem! This is easily solvable using the page ids from the <code>mobile_page_id</code> helper method I mentioned above. So whatever your testing framework, here are a few helpers that are critical. Assume these are mixed into your test helper.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="kp">private</span>
+
+<span class="kp">include</span> <span class="no">MobileConcerns</span><span class="o">::</span><span class="no">Helpers</span> <span class="c1"># Mentioned above.</span>
+
+<span class="k">def</span> <span class="nf">current_page_id</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
+  <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">||</span> <span class="n">current_path</span>
+  <span class="s2">&quot;div#</span><span class="si">#{</span><span class="n">mobile_page_id</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">.ui-page-active&quot;</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">current_page</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
+  <span class="n">find</span><span class="p">(</span><span class="n">current_page_id</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">within_current_page</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
+  <span class="n">within</span><span class="p">(</span><span class="n">current_page_id</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="p">{</span> <span class="k">yield</span> <span class="p">}</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  So let's go over these. First is the <code>current_page_id</code> method. Most of the time you are going to pass a path argument to this method, since the Capybara's <code>current_path</code> will only work correctly on the first page load, not each following AJAX page load which would change the location hash. See how this is using the <code>mobile_page_id</code> helper mixed in and described above? Next is the <code>current_page</code> helper. It finds the passed path/id with Capybara's find method. The <code>within_current_page</code> leverages Capybara's <code>within</code> helper to scope your action to that particular DOM element. Here is a classic example using these.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">should</span> <span class="s1">&#39;be able to navigate to logged in user page and change email&#39;</span> <span class="k">do</span>
+  <span class="n">login_as</span> <span class="vi">@user</span>
+  <span class="n">visit</span> <span class="n">mobile_homepage_path</span>
+  <span class="n">click_on</span> <span class="s1">&#39;My Account&#39;</span>
+  <span class="n">user_path</span> <span class="o">=</span> <span class="n">mobile_user_path</span><span class="p">(</span><span class="vi">@user</span><span class="p">)</span>
+  <span class="n">assert</span> <span class="n">current_page</span><span class="p">(</span><span class="n">user_path</span><span class="p">)</span>
+  <span class="c1"># Change email</span>
+  <span class="n">new_email</span> <span class="o">=</span> <span class="no">Forgery</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">address</span>
+  <span class="n">within_current_page</span><span class="p">(</span><span class="n">user_path</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">fill_in</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="ss">:with</span> <span class="o">=&gt;</span> <span class="n">new_email</span>
+    <span class="n">click_button</span> <span class="s1">&#39;Save Changes&#39;</span>
+  <span class="k">end</span>
+  <span class="vi">@user</span><span class="o">.</span><span class="n">reload</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">must_equal</span> <span class="n">new_email</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Hopefully you can see how this simple page id foundation can help you better test your jQuery Mobile app with Capybara-WebKit. What an awesome tool! I sometimes find it hard to believe we are now at the point where we can easily test this much JavaScript in a headless browser directed by Ruby.
+</p>
+
+
+
+<h2>Resources</h2>
+
+<ul>
+  <li><a href="http://jquerymobile.com/">jQuery Mobile</a></li>
+  <li><a href="http://weblog.jamisbuck.org/2007/1/17/concerns-in-activerecord">Concerns Module Pattern</a></li>
+  <li><a href="https://github.com/thoughtbot/capybara-webkit">Capybara-WebKit</a></li>
+  <li><a href="https://github.com/metaskills/holygrail_rails23">Rails 2.3 App w/Capybara-WebKit Integration</a></li>
+  <li><a href="https://github.com/metaskills/holygrail_rails31">Rails 3.1 App w/Capybara-WebKit Integration</a></li>
+  <li><a href="http://techiferous.com/2010/04/using-capybara-in-rails-3/">Wyatt Green's Using Capybara In Rails 3</a></li>
+  <li><a href="/2011/03/26/using-minitest-spec-with-rails/">Using MiniTest::Spec With Rails</a></li>
+</ul>
+
+
+
+
+]]>
+    </content>
+ </entry>
+ 
+ <entry>
+   <title>Use Compass Sass Framework Files With The Rails 3.1.0.rc5 Asset Pipeline</title>
+   <link href="http://metaskills.net/2011/07/29/use-compass-sass-framework-files-with-the-rails-3.1.0.rc5-asset-pipeline"/>
+   <updated>2011-07-29T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2011/07/29/use-compass-sass-framework-files-with-the-rails-3.1.0.rc5-asset-pipeline</id>
+   <content type="html">
+     <![CDATA[<aside class="flash_info">
+  UPDATE: Now that Rails 3.1 is out, just use the <a href="http://rubygems.org/gems/compass">latest compass</a> or pre-release. No hacks needed!
+</aside>
+
+<p>
+  This is a simple update to my <a href="/2011/05/18/use-compass-sass-framework-files-with-the-rails-3.1-asset-pipeline/">original article</a> for using compass's <code>.scss</code> files with the asset pipeline. This assumes you had this setup working in Rails 3.1.0.rc4, but should be helpful to anybody. The good news is that most everything is wired up.
+</p>
+
+<p>
+  First, you are going to need to update your Gemfile. Follow the latest conventions and make sure you have a <code>:assets</code> group. Use the example below. With the exception of the compass addition to their "rails31" branch, this is what a Rails 3.1.0.rc5 project would generate. It is a good idea to put all your asset pipeline related gems in this group. As the comment says, these would not be required for production as the assumption is would precompile your static assets on deploys. Note, make sure your bundle for sass-rails installs the matching rc5 too.
+</p>
+
+
+<div class="highlight"><pre><code class="ruby"><span class="c1"># Gems used only for assets and not required</span>
+<span class="c1"># in production environments by default.</span>
+<span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">&#39;sass-rails&#39;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 3.1.0.rc&quot;</span>
+  <span class="n">gem</span> <span class="s1">&#39;coffee-rails&#39;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 3.1.0.rc&quot;</span>
+  <span class="n">gem</span> <span class="s1">&#39;uglifier&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class="p">,</span> <span class="ss">:git</span> <span class="o">=&gt;</span> <span class="s1">&#39;git://github.com/chriseppstein/compass.git&#39;</span><span class="p">,</span> <span class="ss">:branch</span> <span class="o">=&gt;</span> <span class="s1">&#39;rails31&#39;</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>
+  Now here is a crazy gotcha. Rails 3.1.0.rc5 has changed the application.rb bundler line a little to account for this new :assets group. Find the bundler line and make sure it looks like this.
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="no">Bundler</span><span class="o">.</span><span class="n">require</span> <span class="o">*</span><span class="no">Rails</span><span class="o">.</span><span class="n">groups</span><span class="p">(</span><span class="ss">:assets</span><span class="p">)</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Bundler</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>
+  Lastly, we need to get the compass files in the the load path. The sass-rails gem has set us up for this. I choose to hook into it using my <code>config/initializers/sass.rb</code> like so. I imagine that compass will be doing this on its own at some point in the future too. After this you should be all set!
+</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="no">Rails</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">sass</span><span class="o">.</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Gem</span><span class="o">.</span><span class="n">loaded_specs</span><span class="o">[</span><span class="s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class="si">}</span><span class="s2">/frameworks/compass/stylesheets&quot;</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+]]>
+    </content>
+ </entry>
+ 
+ 
+</feed>

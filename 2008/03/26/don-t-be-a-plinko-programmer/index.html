@@ -1,0 +1,361 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      Don't Be A Plinko Programmer @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css" type="text/css">
+    <link rel="stylesheet" href="/resource/site.css" type="text/css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/jquery-1.7.1.min.js" type="text/javascript">
+</script>
+    <script src="/resource/site.js" type="text/javascript">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="U">About Me</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="/pages/resume.html" class="button" data-icon="N">Resume</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Twitter</a>
+            </li>
+            <li>
+              <a href="/archive.html" class="button" data-icon="l">Archives</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate datetime="2008-03-26T00:00:00-04:00">
+              <span class="day">26</span> <span class="month">Mar</span> <span class="year">2008</span>
+            </time>
+            <h1>
+              Don't Be A Plinko Programmer
+            </h1>
+          </header>
+          <p class="clearfix">
+            <img src="/assets/plinko.png" alt="Plink Game" class="floatr ml20"> One of the things that I have really grown persnickety about is the
+            placement of code. For example, I am a huge advocate that controllers in a rails project should read like a mini Domain Specific Language
+            (DSL) and that as much logic as possible be delegated to the models. In my opinion the best way to do that in a Rails project is to learn
+            the proper usage of ActiveRecord Association Extensions. You can check out the Rails API <a href=
+            "http://api.rubyonrails.com/classes/ActiveRecord/Associations/ClassMethods.html">on this page</a> and scroll down to the section called
+            "Association Extensions" if you read the official docs. In short:
+          </p>
+          <blockquote>
+            The proxy objects that control the access to associations can be extended through anonymous modules. This is especially beneficial for
+            adding new finders, creators, and other factory-type methods that are only used as part of this association.
+          </blockquote>
+          <p>
+            Now this brings me to the topic of my article, what is a Plinko Programmer. If you have no class and don't even know what Plinko is,
+            <a href="http://en.wikipedia.org/wiki/Plinko">Wikipedia has a great write up</a> on it. A Plinko Programmer is someone that writes code
+            which smells in a few ways. For instance they use excessive arguments in their methods and unnecessarily pass objects around as
+            arguments. They like to bake their own <a href="http://www.ruby-doc.org/core/classes/Enumerable.html">Enumerable</a> methods vs using the
+            ones readily available. They even like to create large class level methods, or even worse controller actions, that really should be
+            factory methods in 2 or more classes. The analogy is akin to much of the Java code I have rewritten in Rails. Plinko code is long and
+            full of if/else conditions, it's just like the game. You drop an object in the top and just watch it "by chance" work it's way thru the
+            method/function. It is a nasty way to write code and if for anything else it is illegible and hard to test.
+          </p>
+          <h2>
+            What Is The Right Way?
+          </h2>
+          <p>
+            Here is a short example of how to use Association Extensions. This is a simple example, but when you get used to really using association
+            extensions you will begin to see just how much of your code really belongs there. Let's assume you have a simple invoice and items class.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">class</span> <span class="nc">Invoice</span> <span class="o">&lt;</span> <span class=
+"no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">has_many</span> <span class="ss">:items</span><span class="p">,</span> <span class="ss">:class_name</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;InvoiceItem&#39;</span><span class="p">,</span> <span class="ss">:foreign_key</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;invoice_id&#39;</span>
+<span class="k">end</span>
+<span class="k">class</span> <span class="nc">InvoiceItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class=
+"o">::</span><span class="no">Base</span>
+  <span class="n">belongs_to</span> <span class="ss">:invoice</span>
+  <span class="k">def</span> <span class="nf">total</span>
+    <span class="c1"># Some complex stuff</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Now let's say that you want to have a clean little method for getting the total of the Invoice object. Resist the temptation to simple
+            add an instance method to the Invoice class. Although it is logical to have <code>@invoice.total</code> it is better to add it too the
+            association extension. Why? Well think about it, what are you doing? The answer is that you are working with a "collection" of
+            InvoiceItems. It turns out that this is the first part of what the association extension is for, an easy way to work with a collection
+            that has the benefits of knowing how to proxy to methods that can reflect back down to the original caller. It's hard to explain but I'll
+            just leave you with my persnickety code example. Your general rule should be if you are working with the collection in part or in total,
+            then the association extension is the place for it. Keep in mind that so far I have only talked about has_may association extensions, you
+            can do these for one-to-on belongs_to and has_one associations as well.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">class</span> <span class="nc">Invoice</span> <span class="o">&lt;</span> <span class=
+"no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">has_many</span> <span class="ss">:items</span><span class="p">,</span> <span class="ss">:class_name</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;InvoiceItem&#39;</span><span class="p">,</span> <span class="ss">:foreign_key</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;invoice_id&#39;</span> <span class="k">do</span>
+    <span class="k">def</span> <span class="nf">total</span>
+      <span class="n">proxy_target</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class=
+"o">&amp;</span><span class="ss">:total</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+<span class="k">class</span> <span class="nc">InvoiceItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class=
+"o">::</span><span class="no">Base</span>
+  <span class="n">belongs_to</span> <span class="ss">:invoice</span>
+  <span class="k">def</span> <span class="nf">total</span>
+    <span class="c1"># Some complex stuff</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+<span class="c1"># Would yeild code like:</span>
+<span class="vi">@invoice</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">total</span>
+</code>
+</pre>
+          </div>
+          <p>
+            P.S. Here lately I've been creating an app/concerns directory where I put modules that encompass mixed in behavior in so many ways for
+            top level models. Typically these modules/concerns shared instance and class methods with two or more primary classes. They have become
+            an excellent home for association extensions since many large applications will define the same association from different models in the
+            object. To keep the code from duplicating in those different models it is better to do something like this
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="c1"># This file &quot;invoice_item_concerns.rb&quot; would reside in app/concerns</span>
+<span class="k">module</span> <span class="nn">InvoiceItemConcerns</span>
+  <span class="k">module</span> <span class="nn">AssociationExtensions</span>
+    <span class="k">def</span> <span class="nf">total</span>
+      <span class="n">proxy_target</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class=
+"o">&amp;</span><span class="ss">:total</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Invoice</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class=
+"o">::</span><span class="no">Base</span>
+  <span class="n">has_many</span> <span class="ss">:items</span><span class="p">,</span> <span class="ss">:class_name</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;InvoiceItem&#39;</span><span class="p">,</span> <span class="ss">:foreign_key</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;invoice_id&#39;</span><span class="p">,</span> <span class="ss">:extend</span> <span class=
+"o">=&gt;</span> <span class="no">InvoiceItemConcerns</span><span class="o">::</span><span class="no">AssociationExtensions</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">PackingSlip</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class=
+"o">::</span><span class="no">Base</span>
+  <span class="n">has_many</span> <span class="ss">:shipments</span><span class="p">,</span> <span class="ss">:class_name</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;InvoiceItem&#39;</span><span class="p">,</span> <span class="ss">:foreign_key</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;packing_slip_id&#39;</span><span class="p">,</span> <span class="ss">:extend</span> <span class=
+"o">=&gt;</span> <span class="no">InvoiceItemConcerns</span><span class="o">::</span><span class="no">AssociationExtensions</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">InvoiceItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class=
+"o">::</span><span class="no">Base</span>
+  <span class="n">belongs_to</span> <span class="ss">:invoice</span>
+  <span class="k">def</span> <span class="nf">total</span>
+    <span class="c1"># Some complex stuff</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># Would yeild code like:</span>
+<span class="vi">@invoice</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">total</span>
+<span class="vi">@packing_slip</span><span class="o">.</span><span class="n">shipments</span><span class="o">.</span><span class="n">total</span>
+</code>
+</pre>
+          </div>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2008/03/26/don-t-be-a-plinko-programmer/';
+            var disqus_title = "Don't Be A Plinko Programmer";
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Synchronized Times In Ruby &amp; JavaScript Acceptance Tests Using Capybara, Timecop &amp; Sinon.JS
+            </h4>
+            <p>
+              <a href="/2012/08/07/synchronized-times-in-ruby-and-javascript-acceptance-tests-using-capybara-timecop-and-sinon.js">Any good Ruby
+              developer that tests time-dependent code has used the Timecop gem. Timecop provides dead simple time travel and freezing capabilities
+              to Ruby's standard library. But what if you...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Rails, Moment.js And Time Zones
+            </h4>
+            <p>
+              <a href="/2012/08/05/rails-moment-js-and-time-zones">Here are a few quick tips for the time zone aware Rails developer that finds
+              themselves deep into JavaScript date objects. First, use the Moment.js JavaScrpt date library! Moment.js has...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              View Controller Patterns With Spine.JS &amp; SpacePen
+            </h4>
+            <p>
+              <a href="/2012/05/22/view-controller-patterns-with-spine-js-and-spacepen">The VC in 'MVC' As Addy Osmani points out in his Scaling Your
+              JavaScript Applications presentation, all JavaScript 'MVC' frameworks interpret MVC differently. These differences are an academic
+              rabbit hole...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://github.com/henrik/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2012 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://www.meetup.com/ruby-130/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://fearoffish.com">Jamie van Dyke</a>
+            </li>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
+            </li>
+            <li>
+              <a href="http://mwhuss.com/">Marshall Huss</a>
+            </li>
+            <li>
+              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://www.candescence.org/">Geoff Parsons</a>
+            </li>
+            <li>
+              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com/">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>
