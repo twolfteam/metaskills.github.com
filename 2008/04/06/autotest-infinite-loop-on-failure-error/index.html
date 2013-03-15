@@ -79,6 +79,20 @@
             and errors. There will be an array dumped that will contain the files change that have caused autotest to start another test cycle. In my
             case here is what I saw.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="text">1) Failure:
+test_truth(BookmarkTest)
+[test/unit/bookmark_test.rb:6
+test/unit/bookmark_test.rb:5]:
+&lt;false&gt; is not true.
+
+1 tests, 1 assertions, 1 failures, 0 errors
+[[&quot;config/uuid.state&quot;, Sun Apr 06 13:58:55 -0400 2008]]
+Dunno! config/uuid.state
+</code>
+</pre>
+          </div>
           <p>
             Ah ha... there it goes. I was using a UUID state file and it appears that file being written into the <code>config</code> directory is
             the culprit. By default autotest does not ignore that directory.
@@ -92,6 +106,18 @@
             <code>tmp</code> directory. However if you think that adding an exception to your <code>~/.autotest</code> file would be more
             appropriate, here is the syntax:
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="no">Autotest</span><span class="o">.</span><span class="n">add_hook</span> <span class=
+"ss">:initialize</span> <span class="k">do</span> <span class="o">|</span><span class="n">autotest</span><span class="o">|</span>
+  <span class="o">[</span><span class="s1">&#39;.svn&#39;</span><span class="p">,</span><span class="s1">&#39;.hg&#39;</span><span class=
+"p">,</span><span class="s1">&#39;.git&#39;</span><span class="o">].</span><span class="n">each</span> <span class="p">{</span> <span class=
+"o">|</span><span class="n">exception</span><span class="o">|</span> <span class="n">autotest</span><span class="o">.</span><span class=
+"n">add_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span> <span class="p">}</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';

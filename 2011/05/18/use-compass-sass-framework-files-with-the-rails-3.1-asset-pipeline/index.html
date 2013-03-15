@@ -78,19 +78,63 @@
           <p>
             First, bundle up the compass, but do not require it. Add this to your <code>Gemfile</code>.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class="p">,</span> <span class=
+"ss">:require</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</code>
+</pre>
+          </div>
           <p>
             Next, add a Sass initializer in <code>config/initializers/sass.rb</code> and fill it in with the code below. This will add two more load
             paths to the Sass engine. The first is your default rails/sprockets asset path for stylesheets. It simply let's you build a deep folder
             structure in that directory and use relative paths from each file. The second will put the entire compass Sass framework files into the
             Sass load path.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="no">Sass</span><span class="o">::</span><span class="no">Engine</span><span class="o">::</span><span class=
+"no">DEFAULT_OPTIONS</span><span class="o">[</span><span class="ss">:load_paths</span><span class="o">].</span><span class=
+"n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">load_paths</span><span class="o">|</span>
+  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
+"no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/app/assets/stylesheets&quot;</span>
+  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
+"no">Gem</span><span class="o">.</span><span class="n">loaded_specs</span><span class="o">[</span><span class=
+"s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class="si">}</span><span class=
+"s2">/frameworks/compass/stylesheets&quot;</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
           <p>
             Now in your rails <code>app/assets/stylesheets/foo.scss</code> file you can use Sass' <code>@import</code> with paths to the compass
             framework.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="css"><span class="k">@import</span> <span class="s2">&quot;compass/css3/opacity&quot;</span><span class="p">;</span>
+<span class="nf">#mylogo</span> <span class="p">{</span> <span class="o">@</span><span class="n">include</span> <span class=
+"k">opacity</span><span class="p">(</span><span class="m">0</span><span class="o">.</span><span class="m">5</span><span class=
+"p">);</span> <span class="p">}</span>
+</code>
+</pre>
+          </div>
           <p>
             That is an example loading up the opacity helpers. Your generated css file will look like this! CSS is never going to be the same again!
           </p>
+          <div class="highlight">
+            <pre>
+<code class="css"><span class="nf">#mylogo</span> <span class="p">{</span>
+  <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">filter</span><span class="o">:</span> <span class=
+"s2">&quot;progid:DXImageTransform.Microsoft.Alpha(Opacity=50)&quot;</span><span class="p">;</span>
+  <span class="n">filter</span><span class="o">:</span> <span class="n">progid</span><span class="o">:</span><span class=
+"n">DXImageTransform</span><span class="o">.</span><span class="n">Microsoft</span><span class="o">.</span><span class="n">Alpha</span><span class=
+"p">(</span><span class="n">Opacity</span><span class="o">=</span><span class="m">50</span><span class="p">);</span>
+  <span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span><span class=
+"p">;</span> <span class="p">}</span>
+</code>
+</pre>
+          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';

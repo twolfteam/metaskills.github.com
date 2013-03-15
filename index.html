@@ -133,9 +133,10 @@
             </header>
             <p>
               When ActiveRecord 3.2 was released there was a small addition called ActiveRecord::Store which bills itself as a simple key/value store
-              for your models. The code below is pulled right from their example usage. Most people know that I love simple tools. But when I found
-              myself considering ActiveRecord::Store, I found it seriously lacking for my particular use case. What I wanted was a config for a user
-              class that could do the following: Interchange property dot notation with indifferent string/symbol...
+              for your models. The code below is pulled right from their example usage. class User &lt; ActiveRecord::Base store :settings,
+              accessors: [:color, :homepage] end @user = User.new(color: &#39;black&#39;, homepage: &#39;37signals.com&#39;) @user.color # =&gt;
+              &#39;black&#39; @user.settings[:color] # =&gt; &#39;black&#39; @user.settings[:remember_me] = true Most people know that I love simple
+              tools. But when I found myself considering ActiveRecord::Store, I found it seriously lacking...
             </p>
           </article>
           <article class="excerpt">
@@ -251,10 +252,10 @@
               </h3><time pubdate="" datetime="2011-09-06T00:00:00-04:00">06 Sep 2011</time>
             </header>
             <p>
-              This page has been translated into Spanish language by Maria Ramos from Webhostinghub.com. I ask this question a lot! To Job
-              candidates, friends, and almost any developer that says they work with JavaScript. I believe how you encapsulate your JavaScript is a
-              good indicator on your level of expertise with the language. I find that most beginners have come to JavaScript via jQuery and often
-              define their functions at the top level namespace in some application.js file. These functions are...
+              I ask this question a lot! To Job candidates, friends, and almost any developer that says they work with JavaScript. I believe how you
+              encapsulate your JavaScript is a good indicator on your level of expertise with the language. I find that most beginners have come to
+              JavaScript via jQuery and often define their functions at the top level namespace in some application.js file. These functions are
+              loosely organized and often have no way of sharing simple object state and...
             </p>
           </article>
           <div class="floatr mr20">

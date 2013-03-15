@@ -75,6 +75,106 @@
             Rails developer.
           </p>
           <div class="h20"></div>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">module</span> <span class="nn">ActiveSupport</span>
+  <span class="k">module</span> <span class="nn">Cache</span>
+    <span class="k">class</span> <span class="nc">MemCacheStore</span> <span class="o">&lt;</span> <span class="no">Store</span>
+      
+      <span class="kp">include</span> <span class="no">ActionView</span><span class="o">::</span><span class="no">Helpers</span><span class=
+"o">::</span><span class="no">DateHelper</span>
+      <span class="kp">include</span> <span class="no">ActionView</span><span class="o">::</span><span class="no">Helpers</span><span class=
+"o">::</span><span class="no">NumberHelper</span>
+
+      <span class="c1"># Higher percentages, above 90%, are good.</span>
+      <span class="k">def</span> <span class="nf">hit_ratio</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class=
+"k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class=
+"n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">stat</span><span class=
+"o">[</span><span class="s1">&#39;get_hits&#39;</span><span class="o">].</span><span class="n">to_f</span> <span class="o">/</span> <span class=
+"n">stat</span><span class="o">[</span><span class="s1">&#39;cmd_get&#39;</span><span class="o">].</span><span class="n">to_f</span><span class=
+"p">)</span> <span class="o">*</span> <span class="mi">100</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">number_to_percentage</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class=
+"ss">:precision</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">)</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="c1"># Another good statistic to look at is percentage of gets to sets. For a well-tuned application, </span>
+      <span class="c1"># there should be more gets than sets. High percents are bad, negatives are great.</span>
+      <span class="k">def</span> <span class="nf">gets_to_sets</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class=
+"k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class=
+"n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">sets</span> <span class="o">=</span> <span class="n">stat</span><span class="o">[</span><span class=
+"s1">&#39;cmd_set&#39;</span><span class="o">].</span><span class="n">to_f</span>
+          <span class="nb">gets</span> <span class="o">=</span> <span class="n">stat</span><span class="o">[</span><span class=
+"s1">&#39;cmd_get&#39;</span><span class="o">].</span><span class="n">to_f</span>
+          <span class="n">more_sets</span> <span class="o">=</span> <span class="n">sets</span> <span class="o">-</span> <span class="nb">gets</span>
+          <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">more_sets</span> <span class=
+"o">/</span> <span class="nb">gets</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">number_to_percentage</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class=
+"ss">:precision</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">)</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">uptime</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class=
+"k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class=
+"n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">started_on</span> <span class="o">=</span> <span class="n">stat</span><span class="o">[</span><span class=
+"s1">&#39;uptime&#39;</span><span class="o">].</span><span class="n">seconds</span><span class="o">.</span><span class="n">ago</span>
+          <span class="n">utime</span> <span class="o">=</span> <span class="n">distance_of_time_in_words</span> <span class=
+"n">started_on</span><span class="p">,</span> <span class="no">Time</span><span class="o">.</span><span class="n">now</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class=
+"o">=</span> <span class="p">{</span><span class="ss">:started_on</span> <span class="o">=&gt;</span> <span class="n">started_on</span><span class=
+"p">,</span> <span class="ss">:uptime</span> <span class="o">=&gt;</span> <span class="n">utime</span><span class="p">}</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">memory</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class=
+"k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class=
+"n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">memory</span> <span class="o">=</span> <span class="n">number_to_human_size</span> <span class="n">stat</span><span class=
+"o">[</span><span class="s1">&#39;limit_maxbytes&#39;</span><span class="o">]</span>
+          <span class="n">used</span> <span class="o">=</span> <span class="n">number_to_human_size</span> <span class="n">stat</span><span class=
+"o">[</span><span class="s1">&#39;bytes&#39;</span><span class="o">]</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class=
+"o">=</span> <span class="p">{</span><span class="ss">:memory_total</span> <span class="o">=&gt;</span> <span class="n">memory</span><span class=
+"p">,</span> <span class="ss">:memory_used</span> <span class="o">=&gt;</span> <span class="n">used</span><span class="p">}</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+      
+      <span class="k">def</span> <span class="nf">report</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class=
+"n">inject</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="n">memo</span><span class=
+"p">,</span> <span class="n">server</span><span class="o">|</span>
+          <span class="n">rpt</span> <span class="o">=</span> <span class="n">memory</span><span class="o">[</span><span class=
+"n">server</span><span class="o">].</span><span class="n">merge</span><span class="p">(</span><span class="n">uptime</span><span class=
+"o">[</span><span class="n">server</span><span class="o">]</span><span class="p">)</span>
+          <span class="n">rpt</span><span class="o">[</span><span class="ss">:hit_ratio</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">hit_ratio</span><span class="o">[</span><span class="n">server</span><span class="o">]</span>
+          <span class="n">rpt</span><span class="o">[</span><span class="ss">:gets_to_sets</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">gets_to_sets</span><span class="o">[</span><span class="n">server</span><span class="o">]</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">rpt</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+      
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';

@@ -68,12 +68,44 @@
             all versions of rails. If you did not know, all the script files in rails 3 are gone and the new all-in-one <code>rails</code> executable
             does all the heavy lifting. This little function even passes down all the arguments too.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="bash">sc <span class="o">()</span> <span class="o">{</span>
+  <span class="k">if</span> <span class="o">[</span> -f ./script/rails <span class="o">]</span>; <span class="k">then </span>
+<span class="k">    </span>rails console <span class="nv">$argv</span>
+  <span class="k">else</span>
+    ./script/console <span class="nv">$argv</span>
+  <span class="k">fi</span>
+<span class="o">}</span>
+</code>
+</pre>
+          </div>
           <p>
             One other thing, the way rails uses IRB is different now. I had to change my <code>~/.irbrc</code> file to look like this below to get my
             simple prompt and history back. IMPORTANT NOTE: In order for this to work, you <a href=
             "http://redmine.ruby-lang.org/issues/show/1556">have to apply this 2 line patch to your save-history.rb file</a>. Worked like a champ for
             me.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="c1"># IRB history patch &lt;http://redmine.ruby-lang.org/issues/show/1556&gt;</span>
+
+<span class="nb">require</span> <span class="s1">&#39;irb/completion&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;irb/ext/save-history&#39;</span>
+
+<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+"ss">:USE_READLINE</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+"ss">:SAVE_HISTORY</span><span class="o">]</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+"ss">:HISTORY_FILE</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
+"no">ENV</span><span class="o">[</span><span class="s1">&#39;HOME&#39;</span><span class="o">]</span><span class="si">}</span><span class=
+"s2">/.irb.hist&quot;</span>
+<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+"ss">:PROMPT_MODE</span><span class="o">]</span> <span class="o">=</span> <span class="ss">:SIMPLE</span>
+</code>
+</pre>
+          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';

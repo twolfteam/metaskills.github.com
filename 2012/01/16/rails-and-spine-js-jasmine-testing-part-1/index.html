@@ -126,11 +126,49 @@
             and <code>:test</code> groups since Jasminerice runs in both of those Rails environments. I also have that ruby_gntp dependency since I
             am using Growl on Mac OS X, YMMV.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class=
+"ss">:test</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">&#39;jasminerice&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;guard-jasmine&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;ruby_gntp&#39;</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
           <p>
             So that was easy, now on to our <code>Guardfile</code>. Here is mine below. Notice how I put my JavaScript related guards into a
             <code>js</code> group? This is a seldom used feature of Guard and it means I can monitor only my jasmine specs by starting guard off
             using <code>$ guard -g js</code> and my other guards in my <code>ruby</code> group, like minitest, will be ignored.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">group</span> <span class="s1">&#39;js&#39;</span> <span class="k">do</span>
+
+  <span class="n">guard</span> <span class="s1">&#39;jasmine&#39;</span> <span class="k">do</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/index\.js\.coffee$}</span><span class=
+"p">)</span>  <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/(.+)\.js\.coffee$}</span><span class=
+"p">)</span>   <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class=
+"s2">&quot;spec/javascripts/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class=
+"o">]</span><span class="si">}</span><span class="s2">_spec.js.coffee&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/(.+)_spec\.js\.coffee$}</span><span class=
+"p">)</span>          <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class=
+"s2">&quot;spec/javascripts/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class=
+"o">]</span><span class="si">}</span><span class="s2">_spec.js.coffee&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/spec\.js$}</span><span class=
+"p">)</span>                       <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/spec_helper\.js$}</span><span class=
+"p">)</span>                <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/jasmine-myapp.*}</span><span class=
+"p">)</span>                 <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
           <p>
             This setup assumes a few things. First that you are only testing your Spine.JS application and that those files are in the
             <code>app/assets/javascripts/myapp</code> directory. That myapp directory could just be <code>app</code> in your case if you used the
@@ -151,6 +189,23 @@
             specs like the one below and seeing them run by either visiting the <code>/jasmine</code> URL of your running Rails application or by
             using Guard in your terminal window.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">describe</span> <span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  
+  <span class="n">it</span> <span class="s1">&#39;sets el&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class=
+"n">Application</span><span class="o">.</span><span class="n">el</span><span class="p">)</span><span class="o">.</span><span class=
+"n">toEqual</span> <span class="err">$</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span>
+
+  <span class="n">it</span> <span class="s1">&#39;sets the userId as a property on itself&#39;</span><span class="p">,</span> <span class=
+"o">-&gt;</span>
+    <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class=
+"n">Application</span><span class="o">.</span><span class="n">userId</span><span class="p">)</span><span class="o">.</span><span class=
+"n">toEqual</span> <span class="vi">@bob</span><span class="o">.</span><span class="n">id</span>
+</code>
+</pre>
+          </div>
           <p>
             <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Continue to part two...</a>
           </p>

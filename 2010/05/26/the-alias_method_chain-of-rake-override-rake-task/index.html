@@ -72,10 +72,63 @@
             method chain some core rails :db namespaced tasks. So once again I googled others work and again resorted to hacking Rake. Below is what
             I was left with.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="no">Rake</span><span class="o">::</span><span class="no">TaskManager</span><span class="o">.</span><span class=
+"n">class_eval</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="nf">alias_task</span><span class="p">(</span><span class="n">fq_name</span><span class="p">)</span>
+    <span class="n">new_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
+"n">fq_name</span><span class="si">}</span><span class="s2">:original&quot;</span>
+    <span class="vi">@tasks</span><span class="o">[</span><span class="n">new_name</span><span class="o">]</span> <span class=
+"o">=</span> <span class="vi">@tasks</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class=
+"n">fq_name</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">alias_task</span><span class="p">(</span><span class="n">fq_name</span><span class="p">)</span>
+  <span class="no">Rake</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class=
+"n">alias_task</span><span class="p">(</span><span class="n">fq_name</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">override_task</span><span class="p">(</span><span class="o">*</span><span class=
+"n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="nb">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">deps</span> <span class=
+"o">=</span> <span class="no">Rake</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class=
+"n">resolve_args</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">dup</span><span class="p">)</span>
+  <span class="n">fq_name</span> <span class="o">=</span> <span class="no">Rake</span><span class="o">.</span><span class=
+"n">application</span><span class="o">.</span><span class="n">instance_variable_get</span><span class="p">(:</span><span class=
+"vi">@scope</span><span class="p">)</span><span class="o">.</span><span class="n">dup</span><span class="o">.</span><span class=
+"n">push</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span><span class="o">.</span><span class=
+"n">join</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+  <span class="n">alias_task</span><span class="p">(</span><span class="n">fq_name</span><span class="p">)</span>
+  <span class="no">Rake</span><span class="o">::</span><span class="no">Task</span><span class="o">.</span><span class=
+"n">define_task</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class=
+"o">&amp;</span><span class="n">block</span><span class="p">)</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
           <p>
             It's easy to use, just require it in your Rakefile. In the example below, I was able to programmatically method chain the core rails
             db:test:purge and only call the original if I needed to. Very cool!
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">namespace</span> <span class="ss">:db</span> <span class="k">do</span>
+  <span class="n">namespace</span> <span class="ss">:test</span> <span class="k">do</span>
+    <span class="n">override_task</span> <span class="ss">:purge</span> <span class="o">=&gt;</span> <span class=
+"ss">:environment</span> <span class="k">do</span>
+      <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+      <span class="c1"># To invoke the original task add &quot;:original&quot; to its name</span>
+      <span class="no">Rake</span><span class="o">::</span><span class="no">Task</span><span class="o">[</span><span class=
+"s2">&quot;db:test:purge:original&quot;</span><span class="o">].</span><span class="n">execute</span>
+      <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
           <p>
             Lastly, thanks to <a href="http://www.taknado.com/">Eugene Bolshakov</a>, <a href="http://github.com/jwood">John Wood</a>, and <a href=
             "http://github.com/markwfoster">Mark Foster</a> whom have tackled this rake problem before. My version above was based on their work, but

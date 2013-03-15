@@ -74,6 +74,31 @@
             and unacceptable to someone dealing with their own objects to encapsulate behavior. Today I found two ways of dealing with my problem, a
             jQuery way and a CoffeeScript way. First a code example.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">class</span> <span class="nc">MyObject</span>
+  
+  <span class="n">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
+    <span class="vi">@myDomElement</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class=
+"s1">&#39;#myDomElement&#39;</span><span class="p">)</span>
+    <span class="err">@</span><span class="o">.</span><span class="n">_initBehavior</span><span class="p">()</span>
+
+  <span class="n">handler</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
+"o">-&gt;</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">this</span><span class=
+"p">)</span>
+    <span class="kp">false</span>
+
+  <span class="n">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
+    <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
+"n">resize</span> <span class="vi">@handler</span>
+
+<span class="n">jQuery</span> <span class="o">-&gt;</span>
+  <span class="n">window</span><span class="o">.</span><span class="n">myObject</span> <span class="o">=</span> <span class=
+"kp">new</span> <span class="no">MyObject</span><span class="p">();</span>
+</code>
+</pre>
+          </div>
           <p>
             Here is a simple class using CoffeeScript's methods. It initializes itself with a static property <code>this.myDomElement</code> to some
             DOM element on the page with an id of "myDomElement". It then attaches an event handler to the window's resize event and logs
@@ -81,6 +106,15 @@
             the raw DOM element, in this case the window object. One way of fixing this is to use <a href=
             "http://api.jquery.com/jQuery.proxy/">jQuery's proxy</a> function like so
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
+  <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
+"n">resize</span> <span class="n">jQuery</span><span class="o">.</span><span class="n">proxy</span><span class="p">(</span><span class=
+"vi">@handler</span><span class="p">,</span><span class="n">this</span><span class="p">)</span>
+</code>
+</pre>
+          </div>
           <p>
             This works, but seems a little verbose to me and can clutter up your event initialization code. The other way is to use CoffeeScript's
             fat arrow operator. An <a href="http://jashkenas.github.com/coffee-script/">excerpt from their project page</a> explains it well.
@@ -94,6 +128,31 @@
             So all we have to do is change <code>-&gt;</code> to <code>=&gt;</code> for any of our callbacks or event handlers and now
             <code>this</code> is our own object and not the DOM element. Hot damn!
           </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="k">class</span> <span class="nc">MyObject</span>
+  
+  <span class="n">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
+    <span class="vi">@myDomElement</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class=
+"s1">&#39;#myDomElement&#39;</span><span class="p">)</span>
+    <span class="err">@</span><span class="o">.</span><span class="n">_initBehavior</span><span class="p">()</span>
+
+  <span class="n">handler</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
+"o">=&gt;</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">this</span><span class=
+"p">)</span>
+    <span class="kp">false</span>
+
+  <span class="n">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
+    <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
+"n">resize</span> <span class="vi">@handler</span>
+
+<span class="n">jQuery</span> <span class="o">-&gt;</span>
+  <span class="n">window</span><span class="o">.</span><span class="n">myObject</span> <span class="o">=</span> <span class=
+"kp">new</span> <span class="no">MyObject</span><span class="p">();</span>
+</code>
+</pre>
+          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';

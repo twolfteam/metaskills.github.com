@@ -191,6 +191,22 @@ $ tail -f /the/path/to/your/logfile.log | grep 10.0.1.4
             mentioned above or by using the Unix <a href="http://furl.darwinports.com/">furl</a> program if it is installed on your system. A common
             HTTP header response will look something like this.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="text">HTTP/1.1 200 OK
+Date: Sun, 19 Feb 2006 16:42:05 GMT
+Server: Apache/2.0.55 (Unix) DAV/2 PHP/5.1.1
+Last-Modified: Sun, 08 Jan 2006 16:17:25 GMT
+ETag: &quot;73049-defc-37c52f40&quot;
+Accept-Ranges: bytes
+Content-Length: 57084
+Cache-Control: max-age=7200
+Expires: Sun, 19 Feb 2006 18:42:05 GMT
+Connection: close
+Content-Type: image/png
+</code>
+</pre>
+          </div>
           <p>
             What we are looking for in the header are the &quot;Cache-Control&quot; and &quot;Expires&quot; fields. These fields control how long the
             browser will cache this media or page asset from your server. Having a low value like &quot;1&quot; in &quot;Cache-Control&quot; can be
@@ -204,6 +220,13 @@ $ tail -f /the/path/to/your/logfile.log | grep 10.0.1.4
             to make sure that they are turned on by opening the http.conf file and making sure the following two lines do not have an # sign in front
             of them.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="apache"><span class="nb">LoadModule</span> expires_module modules/mod_expires.so
+<span class="nb">LoadModule</span> headers_module modules/mod_headers.so
+</code>
+</pre>
+          </div>
           <p>
             When these modules are loaded and working, we can then start to use the correct Apache 2 directives to control how browsers cache
             everything from pages to images across the whole site or in a specific directory.
@@ -225,6 +248,23 @@ $ tail -f /the/path/to/your/logfile.log | grep 10.0.1.4
             be used &quot;as is&quot; for most users. The directives here can be placed into the &lt;Directory&gt; directive of your virtual host in
             http.conf or it can be placed loosely in a .htaccess file in the root of your website.
           </p>
+          <div class="highlight">
+            <pre>
+<code class="apache"><span class="nt">&lt;IfModule</span> <span class="s">mod_expires.c</span><span class="nt">&gt;</span>
+  <span class="nb">ExpiresActive</span> <span class="k">On</span>
+  <span class="nb">ExpiresDefault</span> <span class="s2">&quot;access plus 1 seconds&quot;</span>
+  <span class="nb">ExpiresByType</span> text/html <span class="s2">&quot;access plus 1 seconds&quot;</span>
+  <span class="nb">ExpiresByType</span> image/gif <span class="s2">&quot;access plus 120 minutes&quot;</span>
+  <span class="nb">ExpiresByType</span> image/jpeg <span class="s2">&quot;access plus 120 minutes&quot;</span>
+  <span class="nb">ExpiresByType</span> image/png <span class="s2">&quot;access plus 120 minutes&quot;</span>
+  <span class="nb">ExpiresByType</span> text/css <span class="s2">&quot;access plus 60 minutes&quot;</span>
+  <span class="nb">ExpiresByType</span> text/javascript <span class="s2">&quot;access plus 60 minutes&quot;</span>
+  <span class="nb">ExpiresByType</span> application/x-javascript <span class="s2">&quot;access plus 60 minutes&quot;</span>
+  <span class="nb">ExpiresByType</span> text/xml <span class="s2">&quot;access plus 60 minutes&quot;</span>
+<span class="nt">&lt;/IfModule&gt;</span>
+</code>
+</pre>
+          </div>
           <p>
             Let's examine what is happening here in brief. If you are interested <a href="http://httpd.apache.org/docs/2.0/mod/mod_expires.html">full
             documentation of the expires directive</a> can be found on Apache's website along with different syntax formats than the ones used here.
