@@ -197,18 +197,6 @@
             this back in your control. If your new to this path stuff, they are basically just a list of directories that lets your computer know
             where software is installed. Keeping it that simple lets just put these lines anywhere in your <code>.bash_profile</code>.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash"><span class="c"># My PATH Environment Variables</span>
-<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class=
-"s2">&quot;/opt/local/bin:/opt/local/sbin:/usr/local/mysql/bin:$PATH&quot;</span>
-<span class="nb">export </span><span class="nv">MANPATH</span><span class="o">=</span><span class=
-"s2">&quot;/opt/local/share/man:$MANPATH&quot;</span>
-<span class="nb">export </span><span class="nv">INFOPATH</span><span class="o">=</span><span class=
-"s2">&quot;/opt/local/share/info:$INFOPATH&quot;</span>
-</code>
-</pre>
-          </div>
           <p>
             You can see by the example we are simply adding other path options before your systems default, denoted by the <code>$PATH</code>. Using
             colons is how you separate the list and this is how we have added the MySQL installation into your system's path environment and if you

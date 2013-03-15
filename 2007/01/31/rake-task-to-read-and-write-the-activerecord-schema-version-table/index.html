@@ -69,52 +69,6 @@
             know or manually change. Simply copy this in a foo.task file in your project/lib/tasks directory and use <code>rake -T</code> to see the
             description and usage. I have placed these tasks in the db:version namespace.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="n">namespace</span> <span class="ss">:db</span> <span class="k">do</span>
-  <span class="n">namespace</span> <span class="ss">:version</span> <span class="k">do</span> 
-
-    <span class="n">desc</span> <span class="s2">&quot;Read the current version of the database.&quot;</span>
-    <span class="n">task</span> <span class="ss">:read</span> <span class="o">=&gt;</span> <span class="ss">:environment</span> <span class=
-"k">do</span>
-      <span class="nb">puts</span> <span class="s2">&quot;The </span><span class="si">#{</span><span class="no">RAILS_ENV</span><span class=
-"si">}</span><span class="s2">&#39; database version is: </span><span class="si">#{</span><span class="no">ActiveRecord</span><span class=
-"o">::</span><span class="no">Migrator</span><span class="o">.</span><span class="n">current_version</span><span class="si">}</span><span class=
-"s2">&quot;</span>
-    <span class="k">end</span>
-    
-    <span class="n">desc</span> <span class="s2">&quot;Manually set the schema version to a specific target version with VERSION=x&quot;</span>
-    <span class="n">task</span> <span class="ss">:write</span> <span class="o">=&gt;</span> <span class="ss">:environment</span> <span class=
-"k">do</span>
-      <span class="k">if</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;VERSION&#39;</span><span class="o">]</span>
-        <span class="k">if</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class=
-"o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class=
-"s2">&quot;UPDATE </span><span class="si">#{</span><span class="no">ActiveRecord</span><span class="o">::</span><span class=
-"no">Migrator</span><span class="o">.</span><span class="n">schema_info_table_name</span><span class="si">}</span><span class=
-"s2"> SET version = </span><span class="si">#{</span><span class="no">ENV</span><span class="o">[</span><span class=
-"s1">&#39;VERSION&#39;</span><span class="o">].</span><span class="n">to_i</span><span class="si">}</span><span class="s2">&quot;</span><span class=
-"p">)</span>
-          <span class="nb">puts</span> <span class="s2">&quot;SUCCESS: The &#39;</span><span class="si">#{</span><span class=
-"no">RAILS_ENV</span><span class="si">}</span><span class="s2">&#39; database version is now: </span><span class="si">#{</span><span class=
-"no">ActiveRecord</span><span class="o">::</span><span class="no">Migrator</span><span class="o">.</span><span class=
-"n">current_version</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">else</span>
-          <span class="nb">puts</span> <span class="s2">&quot;FAILED: The &#39;</span><span class="si">#{</span><span class=
-"no">RAILS_ENV</span><span class="si">}</span><span class="s2">&#39; database version is still: </span><span class="si">#{</span><span class=
-"no">ActiveRecord</span><span class="o">::</span><span class="no">Migrator</span><span class="o">.</span><span class=
-"n">current_version</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">end</span>
-      <span class="k">else</span>
-        <span class="nb">puts</span> <span class=
-"s1">&#39;You must specify a VERSION=n argument to this command. Use rake db:version:read to get the current version.&#39;</span>
-      <span class="k">end</span>
-    <span class="k">end</span>
-    
-  <span class="k">end</span>  
-<span class="k">end</span>
-</code>
-</pre>
-          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';

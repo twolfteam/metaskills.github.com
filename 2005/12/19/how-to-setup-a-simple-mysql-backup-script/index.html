@@ -94,15 +94,6 @@
             your local system account, not the DB user account associated with the database you are tying to backup. If you are reading this article
             because you have tried using MySQL Administrator's backup system, you may have seen a system message like this:
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text">From: kencollins@ken-pb.local (Cron Daemon)
-To: kencollins@ken-pb.local
-Date: Mon, 19 Dec 2005 23:04:01 -0500 (EST)
-Subject: Cron &lt;kencollins@ken-pb&gt; &quot;/Applications/MySQL Administrator.app/Contents/Resources/mabackup&quot; --directory=&quot;/Users/kencollins/Desktop&quot; --connection=&quot;localhost&quot; --prefix=&quot;MetaDB&quot; MetaDB
-</code>
-</pre>
-          </div>
           <p>
             Before I get to that simple solution and if you are one of the unlucky that tried backups with MySQL Administrator, let's digress for a
             moment and clean up the work it did to your system. First, if you have not already done so, install <a href="http://webmin.com/" title=
@@ -130,15 +121,6 @@ Subject: Cron &lt;kencollins@ken-pb&gt; &quot;/Applications/MySQL Administrator.
             OK, now that our system has less junk processes, to the fun part, a simple and working MySQL backup. For this task I created a really
             simple script. Let's take a look at it below.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash"><span class="c">#!/bin/bash</span>
-<span class="nv">timestamp</span><span class="o">=</span><span class="s2">&quot;$(date -u +%Y-%m-%d_%a)&quot;</span>
-/usr/local/mysql/bin/mysqldump -uXXXX -pXXXX metadb &gt; /Backups/MetaDB_<span class="k">${</span><span class="nv">timestamp</span><span class=
-"k">}</span>.sql
-</code>
-</pre>
-          </div>
           <p>
             There are two parts to this script, the first line sets a variable called "timestamp" in the friendliest format I can think of
             (YYYY-MM-DD_Day), for example 2005-12-19_Mon. The second line of this script uses the mysqldump utility, gives it a username, password,

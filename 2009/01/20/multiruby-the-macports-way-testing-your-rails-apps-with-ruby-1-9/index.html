@@ -130,36 +130,6 @@ $ sudo mv /opt/local/bin/testrb /opt/local/bin/testrb1.8
             "http://github.com/metaskills/zshkit/tree/master">.zshkit</a> or dotfile of choice and it will create/change symlinks for your ruby, irb,
             rake, etc.. that each point to the version you want to use. Calling it multiple times will simply toggle your ruby versions.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash">chruby <span class="o">()</span> <span class="o">{</span>
-  <span class="nv">ree</span><span class="o">=</span><span class="sb">`</span>ruby -e <span class=
-"s2">&quot;puts RUBY_DESCRIPTION.include?(&#39;Ruby Enterprise Edition&#39;)&quot;</span><span class="sb">`</span>
-  <span class="k">if</span> <span class="o">[</span> <span class="nv">$ree</span> <span class="o">=</span> <span class=
-"s2">&quot;true&quot;</span> <span class="o">]</span>; <span class="k">then </span>
-<span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;NOOP: Currently using REE in your path.&quot;</span>
-  <span class="k">else</span>
-<span class="k">    </span><span class="nv">v</span><span class="o">=</span><span class="sb">`</span>ruby -e <span class=
-"s2">&quot;puts RUBY_VERSION.split(&#39;.&#39;)[0,2].join(&#39;.&#39;)&quot;</span><span class="sb">`</span>
-    <span class="k">if</span> <span class="o">[</span> <span class="nv">$v</span> <span class="o">=</span> <span class=
-"s2">&quot;1.9&quot;</span> <span class="o">]</span>; <span class="k">then </span>
-<span class="k">      </span><span class="nv">cv</span><span class="o">=</span><span class="s2">&quot;1.8&quot;</span>
-    <span class="k">else</span>
-<span class="k">      </span><span class="nv">cv</span><span class="o">=</span><span class="s2">&quot;1.9&quot;</span>
-    <span class="k">fi</span>
-<span class="k">    </span><span class="nv">rubyexes</span><span class=
-"o">=(</span>erb gem irb rake rdoc ri ruby testrb autotest unit_diff rails<span class="o">)</span>
-    <span class="k">for </span>i in <span class="nv">$rubyexes</span>; <span class="k">do</span>
-<span class="k">      </span>sudo unlink <span class="s2">&quot;/opt/local/bin/${i}&quot;</span>
-      sudo ln -s <span class="s2">&quot;/opt/local/bin/${i}${cv}&quot;</span> <span class="s2">&quot;/opt/local/bin/${i}&quot;</span>
-    <span class="k">done</span>
-<span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Now Running: &quot;</span><span class="sb">`</span>ruby -v<span class=
-"sb">`</span>
-  <span class="k">fi</span>
-<span class="o">}</span>
-</code>
-</pre>
-          </div>
           <pre class="command">
 $ chruby
 Now Running: ruby 1.8.7 (2008-08-11 patchlevel 72) [i686-darwin9]

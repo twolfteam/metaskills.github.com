@@ -143,21 +143,6 @@
             which would look like <code>head(:ok)</code>. If you wanted to respond to bad authentication, you might use the 401 code like so,
             <code>head(:unauthorized)</code>. Here is an example from HomeMarks restful user signup action.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">UsersController</span> <span class="o">&lt;</span> <span class=
-"no">ApplicationController</span>
-  <span class="c1"># ...</span>
-  <span class="k">def</span> <span class="nf">create</span>
-    <span class="no">User</span><span class="o">.</span><span class="n">create!</span><span class="p">(</span><span class=
-"n">params</span><span class="o">[</span><span class="ss">:user</span><span class="o">]</span><span class="p">)</span>
-    <span class="n">head</span> <span class="ss">:ok</span>
-  <span class="k">end</span>
-  <span class="c1"># ...</span>
-<span class="k">end</span>
-</code>
-</pre>
-          </div>
           <p>
             There is actually a number of things going on in those 2 lines of code above. If the user is created, the AJAX request will get a simple
             'OK' message via the head method. Obviously the client will need to know what to do on its own. But if errors happen what to do? This
@@ -172,47 +157,6 @@
             delegate exception handling to a method either per controller or site wide for a specific exception class. So enter the <a href=
             "http://github.com/metaskills/homemarks/tree/master/lib/render_invalid_record.rb">RenderInvalidRecord</a> module, show below.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">module</span> <span class="nn">RenderInvalidRecord</span>
-  
-  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">included</span><span class="p">(</span><span class=
-"n">base</span><span class="p">)</span>
-    <span class="n">base</span><span class="o">.</span><span class="n">rescue_from</span><span class="p">(</span><span class=
-"no">ActiveRecord</span><span class="o">::</span><span class="no">RecordInvalid</span><span class="p">,</span> <span class=
-"ss">:with</span> <span class="o">=&gt;</span> <span class="ss">:render_invalid_record</span><span class="p">)</span>
-  <span class="k">end</span>
-  
-  <span class="kp">protected</span>
-  
-  <span class="k">def</span> <span class="nf">render_invalid_record</span><span class="p">(</span><span class="n">exception</span><span class=
-"p">)</span>
-    <span class="n">record</span> <span class="o">=</span> <span class="n">exception</span><span class="o">.</span><span class="n">record</span>
-    <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
-      <span class="nb">format</span><span class="o">.</span><span class="n">html</span> <span class="p">{</span> <span class=
-"n">render</span> <span class="ss">:action</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="n">record</span><span class=
-"o">.</span><span class="n">new_record?</span> <span class="p">?</span> <span class="s1">&#39;new&#39;</span> <span class="p">:</span> <span class=
-"s1">&#39;edit&#39;</span><span class="p">)</span> <span class="p">}</span>
-      <span class="nb">format</span><span class="o">.</span><span class="n">js</span>   <span class="p">{</span> <span class=
-"n">render</span> <span class="ss">:json</span> <span class="o">=&gt;</span> <span class="n">record</span><span class="o">.</span><span class=
-"n">errors</span><span class="o">.</span><span class="n">full_messages</span><span class="p">,</span> <span class="ss">:status</span> <span class=
-"o">=&gt;</span> <span class="ss">:unprocessable_entity</span><span class="p">,</span> <span class="ss">:content_type</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;application/json&#39;</span> <span class="p">}</span>
-      <span class="nb">format</span><span class="o">.</span><span class="n">xml</span>  <span class="p">{</span> <span class=
-"n">render</span> <span class="ss">:xml</span> <span class="o">=&gt;</span> <span class="n">record</span><span class="o">.</span><span class=
-"n">errors</span><span class="o">.</span><span class="n">full_messages</span><span class="p">,</span>  <span class="ss">:status</span> <span class=
-"o">=&gt;</span> <span class="ss">:unprocessable_entity</span> <span class="p">}</span>
-      <span class="nb">format</span><span class="o">.</span><span class="n">json</span> <span class="p">{</span> <span class=
-"n">render</span> <span class="ss">:json</span> <span class="o">=&gt;</span> <span class="n">record</span><span class="o">.</span><span class=
-"n">errors</span><span class="o">.</span><span class="n">full_messages</span><span class="p">,</span> <span class="ss">:status</span> <span class=
-"o">=&gt;</span> <span class="ss">:unprocessable_entity</span> <span class="p">}</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-  
-<span class="k">end</span>
-</code>
-</pre>
-          </div>
           <p>
             Once included in your application.rb file, every ActiveRecord::RecordInvalid exception will be handled by the render_invalid_record
             method. I use this pattern often and it is the primary reason I always use the <strong>bang methods</strong> that end with an exclamation
@@ -286,142 +230,6 @@
               </ul>
             </li>
           </ul>
-          <div class="highlight">
-            <pre>
-<code class="javascript"><span class="kd">var</span> <span class="nx">HomeMarksBase</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">getRequestMood</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">request</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class=
-"nx">status</span> <span class="o">&gt;=</span> <span class="mi">200</span> <span class="o">&amp;&amp;</span> <span class=
-"nx">request</span><span class="p">.</span><span class="nx">status</span> <span class="o">&lt;</span> <span class="mi">300</span><span class=
-"p">)</span> <span class="o">?</span> <span class="s1">&#39;good&#39;</span> <span class="o">:</span> <span class=
-"s1">&#39;bad&#39;</span><span class="p">;</span>
-  <span class="p">},</span>
-  <span class="nx">messagesToList</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">request</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="nx">request</span><span class=
-"p">.</span><span class="nx">responseJSON</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">messageList</span> <span class="o">=</span> <span class="nx">UL</span><span class="p">();</span>
-    <span class="nx">messages</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class=
-"kd">function</span><span class="p">(</span><span class="nx">message</span><span class="p">){</span> 
-      <span class="nx">messageList</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span> <span class=
-"nx">LI</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">escapeHTML</span><span class=
-"p">())</span> <span class="p">);</span>
-    <span class="p">});</span>
-    <span class="k">return</span> <span class="nx">messageList</span><span class="p">;</span>
-  <span class="p">}</span>
-<span class="p">};</span>
-<span class="kd">var</span> <span class="nx">HomeMarksSite</span> <span class="o">=</span> <span class="nx">Class</span><span class=
-"p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">HomeMarksBase</span><span class="p">,{</span> 
-  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">signupForm</span> <span class="o">=</span> <span class=
-"nx">$</span><span class="p">(</span><span class="s1">&#39;signup_form&#39;</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">initEvents</span><span class="p">();</span>
-  <span class="p">},</span>
-  <span class="nx">startAjaxForm</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">event</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">event</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
-    <span class="kd">var</span> <span class="nx">form</span> <span class="o">=</span> <span class="nx">event</span><span class=
-"p">.</span><span class="nx">findElement</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="nb">Object</span><span class=
-"p">.</span><span class="nx">extend</span><span class="p">({</span><span class="nx">imgSrc</span><span class="o">:</span><span class=
-"s1">&#39;loading_invert.gif&#39;</span><span class="p">},</span> <span class="nx">arguments</span><span class="p">[</span><span class=
-"mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="p">{});</span>
-    <span class="kd">var</span> <span class="nx">loadArea</span> <span class="o">=</span> <span class="nx">form</span><span class=
-"p">.</span><span class="nx">down</span><span class="p">(</span><span class="s1">&#39;#form_loading&#39;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">imgTag</span> <span class="o">=</span> <span class="nx">IMG</span><span class=
-"p">({</span><span class="nx">src</span><span class="o">:</span><span class="p">(</span><span class="s1">&#39;/images/&#39;</span><span class=
-"o">+</span><span class="nx">options</span><span class="p">.</span><span class="nx">imgSrc</span><span class="p">)});</span>
-    <span class="nx">$</span><span class="p">(</span><span class="nx">loadArea</span><span class="p">).</span><span class=
-"nx">update</span><span class="p">(</span><span class="nx">imgTag</span><span class="p">);</span>
-    <span class="k">new</span> <span class="nx">Ajax</span><span class="p">.</span><span class="nx">Request</span><span class=
-"p">(</span><span class="nx">form</span><span class="p">.</span><span class="nx">action</span><span class="p">,{</span>
-      <span class="nx">onComplete</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">request</span><span class="p">){</span> <span class="k">this</span><span class="p">.</span><span class=
-"nx">delegateCompleteAjaxForm</span><span class="p">(</span><span class="nx">form</span><span class="p">,</span><span class=
-"nx">request</span><span class="p">)</span> <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class=
-"k">this</span><span class="p">),</span>
-      <span class="nx">parameters</span><span class="o">:</span> <span class="nx">form</span><span class="p">.</span><span class=
-"nx">serialize</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
-    <span class="p">});</span>
-    <span class="nx">form</span><span class="p">.</span><span class="nx">disable</span><span class="p">();</span>
-  <span class="p">},</span>
-  <span class="nx">delegateCompleteAjaxForm</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">form</span><span class="p">,</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">mood</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class=
-"nx">getRequestMood</span><span class="p">(</span><span class="nx">request</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">completeAjaxForm</span><span class="p">(</span><span class=
-"nx">form</span><span class="p">,{</span><span class="nx">mood</span><span class="o">:</span><span class="nx">mood</span><span class="p">});</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">mood</span> <span class="o">==</span> <span class=
-"s1">&#39;good&#39;</span><span class="p">)</span> <span class="p">{</span> 
-      <span class="k">switch</span> <span class="p">(</span><span class="nx">form</span><span class="p">)</span> <span class="p">{</span> 
-        <span class="k">case</span> <span class="k">this</span><span class="p">.</span><span class="nx">supportForm</span> <span class=
-"o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">completeSupportForm</span><span class="p">(</span><span class=
-"nx">request</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span> 
-      <span class="nx">form</span><span class="p">.</span><span class="nx">enable</span><span class="p">();</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">request</span><span class="p">.</span><span class=
-"nx">responseText</span><span class="p">.</span><span class="nx">blank</span><span class="p">())</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">flashHTML</span> <span class="o">=</span> <span class="nx">DIV</span><span class=
-"p">([</span><span class="nx">H2</span><span class="p">(</span><span class="s1">&#39;Errors On Form!&#39;</span><span class="p">),</span><span class=
-"k">this</span><span class="p">.</span><span class="nx">messagesToList</span><span class="p">(</span><span class="nx">request</span><span class=
-"p">)]);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">flashModal</span><span class="p">(</span><span class=
-"s1">&#39;bad&#39;</span><span class="p">,</span><span class="nx">flashHTML</span><span class="p">);</span>
-      <span class="p">};</span>
-    <span class="p">};</span>
-  <span class="p">},</span>
-  <span class="nx">completeAjaxForm</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">form</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="nb">Object</span><span class=
-"p">.</span><span class="nx">extend</span><span class="p">({</span><span class="nx">mood</span><span class="o">:</span><span class=
-"s1">&#39;good&#39;</span><span class="p">},</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class=
-"p">]</span> <span class="o">||</span> <span class="p">{});</span>
-    <span class="kd">var</span> <span class="nx">loadArea</span> <span class="o">=</span> <span class="nx">form</span><span class=
-"p">.</span><span class="nx">down</span><span class="p">(</span><span class="s1">&#39;#form_loading&#39;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">completeId</span> <span class="o">=</span> <span class=
-"s1">&#39;complete_ajax_form_&#39;</span> <span class="o">+</span> <span class="nx">form</span><span class="p">.</span><span class=
-"nx">id</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">imgSrc</span> <span class="o">=</span> <span class="s1">&#39;/images/&#39;</span><span class=
-"o">+</span><span class="nx">options</span><span class="p">.</span><span class="nx">mood</span><span class="o">+</span><span class=
-"s1">&#39;.png&#39;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">moodHtml</span> <span class="o">=</span> <span class="nx">SPAN</span><span class=
-"p">({</span><span class="nx">id</span><span class="o">:</span><span class="nx">completeId</span><span class="p">,</span><span class=
-"nx">className</span><span class="o">:</span><span class="s1">&#39;m0 p0&#39;</span><span class="p">},</span> <span class="p">[</span><span class=
-"nx">IMG</span><span class="p">({</span><span class="nx">src</span><span class="o">:</span><span class="nx">imgSrc</span><span class="p">})]);</span>
-    <span class="nx">$</span><span class="p">(</span><span class="nx">loadArea</span><span class="p">).</span><span class=
-"nx">update</span><span class="p">(</span><span class="nx">moodHtml</span><span class="p">);</span>
-    <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class=
-"p">{</span> <span class="nx">$</span><span class="p">(</span><span class="nx">completeId</span><span class="p">).</span><span class=
-"nx">fade</span><span class="p">();</span> <span class="p">},</span><span class="mi">3000</span><span class="p">);</span>
-  <span class="p">},</span>
-  <span class="nx">completeSignupForm</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">request</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">message</span> <span class="o">=</span> <span class=
-"s2">&quot;Thank your for signing up for your own HomeMarks page. An email has been sent to &quot;</span> <span class="o">+</span>
-      <span class=
-"s2">&quot;your address along with a link to activate your account. If you have not done so already, please &quot;</span> <span class="o">+</span>
-      <span class="s2">&quot;take a moment to read the HomeMarks documentation.&quot;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">flashHTML</span> <span class="o">=</span> <span class="nx">DIV</span><span class=
-"p">([</span><span class="nx">H2</span><span class="p">(</span><span class="s1">&#39;Signup Complete:&#39;</span><span class=
-"p">),</span><span class="nx">P</span><span class="p">(</span><span class="nx">message</span><span class="p">)]);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class=
-"s1">&#39;good&#39;</span><span class="p">,</span><span class="nx">flashHTML</span><span class="p">);</span>
-  <span class="p">},</span>
-  <span class="nx">initEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class=
-"nx">signupForm</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class=
-"nx">signupForm</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class=
-"s1">&#39;submit&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class=
-"nx">startAjaxForm</span><span class="p">.</span><span class="nx">bindAsEventListener</span><span class="p">(</span><span class=
-"k">this</span><span class="p">));</span> <span class="p">};</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-</code>
-</pre>
-          </div>
           <h2>
             Client-Side Error Handling
           </h2>
@@ -437,82 +245,7 @@
             <code>this.flashes</code>. I then created a <code>clearFlashes()</code> function and then a <code>flash()</code> function that would take
             the mood and the HTML to embed, viola â€“ I can now call <code>this.flash.('good',someHTML)</code> and I get the same type of flash one
             would have seen if I set it in the controller and rendered. Note, this is what I used on the the signup form success above.
-          </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="o">&lt;</span><span class="sx">% [:good,:bad,:indif].each </span><span class="k">do</span> <span class=
-"o">|</span><span class="n">key</span><span class="o">|</span> <span class="sx">%&gt;</span>
-<span class="sx">  &lt;div id=&quot;flash_&lt;%= key %&gt;</span><span class="s2">&quot; class=&quot;</span><span class=
-"n">flash_message</span><span class="s2">&quot; style=&quot;</span><span class="nb">display</span><span class="p">:</span><span class=
-"o">&lt;</span><span class="sx">%= flash[key].blank? ? &#39;none&#39; : &#39;block&#39; %&gt;;&quot;&gt;</span>
-<span class="sx">         &lt;span&gt;&lt;%=</span> <span class="n">flash</span><span class="o">[</span><span class="n">key</span><span class=
-"o">]</span> <span class="sx">%&gt;&lt;/span&gt;</span>
-        <span class="o">&lt;</span><span class="sr">/div&gt;</span>
-<span class="sr">&lt;% end %&gt;</span>
-</code>
-</pre>
-          </div><br>
-          <div class="highlight">
-            <pre>
-<code class="javascript"><span class="kd">var</span> <span class="nx">HomeMarksBase</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">messagesToAlert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">request</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="nx">request</span><span class=
-"p">.</span><span class="nx">responseJSON</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">alertText</span> <span class="o">=</span> <span class="nx">messages</span><span class=
-"p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;.\n&quot;</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">alertText</span><span class="p">.</span><span class=
-"nx">endsWith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span> <span class="p">{</span> <span class=
-"nx">alert</span><span class="p">(</span><span class="nx">alertText</span><span class="p">);</span> <span class="p">}</span> <span class=
-"k">else</span> <span class="p">{</span> <span class="nx">alert</span><span class="p">(</span><span class="nx">alertText</span><span class=
-"o">+</span><span class="s1">&#39;.&#39;</span><span class="p">);</span> <span class="p">};</span>
-  <span class="p">},</span>
-  <span class="nx">messagesToList</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">request</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="nx">request</span><span class=
-"p">.</span><span class="nx">responseJSON</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">messageList</span> <span class="o">=</span> <span class="nx">UL</span><span class="p">();</span>
-    <span class="nx">messages</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class=
-"kd">function</span><span class="p">(</span><span class="nx">message</span><span class="p">){</span> 
-      <span class="nx">messageList</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span> <span class=
-"nx">LI</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">escapeHTML</span><span class=
-"p">())</span> <span class="p">);</span>
-    <span class="p">});</span>
-    <span class="k">return</span> <span class="nx">messageList</span><span class="p">;</span>
-  <span class="p">}</span>
-<span class="p">};</span>
-<span class="kd">var</span> <span class="nx">HomeMarksSite</span> <span class="o">=</span> <span class="nx">Class</span><span class=
-"p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">HomeMarksBase</span><span class="p">,{</span> 
-  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">flashes</span> <span class="o">=</span> <span class=
-"nx">$$</span><span class="p">(</span><span class="s1">&#39;div.flash_message&#39;</span><span class="p">);</span>
-  <span class="p">},</span>
-  <span class="nx">clearFlashes</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">flashes</span><span class="p">.</span><span class=
-"nx">invoke</span><span class="p">(</span><span class="s1">&#39;hide&#39;</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">flashes</span><span class="p">.</span><span class=
-"nx">invoke</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span><span class=
-"s1">&#39;&#39;</span><span class="p">);</span>
-  <span class="p">},</span>
-  <span class="nx">flash</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">mood</span><span class="p">,</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">clearFlashes</span><span class="p">();</span>
-    <span class="kd">var</span> <span class="nx">moodFlash</span> <span class="o">=</span> <span class="k">this</span><span class=
-"p">.</span><span class="nx">flashes</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class=
-"kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span> <span class="k">if</span> <span class=
-"p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">id</span> <span class="o">==</span> <span class=
-"s1">&#39;flash_&#39;</span><span class="o">+</span><span class="nx">mood</span><span class="p">)</span> <span class="p">{</span><span class=
-"k">return</span> <span class="kc">true</span><span class="p">};</span> <span class="p">});</span>
-    <span class="nx">moodFlash</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class=
-"nx">html</span><span class="p">);</span>
-    <span class="nx">moodFlash</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
-    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;site_wrapper&#39;</span><span class="p">).</span><span class=
-"nx">scrollTo</span><span class="p">();</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-</code>
-</pre>
-          </div>
+          </p><br>
           <div class="center">
             <video title="HomeMarks v2 Signup" src="/assets/login.mp4" width="617" height="473" controls="" preload=""></video>
           </div>
@@ -525,24 +258,6 @@
             will automatically crate the modal HTML using Builder. If you want to use it, make sure to get the CSS and images the project too. Below
             is a function that I put in my site class that allows me to call <code>this.flashModal('good',someHTML))</code>.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="javascript"><span class="kd">var</span> <span class="nx">HomeMarksSite</span> <span class="o">=</span> <span class=
-"nx">Class</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">HomeMarksBase</span><span class=
-"p">,{</span> 
-  <span class="nx">flashModal</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
-"nx">mood</span><span class="p">,</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">moodColor</span> <span class="o">=</span> <span class="k">this</span><span class=
-"p">.</span><span class="nx">flashMoodColors</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class=
-"nx">mood</span><span class="p">);</span>
-    <span class="nx">HmModal</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class=
-"nx">html</span><span class="p">,{</span><span class="nx">color</span><span class="o">:</span><span class="nx">moodColor</span><span class=
-"p">});</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-</code>
-</pre>
-          </div>
           <h2>
             Wrapping It Up
           </h2>

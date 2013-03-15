@@ -124,35 +124,6 @@
             stay DRY and build Spine.JS web applications that hit the MVC mark. So what is SpacePen? Basically a CoffeeScript subclass of a jQuery
             object.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
-
-  <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="vi">@div</span> <span class="o">=&gt;</span>
-      <span class="vi">@h1</span> <span class="s2">&quot;Space Ships&quot;</span>
-      <span class="vi">@ol</span> <span class="o">=&gt;</span>
-        <span class="vi">@li</span> <span class="s2">&quot;Apollo&quot;</span>
-        <span class="vi">@li</span> <span class="s2">&quot;Soyuz&quot;</span>
-        <span class="vi">@li</span> <span class="s2">&quot;Space Shuttle&quot;</span>
-</code>
-</pre>
-          </div>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
-<span class="n">view</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class=
-"s1">&#39;ol&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class=
-"s1">&#39;&lt;li&gt;Star Destroyer&lt;/li&gt;&#39;</span><span class="p">)</span>
-
-<span class="n">view</span><span class="o">.</span><span class="n">click</span> <span class="s1">&#39;li&#39;</span><span class=
-"p">,</span> <span class="o">-&gt;</span>
-  <span class="n">alert</span> <span class="s2">&quot;You clicked on </span><span class="si">#{</span><span class="err">$</span><span class=
-"p">(</span><span class="n">this</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class=
-"p">()</span><span class="si">}</span><span class="s2">&quot;</span>
-</code>
-</pre>
-          </div>
           <p>
             This simple example shows how your SpacePen view class defines its markup in a <code>@content</code> class function. This function yields
             a builder syntax where you can easily add attributes and values. My advice is to do basic structure only in your <code>@content</code>
@@ -160,30 +131,6 @@
             more on that advice later. But first, I did say that views should expose interfaces to controllers and are first class code citizens that
             champion their own concerns right? Let's look at a common pattern, views building new nodes within itself.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
-
-  <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="vi">@div</span> <span class="o">=&gt;</span>
-      <span class="vi">@h1</span> <span class="s2">&quot;SpacePort&quot;</span>
-      <span class="vi">@ol</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;shipList&#39;</span>
-
-  <span class="n">addShip</span><span class="p">:</span> <span class="p">(</span><span class="n">ship</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="vi">@shipList</span><span class="o">.</span><span class="n">append</span> <span class="s2">&quot;&lt;li&gt;</span><span class=
-"si">#{</span><span class="n">ship</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class=
-"s2">&lt;/li&gt;&quot;</span>
-</code>
-</pre>
-          </div>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
-<span class="n">view</span><span class="o">.</span><span class="n">addShip</span> <span class="s2">&quot;Enterprise&quot;</span>
-</code>
-</pre>
-          </div>
           <p>
             The example has been changed slightly so that the view now exposes a public function called <code>addShip()</code> which takes an object
             to add to the view. It can easily implement this because I have declared the ordered list to be an outlet called <code>shipList</code>
@@ -225,43 +172,6 @@
             controller and view is out of the scope of this article, but its one of many day "content" controllers and view are perfect examples.
             Here we go!
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
-
-<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
-"o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class=
-"n">Controller</span>
-  
-  <span class="n">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class=
-"o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span>
-    <span class="k">super</span> <span class="n">el</span><span class="p">:</span> <span class="vi">@view</span>
-</code>
-</pre>
-          </div>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
-
-<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class=
-"n">Day</span> <span class="n">extends</span> <span class="no">View</span>
-  
-  <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="vi">@div</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class=
-"p">,</span> <span class="o">=&gt;</span>
-      <span class="c1"># ...</span>
-
-  <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="n">params</span><span class=
-"o">.</span><span class="n">moment</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class=
-"s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
-</code>
-</pre>
-          </div>
           <p>
             So rule number one, always create an instance of a SpacePen view and assign that to the <code>@view</code> property of every Spine.JS
             controller. That <code>@view</code> will be assigned to the controller's <code>@el</code> property when it supers up.
@@ -283,135 +193,12 @@
             find the DOM element for a model object and then use the <code>view()</code> function provided by SpacePen to get to the SpacePen
             instance for this node.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class=
-"o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
-  
-  <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="vi">@div</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class=
-"p">,</span> <span class="o">=&gt;</span>
-      <span class="c1"># ...</span>
-      <span class="vi">@div</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span><span class=
-"p">,</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span>
-      <span class="c1"># ...</span>
-  
-  <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class=
-"n">moment</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-    <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="vi">@date</span><span class=
-"o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
-    
-  <span class="n">addEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">EventView</span><span class=
-"p">(</span><span class="n">event</span><span class="p">)</span>
-    <span class="vi">@events</span><span class="o">.</span><span class="n">append</span>
-  
-  <span class="n">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?</span><span class=
-"o">.</span><span class="n">update</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-
-  <span class="n">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?</span><span class=
-"o">.</span><span class="n">remove</span><span class="p">()</span>
-  
-  <span class="c1"># Private</span>
-  
-  <span class="n">findEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="n">selector</span> <span class="o">=</span> <span class="s2">&quot;.event[data-event-id=&#39;</span><span class=
-"si">#{</span><span class="n">event</span><span class="o">.</span><span class="n">startsAtFormat</span><span class="p">()</span><span class=
-"si">}</span><span class="s2">&#39;]&quot;</span>
-    <span class="vi">@events</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class=
-"n">selector</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
-
-  <span class="n">afterAttach</span><span class="p">:</span> <span class="o">-&gt;</span> 
-    <span class="vi">@startSpinner</span><span class="p">()</span>
-    <span class="vi">@loadEvents</span><span class="p">()</span>
-  
-  <span class="c1"># ...</span>
-
-<span class="k">class</span> <span class="nc">EventView</span> <span class="n">extends</span> <span class="no">View</span>
-  
-  <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="vi">@div</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;.event&#39;</span><span class=
-"p">,</span> <span class="s1">&#39;data-event-id&#39;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class=
-"n">id</span> <span class="o">=&gt;</span>
-      <span class="vi">@div</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;description&#39;</span>
-      <span class="vi">@div</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;duration&#39;</span>
-  
-  <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@update</span> <span class="n">event</span>
-  
-  <span class="n">update</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="vi">@attr</span> <span class="s1">&#39;data-starts-at&#39;</span><span class="p">,</span> <span class="n">event</span><span class=
-"o">.</span><span class="n">startsAtFormat</span><span class="p">()</span>
-    <span class="vi">@description</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class=
-"o">.</span><span class="n">description</span>
-    <span class="vi">@duration</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class=
-"o">.</span><span class="n">duration</span>
-</code>
-</pre>
-          </div>
           <p>
             Next up, the expanded day controller example that manages the view above. In this example we bind to two of the the Spine.JS
             <code>CalendarEvent</code> model events. One for update and one for destroy. These events are then pushed down to the view and will do
             any work necessary. Just in case this controller is ever discarded for performance reasons, we hook into the <code>release()</code>
             function provided by Spine.JS controllers to remove the event listeners.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
-"o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class=
-"n">Controller</span>
-  
-  <span class="vi">@events</span><span class="p">:</span> 
-    <span class="s1">&#39;click .event&#39;</span><span class="p">:</span> <span class="s1">&#39;selectEvent&#39;</span>
-  
-  <span class="n">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">moment</span>
-    <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class=
-"o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">moment</span><span class=
-"p">:</span> <span class="vi">@date</span>
-    <span class="k">super</span> <span class="n">el</span><span class="p">:</span> <span class="vi">@view</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">bind</span> <span class="s1">&#39;update&#39;</span><span class=
-"p">,</span> <span class="vi">@updateEvent</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">bind</span> <span class=
-"s1">&#39;beforeDestroy&#39;</span><span class="p">,</span> <span class="vi">@destroyEvent</span>
-  
-  <span class="n">release</span><span class="p">:</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">unbind</span> <span class="s1">&#39;update&#39;</span><span class=
-"p">,</span> <span class="vi">@updateEvent</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">unbind</span> <span class=
-"s1">&#39;beforeDestroy&#39;</span><span class="p">,</span> <span class="vi">@removeEvent</span>
-    <span class="k">super</span>
-
-  <span class="c1"># Private</span>
-
-  <span class="n">selectEvent</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="c1"># ...</span>
-
-  <span class="n">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@view</span><span class="o">.</span><span class="n">updateEvent</span> <span class="n">event</span>
-    <span class="c1"># ...</span>
-
-  <span class="n">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@view</span><span class="o">.</span><span class="n">removeEvent</span> <span class="n">event</span>
-    <span class="c1"># ...</span>
-</code>
-</pre>
-          </div>
           <p>
             Hope you found this mini introduction to SpacePen and Spine.JS controllers useful. There is literally tons of ways you can use these
             tools together to make your controllers and views fun to build and maintainable. Be excellent and let me know what works for you!

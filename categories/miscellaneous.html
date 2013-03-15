@@ -93,10 +93,7 @@
             </header>
             <p>
               Want a list of the users and the number of commits they made? Git makes it really really easy, while I could not find such an easy
-              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require &#39;rubygems&#39;
-              require &#39;activesupport&#39; log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)[&#39;logentry&#39;] report_hash =
-              svn_logs.inject({}) do |report,log| author = log[&#39;author&#39;][0] report[author] ||= {:commit_count =&gt; 0}
-              report[author][:commit_count] += 1 report end commits_authors = report_hash.keys.map {...
+              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion
             </p>
           </article>
           <article class="excerpt">

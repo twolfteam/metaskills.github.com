@@ -106,31 +106,11 @@
             <a href="http://guide.macports.org/">their installation instructions</a>. At the time of this writing, the current version is 1.8 and has
             tons of new stuff for Snow Leopard. If you use bash, the default shell on OS X, then add this to your ~/.profile.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash"><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class=
-"s2">&quot;/usr/local/bin:$PATH&quot;</span>
-<span class="nb">export </span><span class="nv">MANPATH</span><span class="o">=</span><span class=
-"s2">&quot;/usr/local/share/man:$MANPATH&quot;</span>
-<span class="nb">export </span><span class="nv">INFOPATH</span><span class="o">=</span><span class=
-"s2">&quot;/usr/local/share/info:$INFOPATH&quot;</span>
-</code>
-</pre>
-          </div>
           <p>
             However, if you have <a href=
             "http://books.google.com/books?id=jKY-rDoJx3wC&pg=PA115&lpg=PA115&dq=system+preferences+account+right+click+os+x+switch+to+zsh+default+shell&source=bl&ots=J0eyfcuH37&sig=F4MrA0-NmqeprnqEneAhAdqJBPg&hl=en&ei=FFigSs73GMqc8QaAzoDeDw&sa=X&oi=book_result&ct=result&resnum=2#v=onepage&q=system%20preferences%20account%20right%20click%20os%20x%20switch%20to%20zsh%20default%20shell&f=false">
             changed your default shell to ZSH</a>, then put this in your ~/.zshenv file. I highly recommend switching your default shell to ZSH.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash"><span class="nv">path</span><span class="o">=(</span>/opt/local/bin /opt/local/sbin /opt/local/apache2/bin <span class=
-"nv">$path</span><span class="o">)</span>
-<span class="nv">manpath</span><span class="o">=(</span>/opt/local/share/man <span class="nv">$manpath</span><span class="o">)</span>
-<span class="nv">infopath</span><span class="o">=(</span>/opt/local/share/info <span class="nv">$infopath</span><span class="o">)</span>
-</code>
-</pre>
-          </div>
           <h3>
             Important x86_64 Arch Notice
           </h3>
@@ -283,43 +263,10 @@ $ sudo port install rb-odbc +utf8
             UTF-8</code> to your configuration file. Here is a thread on <a href="http://lists.ibiblio.org/pipermail/freetds/2006q3/020396.html">how
             to set tsql's client character set</a>.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text"># A typical Sybase server
-# [egServer50]
-#   host = symachine.domain.com
-#   port = 5000
-#   tds version = 5.0
-
-# A typical Microsoft server
-# [egServer70]
-#   host = ntmachine.domain.com
-#   port = 1433
-#   tds version = 7.0
-
-[my_dev_server]
-  host = 192.168.1.58
-  port = 1433
-  tds version = 8.0
-</code>
-</pre>
-          </div>
           <p>
             It has been noted that Windows user may want to include client encodings and character sets that set UTF-8 values. If you are running on
             Windows, try out this style freetds conf.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text">[YOURSERVER]
- host             = yourserver.com
- port             = 1433
- tds version      = 7.0
- text size = 64512
- client encoding  = UTF-8
- client charset   = UTF-8
-</code>
-</pre>
-          </div>
           <p>
             So after you have added your own server here, it is now time to configure unixODBC to use FreeTDS. Let's copy the default distribution
             files to the correctly named ones that unixODBC will look for.
@@ -333,51 +280,17 @@ $ sudo cp /opt/local/etc/odbcinst.ini.dist /opt/local/etc/odbcinst.ini
             file. Add a FreeTDS configuration to it like so. No personal configuration options here, this just links up the MacPort installed
             unixODBC and FreeTDS.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text">[FreeTDS]
-Decscription = FreeTDS driver for SQLServer
-Driver = /opt/local/lib/libtdsodbc.so
-Setup = /opt/local/lib/libtdsodbc.so
-FileUsage = 1
-</code>
-</pre>
-          </div>
           <p>
             So the last thing is to create some DSNs in your <code>/opt/local/etc/odbc.ini</code> file. It is very likely that you could edit this
             file often. Perhaps you do a lot of development and DB server changes. My personal file has over 20 some DSNs here. Here is one example.
             The name and description of the DSN is up to you. Take note how I made the server name "my_dev_server" line up to that used in the
             FreeTDS conf file. That is important. Flavor this to your tastes.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text">[my_dev_server_dsn]
-Driver=FreeTDS
-Description=My Server Connection
-Servername=my_dev_server
-Server=my_dev_server
-Port=1433
-Database=killer_app
-</code>
-</pre>
-          </div>
           <p>
             Here is an example of what your database.yml will look like. So by now you should be able to connect and work with your database. I have
             this working on quite a few Macs. If you found any issues, let me know, but a good place to start is running the adapter tests. That is
             of course if you have the stack setup right.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text">development:
-  adapter: sqlserver
-  mode: ODBC
-  username: rails
-  password: secret
-  database: killer_app
-  dsn: my_dev_server_dsn
-</code>
-</pre>
-          </div>
           <h2>
             Going The Extra Mile With Ruby 1.9.x
           </h2>
@@ -463,18 +376,6 @@ $ sudo gem install mysql -- --with-mysql-config=/opt/local/bin/mysql_config5
             I edit the conf file and uncomment the link that says "skip-networking". That way no one on the local network can hit my DBs. Lastly,
             here are some helpful aliases that I use.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash"><span class="nb">alias </span><span class="nv">my_stop</span><span class="o">=</span><span class=
-"s2">&quot;sudo launchctl stop org.macports.mysql5&quot;</span>
-<span class="nb">alias </span><span class="nv">my_start</span><span class="o">=</span><span class=
-"s2">&quot;sudo launchctl start org.macports.mysql5&quot;</span>
-<span class="nb">alias </span><span class="nv">my_rs</span><span class="o">=</span><span class="s2">&quot;my_stop ; my_start&quot;</span>
-<span class="nb">alias </span><span class="nv">myconf</span><span class="o">=</span><span class=
-"s2">&quot;mate /opt/local/etc/mysql5/my.cnf&quot;</span>
-</code>
-</pre>
-          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';

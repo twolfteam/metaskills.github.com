@@ -67,49 +67,9 @@
             Here is a little ZSH function I have been using for quickly setting up new XCode apps I call tire kickers, little play and learn apps.
             Being able to track your learning as you go with git.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash"><span class="k">if</span> <span class="o">[[</span> -x <span class="sb">`</span>which git<span class="sb">`</span> <span class=
-"o">]]</span>; <span class="k">then</span>
-<span class="k">  </span>
-<span class="k">        function </span>ginit_xcode <span class="o">()</span> <span class="o">{</span>
-          git init
-          <span class="nb">echo</span> <span class="s2">&quot;\n\n# XCode\nbuild\n*.mode1v3\n*.mode2v3\n*.nib\n*.swp\n\</span>
-<span class="s2">*.pbxuser\n*.perspective\n*.perspectivev3\n\n# OSX\n.DS_Store\n\n\</span>
-<span class="s2"># TextMate\n*.tm_build_errors\n\n\n&quot;</span> &gt;&gt; .gitignore
-          git add .gitignore
-          git commit -m <span class="s2">&quot;Ignore Xcode stuff.&quot;</span>
-          git add .
-          git commit -m <span class="s2">&quot;Initial Xcode project.&quot;</span>
-        <span class="o">}</span>
-  
-<span class="k">fi</span>
-</code>
-</pre>
-          </div>
           <p>
             The echo lines puts out a .gitignore file that will look something like this.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text"># XCode
-build
-*.mode1v3
-*.mode2v3
-*.nib
-*.swp
-*.pbxuser
-*.perspective
-*.perspectivev3
-
-# OSX
-.DS_Store
-
-# TextMate
-*.tm_build_errors
-</code>
-</pre>
-          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';

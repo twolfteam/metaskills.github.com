@@ -78,43 +78,10 @@
             one fell swoop. I like this usage too, but the challenge is how to tell an instance of a the ActionMailer::Base class that it needs to
             stop delivery within a method definition that is all set to deliver? The answer is Ruby singleton method magic.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">module</span> <span class="nn">ActionMailer</span>
-  <span class="k">class</span> <span class="nc">Base</span>
-    
-    <span class="c1"># A simple way to short circuit the delivery of an email from within</span>
-    <span class="c1"># deliver_* methods defined in ActionMailer::Base subclases.</span>
-    <span class="k">def</span> <span class="nf">do_not_deliver!</span>
-      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">deliver!</span> <span class=
-"p">;</span> <span class="kp">false</span> <span class="p">;</span> <span class="k">end</span>
-    <span class="k">end</span>
-    
-  <span class="k">end</span>
-<span class="k">end</span>
-</code>
-</pre>
-          </div>
           <p>
             I suggest placing this code into your <code>lib/core_ext/action_mailer.rb</code> file. It will allow you to write mailer methods that can
             short circuit themselves to stop delivery. For instance:
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">MyMailerClass</span> <span class="o">&lt;</span> <span class=
-"no">ActionMailer</span><span class="o">::</span><span class="no">Base</span>
-  <span class="k">def</span> <span class="nf">user_notification</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-    <span class="c1"># ... </span>
-    <span class="n">do_not_deliver!</span> <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class=
-"n">email</span><span class="o">.</span><span class="n">blank?</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-<span class="c1"># In your controller code.</span>
-<span class="no">MyMailerClass</span><span class="o">.</span><span class="n">deliver_user_notification</span><span class="p">(</span><span class=
-"vi">@user</span><span class="p">)</span>
-</code>
-</pre>
-          </div>
           <p>
             Now you do not have to worry about placing delivery concerns in the controller and even worse duplicate that code when you have to use
             the same mailer method in multiple places. This works by letting the instance of the ActionMailer::Base class define it's own deliver!

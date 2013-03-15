@@ -120,10 +120,9 @@
             </header>
             <p>
               When ActiveRecord 3.2 was released there was a small addition called ActiveRecord::Store which bills itself as a simple key/value store
-              for your models. The code below is pulled right from their example usage. class User &lt; ActiveRecord::Base store :settings,
-              accessors: [:color, :homepage] end @user = User.new(color: &#39;black&#39;, homepage: &#39;37signals.com&#39;) @user.color # =&gt;
-              &#39;black&#39; @user.settings[:color] # =&gt; &#39;black&#39; @user.settings[:remember_me] = true Most people know that I love simple
-              tools. But when I found myself considering ActiveRecord::Store, I found it seriously lacking...
+              for your models. The code below is pulled right from their example usage. Most people know that I love simple tools. But when I found
+              myself considering ActiveRecord::Store, I found it seriously lacking for my particular use case. What I wanted was a config for a user
+              class that could do the following: Interchange property dot notation with indifferent string/symbol...
             </p>
           </article>
           <article class="excerpt">
@@ -297,7 +296,7 @@
               UPDATE: Using MiniTest::Spec With Rails &amp; From Test::Unit &amp; Shoulda To MiniTest::Spec &amp; MiniShoulda MiniBacktrace allows
               you to take advantage of the Rails.backtrace_cleaner when using MiniTest. This includes everyone using Rails 3 with Ruby 1.9. Just add
               'mini_backtrace' to your Gemfile's :test group and your should automatically see a huge difference. Any additions to the
-              Rails.backtrace_cleaner should now work. Rails.backtrace_cleaner.add_silencer { |line| line =~ /my_noisy_library/ }
+              Rails.backtrace_cleaner should now work.
             </p>
           </article>
           <article class="excerpt">
@@ -377,7 +376,7 @@
               On December 1st, Heroku deprecated their bundles add-on in favor of their new PG Backups. Even though there are other solutions for
               automating backups using this new add-on, none of them met my needs. I like to have a daily DB backup history, just in case you find
               something bad that happened "n" days earlier. Below is a simple rake task suitable to place in your rails lib/tasks/heroku.task file.
-              I'll explain some things I learned below when writing this. require...
+              I'll explain some things I learned below when writing this. Once...
             </p>
           </article>
           <article class="excerpt">
@@ -455,8 +454,7 @@
             <p>
               Sometime in rails 2.x the #inspect method for an ActiveRecord class was changed to show you all the column names (attributes) of that
               class. This is fine when things are small but if your working on a big legacy schema and you want clean terse debugging, all those
-              column names can be noisy. I just set this initializer up today to kill it. Now the class just shows the number of columns. module
-              ActiveRecord class Base class &lt;&lt; self def...
+              column names can be noisy. I just set this initializer up today to kill it. Now the class just shows the number of columns.
             </p>
           </article>
           <article class="excerpt">
@@ -469,9 +467,7 @@
             <p>
               I never liked how Webrat shows the complete response body for exceptions when integration testing rails applications. For the longest
               time I redefined the formatted_error method to simple do nothing. Today I used Nokogiri to parse out the good bits from that page. Here
-              is the result. Not pretty, but it's working fine so far. Got a better example? Please share! module Webrat class Session def
-              formatted_error doc = Nokogiri::HTML(response_body) exception_name = doc.css(&#39;head title&#39;).inner_html.squish exception_msg =
-              doc.css(&#39;body h1&#39;).inner_html.squish exception_detail1 =...
+              is the result. Not pretty, but it's working fine so far. Got a better example? Please share!
             </p>
           </article>
           <article class="excerpt">
@@ -509,8 +505,8 @@
             <p>
               This is something simple I worked up today for my ZSH profile that let's me keep my simple sc alias and have it work with all versions
               of rails. If you did not know, all the script files in rails 3 are gone and the new all-in-one rails executable does all the heavy
-              lifting. This little function even passes down all the arguments too. sc () { if [ -f ./script/rails ]; then rails console $argv else
-              ./script/console $argv fi...
+              lifting. This little function even passes down all the arguments too. One other thing, the way rails uses IRB is different now. I had
+              to change my...
             </p>
           </article>
           <article class="excerpt">
@@ -653,10 +649,7 @@
             </header>
             <p>
               Want a list of the users and the number of commits they made? Git makes it really really easy, while I could not find such an easy
-              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require &#39;rubygems&#39;
-              require &#39;activesupport&#39; log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)[&#39;logentry&#39;] report_hash =
-              svn_logs.inject({}) do |report,log| author = log[&#39;author&#39;][0] report[author] ||= {:commit_count =&gt; 0}
-              report[author][:commit_count] += 1 report end commits_authors = report_hash.keys.map {...
+              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion
             </p>
           </article>
           <article class="excerpt">
@@ -837,10 +830,8 @@
             <p>
               I've been a TextMate user for a long time now and I'm still finding new things to do with it. Here recently I wanted to use the RubyAMP
               TextMate Bundle and was a little miffed to find that it was pointing to my OS X system ruby. The error message looked something like
-              this when it went looking for my ruby/gems. No such file to load -- appscript (LoadError) from
-              /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/rubygems/custom_require.rb:27:in `gem_original_requireâ€™
-              /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/rubygems/custom_require.rb:27:in `requireâ€™ ... My problem is
-              that I...
+              this when it went looking for my ruby/gems. My problem is that I use ruby installed from MacPorts (yes I have Leopard). I do this
+              because I...
             </p>
           </article>
           <article class="excerpt">

@@ -94,82 +94,25 @@
             get you started. First just bundle up to less-rails-bootstrap, it will automatically pull in less-rails and less.rb via their
             dependencies. BTW, I am going to keep the semantic versioning of the less-rails-bootstrap gem in sync with the major and minor versions
             of the Bootstrap project.
-            <div class="highlight">
-              <pre>
-<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;less-rails-bootstrap&#39;</span><span class="p">,</span> <span class=
-"s1">&#39;~&gt; 1.3.0&#39;</span>
-</code>
-</pre>
-            </div>
             <p>
               From here, the easiest way to use Bootstrap is to require it in your <code>application.css</code> file. Doing so will compile the
               complete LESS libraries files for Bootstrap. Note how we namespace the files using a simple directory structure.
             </p>
-            <div class="highlight">
-              <pre>
-<code class="css"><span class="c">/*</span>
-<span class="c"> *= require twitter/bootstrap</span>
-<span class="c">*/</span>
-
-<span class="nf">#foo</span> <span class="p">{</span>
-  <span class="c">/* Your styles... */</span>
-<span class="p">}</span>
-</code>
-</pre>
-            </div>
             <p>
               Alternatively, in a file with the <code>.css.less</code> extension, you can import the entire Bootstrap LESS framework. This will allow
               you to use Bootstrap's variables and mixins in your CSS that follows. Remember, unlike other CSS frameworks, requiring or importing
               Bootstrap will include all the CSS for building a bootstrapped website. If you only want variables or mixins, you will have to import
               those discreet files, see next section.
             </p>
-            <div class="highlight">
-              <pre>
-<code class="css"><span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap&quot;</span><span class="p">;</span>
-
-<span class="nf">#foo</span> <span class="p">{</span>
-  <span class="o">.</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="p">(</span><span class=
-"m">4px</span><span class="p">);</span>
-<span class="p">}</span>
-</code>
-</pre>
-            </div>
             <p>
               Maybe all you want to use are the variables and mixins that come with Twitter Bootstrap. No problem, just import them individually from
               you own <code>.css.less</code> file. In this case only the <code>#foo</code> selector is output.
             </p>
-            <div class="highlight">
-              <pre>
-<code class="css"><span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap/variables&quot;</span><span class="p">;</span>
-<span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap/mixins&quot;</span><span class="p">;</span>
-
-<span class="nc">.myButton</span><span class="o">(</span><span class="k">@radius</span><span class="o">:</span> <span class=
-"nt">5px</span><span class="o">)</span> <span class="p">{</span>
-  <span class="nc">.border-radius</span><span class="o">(</span><span class="k">@radius</span><span class="o">)</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="nf">#foo</span> <span class="p">{</span>
-  <span class="o">.</span><span class="n">myButton</span><span class="p">(</span><span class="m">10px</span><span class="p">);</span>
-<span class="p">}</span>
-</code>
-</pre>
-            </div>
             <p>
               Using the
             </p><a href="http://twitter.github.com/bootstrap/#javascript">Bootstrap JavaScript</a> files is just as easy. Again, you can include all
             them with a single directive from your <code>application.js</code> file. Optionally, you can require only the files you need like
             <code>require twitter/bootstrap/modal</code>.
-            <div class="highlight">
-              <pre>
-<code class="javascript"><span class="c1">//= require twitter/bootstrap</span>
-
-<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class=
-"p">(</span><span class="kd">function</span><span class="p">(){</span>
-  <span class="c1">//...</span>
-<span class="p">});</span>
-</code>
-</pre>
-            </div>
             <p>
               The less-rails project has already started getting some good feedback. Soon we hope to implement all the features that you may have
               used in the sass-rails project,

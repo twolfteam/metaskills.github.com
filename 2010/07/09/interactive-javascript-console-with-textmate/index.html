@@ -95,28 +95,6 @@ sudo ln -s /System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resour
           <div class="center">
             <img src="/assets/jsc_tmbundle.gif" alt="TextMate Bundle Window" width="520" class="shadow">
           </div>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="c1">#!/usr/bin/env ruby</span>
-
-<span class="nb">require</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;TM_SUPPORT_PATH&#39;</span><span class=
-"o">]</span> <span class="o">+</span> <span class="s1">&#39;/lib/escape.rb&#39;</span>
-
-<span class="k">def</span> <span class="nf">terminal_script_filepath</span>
-  <span class="sx">%|tell application &quot;Terminal&quot;</span>
-<span class="sx">      activate</span>
-<span class="sx">      do script &quot;jsc -i </span><span class="si">#{</span><span class="n">e_as</span><span class="p">(</span><span class=
-"n">e_sh</span><span class="p">(</span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;TM_FILEPATH&#39;</span><span class=
-"o">]</span><span class="p">))</span><span class="si">}</span><span class="sx">&quot;</span>
-<span class="sx">    end tell|</span>
-<span class="k">end</span>
-
-<span class="nb">open</span><span class="p">(</span><span class="s2">&quot;|osascript&quot;</span><span class="p">,</span> <span class=
-"s2">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">io</span><span class=
-"o">|</span> <span class="n">io</span> <span class="o">&lt;&lt;</span> <span class="n">terminal_script_filepath</span> <span class="p">}</span>
-</code>
-</pre>
-          </div>
           <p>
             With that simple bundle command done, you can now use the <code>Command-R</code> keyboard shortcut to load the windows JavaScript file
             into a newly opened terminal window running in the SFX console. Pictures below.

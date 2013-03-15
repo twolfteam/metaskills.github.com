@@ -70,21 +70,6 @@
             that I love so much in Ruby. One of the biggest pluses for Ruby, to me, is the support for meta programming. In a typical rails model,
             you might see something like this.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class=
-"no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">has_many</span>                <span class="ss">:articles</span>
-  <span class="n">named_scope</span>             <span class="ss">:active</span><span class="p">,</span> <span class=
-"ss">:conditions</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:active</span> <span class=
-"o">=&gt;</span> <span class="kp">true</span><span class="p">}</span>
-  <span class="n">validates_uniqueness_of</span> <span class="ss">:email</span>
-  <span class="n">validates_presence_of</span>   <span class="ss">:email</span><span class="p">,</span> <span class="ss">:username</span><span class=
-"p">,</span> <span class="ss">:twitter_handle</span>
-<span class="k">end</span>
-</code>
-</pre>
-          </div>
           <p>
             For the untrained, those are class level methods writing code for an model that persists objects to a database. It looks like you are
             typing a spec or some declaration. In fact this is code writing other code. For newcomers to the language this is voodoo magic, but if
@@ -97,34 +82,6 @@
             two class definitions below are equal and the interface of the object is the same. One is you do not have to write code over an over
             again in an vanilla class you care to have getter/setter methods for.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">MyClass</span>
-  <span class="kp">attr_accessor</span> <span class="ss">:foo</span>
-<span class="k">end</span>
-
-<span class="c1"># Same as writing</span>
-
-<span class="k">class</span> <span class="nc">MyClass</span>
-  <span class="k">def</span> <span class="nf">foo</span>
-    <span class="vi">@foo</span>
-  <span class="k">end</span>
-  <span class="k">def</span> <span class="nf">foo</span><span class="o">=</span><span class="p">(</span><span class="n">value</span><span class=
-"p">)</span>
-    <span class="vi">@foo</span> <span class="o">=</span> <span class="n">value</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-
-<span class="c1"># Same results</span>
-
-<span class="n">o</span> <span class="o">=</span> <span class="no">MyClass</span><span class="o">.</span><span class="n">new</span>
-<span class="n">o</span><span class="o">.</span><span class="n">foo</span>           <span class="c1"># =&gt; nil</span>
-<span class="n">o</span><span class="o">.</span><span class="n">foo</span> <span class="o">=</span> <span class=
-"s1">&#39;bar&#39;</span>   <span class="c1"># =&gt; &quot;bar&quot;</span>
-<span class="n">o</span>               <span class="c1"># =&gt; #&lt;MyClass:0x100172b80 @foo=&quot;bar&quot;&gt;</span>
-</code>
-</pre>
-          </div>
           <p>
             So here is where I want to learn. I know how to write Ruby well enough that I can show one way below of how to write
             <code>attr_accessor</code> if it did not exist in core Ruby. In my example below I made the method named <code>attribute_accessor</code>
@@ -134,58 +91,6 @@
             <code>attr_accessor</code> method takes multiple args and generates methods for each. For simplicity I narrowed down my examples and code
             to only take one argument so we can all stay focused.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">module</span> <span class="nn">MetaSkills</span>
-  
-  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">included</span><span class="p">(</span><span class=
-"n">klass</span><span class="p">)</span>
-    <span class="n">klass</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span>
-      <span class="kp">include</span> <span class="no">ClassMethods</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-  
-  <span class="k">module</span> <span class="nn">ClassMethods</span>
-    
-    <span class="k">def</span> <span class="nf">attribute_accessor</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-      <span class="n">attribute_reader</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-      <span class="n">attribute_writer</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-    <span class="k">end</span>
-
-    <span class="k">def</span> <span class="nf">attribute_reader</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-      <span class="n">define_method</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span> <span class="k">do</span>
-        <span class="nb">instance_variable_get</span> <span class="s2">&quot;@</span><span class="si">#{</span><span class=
-"nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
-      <span class="k">end</span>
-    <span class="k">end</span>
-
-    <span class="k">def</span> <span class="nf">attribute_writer</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-      <span class="n">define_method</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="nb">name</span><span class=
-"si">}</span><span class="s2">=&quot;</span> <span class="k">do</span> <span class="o">|</span><span class="n">value</span><span class="o">|</span>
-        <span class="nb">instance_variable_set</span> <span class="s2">&quot;@</span><span class="si">#{</span><span class=
-"nb">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span>
-      <span class="k">end</span>
-    <span class="k">end</span>
-    
-  <span class="k">end</span>
-  
-<span class="k">end</span>
-
-<span class="no">Class</span><span class="o">.</span><span class="n">send</span> <span class="ss">:include</span><span class=
-"p">,</span> <span class="no">MetaSkills</span>
-
-<span class="k">class</span> <span class="nc">MyClass</span>
-  <span class="n">attribute_accessor</span> <span class="ss">:foo</span>
-<span class="k">end</span>
-
-<span class="n">o</span> <span class="o">=</span> <span class="no">MyClass</span><span class="o">.</span><span class="n">new</span>
-<span class="n">o</span><span class="o">.</span><span class="n">foo</span>           <span class="c1"># =&gt; nil</span>
-<span class="n">o</span><span class="o">.</span><span class="n">foo</span> <span class="o">=</span> <span class=
-"s1">&#39;bar&#39;</span>   <span class="c1"># =&gt; &quot;bar&quot;</span>
-<span class="n">o</span>               <span class="c1"># =&gt; #&lt;MyClass:0x100171c80 @foo=&quot;bar&quot;&gt;</span>
-</code>
-</pre>
-          </div>
           <p>
             Update: A friend was asking me about the namespaces you see in the module. It is technically possible to just open up the Class object
             and add my example additions. Typically in Ruby you are encouraged to create your own namespaced module and inject class/instance modules

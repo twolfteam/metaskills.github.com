@@ -93,114 +93,6 @@
             <li>Finally a LightTPD declaration for spawning FastCGI process for PHP.
             </li>
           </ul>
-          <div class="highlight">
-            <pre>
-<code class="c"><span class="n">simple</span><span class="o">-</span><span class="n">vhost</span><span class="p">.</span><span class=
-"n">server</span><span class="o">-</span><span class="n">root</span>      <span class="o">=</span> <span class=
-"s">&quot;/Library/WebServer/hosts/&quot;</span>
-<span class="n">simple</span><span class="o">-</span><span class="n">vhost</span><span class="p">.</span><span class="k">default</span><span class=
-"o">-</span><span class="n">host</span>     <span class="o">=</span> <span class="s">&quot;default&quot;</span>
-
-<span class="err">$</span><span class="n">HTTP</span><span class="p">[</span><span class="s">&quot;host&quot;</span><span class=
-"p">]</span> <span class="o">=~</span> <span class="s">&quot;^(metaskills.net)|(www.metaskills.net)$&quot;</span> <span class="p">{</span>
-  <span class="n">simple</span><span class="o">-</span><span class="n">vhost</span><span class="p">.</span><span class="k">default</span><span class=
-"o">-</span><span class="n">host</span>     <span class="o">=</span> <span class="s">&quot;metaskills.net&quot;</span>
-  <span class="n">url</span><span class="p">.</span><span class="n">access</span><span class="o">-</span><span class="n">deny</span> <span class=
-"o">=</span> <span class="p">(</span> 
-    <span class="s">&quot;.engine&quot;</span><span class="p">,</span> <span class="s">&quot;.inc&quot;</span><span class="p">,</span> <span class=
-"s">&quot;.install&quot;</span><span class="p">,</span> <span class="s">&quot;.module&quot;</span><span class="p">,</span> <span class=
-"s">&quot;.sh&quot;</span><span class="p">,</span> <span class="s">&quot;.sql&quot;</span><span class="p">,</span> <span class=
-"s">&quot;.pgsql&quot;</span><span class="p">,</span> 
-    <span class="s">&quot;.theme&quot;</span><span class="p">,</span> <span class="s">&quot;.tpl.php&quot;</span><span class=
-"p">,</span> <span class="s">&quot;.xtmpl&quot;</span><span class="p">,</span> <span class="s">&quot;.code-style.pl&quot;</span><span class=
-"p">,</span> <span class="s">&quot;.Repository&quot;</span><span class="p">,</span> <span class="s">&quot;.Root&quot;</span>
-    <span class="p">)</span>
- <span class="n">url</span><span class="p">.</span><span class="n">rewrite</span><span class="o">-</span><span class="n">once</span> <span class=
-"o">=</span> <span class="p">(</span>
-<span class="cp">   # hard-coded rewrites so the drupal catch-alls do not get them.</span>
-   <span class="s">&quot;^/mint/$&quot;</span> <span class="o">=&gt;</span> <span class="s">&quot;/mint/index.php&quot;</span><span class=
-"p">,</span>
-   <span class="s">&quot;^/mint/\?(.*)&quot;</span> <span class="o">=&gt;</span> <span class="s">&quot;/mint/index.php?$1&quot;</span><span class=
-"p">,</span>
-<span class="cp">   # drupal rules for (meta-theme-for-durpal) multi-site, these MUST BE FIRST.</span>
-   <span class="s">&quot;^/meta-theme-for-drupal/system/test/(.*)$&quot;</span>  <span class="o">=&gt;</span> <span class=
-"s">&quot;/meta-theme-for-drupal/index.php?q=system/test/$1&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/meta-theme-for-drupal/search/node/(.*)$&quot;</span>  <span class="o">=&gt;</span> <span class=
-"s">&quot;/meta-theme-for-drupal/index.php?q=search/node/$1&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/meta-theme-for-drupal/([^.?]*)\?(.*)$&quot;</span>    <span class="o">=&gt;</span> <span class=
-"s">&quot;/meta-theme-for-drupal/index.php?q=$1&amp;$2&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/meta-theme-for-drupal/([^.?]*)$&quot;</span>          <span class="o">=&gt;</span> <span class=
-"s">&quot;/meta-theme-for-drupal/index.php?q=$1&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/meta-theme-for-drupal$&quot;</span>                   <span class="o">=&gt;</span> <span class=
-"s">&quot;/meta-theme-for-drupal/index.php&quot;</span><span class="p">,</span>
-<span class="cp">   # drupal rules for default site behavior.</span>
-   <span class="s">&quot;^/system/test/(.*)$&quot;</span>        <span class="o">=&gt;</span> <span class=
-"s">&quot;/index.php?q=system/test/$1&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/search/node/(.*)$&quot;</span>        <span class="o">=&gt;</span> <span class=
-"s">&quot;/index.php?q=search/node/$1&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/([^.?]*)\?(.*)$&quot;</span>          <span class="o">=&gt;</span> <span class=
-"s">&quot;/index.php?q=$1&amp;$2&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/([^.?]*)$&quot;</span>                <span class="o">=&gt;</span> <span class="s">&quot;/index.php?q=$1&quot;</span>
-   <span class="p">)</span>
-  <span class="n">expire</span><span class="p">.</span><span class="n">url</span> <span class="o">=</span> <span class="p">(</span> 
-    <span class="s">&quot;/favicon.ico&quot;</span>              <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span> 
-    <span class="s">&quot;/files/&quot;</span>                   <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span> 
-    <span class="s">&quot;/misc/&quot;</span>                    <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/css/&quot;</span>         <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/images/&quot;</span>      <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/js/&quot;</span>          <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/meta-black/&quot;</span>  <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/meta-grey/&quot;</span>   <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/meta-paper/&quot;</span>  <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/meta-pink/&quot;</span>   <span class="o">=&gt;</span> <span class="s">&quot;access 3 days&quot;</span> 
-    <span class="p">)</span>
-  <span class="n">compress</span><span class="p">.</span><span class="n">cache</span><span class="o">-</span><span class=
-"n">dir</span>            <span class="o">=</span> <span class="n">webserver</span><span class="o">-</span><span class="n">root</span> <span class=
-"o">+</span> <span class="s">&quot;tmp/cache_metaskills/&quot;</span>
-  <span class="n">server</span><span class="p">.</span><span class="n">errorlog</span>               <span class="o">=</span> <span class=
-"n">webserver</span><span class="o">-</span><span class="n">root</span> <span class="o">+</span> <span class=
-"s">&quot;logs/metaskills.error.log&quot;</span>
-  <span class="n">accesslog</span><span class="p">.</span><span class="n">filename</span>            <span class="o">=</span> <span class=
-"n">webserver</span><span class="o">-</span><span class="n">root</span> <span class="o">+</span> <span class=
-"s">&quot;logs/metaskills.access.log&quot;</span>
-  <span class="n">fastcgi</span><span class="p">.</span><span class="n">server</span>                <span class="o">=</span> <span class=
-"p">(</span> <span class="s">&quot;.php&quot;</span> <span class="o">=&gt;</span>
-                                    <span class="p">(</span> <span class="s">&quot;localhost&quot;</span> <span class="o">=&gt;</span>
-                                      <span class="p">(</span> 
-                                        <span class="s">&quot;socket&quot;</span> <span class="o">=&gt;</span> <span class=
-"s">&quot;/tmp/php-fastcgi.socket&quot;</span><span class="p">,</span>
-                                        <span class="s">&quot;bin-path&quot;</span> <span class="o">=&gt;</span> <span class=
-"s">&quot;/opt/local/bin/php-fcgi&quot;</span><span class="p">,</span>
-                                        <span class="s">&quot;max-procs&quot;</span> <span class="o">=&gt;</span> <span class=
-"mi">4</span><span class="p">,</span>
-                                        <span class="s">&quot;bin-environment&quot;</span> <span class="o">=&gt;</span> <span class="p">(</span> 
-                                          <span class="s">&quot;PHP_FCGI_CHILDREN&quot;</span> <span class="o">=&gt;</span> <span class=
-"s">&quot;16&quot;</span><span class="p">,</span>
-                                          <span class="s">&quot;PHP_FCGI_MAX_REQUESTS&quot;</span> <span class="o">=&gt;</span> <span class=
-"s">&quot;10000&quot;</span>
-                                        <span class="p">),</span>
-                                        <span class="s">&quot;bin-copy-environment&quot;</span> <span class="o">=&gt;</span> <span class="p">(</span>
-                                          <span class="s">&quot;PATH&quot;</span><span class="p">,</span> <span class=
-"s">&quot;SHELL&quot;</span><span class="p">,</span> <span class="s">&quot;USER&quot;</span>
-                                        <span class="p">),</span>
-                                        <span class="s">&quot;broken-scriptfilename&quot;</span> <span class="o">=&gt;</span> <span class=
-"s">&quot;enable&quot;</span>
-                                      <span class="p">)</span>
-                                    <span class="p">)</span>
-                                  <span class="p">)</span>
-<span class="p">}</span>
-</code>
-</pre>
-          </div>
           <p>
             Obviously this configuration is dependant on php-fcgi being installed and If you followed along in my past <a href=
             "/2006/05/29/my-own-soup-to-nuts-recipe-for-ruby-on-rails-on-os-x/">Soup to Nuts Recipe for Ruby on RAILS on OS X</a>, here is a few crib
@@ -291,12 +183,6 @@ $ sudo cp /opt/local/etc/php.ini-recommended /opt/local/etc/php.ini
             Now add this line of code to the php.ini file somewhere at the end of the section called "Paths and Directories" that is about mid way
             down. See also this <a href="http://trac.lighttpd.net/trac/wiki/TutorialLighttpdAndPHP">web page</a> for more info on this.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="php"><span class="x">cgi.fix_pathinfo = 1</span>
-</code>
-</pre>
-          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';

@@ -90,13 +90,6 @@
             post. As a bonus, the export will create a <code>tmp/jekyll_posts/rewrites.txt</code> file that will be very useful to include in a
             .htaccess file of your jekyll project. An example below.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="apache"><span class="nb">RewriteRule</span> ^2010/8/19/how-to-clean-a-campfire-room-of-uploads$ <span class=
-"sx">/2010/08/19/how-to-clean-a-campfire-room-of-uploads/</span> [L]
-</code>
-</pre>
-          </div>
           <p>
             Also included in the gist is a <code>Site.export_jskit</code> method that will generate an XML file of your comments to import into
             Disqus. Though I was able to import my Mephisto comments into Disqus and see them linked from the admin interface, I have yet to get them
@@ -114,32 +107,6 @@
             Like many others, I have created a tasks directory in my project root with some executable scripts that help me author, publish and
             deploy my site. Here are some examples.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash"><span class="c">#!/usr/bin/env zsh</span>
-<span class="c"># File: tasks/scss</span>
-<span class="c"># Handy to watch for scss file changes while designing.</span>
-sass --scss --watch _sass:_site/resource --style compact --no-cache
-
-<span class="c">#!/usr/bin/env zsh</span>
-<span class="c"># File: tasks/jekyll</span>
-<span class="c"># Create the site and tidy it.</span>
-setopt rmstarsilent
-rm -rf _site/* <span class="o">&amp;&amp;</span> <span class="se">\</span>
-  sass --style compressed _sass/site.scss:resource/site.css <span class="o">&amp;&amp;</span> <span class="se">\</span>
-  bundle <span class="nb">exec </span>jekyll <span class="o">&amp;&amp;</span> <span class="se">\</span>
-  find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <span class="k">$(</span><span class="nb">pwd</span><span class=
-"k">)</span>/tidy.conf <span class="o">{}</span> <span class="se">\;</span>
-  
-<span class="c">#!/usr/bin/env zsh</span>
-<span class="c"># File: tasks/deploy</span>
-<span class="c"># Build and deploy to mini.</span>
-./tasks/jekyll <span class="o">&amp;&amp;</span> <span class="se">\</span>
-  rsync -avz --delete _site/ mini:/Library/WebServer/hosts/metaskills.net <span class="o">&amp;&amp;</span> <span class="se">\</span>
-  mini sudo apachectl restart
-</code>
-</pre>
-          </div>
           <p>
             The first one, <code>task/scss</code> allowed me to author my site's CSS using <a href="http://sass-lang.com/">SASS</a> and its newer
             SCSS syntax, more on that later. This task simply let me publish my site and then style it later by easily saving the source SCSS file
@@ -160,29 +127,6 @@ rm -rf _site/* <span class="o">&amp;&amp;</span> <span class="se">\</span>
             <code>&lt;header&gt;</code> and <code>&lt;footer&gt;</code> elements in between. A great way to organize comments and new elements like
             the <code>&lt;time&gt;</code> so you can associate a machine readable publication date to your post.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="html"><span class="nt">&lt;article</span> <span class="na">id=</span><span class="s">&quot;post&quot;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;header&gt;</span>
-    <span class="nt">&lt;time</span> <span class="na">pubdate</span> <span class="na">datetime=</span><span class=
-"s">&quot;2010-12-27T00:00:00-05:00&quot;</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;day&quot;</span><span class="nt">&gt;</span>27<span class=
-"nt">&lt;/span&gt;</span>
-      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;month&quot;</span><span class=
-"nt">&gt;</span>Dec<span class="nt">&lt;/span&gt;</span>
-      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;year&quot;</span><span class=
-"nt">&gt;</span>2010<span class="nt">&lt;/span&gt;</span>
-    <span class="nt">&lt;/time&gt;</span>
-    <span class="nt">&lt;h1&gt;</span>Let It Go - Moving From Mephisto To Jekyll<span class="nt">&lt;/h1&gt;</span>
-  <span class="nt">&lt;/header&gt;</span>
-  ...
-  <span class="nt">&lt;footer</span> <span class="na">id=</span><span class="s">&quot;disqus_thread&quot;</span><span class="nt">&gt;</span>
-    ...
-  <span class="nt">&lt;/footer&gt;</span>
-<span class="nt">&lt;/article&gt;</span>
-</code>
-</pre>
-          </div>
           <h2>
             Presentation - SASS
           </h2>
@@ -226,28 +170,6 @@ rm -rf _site/* <span class="o">&amp;&amp;</span> <span class="se">\</span>
             your choosing. This helps you keep your layout and presentation CSS in separate and manageable chunks that have logical names while
             keeping your SASS file from looking like one big long procedural function. It's OO-CSS at its best!
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text">...
-section#page { 
-  width: $pagewidth; 
-  margin: 0px auto;
-  min-height: 800px;
-  @include cmpnt-links;
-  section#content {
-    float: right;
-    width: $c8width;
-    padding-top: $hdrheight + 20px;
-    padding-bottom: 20px;
-    @include layout-excerpt;
-    @include layout-post;
-    @include cmpnt-flash;
-    @include cmpnt-blockquote;
-  }
-...
-</code>
-</pre>
-          </div>
           <h2>
             Presentation - Simple Grid
           </h2>
@@ -256,69 +178,9 @@ section#page {
             However, for this project, I decided to flex SASS and my previous CSS knowledge of positioning and clearing for a leaner layout
             structure. These SCSS variables were enough to let me build out the new layout.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="vg">$cols</span><span class="p">:</span> <span class="mi">10</span><span class="p">;</span>
-<span class="vg">$colwidth</span><span class="p">:</span> <span class="mi">80</span><span class="n">px</span><span class="p">;</span>
-<span class="vg">$gutterwidth</span><span class="p">:</span> <span class="mi">20</span><span class="n">px</span><span class="p">;</span>
-<span class="vg">$c1width</span><span class="p">:</span>  <span class="vg">$colwidth</span> <span class="o">*</span> <span class=
-"mi">1</span><span class="p">;</span>
-<span class="vg">$c2width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class=
-"o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
-"vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">1</span><span class="p">);</span>
-<span class="vg">$c3width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class=
-"o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
-"vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
-<span class="vg">$c4width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class=
-"o">*</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
-"vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">3</span><span class="p">);</span>
-<span class="vg">$c5width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class=
-"o">*</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
-"vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">4</span><span class="p">);</span>
-<span class="vg">$c6width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class=
-"o">*</span> <span class="mi">6</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
-"vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">5</span><span class="p">);</span>
-<span class="vg">$c7width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class=
-"o">*</span> <span class="mi">7</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
-"vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">6</span><span class="p">);</span>
-<span class="vg">$c8width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class=
-"o">*</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
-"vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">7</span><span class="p">);</span>
-<span class="vg">$c9width</span><span class="p">:</span>  <span class="p">(</span><span class="vg">$colwidth</span> <span class=
-"o">*</span> <span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
-"vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">8</span><span class="p">);</span>
-<span class="vg">$c10width</span><span class="p">:</span> <span class="p">(</span><span class="vg">$colwidth</span> <span class=
-"o">*</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
-"vg">$gutterwidth</span> <span class="o">*</span> <span class="mi">9</span><span class="p">);</span>
-<span class="vg">$pagewidth</span><span class="p">:</span> <span class="p">(</span><span class="vg">$colwidth</span> <span class=
-"o">*</span> <span class="vg">$cols</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
-"vg">$gutterwidth</span> <span class="o">*</span> <span class="p">(</span><span class="vg">$cols</span> <span class="o">-</span> <span class=
-"mi">1</span><span class="p">));</span>
-</code>
-</pre>
-          </div>
           <h2>
             Presentation - Pseudo Generated Content
           </h2>
-          <div class="highlight">
-            <pre>
-<code class="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;photobounding&quot;</span><span class=
-"nt">&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;tl&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;tr&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;bl&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;br&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;photoborder&quot;</span><span class=
-"nt">&gt;&lt;/div&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;photo&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;/files/yourpicture.jpg&quot;</span> <span class=
-"na">alt=</span><span class="s">&quot;&quot;</span> <span class="na">width=</span><span class="s">&quot;&quot;</span> <span class=
-"na">height=</span><span class="s">&quot;&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span>
-</code>
-</pre>
-          </div>
           <p>
             We have all seen code like this! It is called divitis, the overuse of span or div elements to structure and style content. I am guilty of
             doing this too, in fact, that code is from my old blog's CSS convention page to make a fancy border around a photo. The new

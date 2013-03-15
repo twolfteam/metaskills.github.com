@@ -96,31 +96,6 @@
             <a href="https://github.com/metaskills/mini_shoulda">MiniShoulda</a> is a small ruby gem that puts a Shoulda DSL on top of
             MiniTest::Spec. All it really does it alias a few key methods. Here is the core of it now.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">MiniTest</span><span class="o">::</span><span class="no">Spec</span> <span class=
-"o">&lt;</span> <span class="no">MiniTest</span><span class="o">::</span><span class="no">Unit</span><span class="o">::</span><span class=
-"no">TestCase</span>
-  
-  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
-    <span class="k">alias</span> <span class="ss">:setup</span>    <span class="ss">:before</span>
-    <span class="k">alias</span> <span class="ss">:teardown</span> <span class="ss">:after</span>
-    <span class="k">alias</span> <span class="ss">:should</span>   <span class="ss">:it</span>
-    <span class="k">alias</span> <span class="ss">:context</span>  <span class="ss">:describe</span>
-  <span class="k">end</span>
-  
-  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">should_eventually</span><span class=
-"p">(</span><span class="n">desc</span><span class="p">)</span>
-    <span class="n">it</span><span class="p">(</span><span class="s2">&quot;should eventually </span><span class="si">#{</span><span class=
-"n">desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">{</span> <span class=
-"n">skip</span><span class="p">(</span><span class="s2">&quot;Should eventually </span><span class="si">#{</span><span class=
-"n">desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">}</span>
-  <span class="k">end</span>
-  
-<span class="k">end</span>
-</code>
-</pre>
-          </div>
           <p>
             For now, MiniShoulda performs only one monkey patch to MiniTest. There is a critical bug in MiniTest that does not allow the
             describe/context blocks to use the existing scope of the parent class. I have a <a href=
@@ -138,13 +113,6 @@ $ gem install mini_shoulda
             Our gem spec will automatically pull in MiniTest version 2.0.2 or greater. Assuming you have a test helper file, the top requires will
             looks something like this. MiniTest needs that autorun file required or none of your tests will run.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby"><span class="nb">require</span> <span class="s1">&#39;mini_shoulda&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;minitest/autorun&#39;</span>
-</code>
-</pre>
-          </div>
           <p>
             What should I expect? For starters, expect a few of your tests to fail. Especially ones that were happenstantially running linearly and
             not exercised in isolation. I think there is a technical term for this? Anyways, MiniTest mixes up the test suite each run trough it

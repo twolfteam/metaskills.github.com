@@ -97,23 +97,6 @@ Where would you like to install Ruby Enterprise Edition to?
             just go back to my normal 1.8/1.9 toggle in <code>/opt/local/bin</code>, I just comment out the REE path extensions, source my profile
             and I'm back to my MacPort basics.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash"><span class="c"># MacPorts</span>
-<span class="nv">path</span><span class="o">=(</span>/opt/local/bin /opt/local/sbin /opt/local/apache2/bin ~/.zshkit/bin <span class=
-"nv">$path</span><span class="o">)</span>
-<span class="nv">manpath</span><span class="o">=(</span>/opt/local/share/man <span class="nv">$manpath</span><span class="o">)</span>
-<span class="nv">infopath</span><span class="o">=(</span>/opt/local/share/info <span class="nv">$infopath</span><span class="o">)</span>
-
-<span class="c"># REE</span>
-<span class="nv">path</span><span class="o">=(</span>/opt/ruby-enterprise-1.8.7-2009.10/bin <span class="nv">$path</span><span class="o">)</span>
-<span class="nv">manpath</span><span class="o">=(</span>/opt/ruby-enterprise-1.8.7-2009.10/share/man <span class="nv">$manpath</span><span class=
-"o">)</span>
-<span class="nv">infopath</span><span class="o">=(</span>/opt/ruby-enterprise-1.8.7-2009.10/share/info <span class="nv">$infopath</span><span class=
-"o">)</span>
-</code>
-</pre>
-          </div>
           <p>
             In the last guide, I mentioned how to switch between ruby 1.8/1.9 installed by MacPorts using a simple ZSH function. You can find this in
             my article title <a href="/2009/01/20/multiruby-the-macports-way-testing-your-rails-apps-with-ruby-1-9/">MultiRuby The MacPorts Way.

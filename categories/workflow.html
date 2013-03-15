@@ -93,10 +93,7 @@
             </header>
             <p>
               Here is a little ZSH function I have been using for quickly setting up new XCode apps I call tire kickers, little play and learn apps.
-              Being able to track your learning as you go with git. if [[ -x `which git` ]]; then function ginit_xcode () { git init echo &quot;\n\n#
-              XCode\nbuild\n*.mode1v3\n*.mode2v3\n*.nib\n*.swp\n\ *.pbxuser\n*.perspective\n*.perspectivev3\n\n# OSX\n.DS_Store\n\n\ #
-              TextMate\n*.tm_build_errors\n\n\n&quot; &gt;&gt; .gitignore git add .gitignore git commit -m &quot;Ignore Xcode stuff.&quot; git add .
-              git commit -m &quot;Initial Xcode project.&quot; } fi The...
+              Being able to track your learning as you go with git. The echo lines puts out a .gitignore file that will look something like this.
             </p>
           </article>
           <article class="excerpt">
@@ -107,10 +104,7 @@
             </header>
             <p>
               Want a list of the users and the number of commits they made? Git makes it really really easy, while I could not find such an easy
-              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require &#39;rubygems&#39;
-              require &#39;activesupport&#39; log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)[&#39;logentry&#39;] report_hash =
-              svn_logs.inject({}) do |report,log| author = log[&#39;author&#39;][0] report[author] ||= {:commit_count =&gt; 0}
-              report[author][:commit_count] += 1 report end commits_authors = report_hash.keys.map {...
+              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion
             </p>
           </article>
           <article class="excerpt">
