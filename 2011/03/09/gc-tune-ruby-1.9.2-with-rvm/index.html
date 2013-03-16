@@ -79,7 +79,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="k">case</span> <span class="s2">&quot;$rvm_ruby_string&quot;</span> in
+<span class="k">case</span> <span class="s2">&quot;$rvm_ruby_string&quot;</span> in
   *ree*|*ruby-1.9.2*<span class="o">)</span>
     <span class="nb">export </span><span class="nv">RUBY_HEAP_MIN_SLOTS</span><span class="o">=</span>1000000
     <span class="nb">export </span><span class="nv">RUBY_HEAP_SLOTS_INCREMENT</span><span class="o">=</span>1000000
@@ -93,7 +93,6 @@
 "nb">unset </span>RUBY_HEAP_MIN_SLOTS RUBY_HEAP_SLOTS_INCREMENT RUBY_HEAP_SLOTS_GROWTH_FACTOR RUBY_GC_MALLOC_LIMIT RUBY_HEAP_FREE_MIN RUBY_FREE_MIN
   ;;                                                                                                                                                                                                                                                                                                                        
 <span class="k">esac</span>
-</code>
 </pre>
           </div>
           <footer id="disqus_thread">

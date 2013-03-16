@@ -90,7 +90,10 @@
             <li>
               <a href="http://livehttpheaders.mozdev.org/">The Live HTTP Headers Firefox Extension</a>
             </li>
-          </ul><a name="tail" class="anchor"></a>
+          </ul>
+          <p>
+            <a name="tail" class="anchor"></a>
+          </p>
           <h2>
             About The tail Command
           </h2>
@@ -119,7 +122,10 @@ $ tail -f /the/path/to/your/logfile.log
             itself or you can SSH into the server with your laptop or other personal Mac and execute it from Terminal. Remember, this command is not
             useful to you if you do not have direct or SSH access to your web server where your log file is being written. If this is the case you
             will have to download it via your normal means and examine it in your favorite text editor.
-          </p><a name="livehttpheaders" class="anchor"></a>
+          </p>
+          <p>
+            <a name="livehttpheaders" class="anchor"></a>
+          </p>
           <h2>
             About HTTP Headers &amp; The Firefox Extension
           </h2>
@@ -193,7 +199,7 @@ $ tail -f /the/path/to/your/logfile.log | grep 10.0.1.4
           </p>
           <div class="highlight">
             <pre>
-<code class="text">HTTP/1.1 200 OK
+HTTP/1.1 200 OK
 Date: Sun, 19 Feb 2006 16:42:05 GMT
 Server: Apache/2.0.55 (Unix) DAV/2 PHP/5.1.1
 Last-Modified: Sun, 08 Jan 2006 16:17:25 GMT
@@ -204,7 +210,6 @@ Cache-Control: max-age=7200
 Expires: Sun, 19 Feb 2006 18:42:05 GMT
 Connection: close
 Content-Type: image/png
-</code>
 </pre>
           </div>
           <p>
@@ -222,15 +227,17 @@ Content-Type: image/png
           </p>
           <div class="highlight">
             <pre>
-<code class="apache"><span class="nb">LoadModule</span> expires_module modules/mod_expires.so
+<span class="nb">LoadModule</span> expires_module modules/mod_expires.so
 <span class="nb">LoadModule</span> headers_module modules/mod_headers.so
-</code>
 </pre>
           </div>
           <p>
             When these modules are loaded and working, we can then start to use the correct Apache 2 directives to control how browsers cache
             everything from pages to images across the whole site or in a specific directory.
-          </p><a name="goodpart" class="anchor"></a>
+          </p>
+          <p>
+            <a name="goodpart" class="anchor"></a>
+          </p>
           <h2>
             Using Apache 2 To Control Browser Caching
           </h2>
@@ -250,7 +257,7 @@ Content-Type: image/png
           </p>
           <div class="highlight">
             <pre>
-<code class="apache"><span class="nt">&lt;IfModule</span> <span class="s">mod_expires.c</span><span class="nt">&gt;</span>
+<span class="nt">&lt;IfModule</span> <span class="s">mod_expires.c</span><span class="nt">&gt;</span>
   <span class="nb">ExpiresActive</span> <span class="k">On</span>
   <span class="nb">ExpiresDefault</span> <span class="s2">&quot;access plus 1 seconds&quot;</span>
   <span class="nb">ExpiresByType</span> text/html <span class="s2">&quot;access plus 1 seconds&quot;</span>
@@ -262,7 +269,6 @@ Content-Type: image/png
   <span class="nb">ExpiresByType</span> application/x-javascript <span class="s2">&quot;access plus 60 minutes&quot;</span>
   <span class="nb">ExpiresByType</span> text/xml <span class="s2">&quot;access plus 60 minutes&quot;</span>
 <span class="nt">&lt;/IfModule&gt;</span>
-</code>
 </pre>
           </div>
           <p>

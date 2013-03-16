@@ -80,19 +80,18 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">module</span> <span class="nn">ActionMailer</span>
+<span class="k">module</span> <span class="nn">ActionMailer</span>
   <span class="k">class</span> <span class="nc">Base</span>
-    
+
     <span class="c1"># A simple way to short circuit the delivery of an email from within</span>
     <span class="c1"># deliver_* methods defined in ActionMailer::Base subclases.</span>
     <span class="k">def</span> <span class="nf">do_not_deliver!</span>
       <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">deliver!</span> <span class=
 "p">;</span> <span class="kp">false</span> <span class="p">;</span> <span class="k">end</span>
     <span class="k">end</span>
-    
+
   <span class="k">end</span>
 <span class="k">end</span>
-</code>
 </pre>
           </div>
           <p>
@@ -101,8 +100,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">MyMailerClass</span> <span class="o">&lt;</span> <span class=
-"no">ActionMailer</span><span class="o">::</span><span class="no">Base</span>
+<span class="k">class</span> <span class="nc">MyMailerClass</span> <span class="o">&lt;</span> <span class="ss">ActionMailer</span><span class=
+"p">:</span><span class="ss">:Base</span>
   <span class="k">def</span> <span class="nf">user_notification</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
     <span class="c1"># ... </span>
     <span class="n">do_not_deliver!</span> <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class=
@@ -112,7 +111,6 @@
 <span class="c1"># In your controller code.</span>
 <span class="no">MyMailerClass</span><span class="o">.</span><span class="n">deliver_user_notification</span><span class="p">(</span><span class=
 "vi">@user</span><span class="p">)</span>
-</code>
 </pre>
           </div>
           <p>

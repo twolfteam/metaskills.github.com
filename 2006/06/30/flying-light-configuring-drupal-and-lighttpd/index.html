@@ -95,9 +95,8 @@
           </ul>
           <div class="highlight">
             <pre>
-<code class="c"><span class="n">simple</span><span class="o">-</span><span class="n">vhost</span><span class="p">.</span><span class=
-"n">server</span><span class="o">-</span><span class="n">root</span>      <span class="o">=</span> <span class=
-"s">&quot;/Library/WebServer/hosts/&quot;</span>
+<span class="n">simple</span><span class="o">-</span><span class="n">vhost</span><span class="p">.</span><span class="n">server</span><span class=
+"o">-</span><span class="n">root</span>      <span class="o">=</span> <span class="s">&quot;/Library/WebServer/hosts/&quot;</span>
 <span class="n">simple</span><span class="o">-</span><span class="n">vhost</span><span class="p">.</span><span class="k">default</span><span class=
 "o">-</span><span class="n">host</span>     <span class="o">=</span> <span class="s">&quot;default&quot;</span>
 
@@ -117,12 +116,19 @@
     <span class="p">)</span>
  <span class="n">url</span><span class="p">.</span><span class="n">rewrite</span><span class="o">-</span><span class="n">once</span> <span class=
 "o">=</span> <span class="p">(</span>
-<span class="cp">   # hard-coded rewrites so the drupal catch-alls do not get them.</span>
+   <span class="err">#</span> <span class="n">hard</span><span class="o">-</span><span class="n">coded</span> <span class=
+"n">rewrites</span> <span class="n">so</span> <span class="n">the</span> <span class="n">drupal</span> <span class="n">catch</span><span class=
+"o">-</span><span class="n">alls</span> <span class="k">do</span> <span class="n">not</span> <span class="n">get</span> <span class=
+"n">them</span><span class="p">.</span>
    <span class="s">&quot;^/mint/$&quot;</span> <span class="o">=&gt;</span> <span class="s">&quot;/mint/index.php&quot;</span><span class=
 "p">,</span>
    <span class="s">&quot;^/mint/\?(.*)&quot;</span> <span class="o">=&gt;</span> <span class="s">&quot;/mint/index.php?$1&quot;</span><span class=
 "p">,</span>
-<span class="cp">   # drupal rules for (meta-theme-for-durpal) multi-site, these MUST BE FIRST.</span>
+   <span class="err">#</span> <span class="n">drupal</span> <span class="n">rules</span> <span class="k">for</span> <span class=
+"p">(</span><span class="n">meta</span><span class="o">-</span><span class="n">theme</span><span class="o">-</span><span class=
+"k">for</span><span class="o">-</span><span class="n">durpal</span><span class="p">)</span> <span class="n">multi</span><span class=
+"o">-</span><span class="n">site</span><span class="p">,</span> <span class="n">these</span> <span class="n">MUST</span> <span class=
+"n">BE</span> <span class="n">FIRST</span><span class="p">.</span>
    <span class="s">&quot;^/meta-theme-for-drupal/system/test/(.*)$&quot;</span>  <span class="o">=&gt;</span> <span class=
 "s">&quot;/meta-theme-for-drupal/index.php?q=system/test/$1&quot;</span><span class="p">,</span>
    <span class="s">&quot;^/meta-theme-for-drupal/search/node/(.*)$&quot;</span>  <span class="o">=&gt;</span> <span class=
@@ -133,7 +139,8 @@
 "s">&quot;/meta-theme-for-drupal/index.php?q=$1&quot;</span><span class="p">,</span>
    <span class="s">&quot;^/meta-theme-for-drupal$&quot;</span>                   <span class="o">=&gt;</span> <span class=
 "s">&quot;/meta-theme-for-drupal/index.php&quot;</span><span class="p">,</span>
-<span class="cp">   # drupal rules for default site behavior.</span>
+   <span class="err">#</span> <span class="n">drupal</span> <span class="n">rules</span> <span class="k">for</span> <span class=
+"k">default</span> <span class="n">site</span> <span class="n">behavior</span><span class="p">.</span>
    <span class="s">&quot;^/system/test/(.*)$&quot;</span>        <span class="o">=&gt;</span> <span class=
 "s">&quot;/index.php?q=system/test/$1&quot;</span><span class="p">,</span>
    <span class="s">&quot;^/search/node/(.*)$&quot;</span>        <span class="o">=&gt;</span> <span class=
@@ -198,7 +205,6 @@
                                     <span class="p">)</span>
                                   <span class="p">)</span>
 <span class="p">}</span>
-</code>
 </pre>
           </div>
           <p>
@@ -293,8 +299,7 @@ $ sudo cp /opt/local/etc/php.ini-recommended /opt/local/etc/php.ini
           </p>
           <div class="highlight">
             <pre>
-<code class="php"><span class="x">cgi.fix_pathinfo = 1</span>
-</code>
+<span class="x">cgi.fix_pathinfo = 1</span>
 </pre>
           </div>
           <footer id="disqus_thread">

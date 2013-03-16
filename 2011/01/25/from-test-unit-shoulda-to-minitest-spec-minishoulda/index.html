@@ -98,17 +98,17 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">MiniTest</span><span class="o">::</span><span class="no">Spec</span> <span class=
-"o">&lt;</span> <span class="no">MiniTest</span><span class="o">::</span><span class="no">Unit</span><span class="o">::</span><span class=
+<span class="k">class</span> <span class="nc">MiniTest</span><span class="o">::</span><span class="no">Spec</span> <span class=
+"o">&lt;</span> <span class="ss">MiniTest</span><span class="p">:</span><span class="ss">:Unit</span><span class="o">::</span><span class=
 "no">TestCase</span>
-  
+
   <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
     <span class="k">alias</span> <span class="ss">:setup</span>    <span class="ss">:before</span>
     <span class="k">alias</span> <span class="ss">:teardown</span> <span class="ss">:after</span>
     <span class="k">alias</span> <span class="ss">:should</span>   <span class="ss">:it</span>
     <span class="k">alias</span> <span class="ss">:context</span>  <span class="ss">:describe</span>
   <span class="k">end</span>
-  
+
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">should_eventually</span><span class=
 "p">(</span><span class="n">desc</span><span class="p">)</span>
     <span class="n">it</span><span class="p">(</span><span class="s2">&quot;should eventually </span><span class="si">#{</span><span class=
@@ -116,9 +116,8 @@
 "n">skip</span><span class="p">(</span><span class="s2">&quot;Should eventually </span><span class="si">#{</span><span class=
 "n">desc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="p">}</span>
   <span class="k">end</span>
-  
+
 <span class="k">end</span>
-</code>
 </pre>
           </div>
           <p>
@@ -140,9 +139,8 @@ $ gem install mini_shoulda
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="nb">require</span> <span class="s1">&#39;mini_shoulda&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;mini_shoulda&#39;</span>
 <span class="nb">require</span> <span class="s1">&#39;minitest/autorun&#39;</span>
-</code>
 </pre>
           </div>
           <p>

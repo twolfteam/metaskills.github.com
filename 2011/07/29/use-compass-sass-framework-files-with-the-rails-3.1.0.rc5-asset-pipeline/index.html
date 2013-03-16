@@ -81,7 +81,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># Gems used only for assets and not required</span>
+<span class="c1"># Gems used only for assets and not required</span>
 <span class="c1"># in production environments by default.</span>
 <span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
   <span class="n">gem</span> <span class="s1">&#39;sass-rails&#39;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 3.1.0.rc&quot;</span>
@@ -92,7 +92,6 @@
 "o">=&gt;</span> <span class="s1">&#39;git://github.com/chriseppstein/compass.git&#39;</span><span class="p">,</span> <span class=
 "ss">:branch</span> <span class="o">=&gt;</span> <span class="s1">&#39;rails31&#39;</span>
 <span class="k">end</span>
-</code>
 </pre>
           </div>
           <p>
@@ -101,10 +100,9 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="no">Bundler</span><span class="o">.</span><span class="n">require</span> <span class="o">*</span><span class=
+<span class="no">Bundler</span><span class="o">.</span><span class="n">require</span> <span class="o">*</span><span class=
 "no">Rails</span><span class="o">.</span><span class="n">groups</span><span class="p">(</span><span class="ss">:assets</span><span class=
 "p">)</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Bundler</span><span class="p">)</span>
-</code>
 </pre>
           </div>
           <p>
@@ -114,7 +112,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="no">Rails</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class=
+<span class="no">Rails</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class=
 "n">sass</span><span class="o">.</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class=
 "n">config</span><span class="o">|</span>
   <span class="n">config</span><span class="o">.</span><span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class=
@@ -122,7 +120,6 @@
 "o">[</span><span class="s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class=
 "si">}</span><span class="s2">/frameworks/compass/stylesheets&quot;</span>
 <span class="k">end</span>
-</code>
 </pre>
           </div>
           <footer id="disqus_thread">

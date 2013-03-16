@@ -92,9 +92,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="apache"><span class="nb">RewriteRule</span> ^2010/8/19/how-to-clean-a-campfire-room-of-uploads$ <span class=
+<span class="nb">RewriteRule</span> ^2010/8/19/how-to-clean-a-campfire-room-of-uploads$ <span class=
 "sx">/2010/08/19/how-to-clean-a-campfire-room-of-uploads/</span> [L]
-</code>
 </pre>
           </div>
           <p>
@@ -116,7 +115,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="c">#!/usr/bin/env zsh</span>
+<span class="c">#!/usr/bin/env zsh</span>
 <span class="c"># File: tasks/scss</span>
 <span class="c"># Handy to watch for scss file changes while designing.</span>
 sass --scss --watch _sass:_site/resource --style compact --no-cache
@@ -130,14 +129,13 @@ rm -rf _site/* <span class="o">&amp;&amp;</span> <span class="se">\</span>
   bundle <span class="nb">exec </span>jekyll <span class="o">&amp;&amp;</span> <span class="se">\</span>
   find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <span class="k">$(</span><span class="nb">pwd</span><span class=
 "k">)</span>/tidy.conf <span class="o">{}</span> <span class="se">\;</span>
-  
+
 <span class="c">#!/usr/bin/env zsh</span>
 <span class="c"># File: tasks/deploy</span>
 <span class="c"># Build and deploy to mini.</span>
 ./tasks/jekyll <span class="o">&amp;&amp;</span> <span class="se">\</span>
   rsync -avz --delete _site/ mini:/Library/WebServer/hosts/metaskills.net <span class="o">&amp;&amp;</span> <span class="se">\</span>
   mini sudo apachectl restart
-</code>
 </pre>
           </div>
           <p>
@@ -162,7 +160,7 @@ rm -rf _site/* <span class="o">&amp;&amp;</span> <span class="se">\</span>
           </p>
           <div class="highlight">
             <pre>
-<code class="html"><span class="nt">&lt;article</span> <span class="na">id=</span><span class="s">&quot;post&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;article</span> <span class="na">id=</span><span class="s">&quot;post&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;header&gt;</span>
     <span class="nt">&lt;time</span> <span class="na">pubdate</span> <span class="na">datetime=</span><span class=
 "s">&quot;2010-12-27T00:00:00-05:00&quot;</span><span class="nt">&gt;</span>
@@ -180,7 +178,6 @@ rm -rf _site/* <span class="o">&amp;&amp;</span> <span class="se">\</span>
     ...
   <span class="nt">&lt;/footer&gt;</span>
 <span class="nt">&lt;/article&gt;</span>
-</code>
 </pre>
           </div>
           <h2>
@@ -228,7 +225,7 @@ rm -rf _site/* <span class="o">&amp;&amp;</span> <span class="se">\</span>
           </p>
           <div class="highlight">
             <pre>
-<code class="text">...
+...
 section#page { 
   width: $pagewidth; 
   margin: 0px auto;
@@ -245,7 +242,6 @@ section#page {
     @include cmpnt-blockquote;
   }
 ...
-</code>
 </pre>
           </div>
           <h2>
@@ -258,7 +254,7 @@ section#page {
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="vg">$cols</span><span class="p">:</span> <span class="mi">10</span><span class="p">;</span>
+<span class="vg">$cols</span><span class="p">:</span> <span class="mi">10</span><span class="p">;</span>
 <span class="vg">$colwidth</span><span class="p">:</span> <span class="mi">80</span><span class="n">px</span><span class="p">;</span>
 <span class="vg">$gutterwidth</span><span class="p">:</span> <span class="mi">20</span><span class="n">px</span><span class="p">;</span>
 <span class="vg">$c1width</span><span class="p">:</span>  <span class="vg">$colwidth</span> <span class="o">*</span> <span class=
@@ -294,7 +290,6 @@ section#page {
 "o">*</span> <span class="vg">$cols</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class=
 "vg">$gutterwidth</span> <span class="o">*</span> <span class="p">(</span><span class="vg">$cols</span> <span class="o">-</span> <span class=
 "mi">1</span><span class="p">));</span>
-</code>
 </pre>
           </div>
           <h2>
@@ -302,8 +297,7 @@ section#page {
           </h2>
           <div class="highlight">
             <pre>
-<code class="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;photobounding&quot;</span><span class=
-"nt">&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;photobounding&quot;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;tl&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;tr&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
   <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;bl&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
@@ -316,7 +310,6 @@ section#page {
 "na">height=</span><span class="s">&quot;&quot;</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
-</code>
 </pre>
           </div>
           <p>

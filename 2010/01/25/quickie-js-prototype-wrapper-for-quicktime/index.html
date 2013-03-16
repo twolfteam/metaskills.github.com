@@ -81,7 +81,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="javascript"><span class="cm">/*</span>
+<span class="cm">/*</span>
 
 <span class="cm">Author:</span>
 <span class="cm">  Ken Collins &lt;metaskills.net&gt;</span>
@@ -93,7 +93,7 @@
 <span class="cm">  container - (element) The container into which the Quickie object will be injected.</span>
 <span class=
 "cm">  attributes - (object) QuickTime attributes for the element. See http://www.apple.com/quicktime/tutorials/embed.html for possible attributes.</span>
-<span class="cm">  </span>
+
 <span class="cm">Returns:</span>
 <span class="cm">  - (element) A new HTML object Element with browser appropriate QuickTime embed code.</span>
 
@@ -110,16 +110,16 @@
 <span class="cm">  });</span>
 
 <span class="cm">Credits:</span>
-<span class="cm">       Mootools Implementaiton: http://pradador.com/code/quickiejs/</span>
-<span class="cm">       </span>
+<span class="cm">    Mootools Implementaiton: http://pradador.com/code/quickiejs/</span>
+
 <span class="cm">License:</span>
-<span class="cm">       MIT-Style License</span>
+<span class="cm">    MIT-Style License</span>
 
 <span class="cm">*/</span>
 
 <span class="kd">var</span> <span class="nx">Quickie</span> <span class="o">=</span> <span class="nx">Class</span><span class=
 "p">.</span><span class="nx">create</span><span class="p">({</span>
-  
+
   <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
 "nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">){</span>
     <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="nx">Try</span><span class="p">.</span><span class=
@@ -165,11 +165,11 @@
 "p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_assignElement</span><span class="p">();</span>
   <span class="p">},</span>
-  
+
   <span class="nx">toElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">;</span>
   <span class="p">},</span>
-  
+
   <span class="nx">_assignElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="p">(</span><span class=
 "nx">Prototype</span><span class="p">.</span><span class="nx">Browser</span><span class="p">.</span><span class="nx">IE</span><span class=
@@ -183,7 +183,7 @@
 "nx">Element</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">)).</span><span class="nx">update</span><span class=
 "p">(</span><span class="nx">build</span><span class="p">).</span><span class="nx">down</span><span class="p">();</span>
   <span class="p">},</span>
-  
+
   <span class="nx">_buildObjectTag</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
     <span class="nx">build</span> <span class="o">=</span> <span class=
@@ -211,7 +211,7 @@
     <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39;&lt;/object&gt;&#39;</span><span class="p">;</span>
     <span class="k">return</span> <span class="nx">build</span><span class="p">;</span>
   <span class="p">},</span>
-  
+
   <span class="nx">_buildEmbedTag</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
     <span class="nx">build</span> <span class="o">=</span> <span class="s1">&#39;&lt;embed &#39;</span><span class="p">;</span>
@@ -240,7 +240,6 @@
   <span class="p">}</span>
 
 <span class="p">});</span>
-</code>
 </pre>
           </div>
           <p>
@@ -254,7 +253,7 @@
             QuickTime source code. See the example below.
             <div class="highlight">
               <pre>
-<code class="javascript"><span class="cm">/* </span>
+<span class="cm">/* </span>
 <span class="cm">Example Container</span>
 <span class=
 "cm">&lt;div id=&quot;mymovie_container&quot; class=&quot;quicktime_video&quot; rel=&quot;src=/video/mymovie.mov|width=280|height=393|loop=true|autoplay=true|video_id=mymovie&quot;&gt;&lt;/div&gt;</span>
@@ -300,7 +299,6 @@
 "nx">qt</span><span class="p">);</span>
   <span class="p">});</span>
 <span class="p">});</span>
-</code>
 </pre>
             </div>
             <h2>

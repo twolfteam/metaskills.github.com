@@ -126,7 +126,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
+<span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="o">=&gt;</span>
@@ -135,12 +135,11 @@
         <span class="vi">@li</span> <span class="s2">&quot;Apollo&quot;</span>
         <span class="vi">@li</span> <span class="s2">&quot;Soyuz&quot;</span>
         <span class="vi">@li</span> <span class="s2">&quot;Space Shuttle&quot;</span>
-</code>
 </pre>
           </div>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
+<span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
 <span class="n">view</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class=
 "s1">&#39;ol&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class=
 "s1">&#39;&lt;li&gt;Star Destroyer&lt;/li&gt;&#39;</span><span class="p">)</span>
@@ -150,7 +149,6 @@
   <span class="n">alert</span> <span class="s2">&quot;You clicked on </span><span class="si">#{</span><span class="err">$</span><span class=
 "p">(</span><span class="n">this</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class=
 "p">()</span><span class="si">}</span><span class="s2">&quot;</span>
-</code>
 </pre>
           </div>
           <p>
@@ -162,26 +160,24 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
+<span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="o">=&gt;</span>
       <span class="vi">@h1</span> <span class="s2">&quot;SpacePort&quot;</span>
-      <span class="vi">@ol</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;shipList&#39;</span>
+      <span class="vi">@ol</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;shipList&#39;</span>
 
-  <span class="n">addShip</span><span class="p">:</span> <span class="p">(</span><span class="n">ship</span><span class="p">)</span> <span class=
+  <span class="ss">addShip</span><span class="p">:</span> <span class="p">(</span><span class="n">ship</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
     <span class="vi">@shipList</span><span class="o">.</span><span class="n">append</span> <span class="s2">&quot;&lt;li&gt;</span><span class=
 "si">#{</span><span class="n">ship</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class=
 "s2">&lt;/li&gt;&quot;</span>
-</code>
 </pre>
           </div>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
+<span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
 <span class="n">view</span><span class="o">.</span><span class="n">addShip</span> <span class="s2">&quot;Enterprise&quot;</span>
-</code>
 </pre>
           </div>
           <p>
@@ -227,30 +223,29 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
+<span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
 
 <span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
 "o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class=
 "n">Controller</span>
-  
-  <span class="n">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
+
+  <span class="ss">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
 "p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class=
 "o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span>
-    <span class="k">super</span> <span class="n">el</span><span class="p">:</span> <span class="vi">@view</span>
-</code>
+    <span class="k">super</span> <span class="ss">el</span><span class="p">:</span> <span class="vi">@view</span>
 </pre>
           </div>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
+<span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
 
 <span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class=
 "n">Day</span> <span class="n">extends</span> <span class="no">View</span>
-  
+
   <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
-    <span class="vi">@div</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class=
+    <span class="vi">@div</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class=
 "p">,</span> <span class="o">=&gt;</span>
       <span class="c1"># ...</span>
 
@@ -259,7 +254,6 @@
     <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="n">params</span><span class=
 "o">.</span><span class="n">moment</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class=
 "s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
-</code>
 </pre>
           </div>
           <p>
@@ -285,44 +279,44 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class=
-"o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
-  
+<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class=
+"n">Day</span> <span class="n">extends</span> <span class="no">View</span>
+
   <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
-    <span class="vi">@div</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class=
+    <span class="vi">@div</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class=
 "p">,</span> <span class="o">=&gt;</span>
       <span class="c1"># ...</span>
-      <span class="vi">@div</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span><span class=
-"p">,</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span>
+      <span class="vi">@div</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span><span class=
+"p">,</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span>
       <span class="c1"># ...</span>
-  
+
   <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
 "p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class=
 "n">moment</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
     <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="vi">@date</span><span class=
 "o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
-    
-  <span class="n">addEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
+
+  <span class="ss">addEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
     <span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">EventView</span><span class=
 "p">(</span><span class="n">event</span><span class="p">)</span>
     <span class="vi">@events</span><span class="o">.</span><span class="n">append</span>
-  
-  <span class="n">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
+
+  <span class="ss">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
 "p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?</span><span class=
 "o">.</span><span class="n">update</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
-  <span class="n">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
+  <span class="ss">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
 "p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?</span><span class=
 "o">.</span><span class="n">remove</span><span class="p">()</span>
-  
+
   <span class="c1"># Private</span>
-  
-  <span class="n">findEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
+
+  <span class="ss">findEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
     <span class="n">selector</span> <span class="o">=</span> <span class="s2">&quot;.event[data-event-id=&#39;</span><span class=
 "si">#{</span><span class="n">event</span><span class="o">.</span><span class="n">startsAtFormat</span><span class="p">()</span><span class=
@@ -330,27 +324,27 @@
     <span class="vi">@events</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class=
 "n">selector</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
 
-  <span class="n">afterAttach</span><span class="p">:</span> <span class="o">-&gt;</span> 
+  <span class="ss">afterAttach</span><span class="p">:</span> <span class="o">-&gt;</span> 
     <span class="vi">@startSpinner</span><span class="p">()</span>
     <span class="vi">@loadEvents</span><span class="p">()</span>
-  
+
   <span class="c1"># ...</span>
 
 <span class="k">class</span> <span class="nc">EventView</span> <span class="n">extends</span> <span class="no">View</span>
-  
+
   <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
-    <span class="vi">@div</span> <span class="n">class</span><span class="p">:</span> <span class="s1">&#39;.event&#39;</span><span class=
+    <span class="vi">@div</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;.event&#39;</span><span class=
 "p">,</span> <span class="s1">&#39;data-event-id&#39;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class=
 "n">id</span> <span class="o">=&gt;</span>
-      <span class="vi">@div</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;description&#39;</span>
-      <span class="vi">@div</span> <span class="n">outlet</span><span class="p">:</span> <span class="s1">&#39;duration&#39;</span>
-  
+      <span class="vi">@div</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;description&#39;</span>
+      <span class="vi">@div</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;duration&#39;</span>
+
   <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
 "p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@update</span> <span class="n">event</span>
-  
-  <span class="n">update</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
+
+  <span class="ss">update</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
     <span class="vi">@attr</span> <span class="s1">&#39;data-starts-at&#39;</span><span class="p">,</span> <span class="n">event</span><span class=
 "o">.</span><span class="n">startsAtFormat</span><span class="p">()</span>
@@ -358,7 +352,6 @@
 "o">.</span><span class="n">description</span>
     <span class="vi">@duration</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class=
 "o">.</span><span class="n">duration</span>
-</code>
 </pre>
           </div>
           <p>
@@ -369,26 +362,26 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
+<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
 "o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class=
 "n">Controller</span>
-  
+
   <span class="vi">@events</span><span class="p">:</span> 
     <span class="s1">&#39;click .event&#39;</span><span class="p">:</span> <span class="s1">&#39;selectEvent&#39;</span>
-  
-  <span class="n">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
+
+  <span class="ss">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
 "p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">moment</span>
     <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class=
-"o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">moment</span><span class=
+"o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="ss">moment</span><span class=
 "p">:</span> <span class="vi">@date</span>
-    <span class="k">super</span> <span class="n">el</span><span class="p">:</span> <span class="vi">@view</span>
+    <span class="k">super</span> <span class="ss">el</span><span class="p">:</span> <span class="vi">@view</span>
     <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">bind</span> <span class="s1">&#39;update&#39;</span><span class=
 "p">,</span> <span class="vi">@updateEvent</span>
     <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">bind</span> <span class=
 "s1">&#39;beforeDestroy&#39;</span><span class="p">,</span> <span class="vi">@destroyEvent</span>
-  
-  <span class="n">release</span><span class="p">:</span>
+
+  <span class="ss">release</span><span class="p">:</span>
     <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">unbind</span> <span class="s1">&#39;update&#39;</span><span class=
 "p">,</span> <span class="vi">@updateEvent</span>
     <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">unbind</span> <span class=
@@ -397,19 +390,18 @@
 
   <span class="c1"># Private</span>
 
-  <span class="n">selectEvent</span><span class="p">:</span> <span class="o">-&gt;</span>
+  <span class="ss">selectEvent</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="c1"># ...</span>
 
-  <span class="n">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
+  <span class="ss">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
 "p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@view</span><span class="o">.</span><span class="n">updateEvent</span> <span class="n">event</span>
     <span class="c1"># ...</span>
 
-  <span class="n">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
+  <span class="ss">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
 "p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@view</span><span class="o">.</span><span class="n">removeEvent</span> <span class="n">event</span>
     <span class="c1"># ...</span>
-</code>
 </pre>
           </div>
           <p>

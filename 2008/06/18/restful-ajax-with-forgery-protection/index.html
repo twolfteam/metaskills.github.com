@@ -91,23 +91,20 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class=
-"nt">&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
   <span class="o">&lt;%=</span> <span class="nx">auth_params_js_var</span> <span class="o">%&gt;</span>
 <span class="nt">&lt;/script&gt;</span>
-</code>
 </pre>
           </div>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">def</span> <span class="nf">auth_params_js_var</span>
+<span class="k">def</span> <span class="nf">auth_params_js_var</span>
   <span class="k">unless</span> <span class="no">RAILS_ENV</span> <span class="o">==</span> <span class="s1">&#39;test&#39;</span>
     <span class="sx">%|var authParams = $H({</span><span class="si">#{</span><span class="n">request_forgery_protection_token</span><span class=
 "si">}</span><span class="sx">:</span><span class="si">#{</span><span class="n">form_authenticity_token</span><span class="o">.</span><span class=
 "n">inspect</span><span class="si">}</span><span class="sx">});|</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code>
 </pre>
           </div>
           <p>
@@ -118,9 +115,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="javascript"><span class="nx">doAjaxRequest</span><span class="o">:</span> <span class="kd">function</span><span class=
-"p">(</span><span class="nx">elmnt</span><span class="p">,</span><span class="nx">finishMethod</span><span class="p">)</span> <span class=
-"p">{</span>
+<span class="nx">doAjaxRequest</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">elmnt</span><span class="p">,</span><span class="nx">finishMethod</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// ...</span>
   <span class="kd">var</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">elmnt</span><span class=
 "p">.</span><span class="nx">method</span> <span class="o">||</span> <span class="s1">&#39;post&#39;</span><span class="p">;</span>
@@ -139,7 +135,6 @@
     <span class="nx">method</span><span class="o">:</span> <span class="nx">method</span>
   <span class="p">});</span>
 <span class="p">}</span>
-</code>
 </pre>
           </div>
           <h2>

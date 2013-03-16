@@ -79,7 +79,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">module</span> <span class="nn">ActiveSupport</span>
+<span class="k">module</span> <span class="nn">ActiveSupport</span>
   <span class="k">class</span> <span class="nc">TimeZone</span>
 
     <span class="k">def</span> <span class="nf">as_json</span><span class="p">(</span><span class="n">options</span><span class=
@@ -97,7 +97,6 @@
 
   <span class="k">end</span>
 <span class="k">end</span>
-</code>
 </pre>
           </div>
           <p>
@@ -107,7 +106,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="coffeescript"><span class="nv">moment.fn.forTimeZone = </span><span class="nf">(timeZone) -&gt;</span>
+<span class="nv">moment.fn.forTimeZone = </span><span class="nf">(timeZone) -&gt;</span>
   <span class="nv">currentOffset = </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class=
 "nx">zone</span><span class="p">()</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class=
 "o">*</span> <span class="o">-</span><span class="mi">1</span>
@@ -119,8 +118,7 @@
                       <span class="nx">currentOffset</span> <span class="o">-</span> <span class="nx">timeZone</span><span class=
 "p">.</span><span class="nx">utc_total_offset</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">clone</span><span class="p">().</span><span class="nx">add</span> <span class=
-"s1">&#39;seconds&#39;</span><span class="p">,</span> <span class="nx">adjustedOfffset</span>
-</code>
+"s">&#39;seconds&#39;</span><span class="p">,</span> <span class="nx">adjustedOfffset</span>
 </pre>
           </div>
           <p>
@@ -129,7 +127,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="javascript"><span class="nx">eastern</span> <span class="o">=</span> <span class="p">{</span>
+<span class="nx">eastern</span> <span class="o">=</span> <span class="p">{</span>
   <span class="nx">friendly_identifier</span><span class="o">:</span> <span class="s2">&quot;America - New York&quot;</span><span class="p">,</span>
   <span class="nx">identifier</span><span class="o">:</span> <span class="s2">&quot;America/New_York&quot;</span><span class="p">,</span>
   <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Eastern Time (US &amp; Canada)&quot;</span><span class="p">,</span>
@@ -149,7 +147,6 @@
 "nx">forTimeZone</span><span class="p">(</span><span class="nx">eastern</span><span class="p">).</span><span class="nx">format</span><span class=
 "p">(</span><span class="nx">format</span><span class="p">)</span>
 <span class="c1">// &quot;August 6th, 2012 at 3:00pm&quot;</span>
-</code>
 </pre>
           </div>
           <h2>

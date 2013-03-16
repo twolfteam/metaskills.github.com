@@ -88,8 +88,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">MyDownload</span>
-  
+<span class="k">class</span> <span class="nc">MyDownload</span>
+
   <span class="n">has_attached_file</span> <span class="ss">:attachment</span><span class="p">,</span> 
                     <span class="ss">:storage</span> <span class="o">=&gt;</span> <span class="ss">:s3</span><span class="p">,</span> <span class=
 "ss">:bucket</span> <span class="o">=&gt;</span> <span class="s1">&#39;mybucket&#39;</span><span class="p">,</span>
@@ -103,38 +103,37 @@
 "n">random_secret</span><span class="si">}</span><span class="s2">/:filename&quot;</span> <span class="p">},</span>
                     <span class="ss">:processors</span> <span class="o">=&gt;</span> <span class="o">[</span><span class=
 "ss">:noop</span><span class="o">]</span>
-  
+
   <span class="n">before_validation_on_create</span> <span class="ss">:set_random_secret</span>
-  
-  
+
+
   <span class="k">def</span> <span class="nf">attachment_url</span>
     <span class="s2">&quot;</span><span class="si">#{</span><span class="nb">self</span><span class="o">.</span><span class=
 "n">class</span><span class="o">.</span><span class="n">tableize</span><span class="si">}</span><span class="s2">/</span><span class=
 "si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class=
 "n">attachment_file_name</span><span class="si">}</span><span class="s2">&quot;</span>
   <span class="k">end</span>
-  
+
   <span class="k">def</span> <span class="nf">authenticated_s3_get_url</span><span class="p">(</span><span class="n">options</span><span class=
 "o">=</span><span class="p">{})</span>
     <span class="n">options</span><span class="o">.</span><span class="n">reverse_merge!</span> <span class="ss">:expires_in</span> <span class=
 "o">=&gt;</span> <span class="mi">10</span><span class="o">.</span><span class="n">minutes</span><span class="p">,</span> <span class=
 "ss">:use_ssl</span> <span class="o">=&gt;</span> <span class="kp">true</span>
-    <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class=
+    <span class="ss">AWS</span><span class="p">:</span><span class="ss">:S3</span><span class="o">::</span><span class=
 "no">S3Object</span><span class="o">.</span><span class="n">url_for</span> <span class="n">attachment</span><span class="o">.</span><span class=
 "n">path</span><span class="p">,</span> <span class="n">attachment</span><span class="o">.</span><span class="n">options</span><span class=
 "o">[</span><span class="ss">:bucket</span><span class="o">]</span><span class="p">,</span> <span class="n">options</span>
   <span class="k">end</span>
-  
+
   <span class="kp">private</span>
-  
+
   <span class="k">def</span> <span class="nf">set_random_secret</span>
     <span class="nb">self</span><span class="o">.</span><span class="n">random_secret</span> <span class="o">=</span> <span class=
-"no">ActiveSupport</span><span class="o">::</span><span class="no">SecureRandom</span><span class="o">.</span><span class="n">hex</span><span class=
+"ss">ActiveSupport</span><span class="p">:</span><span class="ss">:SecureRandom</span><span class="o">.</span><span class="n">hex</span><span class=
 "p">(</span><span class="mi">8</span><span class="p">)</span>
   <span class="k">end</span>
-  
+
 <span class="k">end</span>
-</code>
 </pre>
           </div>
           <p>
@@ -160,7 +159,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># A MyDownload instance.</span>
+<span class="c1"># A MyDownload instance.</span>
 <span class="o">&gt;&gt;</span> <span class="n">dl</span> <span class="o">=</span> <span class="no">MyDownload</span><span class=
 "o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 
@@ -178,7 +177,6 @@
 <span class="o">&gt;&gt;</span> <span class="n">dl</span><span class="o">.</span><span class="n">authenticated_s3_get_url</span>
 <span class="o">=&gt;</span> <span class=
 "s2">&quot;https://s3.amazonaws.com/mybucket/000/000/004/147681c16fddc1e5/private.pdf?AWSAccessKeyId=0HJD3NS9CVWN2JV89K02&amp;Expires=1258990967&amp;Signature=8aWsq4o5gXfpIrRZyeETddnOeFw%3D&quot;</span>
-</code>
 </pre>
           </div>
           <h2>
@@ -193,16 +191,15 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">module</span> <span class="nn">Paperclip</span>  
+<span class="k">module</span> <span class="nn">Paperclip</span>  
   <span class="k">class</span> <span class="nc">Noop</span> <span class="o">&lt;</span> <span class="no">Processor</span>
-    
+
     <span class="k">def</span> <span class="nf">make</span>
       <span class="n">file</span>
     <span class="k">end</span>
 
   <span class="k">end</span>
 <span class="k">end</span>
-</code>
 </pre>
           </div>
           <h2>
@@ -216,7 +213,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">MyDownload</span>
+<span class="k">class</span> <span class="nc">MyDownload</span>
 
   <span class="n">has_attached_file</span> <span class="ss">:attachment</span><span class="p">,</span> 
                     <span class="ss">:storage</span> <span class="o">=&gt;</span> <span class="ss">:fog</span><span class="p">,</span> 
@@ -231,7 +228,7 @@
 "o">|</span><span class="n">attachment</span><span class="o">|</span> <span class="s2">&quot;:id_partition/</span><span class=
 "si">#{</span><span class="n">attachment</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class=
 "n">random_secret</span><span class="si">}</span><span class="s2">/:filename&quot;</span> <span class="p">}</span>  
-  
+
   <span class="k">def</span> <span class="nf">authenticated_s3_get_url</span><span class="p">(</span><span class="n">expires</span> <span class=
 "o">=</span> <span class="kp">nil</span><span class="p">)</span>
     <span class="n">expires</span> <span class="o">||=</span> <span class="mi">10</span><span class="o">.</span><span class=
@@ -243,9 +240,8 @@
     <span class="n">url</span><span class="o">.</span><span class="n">gsub!</span> <span class="sr">/s3.amazonaws.com\//</span><span class=
 "p">,</span> <span class="s1">&#39;&#39;</span>
   <span class="k">end</span>
-  
+
 <span class="k">end</span>
-</code>
 </pre>
           </div>
           <h2>
