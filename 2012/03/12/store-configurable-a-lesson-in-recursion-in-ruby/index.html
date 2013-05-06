@@ -70,8 +70,8 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class=
-"p">:</span><span class="ss">:Base</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class=
+"ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
   <span class="n">store</span> <span class="ss">:settings</span><span class="p">,</span> <span class="ss">accessors</span><span class=
 "p">:</span> <span class="o">[</span><span class="ss">:color</span><span class="p">,</span> <span class="ss">:homepage</span><span class="o">]</span>
 <span class="k">end</span>
@@ -84,6 +84,7 @@
 "ss">:color</span><span class="o">]</span> <span class="c1"># =&gt; &#39;black&#39;</span>
 <span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class=
 "ss">:remember_me</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
+</code>
 </pre>
           </div>
           <p>
@@ -111,8 +112,8 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class=
-"p">:</span><span class="ss">:Base</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class=
+"ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
   <span class="n">store_configurable</span>
 <span class="k">end</span>
 
@@ -131,6 +132,7 @@
 "n">you</span><span class="o">.</span><span class="n">wanted</span><span class="o">.</span><span class="n">to</span> <span class=
 "o">=</span> <span class="s1">&#39;deep_value&#39;</span>
 <span class="vi">@user</span><span class="o">.</span><span class="n">config_changed?</span> <span class="c1"># =&gt; true</span>
+</code>
 </pre>
           </div>
           <p>
@@ -150,7 +152,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="c1"># Default value passed to new.</span>
+<code class="ruby"><span class="c1"># Default value passed to new.</span>
 
 <span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class=
 "p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>  <span class="c1"># =&gt; {}</span>
@@ -167,6 +169,7 @@
 <span class="nb">hash</span>                        <span class="c1"># =&gt; {}</span>
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class=
 "c1"># =&gt; &quot;Missing foo for hash with id 283829283.&quot;</span>
+</code>
 </pre>
           </div>
           <h2>
@@ -179,7 +182,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">RecursiveHash</span> <span class="o">&lt;</span> <span class="no">Hash</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">RecursiveHash</span> <span class="o">&lt;</span> <span class="no">Hash</span>
   <span class="no">Recursive</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class=
 "o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class=
 "o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class=
@@ -199,6 +202,7 @@
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:a</span><span class="o">][</span><span class="ss">:b</span><span class=
 "o">][</span><span class="ss">:c</span><span class="o">]</span>          <span class="c1"># =&gt; {}</span>
 <span class="nb">hash</span>                      <span class="c1"># =&gt; {:foo=&gt;{}, :a=&gt;{:b=&gt;{:c=&gt;{}}}}</span>
+</code>
 </pre>
           </div>
           <p>
@@ -212,8 +216,9 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="n">loader</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class=
-"nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+<code class="ruby"><span class="n">loader</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class=
+"o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class=
+"n">value</span><span class="o">|</span>
   <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class=
 "no">Hash</span><span class="p">)</span>
     <span class="n">value</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class=
@@ -231,6 +236,7 @@
 "n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class=
 "o">.</span><span class="n">call</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class=
 "n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
+</code>
 </pre>
           </div>
           <p>

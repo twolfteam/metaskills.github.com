@@ -126,7 +126,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="o">=&gt;</span>
@@ -135,11 +135,12 @@
         <span class="vi">@li</span> <span class="s2">&quot;Apollo&quot;</span>
         <span class="vi">@li</span> <span class="s2">&quot;Soyuz&quot;</span>
         <span class="vi">@li</span> <span class="s2">&quot;Space Shuttle&quot;</span>
+</code>
 </pre>
           </div>
           <div class="highlight">
             <pre>
-<span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
+<code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
 <span class="n">view</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class=
 "s1">&#39;ol&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class=
 "s1">&#39;&lt;li&gt;Star Destroyer&lt;/li&gt;&#39;</span><span class="p">)</span>
@@ -149,6 +150,7 @@
   <span class="n">alert</span> <span class="s2">&quot;You clicked on </span><span class="si">#{</span><span class="err">$</span><span class=
 "p">(</span><span class="n">this</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class=
 "p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+</code>
 </pre>
           </div>
           <p>
@@ -160,7 +162,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="o">=&gt;</span>
@@ -172,12 +174,14 @@
     <span class="vi">@shipList</span><span class="o">.</span><span class="n">append</span> <span class="s2">&quot;&lt;li&gt;</span><span class=
 "si">#{</span><span class="n">ship</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class=
 "s2">&lt;/li&gt;&quot;</span>
+</code>
 </pre>
           </div>
           <div class="highlight">
             <pre>
-<span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
+<code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
 <span class="n">view</span><span class="o">.</span><span class="n">addShip</span> <span class="s2">&quot;Enterprise&quot;</span>
+</code>
 </pre>
           </div>
           <p>
@@ -223,7 +227,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
+<code class="ruby"><span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
 
 <span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
 "o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class=
@@ -234,11 +238,12 @@
     <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class=
 "o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span>
     <span class="k">super</span> <span class="ss">el</span><span class="p">:</span> <span class="vi">@view</span>
+</code>
 </pre>
           </div>
           <div class="highlight">
             <pre>
-<span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
+<code class="ruby"><span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
 
 <span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class=
 "n">Day</span> <span class="n">extends</span> <span class="no">View</span>
@@ -254,6 +259,7 @@
     <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="n">params</span><span class=
 "o">.</span><span class="n">moment</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class=
 "s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
+</code>
 </pre>
           </div>
           <p>
@@ -279,8 +285,8 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class=
-"n">Day</span> <span class="n">extends</span> <span class="no">View</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class=
+"o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
@@ -352,6 +358,7 @@
 "o">.</span><span class="n">description</span>
     <span class="vi">@duration</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class=
 "o">.</span><span class="n">duration</span>
+</code>
 </pre>
           </div>
           <p>
@@ -362,7 +369,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
+<code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
 "o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class=
 "n">Controller</span>
 
@@ -402,6 +409,7 @@
 "p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@view</span><span class="o">.</span><span class="n">removeEvent</span> <span class="n">event</span>
     <span class="c1"># ...</span>
+</code>
 </pre>
           </div>
           <p>

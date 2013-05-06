@@ -128,11 +128,13 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:test</span> <span class="k">do</span>
+<code class="ruby"><span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class=
+"ss">:test</span> <span class="k">do</span>
   <span class="n">gem</span> <span class="s1">&#39;jasminerice&#39;</span>
   <span class="n">gem</span> <span class="s1">&#39;guard-jasmine&#39;</span>
   <span class="n">gem</span> <span class="s1">&#39;ruby_gntp&#39;</span>
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <p>
@@ -142,7 +144,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="n">group</span> <span class="s1">&#39;js&#39;</span> <span class="k">do</span>
+<code class="ruby"><span class="n">group</span> <span class="s1">&#39;js&#39;</span> <span class="k">do</span>
 
   <span class="n">guard</span> <span class="s1">&#39;jasmine&#39;</span> <span class="k">do</span>
     <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/index\.js\.coffee$}</span><span class=
@@ -164,6 +166,7 @@
   <span class="k">end</span>
 
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <p>
@@ -188,7 +191,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="n">describe</span> <span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+<code class="ruby"><span class="n">describe</span> <span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
 
   <span class="n">it</span> <span class="s1">&#39;sets el&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class=
@@ -200,6 +203,7 @@
     <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class=
 "n">Application</span><span class="o">.</span><span class="n">userId</span><span class="p">)</span><span class="o">.</span><span class=
 "n">toEqual</span> <span class="vi">@bob</span><span class="o">.</span><span class="n">id</span>
+</code>
 </pre>
           </div>
           <p>

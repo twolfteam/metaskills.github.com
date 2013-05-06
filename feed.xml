@@ -4,7 +4,7 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2013-03-15T20:59:05-04:00</updated>
+ <updated>2013-05-05T21:27:25-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
@@ -18,14 +18,14 @@
    <updated>2013-01-05T00:00:00-05:00</updated>
    <id>http://metaskills.net/2013/01/05/in-loving-memory-kenneth-earle-collins</id>
    <content type="html">
-     <![CDATA[<h4 id="toc_16">Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away January 5th, 2013.</h4>
+     <![CDATA[<h4 id="toc_0">Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away January 5th, 2013.</h4>
 
 <p><span class="photofancy floatl mr20 mb10">
   <img src="/assets/dad-sheriff.jpg" alt="Kenneth Earle Collins - Master Deputy Sheriff" width="173" height="258" />
 </span>
 My father, known to his friends and family as Kenny, was born in Logan, West Virginia and was the son of the late Edgar and Frances Collins. He was a retired Master Deputy with the Chesapeake Sheriff&#39;s Department. Kenny is survived by his beloved wife of 7 years, Lois V. Collins; a sister, Lanna DeVites and husband John of Zuni, VA; 4 sons, Benjamin M. Collins and fiancée Samantha of Williamsburg, VA, Kenneth Collins and wife Kelly of Portsmouth, VA, Brian Seabold and wife Kelly of Chesapeake, VA, and George Seabold and wife Terri of Elizabeth City, North Carolina; a daughter, Lisa Berger and husband Keith Berger of VA Beach, VA; and 6 grandchildren, Marcus, Zachery, Grayson, Bryson, Jacob, and Trey.</p>
 
-<h2 id="toc_17">Service</h2>
+<h2 id="toc_1">Service</h2>
 
 <p><span class="photofancy floatr ml20 mb10">
   <img src="/assets/dad-bootcamp-fort-jackson.jpg" alt="Kenneth Earle Collins - Fort Jackson, South Carolina" width="210" height="137" />
@@ -57,7 +57,7 @@ Dad, served two years in Vietnam from 1966 to 1968. Like most veterans, he never
   <img src="/assets/dad-shadow-boxes.png" alt="Kenneth Earle Collins - Shadow Boxes" width="483" height="215" />
 </div>
 
-<h2 id="toc_18">Lifestyle</h2>
+<h2 id="toc_2">Lifestyle</h2>
 
 <p><span class="photofancy floatr ml20">
   <img src="/assets/dad-golfing-with-ben.jpg" alt="Kenneth Earle Collins - Golfing With Ben Collins" width="136" height="207" />
@@ -71,7 +71,7 @@ Dad was an avid golfer! I mean really, he played every spare moment he could and
 </span>
 After getting divorced in 1991, my Dad eventually remarried in July 2006 to Lois V. Collins. Dad and Lois met at a Parents Without Partners (PWP) group and dated for some time. Lois is a real class act and took care of my Dad during his last few years while battling lung cancer. I can not count the number of times she would drive them both to his favorite destinations or other out of state trips. Lois will always be a Collins and is family to me. I love her dearly.</p>
 
-<h2 id="toc_19">Stories</h2>
+<h2 id="toc_3">Stories</h2>
 
 <p><span class="photofancy floatr ml20">
   <img src="/assets/dad-and-linda.jpg" alt="Kenneth Earle Collins - With My Mom, Linda Collins" width="134" height="139" />
@@ -94,11 +94,11 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 * Gather up other stories.
 -->
 
-<h2 id="toc_20">In Closing</h2>
+<h2 id="toc_4">In Closing</h2>
 
 <p>The Collins family has always been close, despite long durations without seeing one another. Often times I went weeks without checking in on my immediate family. The great part about family is that you can always pick up right where you left off. Time has no meaning. But with my Dad&#39;s passing, I will really miss that next time when I want to call and talk to him.</p>
 
-<h2 id="toc_21">Other Links</h2>
+<h2 id="toc_5">Other Links</h2>
 
 <ul>
 <li><a href="http://www.hollomon-brown.com/obituary/Kenneth-Earle-Collins/Chesapeake-VA/1158699">Hollomon-Brown Obituary</a></li>
@@ -139,14 +139,14 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <li><a href="https://github.com/metaskills/holy_grail_harness/archive/master.zip">Download</a> the project.</li>
 <li>Now from the root of &quot;holy_grail_harness&quot; directory.</li>
 </ul>
-<div class="highlight"><pre><span class="nb">puts</span> <span class="s2">&quot;This code will be highlighted&quot;</span>
-</pre></div>
+<div class="highlight"><pre><code class="ruby"><span class="nb">puts</span> <span class="s2">&quot;This code will be highlighted&quot;</span>
+</code></pre></div>
 <p>Make sure to replace <code>my_app_name</code> above with the name of your new Rails application. The setup script has a few options, but the end result will be a new Rails application all ready to go. <strong>So why not a normal Rails application template?</strong> Although, Rails application templates provide a really nice feature set. It was much easier to bootstrap a new Rails application using this prototype method. The end result is a cleaner Gemfile and application setup that can be vetted and tested from within HolyGrailHarness itself.</p>
 
 <p>The script will rename your directory and prompt you to <code>cd</code> to that directory. Once you do that, run <code>rake test:all</code> to see that everything is working.</p>
-<div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd</span> ../my_app_name
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span><span class="nb">cd</span> ../my_app_name
 <span class="nv">$ </span>bundle <span class="nb">exec </span>rake <span class="nb">test</span>:all
-</pre></div>
+</code></pre></div>
 <h1 id="toc_1">Rails 3</h1>
 
 <p>This application prototype will focus on the latest Rails version. At this time, the bundle is locked down to v3.2.9. As Rails updates and is compatible with each component, so will this prototype application be updated. The bundle includes:</p>
@@ -161,7 +161,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <h3 id="toc_3">MiniTest::Spec All The Way Across The Sky!</h3>
 
 <p>Don&#39;t wait for Rails 4 to use MiniTest::Spec! This application is using the <a href="https://github.com/metaskills/minitest-spec-rails">minitest-spec-rails</a> gem which forces <code>ActiveSupport::TestCase</code> to subclass <code>MiniTest::Spec</code>. This means that you can start using the MiniTest&#39;s Spec or Unit structure and assertions directly within the familiar Rails unit, functional, or integration directories. For full details, check out the <a href="https://github.com/metaskills/minitest-spec-rails">minitest-spec-rails</a> documentation or some of the <a href="https://github.com/metaskills/holy_grail_harness/blob/master/test/functional/application_controller_test.rb">test shims</a> within HolyGrailHarness. For example, a <code>test/unit/user_test.rb</code> might look like this.</p>
-<div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;test_helper&#39;</span>
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper&#39;</span>
 
 <span class="k">class</span> <span class="nc">UserTest</span> <span class="o">&lt;</span> <span class="ss">ActiveSupport</span><span class="p">:</span><span class="ss">:TestCase</span>
 
@@ -174,7 +174,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   <span class="k">end</span>
 
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <h3 id="toc_4">Capybara Integration Tests With Poltergeist Using PhantomJS</h3>
 
 <p>You don&#39;t need Cucumber to write good integration tests. Instead use the basic <a href="https://github.com/jnicklas/capybara#the-dsl">Capybara DSL</a> directly within a Rails integration tests with the most bad ass driver available, <a href="https://github.com/jonleighton/poltergeist">Poltergeist</a>, which is built on top of <a href="http://phantomjs.org">PhantomJS</a>. Never again worry about installing Qt so you can compile capybara-webkit, just go download a <a href="http://phantomjs.org/download.html">pre-compiled PhantomJS binary</a> for your specific platform and enjoy 20% faster integration test runs vs capybara-webkit.</p>
@@ -190,7 +190,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 </ul>
 
 <p>HolyGrailHarness comes with a integration test example in the <a href="https://github.com/metaskills/holy_grail_harness/blob/master/test/integration/application_test.rb">test/integration/application_test.rb</a> file. An integration test might look something like this.</p>
-<div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;test_helper_integration&#39;</span>
+<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper_integration&#39;</span>
 
 <span class="k">class</span> <span class="nc">ApplicationTest</span> <span class="o">&lt;</span> <span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:IntegrationTest</span>
 
@@ -203,7 +203,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   <span class="k">end</span>
 
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <h3 id="toc_5">Konacha JavaScript Tests Using PhantomJS</h3>
 
 <p>Move over Jasmine(rice), <a href="https://github.com/jfirebaugh/konacha">Konacha</a> is the way to test your JavaScript now. Konacha is a Rails engine that allows you to test your JavaScript with the <a href="http://visionmedia.github.com/mocha/">Mocha</a> test framework and <a href="http://chaijs.com">Chai</a> assertion library. Konacha&#39;s killer feature is a sandboxed <code>&lt;iframe&gt;</code> for each test spec to run within as well as full Rails asset pipeline integration. The HolyGrailHarness does all the work to get your Konacha <a href="https://github.com/metaskills/holy_grail_harness/tree/master/spec/javascripts"><code>spec/javascripts</code></a> directory all setup and ready to go. Highlights include:</p>
@@ -224,15 +224,15 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 </ul>
 
 <p>Because your CI system should run all your tests, the HolyGrailHarness has added a Rake task to the test namespace that runs the default rails test task (units, functional, integrations) then your Konacha tests.</p>
-<div class="highlight"><pre><span class="nv">$ </span>rake <span class="nb">test</span>:all     <span class="c"># Runs all Rails tests, then Konacha tests.</span>
-</pre></div>
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>rake <span class="nb">test</span>:all     <span class="c"># Runs all Rails tests, then Konacha tests.</span>
+</code></pre></div>
 <h3 id="toc_6">Guard</h3>
 
 <p>TDD in style and run your tests when you hit save! Both <a href="https://github.com/guard/guard-minitest">guard-minitest</a> and <a href="https://github.com/alexgb/guard-konacha">guard-konacha</a> are bundled and ready to go. A basic <code>Guardfile</code> is already setup too. Unlike most, this one is split into two groups <code>:ruby</code> or <code>:js</code>. This lets you focus on either everything or a specific language for your tests.</p>
-<div class="highlight"><pre><span class="nv">$ </span>guard             <span class="c"># Monitor both Ruby and JavaScript tests.</span>
+<div class="highlight"><pre><code class="bash"><span class="nv">$ </span>guard             <span class="c"># Monitor both Ruby and JavaScript tests.</span>
 <span class="nv">$ </span>guard -g ruby     <span class="c"># Monitor Ruby tests.</span>
 <span class="nv">$ </span>guard -g js       <span class="c"># Monitor JavaScript tests.</span>
-</pre></div>
+</code></pre></div>
 <p>The Guardfile assumes you are running OS X and wish to use the Ruby GNTP (Growl Notification Transport Protocol). If this is not the case, consult the Guard documentation on different <a href="https://github.com/guard/guard#system-notifications">system notification</a> alternatives.</p>
 
 <h3 id="toc_7">Factories And Fixtures</h3>
@@ -242,7 +242,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>The HolyGrailHarness bundles the <a href="https://github.com/metaskills/named_seeds">named_seeds</a> gem along with the <a href="https://github.com/thoughtbot/factory_girl">factory_girl</a> gem. The NamedSeeds library checks for the existence of a <a href="https://github.com/metaskills/holy_grail_harness/blob/master/db/test/seeds.rb"><code>db/test/seeds.rb</code></a> file and if present, loads that file. Just like Rails&#39; own <code>db/seeds.rb</code> anything in this file goes. The only difference is that this seed file is populated right before you tests are run so they persist between transactions. You also get the benefit of using this same seed data in development as part of the normal Rails <code>db:setup</code> process. Read the <a href="https://github.com/metaskills/named_seeds#namedseeds">full documentationn</a> on their site on how to use it. Below is a brief example.</p>
 
 <p>Create factories in the <code>test/factories</code> directory. Note, factories are best when they make <code>valid garbage™</code>, so the HolyGrailHarness also requires the <a href="https://github.com/sevenwire/forgery">forgery</a> gem to help with that.</p>
-<div class="highlight"><pre><span class="c1"># In test/factories/user_factory.rb</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In test/factories/user_factory.rb</span>
 
 <span class="no">FactoryGirl</span><span class="o">.</span><span class="n">define</span> <span class="k">do</span>
 
@@ -254,9 +254,9 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   <span class="k">end</span>
 
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <p>When making seed data, be explicit with your attributes that may be forged in the factory, database seeds should be consistent and have meaningful attributes. In this example we are creating an admin user. Note too how we are using <code>NamedSeeds.identify</code> which mimics AcctiveRecord&#39;s fixture identity. This gives us a handle to the fixture within our tests. We also create the <code>@admin</code> instance variable because we might want to use that user later on in the fixture story.</p>
-<div class="highlight"><pre><span class="c1"># In db/test/seeds.rb</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In db/test/seeds.rb</span>
 
 <span class="nb">require</span> <span class="s1">&#39;factory_girl&#39;</span>
 <span class="no">FactoryGirl</span><span class="o">.</span><span class="n">find_definitions</span> <span class="k">rescue</span> <span class="kp">true</span>
@@ -264,24 +264,24 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 
 <span class="vi">@admin</span> <span class="o">=</span> <span class="n">create</span> <span class="ss">:user</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="no">NamedSeeds</span><span class="o">.</span><span class="n">identify</span><span class="p">(</span><span class="ss">:admin</span><span class="p">),</span> 
                        <span class="n">first_name</span><span class="p">:</span> <span class="s1">&#39;Admin&#39;</span><span class="p">,</span> <span class="n">last_name</span><span class="p">:</span> <span class="s1">&#39;User&#39;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s1">&#39;admin@test.com&#39;</span>
-</pre></div>
+</code></pre></div>
 <p>Lastly, in your <a href="https://github.com/metaskills/holy_grail_harness/blob/master/test/test_helper.rb"><code>test/test_helper.rb</code></a> file, declare that you have a named seed to the users model. This will allow your tests to act just like those with ActiveRecord fixtures and use the <code>users(:admin)</code> helper to get to that seeded fixture.</p>
-<div class="highlight"><pre><span class="c1"># In test/test_helper.rb</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In test/test_helper.rb</span>
 
 <span class="k">class</span> <span class="nc">ActiveSupport</span><span class="o">::</span><span class="no">TestCase</span>
 
   <span class="n">named_seeds</span> <span class="ss">:users</span>
 
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <h1 id="toc_8">MVC JavaScript</h1>
 
 <p>The HolyGrailHarness wants you to use some type MV* structure for your JavaScript. The setup script supports <a href="http://spinejs.com">Spine.js</a> as an option, however you can decline and all traces of Spine.js will be removed. If so, the following features will still remain. </p>
 
 <p>A single JavaScript <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/holy_grail_harness/lib/namespaces.js.coffee">namespace</a> on the window object. This namespace creates a model, view, controller object structure that direly matches to the <a href="https://github.com/metaskills/holy_grail_harness/tree/master/app/assets/javascripts/holy_grail_harness"><code>app/assets/javascripts/#{my_app_name}/(model|view|controller)</code></a> directory structure within the Rails asset pipeline. This JavaScript namespace and matching directories will be changed to your new application name as part of the setup task. Here is an example of a User model whose corresponding file would be found in the <code>app/assets/javascripts/my_app_name/models/user.js.coffee</code> file.</p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nx">@MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class="nx">User</span> <span class="k">extends</span> <span class="nx">View</span>  
+<div class="highlight"><pre><code class="coffeescript"><span class="k">class</span> <span class="nx">@MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class="nx">User</span> <span class="k">extends</span> <span class="nx">View</span>  
   <span class="nx">@configure</span> <span class="s">&#39;User&#39;</span><span class="p">,</span> <span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="s">&#39;email&#39;</span>
-</pre></div>
+</code></pre></div>
 <p>The main <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/application.js"><code>application.js</code></a> file requires all vendor frameworks, then the <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/holy_grail_harness/index.js.coffee"><code>index.js.coffee</code></a> within your application name directory. Use this file to boot your JavaScript application and/or setup your root view controller.</p>
 
 <p>Also included is the <a href="https://github.com/nathansobo/space-pen">SpacePen</a> view framework. SpacePen is a powerful and minimalist client-side view framework authored in CoffeeScript. It is actually a jQuery subclass which makes your views really easy to traverse and respond to controller events. Read my <a href="http://metaskills.net/2012/05/22/view-controller-patterns-with-spine-js-and-spacepen/"><em>View Controller Patterns With Spine.js &amp; SpacePen</em></a> article to learn why views should not be dumb and how you can take advantage of SpacePen no matter what JavaScript MV* framework you use.</p>
@@ -291,12 +291,12 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>If you choose to use Spine.js as your JavaScript MVC structure, the setup script will create a git submodule to the Spine repository to the <code>vendor/assets/javascripts/spine</code> directory. This allows your project to use the the source CoffeeScript files, which makes for a wonderful <a href="http://metaskills.net/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">learning experience</a> to both Spine.js and idomatic CoffeeScript. </p>
 
 <p>By default the <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/holy_grail_harness/index.js.coffee"><code>index.js.coffee</code></a> will require all Spine components. This includes manager (stacks), ajax, route, and relation. Remove anything that you do not need. This file also defines the root view controller along with a <code>MyAppName.App.Index.init()</code> class level initialization function. This is called in the main <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/views/layouts/application.html.erb"><code>application.html.erb</code></a> layout file for you too. Likewise, the application init is done in the Mocha before filters mentioned above in both the <a href="https://github.com/metaskills/holy_grail_harness/blob/master/spec/javascripts/spec_helper.js.coffee"><code>spec_helper.js.coffee</code></a> and <a href="https://github.com/metaskills/holy_grail_harness/blob/master/spec/javascripts/spec_helper/fixtures.js.coffee"><code>fixtures.js.coffee</code></a> files. If you examine these files closely, you will see how they make use of Mocha&#39;s <code>done()</code> callback so that you can cleanly abstract AJAX mocks and anything else related to your JavaScript application&#39;s boot process. Here is an example of how you might setup your <code>initApplication()</code>.</p>
-<div class="highlight"><pre><span class="vi">@initApplication = </span><span class="nf">(callback) =&gt;</span>
+<div class="highlight"><pre><code class="coffeescript"><span class="vi">@initApplication = </span><span class="nf">(callback) =&gt;</span>
   <span class="nv">bob = </span><span class="nx">MyAppName</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Seeds</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">bob</span>
   <span class="nx">$</span><span class="p">.</span><span class="nx">mockjax</span> <span class="nv">url: </span><span class="s">&quot;/users/</span><span class="si">#{</span><span class="nx">bob</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">responseText: </span><span class="nx">MyAppName</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Response</span><span class="p">.</span><span class="nx">bobInitial</span><span class="p">.</span><span class="nx">responseText</span>
   <span class="nx">MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">fetch</span> <span class="nv">id: </span><span class="nx">bob</span><span class="p">.</span><span class="nx">id</span>
   <span class="nx">MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">one</span> <span class="s">&#39;refresh&#39;</span><span class="p">,</span> <span class="nx">callback</span>
-</pre></div>
+</code></pre></div>
 <p>No JavaScript project should be without a local notification system to help keep disparate components up to date. Thankfully, Spine&#39;s event module makes a local PubSub system a breeze. The HolyGrailHarness has a <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/holy_grail_harness/lib/notifications.js.coffee"><code>notifications.js.coffee</code></a> that exposes a class level <code>bind()</code> and <code>trigger()</code> to any event string/namespace you want. To make more simple, we recommend creating class level functions that expose the event name as the function name and pass the args to the <code>handle()</code> function. We have done this for the <code>MyAppName.Notifications.appReady()</code> to demonstrate. Calling this function will trigger the <code>app.ready</code> event and passing a function to this function will bind that function to the same event name.</p>
 
 <h1 id="toc_10">Sass &amp; Compass</h1>
@@ -304,7 +304,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p><a href="http://sass-lang.com">Sass</a> is the only way to write CSS for today&#39;s modern web applications. <a href="http://compass-style.org">Compass</a> is the CSS framework that no Sass user should go without. Together they provide a foundation for writing beautiful CSS using pre-built time saving functions. The HolyGrailHarness includes both the <a href="https://github.com/rails/sass-rails">sass-rails</a> and <a href="https://github.com/Compass/compass-rails">compass-rails</a> gems.</p>
 
 <p>To get you started on the right path, we have also created a basic structure within the <code>app/assets/stylesheets</code> asset pipeline directory to help you organize your Sass files. Here is the directory structure below.</p>
-<div class="highlight"><pre>├── application.css
+<div class="highlight"><pre><code class="text">├── application.css
 ├── application
 │   ├── _layout.scss
 │   ├── index.scss
@@ -317,15 +317,15 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
     ├── _placeholders.scss
     ├── _variables.scss
     └── base.scss
-</pre></div>
+</code></pre></div>
 <h3 id="toc_11">The application.css file.</h3>
 
 <p>Never write CSS in <code>application.css</code>. Say what? I know right, but trust me. Just consider this file a top level bundle dependency that only requires other top level bundle assets. Here is the contents of that file. Notice how it requires a bundle called twitter and an index. One is for twitter bootstrap, see section below, and the other is the index to your own Sass framework.</p>
-<div class="highlight"><pre><span class="c">/*</span>
+<div class="highlight"><pre><code class="css"><span class="c">/*</span>
 <span class="c"> *= require application/twitter</span>
 <span class="c"> *= require application/index</span>
 <span class="c">*/</span>
-</pre></div>
+</code></pre></div>
 <h3 id="toc_12">The shared directory.</h3>
 
 <p>Think of this as your own Compass framework. The <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/stylesheets/shared/base.scss"><code>base.scss</code></a> is your single file to <code>@import</code> to get everything loaded and ready to go. <strong>Nothing in any of the shared files should generate CSS!</strong> Importing <code>shared/base</code> should act just like importing <code>compass</code>. Use these files for setting your own variables and creating misc helper functions &amp; mixins. There is a variables file for... variables! Another for animations, fonts and mixins too.</p>
@@ -333,7 +333,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>Pay special attention to the <code>_placeholders.scss</code> file. If you do not know about Sass 3.2&#39;s placeholder selectors (silent classes) and how they make presentational classes efficiently extended by semantic ones, then I highly suggest you read Dale Sande&#39;s presentation titled <a href="https://speakerdeck.com/anotheruiguy/sass-32-silent-classes">Sass 3.2 Silent Classes</a> on Speaker Deck.</p>
 
 <p>Below is the contents of the <code>base.scss</code> file, take note of the order. See too how we import the entire Compass framework. This means that all of your Sass code in any of the shared files can take full advantage of both Bootstrap and Compass&#39; variables and mixins. Epic win!</p>
-<div class="highlight"><pre><span class="c1">// Think of this file as your own compass. Importing the base, never generates CSS.</span>
+<div class="highlight"><pre><code class="sass"><span class="c1">// Think of this file as your own compass. Importing the base, never generates CSS.</span>
 
 <span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;bootstrap/mixins&quot;;</span>
@@ -344,14 +344,14 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <span class="k">@import</span> <span class="s">&quot;shared/mixins&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;shared/animations&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;shared/placeholders&quot;;</span>
-</pre></div>
+</code></pre></div>
 <h3 id="toc_13">The application directory.</h3>
 
 <p>Organize this as you see fit. We have started you off by creating a <code>_layout.scss</code> file for your general layout/structure styles. There is also a <code>components</code> directory which all sub files are imported via a glob. The idea is that components are not dependent upon another. Files that might go in here are things like datepicker, navigation, and general files named after components or widgets. Below is what the <code>application/index.scss</code> looks like.</p>
-<div class="highlight"><pre><span class="k">@import</span> <span class="s">&quot;shared/base&quot;;</span>
+<div class="highlight"><pre><code class="sass"><span class="k">@import</span> <span class="s">&quot;shared/base&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;./layout&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;components/*&quot;;</span>
-</pre></div>
+</code></pre></div>
 <p>If you are more advanced with your CSS and like the idea of style guides, take a looks a the <a href="https://github.com/Anotheruiguy/toadstool">Toadstool</a> style guide framework.</p>
 
 <h1 id="toc_14">Twitter Bootstrap</h1>
@@ -359,12 +359,12 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> is awesome, but <a href="http://metaskills.net/2012/02/27/too-less-should-you-be-using-sass/">LESS is not</a>. That is why the HolyGrailHarness uses the <a href="https://github.com/thomas-mcdonald/bootstrap-sass">bootstrap-sass</a> gem that converts all the Bootstrap LESS files to Sass. Making them ready to import via the Rails asset pipeline.</p>
 
 <p>As shown above in the Sass section, we require the <code>application/twitter.scss</code> bundle asset from the top level <code>application.css</code> bundle file. This twitter bundle file, contents below, take advantage of your shared variables before importing bootstrap from the gem. In this way you can define variables that tweak bootstrap. A good example would be button colors, column widths, etc. Later on in the file you can extend bootstrap styles to your liking. For instance, add more padding to buttons.</p>
-<div class="highlight"><pre><span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
+<div class="highlight"><pre><code class="sass"><span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;bootstrap&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;font-awesome&quot;;</span>
 
 <span class="c1">// Tweak or redefine Twitter classes below.</span>
-</pre></div>
+</code></pre></div>
 <h3 id="toc_15">Font Awesome</h3>
 
 <p>The glyph icons included in Twitter Bootstrap are horrible for hi-resolution &quot;retina&quot; displays typically found on mobile devices. Thankfully the <a href="http://fortawesome.github.com/Font-Awesome/">Font Awesome</a> project provides a drop in replacement that instead uses icon fonts vs raster images. </p>
@@ -424,22 +424,22 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   These file snippets below assume you have an <code>integration.js</code> manifest which includes both a vendored Sinon.JS then a sub file which actually initializes Sinon.JS for our integration test run. In this case below, we are first processing a CoffeeScript file with ERB and then initializing Sinon.JS' fake timers to a default time. In my case, this is 8:30am central standard time. Now we can assure that Capybara's browser engine will be frozen at that time and ready to move forward for each test.
 </p>
-<div class="highlight"><pre><span class="c1">// File app/assets/javascripts/integration.js</span>
+<div class="highlight"><pre><code class="javascript"><span class="c1">// File app/assets/javascripts/integration.js</span>
 
 <span class="c1">//= require sinon-1.4.2</span>
 <span class="c1">//= require integration/sinon</span>
 <span class="c1">//= require application</span>
-</pre></div><div class="highlight"><pre><span class="c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb</span>
+</code></pre></div><div class="highlight"><pre><code class="coffeescript"><span class="c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb</span>
 
 <span class="o">&lt;%</span> <span class="nv">central = </span><span class="nx">ActiveSupport</span><span class="o">::</span><span class="nx">TimeZone</span><span class="p">[</span><span class="s">&#39;Central Time (US &amp; Canada)&#39;</span><span class="p">]</span> <span class="o">%&gt;</span>
 <span class="o">&lt;%</span> <span class="nv">today = </span><span class="nx">central</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="s">&#39;8:30am&#39;</span><span class="p">).</span><span class="nx">to_i</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">%&gt;</span>
 
 <span class="nb">window</span><span class="p">.</span><span class="nv">clock = </span><span class="nx">sinon</span><span class="p">.</span><span class="nx">useFakeTimers</span> <span class="o">&lt;%=</span> <span class="nx">today</span> <span class="o">%&gt;</span>
-</pre></div>
+</code></pre></div>
 <p>
   Now, the Ruby code. Here is slimmed down version of my base integration test case which <a href="/2011/03/26/using-minitest-spec-with-rails/">uses MiniTest::Spec</a> to drive Capybara tests. The first thing I do before any integration test is use Timecop to travel to 8:30am. This means that both Ruby and JavaScript are synced to the exact millisecond in time. Any test that needs to move time forward must call the <code>#advance_time</code> test helper. This method takes a hash of options which is passed directly to the <code>#advance</code> method I previously talked about. It measures the milliseconds between now and the advancement and sends that directly to Sinon.JS' fake timers using Capybara's <code>#execute_script</code> method. So calling <code>advance_time(seconds:20)</code> in Ruby now moves time forward in both Ruby and JavaScript. Epic win!!!
 </p>
-<div class="highlight"><pre><span class="c1"># File test/test_helper_integration.rb</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># File test/test_helper_integration.rb</span>
 
 <span class="nb">require</span> <span class="s2">&quot;test_helper&quot;</span>
 <span class="nb">require</span> <span class="s2">&quot;capybara/rails&quot;</span>
@@ -475,7 +475,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   <span class="k">end</span>
 
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <p>
   I have found the following technique critical to fully testing a recent time based JavaScript application I have developed. I hope you find this technique useful as well and as always, please contribute your thoughts or questions below. Cheers!
 </p>
@@ -505,7 +505,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   Many JavaScript time zone libraries require a huge set of geographic data to both identify zones and their observance of DST. These data files can add a significant overhead to JavaScript. But wouldn't it be great if there was a simple way of leveraging your Rails model's time zone settings? There is, but first we need to serialize an <code>ActiveSupport::TimeZone</code> object in JSON. Easy, just define an <code>#as_json</code> method like the one below. I suggest adding this to an initializer in your Rails <code>config/initializers/active_support.rb</code> directory. The key attribute here is the <code>utc_total_offset</code>. This will be a number in minutes that properly observes DST.
 </p>
-<div class="highlight"><pre><span class="k">module</span> <span class="nn">ActiveSupport</span>
+<div class="highlight"><pre><code class="ruby"><span class="k">module</span> <span class="nn">ActiveSupport</span>
   <span class="k">class</span> <span class="nc">TimeZone</span>
 
     <span class="k">def</span> <span class="nf">as_json</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
@@ -518,22 +518,22 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 
   <span class="k">end</span>
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <p>
   Now assuming you have serialized a models time zone attribute using the full <code>ActiveSupport::TimeZone</code> object, we can easily use this information client side via a quick extension to Moment.js' prototype. Here is a <code>moment.js.coffee</code> file I have required in my Rails applications.
 </p>
-<div class="highlight"><pre><span class="nv">moment.fn.forTimeZone = </span><span class="nf">(timeZone) -&gt;</span>
+<div class="highlight"><pre><code class="coffeescript"><span class="nv">moment.fn.forTimeZone = </span><span class="nf">(timeZone) -&gt;</span>
   <span class="nv">currentOffset = </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">zone</span><span class="p">()</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
   <span class="nv">adjustedOfffset = </span><span class="k">if</span> <span class="nx">currentOffset</span> <span class="o">&gt;</span> <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span> 
                       <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span> <span class="o">-</span> <span class="nx">currentOffset</span> 
                     <span class="k">else</span> 
                       <span class="nx">currentOffset</span> <span class="o">-</span> <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">clone</span><span class="p">().</span><span class="nx">add</span> <span class="s">&#39;seconds&#39;</span><span class="p">,</span> <span class="nx">adjustedOfffset</span>
-</pre></div>
+</code></pre></div>
 <p>
   So we let Ruby do all the hard work of telling us what time zones are observing DST without all the bloat to our JavaScript for parsing zone identifiers. Some sample output.
 </p>
-<div class="highlight"><pre><span class="nx">eastern</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="javascript"><span class="nx">eastern</span> <span class="o">=</span> <span class="p">{</span>
   <span class="nx">friendly_identifier</span><span class="o">:</span> <span class="s2">&quot;America - New York&quot;</span><span class="p">,</span>
   <span class="nx">identifier</span><span class="o">:</span> <span class="s2">&quot;America/New_York&quot;</span><span class="p">,</span>
   <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Eastern Time (US &amp; Canada)&quot;</span><span class="p">,</span>
@@ -549,7 +549,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 
 <span class="nx">moment</span><span class="p">(</span><span class="nx">noonPacific</span><span class="p">).</span><span class="nx">forTimeZone</span><span class="p">(</span><span class="nx">eastern</span><span class="p">).</span><span class="nx">format</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span>
 <span class="c1">// &quot;August 6th, 2012 at 3:00pm&quot;</span>
-</pre></div>
+</code></pre></div>
 <h2>Resources</h2>
 
 <ul>
@@ -601,7 +601,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   I found the <a href="https://github.com/nathansobo/space-pen">SpacePen project on github</a> a few months ago and I have never looked at another templating solution since. For the first time my JavaScript application's view and controller stacks feel natural. No longer do I find myself writing any view related code in my controllers. SpacePen allows me to write view objects that encapsulate their concerns, stay DRY and build Spine.JS web applications that hit the MVC mark. So what is SpacePen? Basically a CoffeeScript subclass of a jQuery object.
 </p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="o">=&gt;</span>
@@ -610,16 +610,16 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
         <span class="vi">@li</span> <span class="s2">&quot;Apollo&quot;</span>
         <span class="vi">@li</span> <span class="s2">&quot;Soyuz&quot;</span>
         <span class="vi">@li</span> <span class="s2">&quot;Space Shuttle&quot;</span>
-</pre></div><div class="highlight"><pre><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
+</code></pre></div><div class="highlight"><pre><code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
 <span class="n">view</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ol&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;li&gt;Star Destroyer&lt;/li&gt;&#39;</span><span class="p">)</span>
 
 <span class="n">view</span><span class="o">.</span><span class="n">click</span> <span class="s1">&#39;li&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
   <span class="n">alert</span> <span class="s2">&quot;You clicked on </span><span class="si">#{</span><span class="err">$</span><span class="p">(</span><span class="n">this</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
-</pre></div>
+</code></pre></div>
 <p>
   This simple example shows how your SpacePen view class defines its markup in a <code>@content</code> class function. This function yields a builder syntax where you can easily add attributes and values. My advice is to do basic structure only in your <code>@content</code> function and rarely take advantage of the fact that it also takes the same parameters argument passed to your constructor. I will explain more on that advice later. But first, I did say that views should expose interfaces to controllers and are first class code citizens that champion their own concerns right? Let's look at a common pattern, views building new nodes within itself.
 </p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="o">=&gt;</span>
@@ -628,9 +628,9 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 
   <span class="ss">addShip</span><span class="p">:</span> <span class="p">(</span><span class="n">ship</span><span class="p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@shipList</span><span class="o">.</span><span class="n">append</span> <span class="s2">&quot;&lt;li&gt;</span><span class="si">#{</span><span class="n">ship</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/li&gt;&quot;</span>
-</pre></div><div class="highlight"><pre><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
+</code></pre></div><div class="highlight"><pre><code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
 <span class="n">view</span><span class="o">.</span><span class="n">addShip</span> <span class="s2">&quot;Enterprise&quot;</span>
-</pre></div>
+</code></pre></div>
 <p>
   The example has been changed slightly so that the view now exposes a public function called <code>addShip()</code> which takes an object to add to the view. It can easily implement this because I have declared the ordered list to be an outlet called <code>shipList</code> which will automatically be assigned as a property on each view instance. Calling append on that node is possible because like the view object itself, any outlet is a jQuery object as well.
 </p>
@@ -654,14 +654,14 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   With the overview of these components out of the way, let's jump right into how they can work together to punch the VC up a notch in your next JavaScript MVC application. These examples below are pared down version of a scheduler application I just completed. The model is similar to an iCal day interface for calendar events. In such, there would be a view controller that manages the presentation of your schedule "by day". This controller's view would have a header for the current day and a set of controls for going to the previous day, today and the next day. This controller would act as a navigation controller and correlate to Apple's notion of a "container" view controller. When needed, it would find or create a day controller and append it to one of its subviews. The code for that container controller and view is out of the scope of this article, but its one of many day "content" controllers and view are perfect examples. Here we go!
 </p>
-<div class="highlight"><pre><span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
 
 <span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class="n">Controller</span>
 
   <span class="ss">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span>
     <span class="k">super</span> <span class="ss">el</span><span class="p">:</span> <span class="vi">@view</span>
-</pre></div><div class="highlight"><pre><span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
+</code></pre></div><div class="highlight"><pre><code class="ruby"><span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
 
 <span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
 
@@ -671,7 +671,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 
   <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">moment</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
-</pre></div>
+</code></pre></div>
 <p>
   So rule number one, always create an instance of a SpacePen view and assign that to the <code>@view</code> property of every Spine.JS controller. That <code>@view</code> will be assigned to the controller's <code>@el</code> property when it supers up. 
 </p>
@@ -685,7 +685,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   Here is the same controller and view example with a bit more detail. First up, the view. This day view CoffeeScript file has a public <code>App.Views.Day</code> view and a private <code>EventView</code> that represents a subview and would be bound to a model instance. This public day view exposes a few public functions for a controller to hook into. The <code>addEvent</code> function will actually build a new SpacePen views for the passed model and append it as a subview. Notice too the <code>findEvent</code> helper function which can find the DOM element for a model object and then use the <code>view()</code> function provided by SpacePen to get to the SpacePen instance for this node.
 </p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="o">=&gt;</span>
@@ -733,11 +733,11 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
     <span class="vi">@attr</span> <span class="s1">&#39;data-starts-at&#39;</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">startsAtFormat</span><span class="p">()</span>
     <span class="vi">@description</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class="o">.</span><span class="n">description</span>
     <span class="vi">@duration</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class="o">.</span><span class="n">duration</span>
-</pre></div>
+</code></pre></div>
 <p>
   Next up, the expanded day controller example that manages the view above. In this example we bind to two of the the Spine.JS <code>CalendarEvent</code> model events. One for update and one for destroy. These events are then pushed down to the view and will do any work necessary. Just in case this controller is ever discarded for performance reasons, we hook into the <code>release()</code> function provided by Spine.JS controllers to remove the event listeners.
 </p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class="n">Controller</span>
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class="n">Controller</span>
 
   <span class="vi">@events</span><span class="p">:</span> 
     <span class="s1">&#39;click .event&#39;</span><span class="p">:</span> <span class="s1">&#39;selectEvent&#39;</span>
@@ -766,7 +766,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   <span class="ss">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@view</span><span class="o">.</span><span class="n">removeEvent</span> <span class="n">event</span>
     <span class="c1"># ...</span>
-</pre></div>
+</code></pre></div>
 <p>
   Hope you found this mini introduction to SpacePen and Spine.JS controllers useful. There is literally tons of ways you can use these tools together to make your controllers and views fun to build and maintainable. Be excellent and let me know what works for you!
 </p>
@@ -796,7 +796,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
      <![CDATA[<p>
   When ActiveRecord 3.2 was released there was a small addition called <a href="http://api.rubyonrails.org/classes/ActiveRecord/Store.html">ActiveRecord::Store</a> which bills itself as a simple key/value store for your models. The code below is pulled right from their example usage.
 </p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
   <span class="n">store</span> <span class="ss">:settings</span><span class="p">,</span> <span class="ss">accessors</span><span class="p">:</span> <span class="o">[</span><span class="ss">:color</span><span class="p">,</span> <span class="ss">:homepage</span><span class="o">]</span>
 <span class="k">end</span>
 
@@ -804,7 +804,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <span class="vi">@user</span><span class="o">.</span><span class="n">color</span>            <span class="c1"># =&gt; &#39;black&#39;</span>
 <span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:color</span><span class="o">]</span> <span class="c1"># =&gt; &#39;black&#39;</span>
 <span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:remember_me</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
-</pre></div>
+</code></pre></div>
 <p>
   Most people know that I love simple tools. But when I found myself considering <code>ActiveRecord::Store</code>, I found it seriously lacking for my particular use case. What I wanted was a config for a user class that could do the following:
 </p>
@@ -823,7 +823,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   </span>
   The lack of these features is why I set out to build a little gem I call <a href="https://github.com/metaskills/store_configurable">StoreConfigurable</a>. A zero-configuration recursive Hash for storing a tree of options in a serialized ActiveRecord column which includes self-aware hooks that delegate dirty/changed state to your configs owner. Perfect right? Here is a simple example of its usage below. If you want to learn more, checkout the <a href="https://github.com/metaskills/store_configurable">project on github</a> with the full README. 
 </p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
   <span class="n">store_configurable</span>
 <span class="k">end</span>
 
@@ -832,7 +832,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">sortable_tables</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;asc&#39;</span>
 <span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">you</span><span class="o">.</span><span class="n">should</span><span class="o">.</span><span class="n">never</span><span class="o">.</span><span class="n">need</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">do</span><span class="o">.</span><span class="n">this</span><span class="o">.</span><span class="n">but</span><span class="o">.</span><span class="n">you</span><span class="o">.</span><span class="n">could</span><span class="o">.</span><span class="n">if</span><span class="o">.</span><span class="n">you</span><span class="o">.</span><span class="n">wanted</span><span class="o">.</span><span class="n">to</span> <span class="o">=</span> <span class="s1">&#39;deep_value&#39;</span>
 <span class="vi">@user</span><span class="o">.</span><span class="n">config_changed?</span> <span class="c1"># =&gt; true</span>
-</pre></div>
+</code></pre></div>
 <p>
   Rather than talking about how StoreConfigurable might be a good fit for you, I would instead like to discuss how my first practical usage of recursion in Ruby is implemented in StoreConfigurable. That along with how to leverage default Hash values is the topic for this post.
 </p>
@@ -842,7 +842,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   So first up, a little known feature of Ruby's <a href="http://www.ruby-doc.org/core-1.9.3/Hash.html">Hash</a> class is the ability for a default value to be returned when a key is missing. If you stop and think about this, the default is <code>nil</code>, which is a valid object in Ruby. But you can tell Hash objects to return other values when a key is missing. The first way to do this is to pass the default value as an argument to <code>Hash.new()</code>. The second is to pass a block to the new method which would return the default value. That block is passed in the current hash object and the key that is missing so you can do some fancy things if needed. Here are some quick examples of both techniques. 
 </p>
-<div class="highlight"><pre><span class="c1"># Default value passed to new.</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># Default value passed to new.</span>
 
 <span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>  <span class="c1"># =&gt; {}</span>
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class="c1"># =&gt; &quot;default&quot;</span>
@@ -852,13 +852,13 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="o">|</span> <span class="s2">&quot;Missing </span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2"> for hash with id </span><span class="si">#{</span><span class="nb">hash</span><span class="o">.</span><span class="n">object_id</span><span class="si">}</span><span class="s2">.&quot;</span> <span class="p">}</span>
 <span class="nb">hash</span>                        <span class="c1"># =&gt; {}</span>
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class="c1"># =&gt; &quot;Missing foo for hash with id 283829283.&quot;</span>
-</pre></div>
+</code></pre></div>
 <h2>Recursion</h2>
 
 <p>
   Recurion in Ruby can take many forms. My solution for StoreConfigurable was to always make the hash returned by the proxy object self replicate itself for key misses. Here is a fundamental example to make your own Hash object return new instances of itself when keys are missing.
 </p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">RecursiveHash</span> <span class="o">&lt;</span> <span class="no">Hash</span>
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">RecursiveHash</span> <span class="o">&lt;</span> <span class="no">Hash</span>
   <span class="no">Recursive</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
   <span class="k">def</span> <span class="nf">initialize</span>
     <span class="k">super</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Recursive</span><span class="p">)</span>
@@ -871,7 +871,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">].</span><span class="n">class</span>          <span class="c1"># =&gt; RecursiveHash</span>
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:a</span><span class="o">][</span><span class="ss">:b</span><span class="o">][</span><span class="ss">:c</span><span class="o">]</span>          <span class="c1"># =&gt; {}</span>
 <span class="nb">hash</span>                      <span class="c1"># =&gt; {:foo=&gt;{}, :a=&gt;{:b=&gt;{:c=&gt;{}}}}</span>
-</pre></div>
+</code></pre></div>
 <p>
   In this example, I create a <a href="http://www.ruby-doc.org/core-1.9.3/Proc.html">Proc</a> object via the lambda keyword and I use this as the block argument when you create an instance of <code>RecursiveHash</code> via the super method. Here I am using the <code>&amp;</code> syntax to pass an existing Proc as a block. Hope I have not lost you so far :)
 </p>
@@ -879,7 +879,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   So default hashes in Ruby and simple recursion techniques are what make up some of the key points of StoreConfigurable. I also use recursion when loading the hash values from the YAML stored in the database. Here is what that technique looks like.
 </p>
-<div class="highlight"><pre><span class="n">loader</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+<div class="highlight"><pre><code class="ruby"><span class="n">loader</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
   <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Hash</span><span class="p">)</span>
     <span class="n">value</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="nb">hash</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
   <span class="k">else</span>
@@ -888,7 +888,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <span class="k">end</span>
 
 <span class="n">data</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 <p>
   Hopefully this dive into Ruby or maybe StoreConfigurable is helpful!
 </p>
@@ -937,7 +937,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   <span class="photofancy floatr ml20"><img src="/assets/less_variable_property.png" alt="Does LESS have property interpolation?" width="400" height="199" /></span>
   Some of the bugs I encountered were fixed, like parsing errors for CSS3 keyframes. Others had horrible workarounds that used more code while at the same time lowering legibility. Finally, I came across the one issue on the hundreds of those that exists on LESS' github page that stopped me cold. It was titled <a href="http://github.com/cloudhead/less.js/issues/36">variable property</a> and after learning about it, I decided to stop using LESS for my Rails projects. What are variable properties anyway. Let me show you a common pattern both I and Compass use in a basic contrived example. You may also want to read my comments in that github issue link too. Imagine I have some global colors that I want to mixin to other classes based on a dynamic property. So given this SCSS below:
 </p>
-<div class="highlight"><pre><span class="err">$</span><span class="nt">myWhite</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class="o">);</span>
+<div class="highlight"><pre><code class="css"><span class="err">$</span><span class="nt">myWhite</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class="o">);</span>
 <span class="err">$</span><span class="nt">myGray</span><span class="o">:</span>  <span class="nt">rgb</span><span class="o">(</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">);</span>
 <span class="err">$</span><span class="nt">myBlack</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">);</span>
 
@@ -950,14 +950,14 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <span class="nc">.box</span> <span class="p">{</span>
   <span class="o">@</span><span class="n">include</span> <span class="n">myColorClasses</span><span class="p">(</span><span class="k">background-color</span><span class="p">);</span>
 <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 <p>
   It would output something like the following. Notice how I use the variable string <code>background-color</code> and generate dynamic properties?
 </p>
-<div class="highlight"><pre><span class="nc">.box.white</span> <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class="m">#f0f0f0</span><span class="p">;</span> <span class="p">}</span>
+<div class="highlight"><pre><code class="css"><span class="nc">.box.white</span> <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class="m">#f0f0f0</span><span class="p">;</span> <span class="p">}</span>
 <span class="nc">.box.gray</span>  <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class="m">#8c8c8c</span><span class="p">;</span> <span class="p">}</span>
 <span class="nc">.box.black</span> <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class="m">#1e1e1e</span><span class="p">;</span> <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 <p>
   Astute observers may point out that you can achieve the same with sub classes and be more efficient in the generated CSS too. You would be correct. I did say this was a contrived example. The point is that LESS is not a CSS preprocessor and without the ability to dynamically define property values you will be limited in the ways your LESS based CSS framework can compete with frameworks like Compass. Simply put, LESS will never stack up to Sass.
 </p>
@@ -1003,7 +1003,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   The first place we need to patch things up is Guard::Jasmine itself. In my <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">last article</a> I covered how to monkey patch Jasminerice in a <code>config/initializers/jasminerice.rb</code> file. My Guard::Jasmine freedom patch will be placed in that same file. Pasted below, this does two things vs the <a href="http://github.com/netzpirat/guard-jasmine/blob/master/lib/guard/jasmine/runner.rb">original</a>. First it changes the <code>report_specdoc_logs</code> method to not pass <code>true</code> to the <code>format_log_message</code> method. Second, the <code>format_log_message</code> method itself now has the message regular expression changed to a multi-line scan. It will also look out for a custom prefix tag and allow it to pass through. This is for our pretty objects. Anything else now outputs the message with the file and line number, something previously stripped by Guard::Jasmine.
 </p>
-<div class="highlight"><pre><span class="c1"># coding: utf-8</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># coding: utf-8</span>
 <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
 
   <span class="c1"># Other Jasminerice patches from:</span>
@@ -1045,13 +1045,13 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   <span class="k">end</span>
 
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <h2>A JavaScript Pretty Print Library</h2>
 
 <p>
   So now that we have Guard::Jasmine not stripping multi-line console messages to one line and printing file and line numbers, we are ready to hook into it. But first we need a JavaScript library that pretty prints objects for us and wrap this all up behind our own interface to <code>console.log</code>. During my research I found a library called jsDump and decided to <a href="https://github.com/NV/jsDump">use a fork of the project on github</a>. So go download that file and place it in <code>vendor/assets/javascripts/jsDump.js</code> of your Rails project. Next you will want to add it to your <code>spec/javascripts/spec.js</code> manifest like so. My below example is pulled right from my previous article and I have placed jsDump right after my jasmine files.
 </p>
-<div class="highlight"><pre><span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasminerice</span>
+<div class="highlight"><pre><code class="javascript"><span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasminerice</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">mock</span><span class="o">-</span><span class="nx">ajax</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jsDump</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">application</span>
@@ -1060,7 +1060,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">models</span><span class="o">/</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">controllers</span><span class="o">/</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span>
-</pre></div>
+</code></pre></div>
 <h2>Logging Helpers - Using BlackCoffee</h2>
 
 <p>
@@ -1070,15 +1070,15 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   The only thing working against is is Sprockets/Tilt rendering CoffeeScript files in their own closure. Which is something you should really not fight! But in this case I think it is fine to have this particular file avoid that. Which allows us to (a) write our helper code in CoffeeScript and (b) use these functions as helpers in the global space like other Jasmine helpers. So enter my <a href="http://github.com/metaskills/sprockets-blackcoffee">Sprockets BlackCoffee</a> gem. This is a simple gem that exposes a CoffeeScript template that uses the <code>--bare</code> option to keep your file from being wrapped in a closure. All you have to do is give the file a <code>.js.black_coffee</code> extension and it will just work. So let's assume you have a <code>spec/javascripts/jasmine-myapp.js.black_coffee</code> created and the gem installed like so.
 </p>
-<div class="highlight"><pre><span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
   <span class="c1"># ...</span>
   <span class="n">gem</span> <span class="s1">&#39;sprockets-blackcoffee&#39;</span>
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <p>
   Finally, here are examples of my logging helpers in the <code>jasmine-myapp</code> file. The <code>myLogParser</code> uses jsDump to get back a pretty formatted string of any object if that object is not already a string. The primary logging helper <code>myLog</code> will prefix your message with <code>[myLog]</code> so the Guard::Jasmine recognizes the message and outputs only the object. The last helper <code>myLogLine</code> will do just like the other, but will allow the file and line number tobe printed too.
 </p>
-<div class="highlight"><pre><span class="n">myLog</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
+<div class="highlight"><pre><code class="ruby"><span class="n">myLog</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
   <span class="n">console</span><span class="o">.</span><span class="n">log</span> <span class="s2">&quot;[myLog]</span><span class="si">#{</span><span class="n">myLogParser</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
 <span class="n">myLogLine</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
@@ -1086,13 +1086,13 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 
 <span class="n">myLogParser</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
   <span class="k">if</span> <span class="n">typeof</span> <span class="n">obj</span> <span class="n">is</span> <span class="s1">&#39;string&#39;</span> <span class="k">then</span> <span class="n">obj</span> <span class="k">else</span> <span class="n">jsDump</span><span class="o">.</span><span class="n">parse</span> <span class="n">obj</span>
-</pre></div>
+</code></pre></div>
 <h2>In Practice</h2>
 
 <p>
   Here is an example of a Jasmine spec where I was using console.log before the patches above and what it would output to the terminal.
 </p>
-<div class="highlight"><pre><span class="c1">#= include spec_helper</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1">#= include spec_helper</span>
 
 <span class="n">describe</span> <span class="s1">&#39;User&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
 
@@ -1100,7 +1100,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
     <span class="vi">@user</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">User</span> <span class="nb">id</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s1">&#39;bob@test.com&#39;</span>
     <span class="n">console</span><span class="o">.</span><span class="n">log</span> <span class="vi">@user</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span>
     <span class="n">expect</span><span class="p">(</span><span class="vi">@user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="s1">&#39;bob@test.com&#39;</span>
-</pre></div>
+</code></pre></div>
 <pre class="code">
 User
   ✘ has been configured with proper attributes
@@ -1185,7 +1185,7 @@ in 0.653 seconds
 <p>
   Turns out this is really easy since Jasminerice is just a simple Rails engine with few moving parts. It has a <code>SpecController</code> that renders a basic layout which requires your application's JavaScript assets along with Jasmine. The goal is to tell it to render your single application page that loads up your Spine.JS app with a few additional hacks. When done, we are going to have Jasminerice in your full control. This means we get the same CSS and JavaScript as our real application along with a solid foundation to extend Jasminerice at our whim. This leaves us with a clean canvas suitable for Jasmine unit, functional and integraiton testing all wrapped up into one.
 </p>
-<div class="highlight"><pre><span class="c1"># In: config/initializers/jasminerice.rb</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In: config/initializers/jasminerice.rb</span>
 
 <span class="k">module</span> <span class="nn">Jasminerice</span>
 
@@ -1211,7 +1211,7 @@ in 0.653 seconds
   <span class="k">end</span>
 
 <span class="k">end</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
-</pre></div>
+</code></pre></div>
 <p>
   There we go, a simple example pulled from my current project. What we are doing here is freedom-patching that spec controller's index action to render both a template and layout from your application. I also have a <code>MyApplication</code> module which I include in the <code>Jasminerice::ApplicationHelper</code> for a few methods that my application view code would expect. In this case a <code>current_user</code> method and some delegation of URL helpers to the root Rails application. Do not get hung up on what user is returned there too. It is mostly moot as all AJAX calls will be stubbed. Lastly, I made a <code>jasminerice?</code> view helper and a matching one that I have in my own <code>ApplicationHelper</code> which returns false. I will show why and how this all fits together later on.
 </p>
@@ -1219,7 +1219,7 @@ in 0.653 seconds
 <p>
   Now that we have full control and some reflection for Jasminerice, let's reviw our appliation's main layout. Here is an example of my <code>app/views/layouts/application.html.haml</code> file.
 </p>
-<div class="highlight"><pre><span class="o">!!!</span> <span class="mi">5</span>
+<div class="highlight"><pre><code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
 <span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">}</span>
   <span class="o">%</span><span class="n">head</span>
     <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
@@ -1234,16 +1234,16 @@ in 0.653 seconds
       <span class="o">%</span><span class="n">script</span> <span class="n">jQuery</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span> <span class="no">MyApp</span><span class="o">.</span><span class="n">App</span><span class="o">.</span><span class="n">Home</span><span class="o">.</span><span class="n">init</span><span class="p">();</span> <span class="p">});</span>
   <span class="o">%</span><span class="n">body</span>
     <span class="o">%</span><span class="n">section</span><span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="ss">data</span><span class="p">:</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">}}</span>
-</pre></div>
+</code></pre></div>
 <p>
   It is really that simple! It has a single condition that says if Jasminerice is loading this page, use the top level <code>spec</code> CSS and JavaScript asset manifest. If not, render my main application's CSS and JavaScript manifests. You will also notice that I decouple my Spine's application initialization from the main JS files and only initialize the app on page load when not running in Jasminerce. This allows us to stub AJAX calls in specs then initialization the Spine.JS app when we are fully ready. So now, let us take a look at what both the <code>spec/javascripts/spec.css</code> and <code>spec/javascripts/spec.js</code> manifests may look like.
 </p>
-<div class="highlight"><pre><span class="c">/*</span>
+<div class="highlight"><pre><code class="css"><span class="c">/*</span>
 <span class="c"> *= require jasmine</span>
 <span class="c"> *= require application</span>
 <span class="c"> */</span>
 <span class="nc">.jasmine_reporter</span> <span class="p">{</span> <span class="k">display</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span> <span class="p">}</span>
-</pre></div><div class="highlight"><pre><span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasminerice</span>
+</code></pre></div><div class="highlight"><pre><code class="javascript"><span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasminerice</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">mock</span><span class="o">-</span><span class="nx">ajax</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">application</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasmine</span><span class="o">-</span><span class="nx">myapp</span>
@@ -1251,7 +1251,7 @@ in 0.653 seconds
 <span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">models</span><span class="o">/</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">controllers</span><span class="o">/</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span>
-</pre></div>
+</code></pre></div>
 <p>
   These should be self explanatory. The <code>spec.css</code> manifest requires the jasmine styles, then our application's styles. It then hides the Jasmine reporter element. The <code>spec.js</code> manifest does something similiar, It first requires the jasminerice manifest, a Jasmine helper called <a href="https://github.com/pivotal/jasmine-ajax">jasmine-ajax</a> but poorly named mock-ajax, then your application's JavaScript followed by a personal Jasmine helper that we will discuss later. The last lines include all the spec files in each of the lib, models, controller and views directories located in the parent <code>spec/javascripts</code> directory.
 </p>
@@ -1323,16 +1323,16 @@ in 0.653 seconds
 <p>
   Next, we need to get the gems in our <code>Gemfile</code>. Here is how mine are setup. I have them in both the <code>:develpment</code> and <code>:test</code> groups since Jasminerice runs in both of those Rails environments. I also have that ruby_gntp dependency since I am using Growl on Mac OS X, YMMV.
 </p>
-<div class="highlight"><pre><span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:test</span> <span class="k">do</span>
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:test</span> <span class="k">do</span>
   <span class="n">gem</span> <span class="s1">&#39;jasminerice&#39;</span>
   <span class="n">gem</span> <span class="s1">&#39;guard-jasmine&#39;</span>
   <span class="n">gem</span> <span class="s1">&#39;ruby_gntp&#39;</span>
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <p>
   So that was easy, now on to our <code>Guardfile</code>. Here is mine below. Notice how I put my JavaScript related guards into a <code>js</code> group? This is a seldom used feature of Guard and it means I can monitor only my jasmine specs by starting guard off using <code>$ guard -g js</code> and my other guards in my <code>ruby</code> group, like minitest, will be ignored.
 </p>
-<div class="highlight"><pre><span class="n">group</span> <span class="s1">&#39;js&#39;</span> <span class="k">do</span>
+<div class="highlight"><pre><code class="ruby"><span class="n">group</span> <span class="s1">&#39;js&#39;</span> <span class="k">do</span>
 
   <span class="n">guard</span> <span class="s1">&#39;jasmine&#39;</span> <span class="k">do</span>
     <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/index\.js\.coffee$}</span><span class="p">)</span>  <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
@@ -1344,7 +1344,7 @@ in 0.653 seconds
   <span class="k">end</span>
 
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <p>
   This setup assumes a few things. First that you are only testing your Spine.JS application and that those files are in the <code>app/assets/javascripts/myapp</code> directory. That myapp directory could just be <code>app</code> in your case if you used the <a href="http://github.com/maccman/spine-rails">spine-rails</a> gem without the <code>--app</code> option. In my case, that folder is named <code>homemarks</code>. This Guardfile also assumes that your JavaScript app and specs are CoffeeScript files and that specs are in the <code>spec/javascripts</code> folder specified by Jasminerice. You are going to want to follow some file naming convention now too. For example if you have a Spine.JS app file in <code>app/assets/javascripts/myapp/models/post.js.coffee</code>, then you are going to want the matching spec in <code>spec/javascripts/models/post_spec.js.coffee</code>. So saving each of those files will trigger that specific spec to run. There are also so some watchers on important root files like your spec.js sprockets manifest and your Spine.JS app index. Changing any of those files will result in your entire spec suite running again. 
 </p>
@@ -1354,14 +1354,14 @@ in 0.653 seconds
 <p>
   I will go into more details on the <code>spec_helper.js</code> and <code>jasmine-myapp</code> files above in <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">the second part</a> of this article. For now you should be set to start writing specs like the one below and seeing them run by either visiting the <code>/jasmine</code> URL of your running Rails application or by using Guard in your terminal window.
 </p>
-<div class="highlight"><pre><span class="n">describe</span> <span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+<div class="highlight"><pre><code class="ruby"><span class="n">describe</span> <span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
 
   <span class="n">it</span> <span class="s1">&#39;sets el&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">el</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="err">$</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span>
 
   <span class="n">it</span> <span class="s1">&#39;sets the userId as a property on itself&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">userId</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="vi">@bob</span><span class="o">.</span><span class="n">id</span>
-</pre></div>
+</code></pre></div>
 <p>
   <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Continue to part two...</a>
 </p>
@@ -1427,19 +1427,19 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
 <p>
   This adds the Spine project to your <code>vendor/assets/javascripts/spine</code> directory. Which means it can now be leveraged by Rails asset pipeline using Sprockets. So if you had used the spine-rails generator above and had your spine requires in <code>app/assets/javascripts/app/index.js.coffee</code>, you would now be able to change what should have looked like this:
 </p>
-<div class="highlight"><pre><span class="c1">#= require spine</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1">#= require spine</span>
 <span class="c1">#= require spine/manager</span>
 <span class="c1">#= require spine/ajax</span>
 <span class="c1">#= require spine/route</span>
-</pre></div>
+</code></pre></div>
 <p>
   To something like the following. Since the <code>spine/src</code> directory is where the source CoffeeScript files from our submodule above and Sprockets will render these just fine, it all just works!
 </p>
-<div class="highlight"><pre><span class="c1">#= require spine/src/spine</span>
+<div class="highlight"><pre><code class="ruby"><span class="c1">#= require spine/src/spine</span>
 <span class="c1">#= require spine/src/manager</span>
 <span class="c1">#= require spine/src/ajax</span>
 <span class="c1">#= require spine/src/route</span>
-</pre></div>
+</code></pre></div>
 <p>
   So now you can easily update your Spine dependency using a simple git workflow with the added benefit that you can open up any of the source CoffeeScript files and learn Spine from the inside out. You can even change the source or put in console debugging to see what is happening and your application files will recompile via Sprockets on the next request.
 </p>
@@ -1487,32 +1487,32 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
 <p>
   I introduce you to both the new <a href="http://github.com/metaskills/less-rails">less-rails</a> and <a href="http://github.com/metaskills/less-rails-bootstrap">less-rails-bootstrap</a> gems. Take a look at the source code if you ever wanted to learn how to implement a simple Rails::Railtie or Engine. But assuming you want to use Twitter's Bootstrap, here are a few examples to get you started. First just bundle up to less-rails-bootstrap, it will automatically pull in less-rails and less.rb via their dependencies. BTW, I am going to keep the semantic versioning of the less-rails-bootstrap gem in sync with the major and minor versions of the Bootstrap project.
 </p>
-<div class="highlight"><pre><span class="n">gem</span> <span class="s1">&#39;less-rails-bootstrap&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.3.0&#39;</span>
-</pre></div>
+<div class="highlight"><pre><code class="ruby"><span class="n">gem</span> <span class="s1">&#39;less-rails-bootstrap&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.3.0&#39;</span>
+</code></pre></div>
 <p>
   From here, the easiest way to use Bootstrap is to require it in your <code>application.css</code> file. Doing so will compile the complete LESS libraries files for Bootstrap. Note how we namespace the files using a simple directory structure.
 </p>
-<div class="highlight"><pre><span class="c">/*</span>
+<div class="highlight"><pre><code class="css"><span class="c">/*</span>
 <span class="c"> *= require twitter/bootstrap</span>
 <span class="c">*/</span>
 
 <span class="nf">#foo</span> <span class="p">{</span>
   <span class="c">/* Your styles... */</span>
 <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 <p>
   Alternatively, in a file with the <code>.css.less</code> extension, you can import the entire Bootstrap LESS framework. This will allow you to use Bootstrap's variables and mixins in your CSS that follows. Remember, unlike other CSS frameworks, requiring or importing Bootstrap will include all the CSS for building a bootstrapped website. If you only want variables or mixins, you will have to import those discreet files, see next section.
 </p>
-<div class="highlight"><pre><span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap&quot;</span><span class="p">;</span>
+<div class="highlight"><pre><code class="css"><span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap&quot;</span><span class="p">;</span>
 
 <span class="nf">#foo</span> <span class="p">{</span>
   <span class="o">.</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="p">(</span><span class="m">4px</span><span class="p">);</span>
 <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 <p>
   Maybe all you want to use are the variables and mixins that come with Twitter Bootstrap. No problem, just import them individually from you own <code>.css.less</code> file. In this case only the <code>#foo</code> selector is output.
 </p>
-<div class="highlight"><pre><span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap/variables&quot;</span><span class="p">;</span>
+<div class="highlight"><pre><code class="css"><span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap/variables&quot;</span><span class="p">;</span>
 <span class="k">@import</span> <span class="s2">&quot;twitter/bootstrap/mixins&quot;</span><span class="p">;</span>
 
 <span class="nc">.myButton</span><span class="o">(</span><span class="k">@radius</span><span class="o">:</span> <span class="nt">5px</span><span class="o">)</span> <span class="p">{</span>
@@ -1522,16 +1522,16 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
 <span class="nf">#foo</span> <span class="p">{</span>
   <span class="o">.</span><span class="n">myButton</span><span class="p">(</span><span class="m">10px</span><span class="p">);</span>
 <span class="p">}</span>
-</pre></div>
+</code></pre></div>
 <p>
   Using the <a href="http://twitter.github.com/bootstrap/#javascript">Bootstrap JavaScript</a> files is just as easy. Again, you can include all them with a single directive from your <code>application.js</code> file. Optionally, you can require only the files you need like <code>require twitter/bootstrap/modal</code>.
 </p>
-<div class="highlight"><pre><span class="c1">//= require twitter/bootstrap</span>
+<div class="highlight"><pre><code class="javascript"><span class="c1">//= require twitter/bootstrap</span>
 
 <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
   <span class="c1">//...</span>
 <span class="p">});</span>
-</pre></div>
+</code></pre></div>
 <p>
   The less-rails project has already started getting some good feedback. Soon we hope to implement all the features that you may have used in the sass-rails project, <a href="https://github.com/metaskills/less-rails/issues/1">like asset pipeline helpers</a>. One last thing, I wanted to say thanks to <a href="https://github.com/nmerouze">Nicolas Mérouze</a> for opening up the old less-rails gem space on rubygems.org for the new gem!
 </p>
@@ -1564,7 +1564,7 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
   </span>
   One part of Objective-C that I like is being able to send messages to nil objects safely and more so their <a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/KeyValueCoding/Articles/KeyValueCoding.html">KVC</a> and <a href="http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/KeyValueObserving/KeyValueObserving.html">KVO</a> patterns. In Ruby I often use the <code>#try</code> method to safely send messages to objects that may be nil at runtime. But one thing I always wanted was a nice way to send a key path, basically a string of methods signatures, to an object in the same way. I give you my simple <code>#try_keypath</code> method :)
 </p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">Object</span>
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Object</span>
   <span class="k">def</span> <span class="nf">try_keypath</span><span class="p">(</span><span class="nb">methods</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
     <span class="nb">methods</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">result</span><span class="p">,</span> <span class="nb">method</span><span class="o">|</span> <span class="n">result</span><span class="o">.</span><span class="n">try</span><span class="p">(</span><span class="nb">method</span><span class="p">)</span> <span class="p">}</span>
   <span class="k">end</span>
@@ -1575,11 +1575,11 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
     <span class="kp">nil</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <p>
   Yup, it is that simple. Let's see how this would work. Here are a few basic classes that randomly return nested objects. So staring with the <code>Foo</code> object, we have the possibility to get to some deeply nested info.
 </p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">Foo</span>
+<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Foo</span>
   <span class="k">def</span> <span class="nf">bar</span>
     <span class="nb">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">?</span> <span class="no">Bar</span><span class="o">.</span><span class="n">new</span> <span class="p">:</span> <span class="kp">nil</span>
   <span class="k">end</span>
@@ -1599,11 +1599,11 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
     <span class="p">{</span><span class="ss">:winning</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre></div>
+</code></pre></div>
 <p>
   Finally, here is how it would look and return different results. Man I love Ruby!
 </p>
-<div class="highlight"><pre><span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7dfd0&gt;</span>
+<div class="highlight"><pre><code class="ruby"><span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7dfd0&gt;</span>
 <span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7ddf0&gt;</span>
 <span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; nil</span>
 <span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; nil</span>
@@ -1623,7 +1623,7 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
 <span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
 <span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
 <span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
-</pre></div>]]>
+</code></pre></div>]]>
     </content>
  </entry>
  
@@ -1725,7 +1725,7 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
 <p>
   So jQuery is the proper winner and choice for anyone wanting to use a JavaScript framework to make working with the DOM in web sites easier. It has awesome event handling and delegation. So many things that Prototype.js lacked. It even has great documentation. About the only bad thing about jQuery is the widely different interfaces to it's AJAX functions and the arguments passed to their callbacks. Oh, and they totally screwed new JavaScript developers by not sheperding them into learning some sort of way to encapsulate their object behavior. So this article is for those that are not using <a href="http://jashkenas.github.com/coffee-script/">CoffeeScript's class system</a>, <a href="http://documentcloud.github.com/backbone/">Backbone.js's class system</a>, or jQuery's deeply nested plugin class system that is hidden away. So lets get to fixing that. Here is 32 lines of dirt simple JavaScript inheritance.
 </p>
-<div class="highlight"><pre><span class="cm">/* Simple JavaScript Class</span>
+<div class="highlight"><pre><code class="javascript"><span class="cm">/* Simple JavaScript Class</span>
 <span class="cm">   By John Resig. MIT Licensed. &lt;http://ejohn.org/blog/simple-javascript-inheritance/&gt; */</span>
 <span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
   <span class="kd">var</span> <span class="nx">initializing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">fnTest</span> <span class="o">=</span> <span class="sr">/xyz/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span><span class="nx">xyz</span><span class="p">;})</span> <span class="o">?</span> <span class="sr">/\b_super\b/</span> <span class="o">:</span> <span class="sr">/.*/</span><span class="p">;</span>
@@ -1759,11 +1759,11 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
     <span class="k">return</span> <span class="nx">JQClass</span><span class="p">;</span>
   <span class="p">};</span>
 <span class="p">})();</span>
-</pre></div>
+</code></pre></div>
 <p>
   It is <a href="http://ejohn.org/blog/simple-javascript-inheritance/">worth reading the comments</a> John Resig's blog post for this piece of work as well as the full documentation. My code example above names this <code>JQClass</code> to avoid namespace collisions with other frameworks. Here is a simple example of its usage.
 </p>
-<div class="highlight"><pre><span class="c1">// Your namespace.</span>
+<div class="highlight"><pre><code class="javascript"><span class="c1">// Your namespace.</span>
 
 <span class="kd">var</span> <span class="nx">MyApp</span> <span class="o">=</span> <span class="p">{</span>
   <span class="nx">models</span><span class="o">:</span> <span class="p">{}</span>
@@ -1795,7 +1795,7 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
   <span class="p">}</span>
 
 <span class="p">});</span>
-</pre></div>
+</code></pre></div>
 <p>
   This code example is pulled from a jQuery mobile project I recently finished. The real usage of the flash objects would be numerous as there would be one per page and I have a top level delegate object that finds the active page and finds or create the flash DOM elements. But this should be a good enough example to show why you might choose a simple class and object inheritance system vs putting all your logic in <code>$(document).ready({})</code> scopes. There are tons of ways to write good OO JavaScript and I hope some find this useful and explore some other ways.
 </p>

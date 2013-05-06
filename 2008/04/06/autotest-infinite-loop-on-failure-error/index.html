@@ -81,7 +81,7 @@
           </p>
           <div class="highlight">
             <pre>
-1) Failure:
+<code class="text">1) Failure:
 test_truth(BookmarkTest)
 [test/unit/bookmark_test.rb:6
 test/unit/bookmark_test.rb:5]:
@@ -90,6 +90,7 @@ test/unit/bookmark_test.rb:5]:
 1 tests, 1 assertions, 1 failures, 0 errors
 [[&quot;config/uuid.state&quot;, Sun Apr 06 13:58:55 -0400 2008]]
 Dunno! config/uuid.state
+</code>
 </pre>
           </div>
           <p>
@@ -107,13 +108,14 @@ Dunno! config/uuid.state
           </p>
           <div class="highlight">
             <pre>
-<span class="no">Autotest</span><span class="o">.</span><span class="n">add_hook</span> <span class="ss">:initialize</span> <span class=
-"k">do</span> <span class="o">|</span><span class="n">autotest</span><span class="o">|</span>
+<code class="ruby"><span class="no">Autotest</span><span class="o">.</span><span class="n">add_hook</span> <span class=
+"ss">:initialize</span> <span class="k">do</span> <span class="o">|</span><span class="n">autotest</span><span class="o">|</span>
   <span class="o">[</span><span class="s1">&#39;.svn&#39;</span><span class="p">,</span><span class="s1">&#39;.hg&#39;</span><span class=
 "p">,</span><span class="s1">&#39;.git&#39;</span><span class="o">].</span><span class="n">each</span> <span class="p">{</span> <span class=
 "o">|</span><span class="n">exception</span><span class="o">|</span> <span class="n">autotest</span><span class="o">.</span><span class=
 "n">add_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span> <span class="p">}</span>
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <footer id="disqus_thread">

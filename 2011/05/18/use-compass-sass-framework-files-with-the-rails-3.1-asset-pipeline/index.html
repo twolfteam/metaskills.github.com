@@ -80,8 +80,9 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class="p">,</span> <span class="ss">:require</span> <span class=
-"o">=&gt;</span> <span class="kp">false</span>
+<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class="p">,</span> <span class=
+"ss">:require</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</code>
 </pre>
           </div>
           <p>
@@ -92,7 +93,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="ss">Sass</span><span class="p">:</span><span class="ss">:Engine</span><span class="o">::</span><span class=
+<code class="ruby"><span class="ss">Sass</span><span class="p">:</span><span class="ss">:Engine</span><span class="o">::</span><span class=
 "no">DEFAULT_OPTIONS</span><span class="o">[</span><span class="ss">:load_paths</span><span class="o">].</span><span class=
 "n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">load_paths</span><span class="o">|</span>
   <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
@@ -102,6 +103,7 @@
 "s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class="si">}</span><span class=
 "s2">/frameworks/compass/stylesheets&quot;</span>
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <p>
@@ -110,10 +112,11 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">@import</span> <span class="s2">&quot;compass/css3/opacity&quot;</span><span class="p">;</span>
+<code class="css"><span class="k">@import</span> <span class="s2">&quot;compass/css3/opacity&quot;</span><span class="p">;</span>
 <span class="nf">#mylogo</span> <span class="p">{</span> <span class="o">@</span><span class="n">include</span> <span class=
 "k">opacity</span><span class="p">(</span><span class="m">0</span><span class="o">.</span><span class="m">5</span><span class=
 "p">);</span> <span class="p">}</span>
+</code>
 </pre>
           </div>
           <p>
@@ -121,7 +124,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="nf">#mylogo</span> <span class="p">{</span>
+<code class="css"><span class="nf">#mylogo</span> <span class="p">{</span>
   <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">filter</span><span class="o">:</span> <span class=
 "s2">&quot;progid:DXImageTransform.Microsoft.Alpha(Opacity=50)&quot;</span><span class="p">;</span>
   <span class="n">filter</span><span class="o">:</span> <span class="n">progid</span><span class="o">:</span><span class=
@@ -129,6 +132,7 @@
 "p">(</span><span class="n">Opacity</span><span class="o">=</span><span class="m">50</span><span class="p">);</span>
   <span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span><span class=
 "p">;</span> <span class="p">}</span>
+</code>
 </pre>
           </div>
           <footer id="disqus_thread">

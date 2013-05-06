@@ -81,7 +81,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="o">!!!</span> <span class="mi">5</span>
+<code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
 <span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class=
 "s1">&#39;en&#39;</span><span class="p">}</span>
   <span class="o">%</span><span class="n">head</span>
@@ -103,6 +103,7 @@
 "o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js&#39;</span><span class="p">}</span>
   <span class="o">%</span><span class="n">body</span>
     <span class="o">=</span> <span class="k">yield</span><span class="p">(</span><span class="ss">:layout</span><span class="p">)</span>
+</code>
 </pre>
           </div>
           <p>
@@ -130,7 +131,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="c1"># File: app/concerns/mobile_concerns.rb</span>
+<code class="ruby"><span class="c1"># File: app/concerns/mobile_concerns.rb</span>
 <span class="k">module</span> <span class="nn">MobileConcerns</span>  
   <span class="k">module</span> <span class="nn">Helpers</span>
     <span class="k">def</span> <span class="nf">mobile_page_id</span><span class="p">(</span><span class="n">path</span> <span class=
@@ -153,6 +154,7 @@
 "ss">ActionController</span><span class="p">:</span><span class="ss">:IntegrationTest</span>
   <span class="kp">include</span> <span class="ss">MobileConcerns</span><span class="p">:</span><span class="ss">:Helpers</span>
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <p>
@@ -168,7 +170,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="o">-</span> <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;User Profile&quot;</span>
+<code class="ruby"><span class="o">-</span> <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;User Profile&quot;</span>
 
 <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class=
 "n">mobile_page_id</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
@@ -185,6 +187,7 @@
   <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class=
 "p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;footer&#39;</span><span class="p">}}</span>
     <span class="sr">/...</span>
+</code>
 </pre>
           </div>
           <h2>
@@ -198,7 +201,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="c1"># HAML Shorthand For:</span>
+<code class="ruby"><span class="c1"># HAML Shorthand For:</span>
 <span class=
 "c1"># &lt;div id=&quot;foo&quot; data-role=&quot;page&quot; data-title=&quot;Title&quot; data-rel=&quot;dialog&quot;&gt;&lt;/div&gt;</span>
 
@@ -216,6 +219,7 @@
 "ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class=
 "s1">&#39;Stephen&#39;</span><span class="p">,</span> <span class="ss">:city_state</span> <span class="o">=&gt;</span> <span class=
 "sx">%w(Chicago IL)</span><span class="p">})</span>
+</code>
 </pre>
           </div>
           <h2>
@@ -231,8 +235,8 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">Mobile</span><span class="o">::</span><span class="no">BaseController</span> <span class=
-"o">&lt;</span> <span class="no">ApplicationController</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">Mobile</span><span class="o">::</span><span class=
+"no">BaseController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
 
   <span class="no">LAYOUT</span> <span class="o">=</span> <span class="s1">&#39;mobile&#39;</span><span class="o">.</span><span class=
 "n">freeze</span>
@@ -252,6 +256,7 @@
   <span class="k">end</span>
 
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <h2>
@@ -280,7 +285,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="kp">private</span>
+<code class="ruby"><span class="kp">private</span>
 
 <span class="kp">include</span> <span class="ss">MobileConcerns</span><span class="p">:</span><span class="ss">:Helpers</span> <span class=
 "c1"># Mentioned above.</span>
@@ -303,6 +308,7 @@
   <span class="n">within</span><span class="p">(</span><span class="n">current_page_id</span><span class="p">(</span><span class=
 "n">path</span><span class="p">))</span> <span class="p">{</span> <span class="k">yield</span> <span class="p">}</span>
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <p>
@@ -315,7 +321,8 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="n">should</span> <span class="s1">&#39;be able to navigate to logged in user page and change email&#39;</span> <span class="k">do</span>
+<code class="ruby"><span class="n">should</span> <span class=
+"s1">&#39;be able to navigate to logged in user page and change email&#39;</span> <span class="k">do</span>
   <span class="n">login_as</span> <span class="vi">@user</span>
   <span class="n">visit</span> <span class="n">mobile_homepage_path</span>
   <span class="n">click_on</span> <span class="s1">&#39;My Account&#39;</span>
@@ -334,6 +341,7 @@
   <span class="vi">@user</span><span class="o">.</span><span class="n">reload</span><span class="o">.</span><span class="n">email</span><span class=
 "o">.</span><span class="n">must_equal</span> <span class="n">new_email</span>
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <p>

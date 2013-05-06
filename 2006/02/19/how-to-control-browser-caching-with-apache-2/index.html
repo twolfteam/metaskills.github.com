@@ -199,7 +199,7 @@ $ tail -f /the/path/to/your/logfile.log | grep 10.0.1.4
           </p>
           <div class="highlight">
             <pre>
-HTTP/1.1 200 OK
+<code class="text">HTTP/1.1 200 OK
 Date: Sun, 19 Feb 2006 16:42:05 GMT
 Server: Apache/2.0.55 (Unix) DAV/2 PHP/5.1.1
 Last-Modified: Sun, 08 Jan 2006 16:17:25 GMT
@@ -210,6 +210,7 @@ Cache-Control: max-age=7200
 Expires: Sun, 19 Feb 2006 18:42:05 GMT
 Connection: close
 Content-Type: image/png
+</code>
 </pre>
           </div>
           <p>
@@ -227,8 +228,9 @@ Content-Type: image/png
           </p>
           <div class="highlight">
             <pre>
-<span class="nb">LoadModule</span> expires_module modules/mod_expires.so
+<code class="apache"><span class="nb">LoadModule</span> expires_module modules/mod_expires.so
 <span class="nb">LoadModule</span> headers_module modules/mod_headers.so
+</code>
 </pre>
           </div>
           <p>
@@ -257,7 +259,7 @@ Content-Type: image/png
           </p>
           <div class="highlight">
             <pre>
-<span class="nt">&lt;IfModule</span> <span class="s">mod_expires.c</span><span class="nt">&gt;</span>
+<code class="apache"><span class="nt">&lt;IfModule</span> <span class="s">mod_expires.c</span><span class="nt">&gt;</span>
   <span class="nb">ExpiresActive</span> <span class="k">On</span>
   <span class="nb">ExpiresDefault</span> <span class="s2">&quot;access plus 1 seconds&quot;</span>
   <span class="nb">ExpiresByType</span> text/html <span class="s2">&quot;access plus 1 seconds&quot;</span>
@@ -269,6 +271,7 @@ Content-Type: image/png
   <span class="nb">ExpiresByType</span> application/x-javascript <span class="s2">&quot;access plus 60 minutes&quot;</span>
   <span class="nb">ExpiresByType</span> text/xml <span class="s2">&quot;access plus 60 minutes&quot;</span>
 <span class="nt">&lt;/IfModule&gt;</span>
+</code>
 </pre>
           </div>
           <p>

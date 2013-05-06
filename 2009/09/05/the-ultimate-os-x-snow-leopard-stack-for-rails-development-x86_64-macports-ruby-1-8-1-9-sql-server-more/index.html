@@ -108,11 +108,13 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/usr/local/bin:$PATH&quot;</span>
+<code class="bash"><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class=
+"s2">&quot;/usr/local/bin:$PATH&quot;</span>
 <span class="nb">export </span><span class="nv">MANPATH</span><span class="o">=</span><span class=
 "s2">&quot;/usr/local/share/man:$MANPATH&quot;</span>
 <span class="nb">export </span><span class="nv">INFOPATH</span><span class="o">=</span><span class=
 "s2">&quot;/usr/local/share/info:$INFOPATH&quot;</span>
+</code>
 </pre>
           </div>
           <p>
@@ -122,10 +124,11 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="nv">path</span><span class="o">=(</span>/opt/local/bin /opt/local/sbin /opt/local/apache2/bin <span class="nv">$path</span><span class=
-"o">)</span>
+<code class="bash"><span class="nv">path</span><span class="o">=(</span>/opt/local/bin /opt/local/sbin /opt/local/apache2/bin <span class=
+"nv">$path</span><span class="o">)</span>
 <span class="nv">manpath</span><span class="o">=(</span>/opt/local/share/man <span class="nv">$manpath</span><span class="o">)</span>
 <span class="nv">infopath</span><span class="o">=(</span>/opt/local/share/info <span class="nv">$infopath</span><span class="o">)</span>
+</code>
 </pre>
           </div>
           <h3>
@@ -282,7 +285,7 @@ $ sudo port install rb-odbc +utf8
           </p>
           <div class="highlight">
             <pre>
-# A typical Sybase server
+<code class="text"># A typical Sybase server
 # [egServer50]
 #   host = symachine.domain.com
 #   port = 5000
@@ -298,6 +301,7 @@ $ sudo port install rb-odbc +utf8
   host = 192.168.1.58
   port = 1433
   tds version = 8.0
+</code>
 </pre>
           </div>
           <p>
@@ -306,13 +310,14 @@ $ sudo port install rb-odbc +utf8
           </p>
           <div class="highlight">
             <pre>
-[YOURSERVER]
+<code class="text">[YOURSERVER]
  host             = yourserver.com
  port             = 1433
  tds version      = 7.0
  text size = 64512
  client encoding  = UTF-8
  client charset   = UTF-8
+</code>
 </pre>
           </div>
           <p>
@@ -330,11 +335,12 @@ $ sudo cp /opt/local/etc/odbcinst.ini.dist /opt/local/etc/odbcinst.ini
           </p>
           <div class="highlight">
             <pre>
-[FreeTDS]
+<code class="text">[FreeTDS]
 Decscription = FreeTDS driver for SQLServer
 Driver = /opt/local/lib/libtdsodbc.so
 Setup = /opt/local/lib/libtdsodbc.so
 FileUsage = 1
+</code>
 </pre>
           </div>
           <p>
@@ -345,13 +351,14 @@ FileUsage = 1
           </p>
           <div class="highlight">
             <pre>
-[my_dev_server_dsn]
+<code class="text">[my_dev_server_dsn]
 Driver=FreeTDS
 Description=My Server Connection
 Servername=my_dev_server
 Server=my_dev_server
 Port=1433
 Database=killer_app
+</code>
 </pre>
           </div>
           <p>
@@ -361,13 +368,14 @@ Database=killer_app
           </p>
           <div class="highlight">
             <pre>
-development:
+<code class="text">development:
   adapter: sqlserver
   mode: ODBC
   username: rails
   password: secret
   database: killer_app
   dsn: my_dev_server_dsn
+</code>
 </pre>
           </div>
           <h2>
@@ -457,13 +465,14 @@ $ sudo gem install mysql -- --with-mysql-config=/opt/local/bin/mysql_config5
           </p>
           <div class="highlight">
             <pre>
-<span class="nb">alias </span><span class="nv">my_stop</span><span class="o">=</span><span class=
+<code class="bash"><span class="nb">alias </span><span class="nv">my_stop</span><span class="o">=</span><span class=
 "s2">&quot;sudo launchctl stop org.macports.mysql5&quot;</span>
 <span class="nb">alias </span><span class="nv">my_start</span><span class="o">=</span><span class=
 "s2">&quot;sudo launchctl start org.macports.mysql5&quot;</span>
 <span class="nb">alias </span><span class="nv">my_rs</span><span class="o">=</span><span class="s2">&quot;my_stop ; my_start&quot;</span>
 <span class="nb">alias </span><span class="nv">myconf</span><span class="o">=</span><span class=
 "s2">&quot;mate /opt/local/etc/mysql5/my.cnf&quot;</span>
+</code>
 </pre>
           </div>
           <footer id="disqus_thread">

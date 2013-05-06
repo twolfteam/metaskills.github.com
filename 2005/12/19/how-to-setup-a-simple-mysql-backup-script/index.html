@@ -96,10 +96,11 @@
           </p>
           <div class="highlight">
             <pre>
-From: kencollins@ken-pb.local (Cron Daemon)
+<code class="text">From: kencollins@ken-pb.local (Cron Daemon)
 To: kencollins@ken-pb.local
 Date: Mon, 19 Dec 2005 23:04:01 -0500 (EST)
 Subject: Cron &lt;kencollins@ken-pb&gt; &quot;/Applications/MySQL Administrator.app/Contents/Resources/mabackup&quot; --directory=&quot;/Users/kencollins/Desktop&quot; --connection=&quot;localhost&quot; --prefix=&quot;MetaDB&quot; MetaDB
+</code>
 </pre>
           </div>
           <p>
@@ -131,10 +132,11 @@ Subject: Cron &lt;kencollins@ken-pb&gt; &quot;/Applications/MySQL Administrator.
           </p>
           <div class="highlight">
             <pre>
-<span class="c">#!/bin/bash</span>
+<code class="bash"><span class="c">#!/bin/bash</span>
 <span class="nv">timestamp</span><span class="o">=</span><span class="s2">&quot;$(date -u +%Y-%m-%d_%a)&quot;</span>
 /usr/local/mysql/bin/mysqldump -uXXXX -pXXXX metadb &gt; /Backups/MetaDB_<span class="k">${</span><span class="nv">timestamp</span><span class=
 "k">}</span>.sql
+</code>
 </pre>
           </div>
           <p>

@@ -88,7 +88,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">MyDownload</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">MyDownload</span>
 
   <span class="n">has_attached_file</span> <span class="ss">:attachment</span><span class="p">,</span> 
                     <span class="ss">:storage</span> <span class="o">=&gt;</span> <span class="ss">:s3</span><span class="p">,</span> <span class=
@@ -134,6 +134,7 @@
   <span class="k">end</span>
 
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <p>
@@ -159,7 +160,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="c1"># A MyDownload instance.</span>
+<code class="ruby"><span class="c1"># A MyDownload instance.</span>
 <span class="o">&gt;&gt;</span> <span class="n">dl</span> <span class="o">=</span> <span class="no">MyDownload</span><span class=
 "o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 
@@ -177,6 +178,7 @@
 <span class="o">&gt;&gt;</span> <span class="n">dl</span><span class="o">.</span><span class="n">authenticated_s3_get_url</span>
 <span class="o">=&gt;</span> <span class=
 "s2">&quot;https://s3.amazonaws.com/mybucket/000/000/004/147681c16fddc1e5/private.pdf?AWSAccessKeyId=0HJD3NS9CVWN2JV89K02&amp;Expires=1258990967&amp;Signature=8aWsq4o5gXfpIrRZyeETddnOeFw%3D&quot;</span>
+</code>
 </pre>
           </div>
           <h2>
@@ -191,7 +193,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">module</span> <span class="nn">Paperclip</span>  
+<code class="ruby"><span class="k">module</span> <span class="nn">Paperclip</span>  
   <span class="k">class</span> <span class="nc">Noop</span> <span class="o">&lt;</span> <span class="no">Processor</span>
 
     <span class="k">def</span> <span class="nf">make</span>
@@ -200,6 +202,7 @@
 
   <span class="k">end</span>
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <h2>
@@ -213,7 +216,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">MyDownload</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">MyDownload</span>
 
   <span class="n">has_attached_file</span> <span class="ss">:attachment</span><span class="p">,</span> 
                     <span class="ss">:storage</span> <span class="o">=&gt;</span> <span class="ss">:fog</span><span class="p">,</span> 
@@ -242,6 +245,7 @@
   <span class="k">end</span>
 
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <h2>

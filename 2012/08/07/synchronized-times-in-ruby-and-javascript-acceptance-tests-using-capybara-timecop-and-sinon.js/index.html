@@ -139,16 +139,17 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="c1">// File app/assets/javascripts/integration.js</span>
+<code class="javascript"><span class="c1">// File app/assets/javascripts/integration.js</span>
 
 <span class="c1">//= require sinon-1.4.2</span>
 <span class="c1">//= require integration/sinon</span>
 <span class="c1">//= require application</span>
+</code>
 </pre>
           </div>
           <div class="highlight">
             <pre>
-<span class="c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb</span>
+<code class="coffeescript"><span class="c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb</span>
 
 <span class="o">&lt;%</span> <span class="nv">central = </span><span class="nx">ActiveSupport</span><span class="o">::</span><span class=
 "nx">TimeZone</span><span class="p">[</span><span class="s">&#39;Central Time (US &amp; Canada)&#39;</span><span class="p">]</span> <span class=
@@ -159,6 +160,7 @@
 
 <span class="nb">window</span><span class="p">.</span><span class="nv">clock = </span><span class="nx">sinon</span><span class=
 "p">.</span><span class="nx">useFakeTimers</span> <span class="o">&lt;%=</span> <span class="nx">today</span> <span class="o">%&gt;</span>
+</code>
 </pre>
           </div>
           <p>
@@ -172,7 +174,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="c1"># File test/test_helper_integration.rb</span>
+<code class="ruby"><span class="c1"># File test/test_helper_integration.rb</span>
 
 <span class="nb">require</span> <span class="s2">&quot;test_helper&quot;</span>
 <span class="nb">require</span> <span class="s2">&quot;capybara/rails&quot;</span>
@@ -220,6 +222,7 @@
   <span class="k">end</span>
 
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <p>

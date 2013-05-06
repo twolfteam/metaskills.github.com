@@ -132,7 +132,7 @@ $ sudo mv /opt/local/bin/testrb /opt/local/bin/testrb1.8
           </p>
           <div class="highlight">
             <pre>
-chruby <span class="o">()</span> <span class="o">{</span>
+<code class="bash">chruby <span class="o">()</span> <span class="o">{</span>
   <span class="nv">ree</span><span class="o">=</span><span class="sb">`</span>ruby -e <span class=
 "s2">&quot;puts RUBY_DESCRIPTION.include?(&#39;Ruby Enterprise Edition&#39;)&quot;</span><span class="sb">`</span>
   <span class="k">if</span> <span class="o">[</span> <span class="nv">$ree</span> <span class="o">=</span> <span class=
@@ -157,6 +157,7 @@ chruby <span class="o">()</span> <span class="o">{</span>
 "sb">`</span>
   <span class="k">fi</span>
 <span class="o">}</span>
+</code>
 </pre>
           </div>
           <pre class="command">

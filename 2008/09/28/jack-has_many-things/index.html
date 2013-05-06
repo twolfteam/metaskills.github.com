@@ -105,7 +105,9 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="n">gem</span> <span class="s1">&#39;grouped_scope&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 3.1.0&#39;</span>
+<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;grouped_scope&#39;</span><span class="p">,</span> <span class=
+"s1">&#39;~&gt; 3.1.0&#39;</span>
+</code>
 </pre>
           </div>
           <p>
@@ -113,7 +115,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">PeopleCanChooseAGroup</span> <span class="o">&lt;</span> <span class=
+<code class="ruby"><span class="k">class</span> <span class="nc">PeopleCanChooseAGroup</span> <span class="o">&lt;</span> <span class=
 "ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Migration</span>
   <span class="k">def</span> <span class="nf">up</span>
     <span class="n">add_column</span> <span class="ss">:people</span><span class="p">,</span> <span class="ss">:group_id</span><span class=
@@ -123,6 +125,7 @@
     <span class="n">remove_column</span> <span class="ss">:people</span><span class="p">,</span> <span class="ss">:group_id</span>
   <span class="k">end</span>
 <span class="k">end</span>
+</code>
 </pre>
           </div>
           <p>
@@ -130,8 +133,8 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">Person</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class=
-"p">:</span><span class="ss">:Base</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">Person</span> <span class="o">&lt;</span> <span class=
+"ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
   <span class="n">has_many</span> <span class="ss">:things</span>
   <span class="n">has_many</span> <span class="ss">:acquaintances</span>
   <span class="n">has_many</span> <span class="ss">:problems</span>
@@ -147,6 +150,7 @@
 "p">,</span> <span class="mi">1</span>
 <span class="vi">@bob</span><span class="o">.</span><span class="n">update_attribute</span> <span class="ss">:group_id</span><span class=
 "p">,</span> <span class="mi">1</span>
+</code>
 </pre>
           </div>
           <p>
@@ -157,8 +161,9 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="vi">@jack</span><span class="o">.</span><span class="n">group</span>   <span class=
+<code class="ruby"><span class="vi">@jack</span><span class="o">.</span><span class="n">group</span>   <span class=
 "c1"># =&gt; [#&lt;Person id: 1, name: &quot;Jack&quot;, group_id: 1&gt;, #&lt;Person id: 2, name: &quot;Bob&quot;, group_id: 1&gt;]</span>
+</code>
 </pre>
           </div>
           <h2>
@@ -172,7 +177,7 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="vi">@jack</span><span class="o">.</span><span class="n">problems</span><span class="o">.</span><span class=
+<code class="ruby"><span class="vi">@jack</span><span class="o">.</span><span class="n">problems</span><span class="o">.</span><span class=
 "n">size</span>   <span class="c1"># =&gt; 6</span>
 <span class="vi">@bob</span><span class="o">.</span><span class="n">problems</span><span class="o">.</span><span class=
 "n">size</span>    <span class="c1"># =&gt; 2</span>
@@ -183,6 +188,7 @@
 "o">.</span><span class="n">size</span>   <span class="c1"># =&gt; 8</span>
 <span class="vi">@jack</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">problems</span><span class=
 "o">.</span><span class="n">size</span>  <span class="c1"># =&gt; 8</span>
+</code>
 </pre>
           </div>
           <p>
@@ -199,8 +205,8 @@
           </p>
           <div class="highlight">
             <pre>
-<span class="k">class</span> <span class="nc">Person</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class=
-"p">:</span><span class="ss">:Base</span>
+<code class="ruby"><span class="k">class</span> <span class="nc">Person</span> <span class="o">&lt;</span> <span class=
+"ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
   <span class="n">has_many</span> <span class="ss">:mental_issues</span><span class="p">,</span> <span class="ss">:class_name</span> <span class=
 "o">=&gt;</span> <span class="s2">&quot;MentalState&quot;</span><span class="p">,</span> <span class="ss">:foreign_key</span> <span class=
 "o">=&gt;</span> <span class="ss">:name</span> <span class="k">do</span>
@@ -224,6 +230,7 @@
 "n">mental_issues</span><span class="o">.</span><span class="n">dangerous</span><span class="o">.</span><span class=
 "n">treatable_by</span><span class="p">(</span><span class="vi">@doctor</span><span class="p">)</span> <span class=
 "c1"># =&gt; [#&lt;MentalState...&gt;,#&lt;MentalState...&gt;]</span>
+</code>
 </pre>
           </div>
           <h2>

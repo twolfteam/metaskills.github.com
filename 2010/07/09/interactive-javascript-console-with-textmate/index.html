@@ -97,7 +97,7 @@ sudo ln -s /System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resour
           </div>
           <div class="highlight">
             <pre>
-<span class="c1">#!/usr/bin/env ruby</span>
+<code class="ruby"><span class="c1">#!/usr/bin/env ruby</span>
 
 <span class="nb">require</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;TM_SUPPORT_PATH&#39;</span><span class=
 "o">]</span> <span class="o">+</span> <span class="s1">&#39;/lib/escape.rb&#39;</span>
@@ -114,6 +114,7 @@ sudo ln -s /System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resour
 <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;|osascript&quot;</span><span class="p">,</span> <span class=
 "s2">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">io</span><span class=
 "o">|</span> <span class="n">io</span> <span class="o">&lt;&lt;</span> <span class="n">terminal_script_filepath</span> <span class="p">}</span>
+</code>
 </pre>
           </div>
           <p>
