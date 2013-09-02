@@ -1,0 +1,522 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      Jekyll Tips And Tricks @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css">
+    <link rel="stylesheet" href="/resource/site.css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/jquery-1.7.1.min.js">
+</script>
+    <script src="/resource/site.js">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="U">About Me</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="/pages/resume.html" class="button" data-icon="N">Resume</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Twitter</a>
+            </li>
+            <li>
+              <a href="/archive.html" class="button" data-icon="l">Archives</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate="" datetime="2013-09-02T00:00:00-04:00"><span class="day">02</span> <span class="month">Sep</span> <span class=
+            "year">2013</span></time>
+            <h1>
+              Jekyll Tips And Tricks
+            </h1>
+          </header>
+          <aside class="flash_info">
+            <a href="http://www.booster.com/757rb?utm_source=metaskills&utm_medium=site"><img src="/assets/757rb_shirt_ladies.jpg" alt=
+            "757.RB T-Shirt" width="50" class="floatr ml10 mb10 mr10" style="border: 2px solid white;"> <img src="/assets/757rb_shirt_unisex.jpg"
+            alt="757.RB T-Shirt" width="50" class="floatr ml10 mb10" style="border: 2px solid white;"> IT&#39;S DANGEROUS TO GO ALONE! TAKE THIS!<br>
+            Our t-shirt fund-raiser on Booster.com only has a few days left. Don&#39;t miss out on this 8-bit-tacular Ruby shirt! Available in men,
+            ladies &amp; youth sizes!</a>
+          </aside>
+          <div class="h10"></div>
+          <p>
+            <a href="http://757rb.org?utm_source=metaskills&utm_medium=site"><img class="floatr ml20 mb20" src="/assets/757rb_site.png" alt=
+            "757.RB New Website" width="275"></a> Last week, our localy Ruby community in Norfolk, VA re-launched the <a href=
+            "http://757rb.org?utm_source=metaskills&amp;utm_medium=site">757rb.org</a> website. This was the third static website I have build using
+            <a href="http://jekyllrb.com">Jekyll</a> and the second since the official v1.0.0 release. It was also completely different than any
+            creative approach I have taken on. Please, go ahead and <a href="http://757rb.org?utm_source=metaskills&amp;utm_medium=site">check it
+            out</a> real quick, I will wait.
+          </p>
+          <p>
+            Many things have changed with Jekyll over the years and it is always fun to stay current with the latest technical aspects of the tools
+            we use. So I thought I would put a few of my own techniques out there to see what others think. If you find any of these useful or know
+            of better ways to solve them, let me know.
+          </p>
+          <h2 id="toc_0">
+            Use Task Scripts
+          </h2>
+          <p>
+            I have no idea where I picked this up, but the general idea is to create a <code>tasks</code> directory that holds a set of useful shell
+            scripts. My Jekyll projects usually contain the following executables.
+          </p>
+          <aside class="flash_warn">
+            Remember to add the tasks directory to jekyll&#39;s exclude array in your config file(s).
+          </aside>
+          <ul>
+            <li>jekyll
+            </li>
+            <li>jekyll-livereload
+            </li>
+            <li>deploy
+            </li>
+            <li>
+              <a href="https://gist.github.com/metaskills/6414700">optipng</a>
+            </li>
+            <li>
+              <a href="https://gist.github.com/metaskills/6414713">post</a>
+            </li>
+          </ul>
+          <p>
+            The <code>jekyll</code> wrapper script is only useful to those projects that need to perform additional steps before or after building
+            the site. In the example below, we are cleaning up the site with <code>tidy</code>. Notice the usage of <code>$*</code> after the jekyll
+            build command. This is akin to Ruby&#39;s reverse splat args. It allows you to send any arguments to your own script that the jekyll
+            command would normally take.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="bash"><span class="c">#!/usr/bin/env bash</span>
+<span class="nb">set</span> -e
+
+jekyll build <span class="nv">$*</span>
+find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <span class="k">$(</span><span class="nb">pwd</span><span class=
+"k">)</span>/tidy.conf <span class="o">{}</span> <span class="se">\;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            I will cover <code>jekyll-livereload</code> and <code>deploy</code> later in this post. The <a href=
+            "https://gist.github.com/metaskills/6414700">optipng</a> script is a useful command line utility that compresses assets. While the
+            <a href="https://gist.github.com/metaskills/6414713">post</a> script allows you to easily create a new post. For example:
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="text">$ ./tasks/post &quot;Jekyll Tips And Tricks&quot;
+</code>
+</pre>
+          </div>
+          <h2 id="toc_1">
+            Development &amp; Production Environments
+          </h2>
+          <p>
+            Sometimes you do not want a production feature turned on when developing your site locally. Blogs backed by <a href=
+            "https://disqus.com">DISQUS</a> comments would be a great example. Likewise, maybe you want to develop a new feature that you can see
+            during local development only to be enabled at a later time. Thanks to v1.0 of Jekyll and up, this is easy to do with different
+            configuration files.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="c1"># In _config.yml</span>
+<span class="ss">production</span><span class="p">:</span> <span class="kp">false</span>
+<span class="ss">timezone</span><span class="p">:</span> <span class="s2">&quot;America/New_York&quot;</span>
+
+<span class="c1"># In _config_production.yml</span>
+<span class="ss">production</span><span class="p">:</span> <span class="kp">true</span>
+<span class="ss">timezone</span><span class="p">:</span> <span class="s2">&quot;America/New_York&quot;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Here we have the default <code>_config.yml</code> acting as our default development configuration. It sets the production site variable
+            to false while the <code>_config_production.yml</code> sets it to true. Remember the <code>deploy</code> task I mentioned above? This is
+            a great place to pass down the <code>--config</code> argument to your own jekyll task. Here is a partial example of a deploy task.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="bash"><span class="c">#!/usr/bin/env bash</span>
+<span class="nb">set</span> -e
+
+./tasks/jekyll --config _config_production.yml
+</code>
+</pre>
+          </div>
+          <p>
+            Now you can write code like the following examples in your layouts or includes. Jekyll will automatically take any additional top level
+            configurations and turn them into properties on the <code>site</code> object.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="html"><span class="c">&lt;!-- Only show DISQUS comments in production. --&gt;</span>
+{% if site.production %}
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+  <span class="kd">var</span> <span class="nx">disqus_shortname</span> <span class="o">=</span> <span class="s1">&#39;...&#39;</span><span class=
+"p">;</span>
+  <span class="p">...</span>
+<span class="nt">&lt;/script&gt;</span>
+{% endif %}
+
+<span class="c">&lt;!-- Developing a local only feature not ready for production. --&gt;</span>
+{% unless site.production %}
+<span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;promotion&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;header&gt;</span>T-SHIRT FUNDRAISER!<span class="nt">&lt;/header&gt;</span>
+  ...
+<span class="nt">&lt;/section&gt;</span>
+{% endunless %}
+</code>
+</pre>
+          </div>
+          <h2 id="toc_2">
+            Use The Asset Pipeline
+          </h2>
+          <p>
+            If you have written Jekyll sites prior to the v1.0 release you have likely concocted up your own scripts to use <a href=
+            "http://coffeescript.org">CoffeeScript</a>, <a href="http://sass-lang.com">Sass</a> or both. Love it or hate it, as Ruby developers we
+            got it good with Sprockets.
+          </p>
+          <p>
+            But now Jekyll has the power of the asset pipeline too. Just install the <a href=
+            "https://github.com/ixti/jekyll-assets">jekyll-assets</a> gem. Here are a few tips to get you up and running faster.
+          </p>
+          <p>
+            First, remember that Sprockets is built on top of a gem named Tilt which is a generic interface to multiple template engines. Installing
+            tilt does not install template engines, so make sure to install the ones you want to work with by explicitly declaring them in your
+            Gemfile.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;jekyll-assets&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;coffee-script&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;compass&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;sass&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;uglifier&#39;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            I found the default configuration for jekyll-assets very confusing. It mimicked a production environment Rails setting. All the files
+            used the digest as part of the file name and compression was on by default. This made it really hard to debug. So to make jekyll-assets
+            more like Rails defaults. Use these configurations for each jekyll environment.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="c1"># In _config.yml</span>
+<span class="ss">assets</span><span class="p">:</span>
+  <span class="n">js_compressor</span><span class="p">:</span> 
+  <span class="n">css_compressor</span><span class="p">:</span> 
+  <span class="ss">cache</span><span class="p">:</span> 
+  <span class="ss">cachebust</span><span class="p">:</span> <span class="n">none</span>
+
+<span class="c1"># In _config_production.yml</span>
+<span class="ss">assets</span><span class="p">:</span>
+  <span class="n">js_compressor</span><span class="p">:</span> <span class="n">uglifier</span>
+  <span class="n">css_compressor</span><span class="p">:</span> <span class="n">sass</span>
+  <span class="ss">cache</span><span class="p">:</span> <span class="n">_cache</span><span class="o">/</span><span class="n">assets</span>
+  <span class="ss">cachebust</span><span class="p">:</span> <span class="n">hard</span>
+</code>
+</pre>
+          </div>
+          <h2 id="toc_3">
+            Pow It Up
+          </h2>
+          <p>
+            Sure the new jekyll release has a <code>serve</code> option to boot up a web server. But like good software developers, we should be too
+            lazy for such things. If you develop on a Mac and use <a href="http://pow.cx">Pow</a> already for your Rails applications, why not just
+            hook it up to serve your Jekyll site(s) too. Here are the steps.
+          </p>
+          <p>
+            First, add both rack and rack-rewrite to your <code>Gemfile</code>.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;rack&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;rack-rewrite&#39;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Now create a <code>config.ru</code> file at the root of your project with the following contents.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;rack-rewrite&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;rack/rewrite&#39;</span>
+
+<span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Rewrite</span> <span class="k">do</span>
+  <span class="n">r301</span> <span class="sr">%r{^([^\.]*[^\/])$}</span><span class="p">,</span> <span class="s1">&#39;$1/&#39;</span> 
+  <span class="n">r301</span> <span class="sr">%r{^(.*\/)$}</span><span class="p">,</span> <span class="s1">&#39;$1index.html&#39;</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Lastly, sym link the <code>_site</code> directory of your Jekyll project to the <code>public</code>. Then symlink your Jekyll project
+            directory to Pow as you normally would do any Rails or Rack app.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="text">$ ln -s _site public
+$ cd ~/.pow
+$ ln -s /path/to/myjekyllapp
+</code>
+</pre>
+          </div>
+          <p>
+            You can now access your generated site at <code>http://myjekyllapp.dev</code> via Pow.
+          </p>
+          <aside class="flash_warn">
+            Remember to add both config.ru and the public directory to jekyll&#39;s exclude array in your config file(s).
+          </aside>
+          <h2 id="toc_4">
+            Live Reloads
+          </h2>
+          <p>
+            I love <a href="http://livereload.com">LiveReload</a> and have purchased the native OS X client for $9 from the <a href=
+            "http://itunes.apple.com/us/app/livereload/id482898991?mt=12">Mac App Store</a>. Personally, I could never get the guard-livereload gem
+            working and just opted for the GUI client. So this tip will only focus on using the native Mac app.
+          </p>
+          <p>
+            It solves a few problems. First, it overcomes LiveReload&#39;s lack of <a href="https://github.com/sstephenson/rbenv">rbenv</a> support.
+            It also assumes that your jekyll site is rather large and takes several seconds to build. Finally, assuming that you are working on your
+            latest post and all you need to do is build a single page over and over again.
+          </p>
+          <p>
+            Setup LiveReload like you normally would by dragging your project&#39;s folder to their setup window. From here we want to configure your
+            jekyll project to &quot;Run a custom command...&quot;. Click on &quot;Options...&quot; and add the full path to your
+            <code>jekyll-livereload</code> task script.
+          </p>
+          <div class="center">
+            <span class="photofancy"><img src="/assets/livereload_custom_command1.png" alt="LiveReload Run Custom Command" width="400"></span>
+            <span class="photofancy center"><img src="/assets/livereload_custom_command2.png" alt="LiveReload Run Custom Command" width="400"></span>
+          </div>
+          <p>
+            <span class="photofancy floatr ml20"><img src="/assets/livereload_exclude.png" alt="LiveReload Exclude Directories" width="200"></span>
+            Also, make sure to exclude any directories that you do not want LiveReload to monitor. One critical folder is the jekyll
+            <code>_site</code> directory. Watching this directly usually results in a indefinite LiveReload loop. Not good.
+          </p>
+          <p>
+            Your mileage may vary, but here is what I have found works for me in my <code>jekyll-livereload</code> script. This forces the LiveReload
+            sub shell script to load up rbenv again. It then uses the <code>--limit_posts</code> argument to build just the last post. I have found
+            this quickly refreshes the browser page automatically for me while working on my latest Jekyll post in markdown.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="bash"><span class="c">#!/usr/bin/env bash</span>
+<span class="nb">set</span> -e
+
+<span class="nb">export </span><span class="nv">LANG</span><span class="o">=</span><span class="s2">&quot;en_US.UTF-8&quot;</span>
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class=
+"s2">&quot;$HOME/.rbenv/shims:$HOME/.rbenv/bin:$HOME/.rbenv/plugins/ruby-build/bin:$PATH&quot;</span>
+<span class="nb">eval</span> <span class="s2">&quot;$(rbenv init -)&quot;</span>
+
+jekyll build --limit_posts 1
+</code>
+</pre>
+          </div>
+          <aside class="flash_warn">
+            Remember turn off LiveReload while you are deploying!
+          </aside>
+          <h2 id="toc_5">
+            Resources
+          </h2>
+          <ul>
+            <li>
+              <a href="http://757rb.org?utm_source=metaskills&amp;utm_medium=site">757RB.org</a>
+            </li>
+            <li>
+              <a href="http://jekyllrb.com">Jekyll - Simple, blog-aware, static sites.</a>
+            </li>
+            <li>
+              <a href="https://github.com/ixti/jekyll-assets">jekyll-assets - Asset pipeline for Jekyll.</a>
+            </li>
+            <li>
+              <a href="http://pow.cx">Pow - A zero-config Rack server for OS X.</a>
+            </li>
+            <li>
+              <a href="http://livereload.com">LiveReload</a>
+            </li>
+          </ul>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2013/09/02/jekyll-tips-and-tricks';
+            var disqus_title = "Jekyll Tips And Tricks";
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Jekyll Tips And Tricks
+            </h4>
+            <p>
+              <a href="/2013/09/02/jekyll-tips-and-tricks">IT&#39;S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has
+              a few days left. Don&#39;t miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              In Loving Memory of Kenneth Earle Collins
+            </h4>
+            <p>
+              <a href="/2013/01/05/in-loving-memory-kenneth-earle-collins">Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away January
+              5th, 2013. My father, known to his friends and family as Kenny, was born in Logan, West Virginia and was...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              HolyGrailHarness
+            </h4>
+            <p>
+              <a href="/2012/12/05/holygrailharness">The latest README for HolyGrailHarness will always be on the Github project page. A curated
+              Rails application prototype that focuses on simple test patterns for Ruby &amp; JavaScript! Unlike normal...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://technology.customink.com">CustomInk Technology</a>
+            </li>
+            <li>
+              <a href="http://fearoffish.com">Jamie van Dyke</a>
+            </li>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://brennandunn.com">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

@@ -65,9 +65,34 @@
             "http://github.com/rails-sqlserver/">rails-sqlserver</a>) or a list of my gems on <a href=
             "https://rubygems.org/profiles/246">rubygems.org</a>.
           </aside>
-          <h2>
+          <h2 id="toc_0">
+            Mocha-PhantomJS
+          </h2>
+          <p>
+            <a href="http://visionmedia.github.io/mocha/">Mocha</a> is a feature-rich JavaScript test framework running on node and the browser.
+            Along with the <a href="http://chaijs.com/">Chai</a> assertion library they make an impressive combo. <a href=
+            "http://phantomjs.org/">PhantomJS</a> is a headless WebKit with a JavaScript/CoffeeScript API. It has fast and native support for various
+            web standards like DOM handling, CSS selectors, JSON, Canvas, and SVG.
+          </p>
+          <p>
+            The <a href="https://github.com/metaskills/mocha-phantomjs">mocha-phantomjs</a> project provides a mocha-phantomjs.coffee script file and
+            extensions to drive PhantomJS while testing your HTML pages with Mocha from the console.
+          </p>
+          <h2 id="toc_1">
+            MiniTest Spec Rails
+          </h2>
+          <p>
+            The <a href="https://github.com/metaskills/minitest-spec-rails">minitest-spec-rails</a> gem makes it easy to use the MiniTest::Spec DSL
+            within your existing Rails 2.3, 3.x or 4.x test suite. It does this by forcing ActiveSupport::TestCase to utilize the
+            MiniTest::Spec::DSL.
+          </p>
+          <h2 id="toc_2">
             Rails SQL Server
           </h2>
+          <aside class="flash_warn">
+            <a href="https://groups.google.com/d/msg/rails-sqlserver-adapter/PWIobkN7FOg/a0LDfE1hN1UJ">The SQLServer Adapter is looking for a
+            maintainer.</a> However I still support and actively work on TinyTDS.
+          </aside>
           <p>
             The SQL Server adapter for rails is back for ActiveRecord 2.2 and up! We are currently passing all tests and hope to continue to do so
             moving forward. Includes tons of new features including unicode column support, pessimistic locking, date/time column casting, DDL
@@ -86,15 +111,15 @@
               <a href="http://github.com/rails-sqlserver/tiny_tds/">TinyTds - A modern, simple and fast FreeTDS library for Ruby using DB-Library</a>
             </li>
           </ul>
-          <h2>
+          <h2 id="toc_3">
             Less-Rails &amp; Less-Rails-Bootstrap
           </h2>
           <p>
-            When <a href="http://twitter.github.com/bootstrap/">Twitter's Bootstrap</a> was first released, I decided to give it a try and I assumed
-            there was support in the Rails asset pipeline for it. I was mistaken. Even thought Tilt under Sprockets could render less files with the
-            less.rb and therubyracer gems, there was no easy way to hook up the less load paths in a single place. Nor was there a way to expose
-            helpers familiar to those using <a href="https://github.com/rails/sass-rails">sass-rails</a> like <code>asset-data-url</code>. Thus was
-            born these two gems. Both leverage <code>Rails::Engine</code> or <code>Rails::Railtie</code> models that hook into the low level
+            When <a href="http://twitter.github.com/bootstrap/">Twitter&#39;s Bootstrap</a> was first released, I decided to give it a try and I
+            assumed there was support in the Rails asset pipeline for it. I was mistaken. Even thought Tilt under Sprockets could render less files
+            with the less.rb and therubyracer gems, there was no easy way to hook up the less load paths in a single place. Nor was there a way to
+            expose helpers familiar to those using <a href="https://github.com/rails/sass-rails">sass-rails</a> like <code>asset-data-url</code>.
+            Thus was born these two gems. Both leverage <code>Rails::Engine</code> or <code>Rails::Railtie</code> models that hook into the low level
             internals of the Rails boot process to hook into the asset pipeline. I even take advantage of therubyracer to add functions to Less.js
             that hook right back into Ruby!
           </p>
@@ -106,11 +131,11 @@
               <a href="https://github.com/metaskills/less-rails-bootstrap">Less-Rails-Bootstrap On Github</a>
             </li>
             <li>
-              <a href="/2011/09/26/less-is-more-using-twitter-bootstrap-in-the-rails-3-1-asset-pipeline/">LESS Is More - Using Twitter's Bootstrap In
-              The Rails 3.1 Asset Pipeline</a>
+              <a href="/2011/09/26/less-is-more-using-twitter-bootstrap-in-the-rails-3-1-asset-pipeline/">LESS Is More - Using Twitter&#39;s
+              Bootstrap In The Rails 3.1 Asset Pipeline</a>
             </li>
           </ul>
-          <h2>
+          <h2 id="toc_4">
             GroupedScope Plugin
           </h2>
           <p>
@@ -125,7 +150,7 @@
               <a href="/2008/09/28/jack-has_many-things/">Jack has_many :things</a>, an article introducing GroupedScope.
             </li>
           </ul>
-          <h2>
+          <h2 id="toc_5">
             Capistrano: Remote Shared Cache Strategy
           </h2>
           <p>
@@ -144,7 +169,7 @@
               <a href="http://github.com/metaskills/remote_shared_cache/tree/master">http://github.com/metaskills/remote_shared_cache/tree/master</a>
             </li>
           </ul>
-          <h2>
+          <h2 id="toc_6">
             HomeMarks: Simple Bookmark Start Page
           </h2>
           <p>
@@ -155,17 +180,17 @@
           <p>
             HomeMarks went thru its third rewrite a few months ago for Rails 3 and is currently deployed on Heroku. I also recently just finished my
             first native Objective-C iPhone app too. I am currently working on the native iPad version and will post updates here too. When that
-            happens I will rewrite the rails application a 4th time using CoffeeScript & Spine.js.
+            happens I will rewrite the rails application a 4th time using CoffeeScript &amp; Spine.js.
           </p>
           <ul>
             <li>
               <a href="/2010/02/12/synchronizing-core-data-with-rails-3-0-0-pre/">Synchronizing Core Data With Rails (3.0.0.pre)</a>
             </li>
             <li>
-              <a href="/2008/08/18/in-hell-oo-for-homemarks/">Hell'OO HomeMarks</a>
+              <a href="/2008/08/18/in-hell-oo-for-homemarks/">Hell&#39;OO HomeMarks</a>
             </li>
             <li>
-              <a href="/2008/05/24/the-ajax-head-design-pattern/">The "AJAX Head" Design Pattern</a>
+              <a href="/2008/05/24/the-ajax-head-design-pattern/">The &quot;AJAX Head&quot; Design Pattern</a>
             </li>
           </ul>
         </article>
@@ -216,6 +241,15 @@
           </h3>
           <article>
             <h4>
+              Jekyll Tips And Tricks
+            </h4>
+            <p>
+              <a href="/2013/09/02/jekyll-tips-and-tricks">IT&#39;S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has
+              a few days left. Don&#39;t miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               In Loving Memory of Kenneth Earle Collins
             </h4>
             <p>
@@ -232,18 +266,8 @@
               Rails application prototype that focuses on simple test patterns for Ruby &amp; JavaScript! Unlike normal...</a>
             </p>
           </article>
-          <article>
-            <h4>
-              Synchronized Times In Ruby &amp; JavaScript Acceptance Tests Using Capybara, Timecop &amp; Sinon.JS
-            </h4>
-            <p>
-              <a href="/2012/08/07/synchronized-times-in-ruby-and-javascript-acceptance-tests-using-capybara-timecop-and-sinon.js">Any good Ruby
-              developer that tests time-dependent code has used the Timecop gem. Timecop provides dead simple time travel and freezing capabilities
-              to Ruby's standard library. But what if you...</a>
-            </p>
-          </article>
           <aside id="powered">
-            <span>Powered by <a href="http://github.com/mojombo/jekyll">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
             <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
           </aside>
@@ -272,7 +296,7 @@
               <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
             </li>
             <li>
-              <a id="badge_757rb" href="http://www.meetup.com/ruby-130/"></a>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
             </li>
           </ul>
         </section>
@@ -282,34 +306,25 @@
           </h3>
           <ul>
             <li>
+              <a href="http://technology.customink.com">CustomInk Technology</a>
+            </li>
+            <li>
               <a href="http://fearoffish.com">Jamie van Dyke</a>
             </li>
             <li>
               <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
             </li>
             <li>
-              <a href="http://www.linkedin.com/in/imbriaco">Mark Imbriaco</a>
-            </li>
-            <li>
-              <a href="http://mwhuss.com/">Marshall Huss</a>
-            </li>
-            <li>
-              <a href="http://fun3d.larc.nasa.gov/">Bil Kleb</a>
-            </li>
-            <li>
               <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
             </li>
             <li>
-              <a href="http://www.candescence.org/">Geoff Parsons</a>
+              <a href="http://brennandunn.com">Brennan Dunn</a>
             </li>
             <li>
-              <a href="http://www.wearetitans.net/">Brennan Dunn</a>
+              <a href="http://evan.tiggerpalace.com">Evan Light</a>
             </li>
             <li>
-              <a href="http://evan.tiggerpalace.com/">Evan Light</a>
-            </li>
-            <li>
-              <a href="http://techiferous.com/">Wyatt Greene</a>
+              <a href="http://techiferous.com">Wyatt Greene</a>
             </li>
             <li>
               <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>

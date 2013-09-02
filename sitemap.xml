@@ -4,6 +4,13 @@
         xmlns:video="http://www.sitemaps.org/schemas/sitemap-video/1.1">
   
   <url> 
+    <loc>http://metaskills.net/2013/09/02/jekyll-tips-and-tricks</loc> 
+    
+    <lastmod>2013-09-02T00:00:00-04:00</lastmod>
+    
+  </url>
+  
+  <url> 
     <loc>http://metaskills.net/2013/01/05/in-loving-memory-kenneth-earle-collins</loc> 
     
     <lastmod>2013-01-05T00:00:00-05:00</lastmod>
