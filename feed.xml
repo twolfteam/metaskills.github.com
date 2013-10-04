@@ -4,13 +4,52 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2013-09-07T10:13:09-04:00</updated>
+ <updated>2013-10-03T22:03:13-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
    <email>ken@metaskills.net</email>
  </author>
 
+ 
+ <entry>
+   <title>Using Dotenv In Rails</title>
+   <link href="http://metaskills.net/2013/10/03/using-dotenv-in-rails"/>
+   <updated>2013-10-03T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2013/10/03/using-dotenv-in-rails</id>
+   <content type="html">
+     <![CDATA[<p>Environment variables as a configuration means are everywhere in Ruby. For instance, ActiveRecord will use the single <code>DATABASE_URL</code> environment variable for every part of it&#39;s configuration, no database.yml needed! If you are not on board with environment variables, check out <a href="http://12factor.net/config">The Twelve-Factor App</a> for configuration. This is exactly how good software platforms like <a href="https://www.heroku.com">Heroku</a> work, all through environment variables.</p>
+
+<p>But using environment variables in a Rails application can be tricky. During local development, you may not want to set everything in your Bash or ZSH profile. Perhaps you want per project settings. And then there is the trouble of using different environment variables when running your tests. Enter the <a href="https://github.com/bkeepers/dotenv">Dotenv</a> project. </p>
+
+<p>In my examples below of how to integrate Dotenv, I will be using @ecbypi&#39;s fork until this <a href="https://github.com/bkeepers/dotenv/pull/61">pull request for overloading environment variables</a> is accepted. This pull request is key to overriding development or local settings for our Rails test environment. If you like how these examples look below, weigh in on that pull request and lobby for a fresh hot Dotenv release. </p>
+
+<p>Let&#39;s get started. First, let&#39;s add the gem to your Rails project&#39;s Gemfile.</p>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In Gemfile</span>
+<span class="n">gem</span> <span class="s1">&#39;dotenv&#39;</span><span class="p">,</span> <span class="ss">github</span><span class="p">:</span> <span class="s1">&#39;ecbypi/dotenv&#39;</span><span class="p">,</span> <span class="ss">branch</span><span class="p">:</span> <span class="s1">&#39;overload-environment-variables&#39;</span>
+</code></pre></div>
+<p>Next up, open your <code>config/application.rb</code> and add this line right after the require &#39;rails/all&#39; line. This will require the Dotenv gem, then load your own per-developer local settings (if present), then a .env file that matches the current <code>Rails.env</code>.</p>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In config/application.rb</span>
+<span class="nb">require</span> <span class="s1">&#39;rails/all&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;dotenv&#39;</span> <span class="p">;</span> <span class="no">Dotenv</span><span class="o">.</span><span class="n">load</span> <span class="s2">&quot;.env.local&quot;</span><span class="p">,</span> <span class="s2">&quot;.env.</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>Next, create individual <code>.env.RAILS_ENV</code> files with your configurations. YMMV on this one, but the idea is to check all of these in. The <code>.env.development</code> will hold all the default configurations for a new developer to get up and running quickly. The <code>.env.test</code> will hold all the configurations for your test runs. Past that, how you handle the production file or not, is left up to you. In my examples below, we are setting the environment variable for the Awesome gem.</p>
+<div class="highlight"><pre><code class="text">$ echo &quot;AWESOME_GEM_URL=https://awesome.dev&quot;          &gt; .env.development
+$ echo &quot;AWESOME_GEM_URL=https://sandbox.awesome.com&quot;  &gt; .env.test
+$ echo &quot;AWESOME_GEM_URL=https://awesome.com&quot;          &gt; .env.production
+</code></pre></div>
+<p>This covers our bases, but what if a developer wants to override a configuration. They can use good ol&#39; environment variables and get the behavior they expect. Or they create their own <code>.env.local</code> file and set their configurations there. The benefit of the local file is that your Rails application via the console or the development server (for example Pow) will automatically get the same thing when using the .env.local file. Oh yea, it is a good idea to add the this file to your <code>.gitignore</code>.</p>
+<div class="highlight"><pre><code class="text">$ echo &quot;AWESOME_GEM_URL=https://my-awesome.dev&quot;       &gt; .env.local
+</code></pre></div>
+<p>Now, one last thing. We need to make sure that our tests do not use any real, development or local environment settings. This is where @ecbypi overload feature comes in handy. I have added this to the top of the Rails <code>test/test_helper.rb</code> file. </p>
+<div class="highlight"><pre><code class="ruby"><span class="c1"># In test/test_helper.rb</span>
+<span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;RAILS_ENV&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+<span class="o">+</span><span class="nb">require</span> <span class="s1">&#39;dotenv&#39;</span> <span class="p">;</span> <span class="no">Dotenv</span><span class="o">.</span><span class="n">overload</span> <span class="s2">&quot;.env.test&quot;</span>
+</code></pre></div>
+<p>Happy environment usage! Have you been solving environment and application configuration in a different way (don&#39;t say YAML), if so, I would love to hear about it!</p>
+]]>
+    </content>
+ </entry>
  
  <entry>
    <title>Jekyll Tips And Tricks</title>
@@ -1814,83 +1853,6 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
 <span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
 <span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class="s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
 </code></pre></div>]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>Revisiting My Design Past</title>
-   <link href="http://metaskills.net/2011/09/11/revisiting-my-design-past"/>
-   <updated>2011-09-11T00:00:00-04:00</updated>
-   <id>http://metaskills.net/2011/09/11/revisiting-my-design-past</id>
-   <content type="html">
-     <![CDATA[<p>
-  Not many people know that I used to be a designer back in the mid 90's. Some of you all may have ventured deep into the colophon section of my site and read <a href="/pages/resume.html">my resume</a> which has visual clues of that history. Either way, this page is dedicated to those that had no idea a programmer like myself could come from a design background. Besides, I think it would be cool to share some of my old portfolio pieces.
-</p>
-
-<h2>Beer Labels</h2>
-
-<p>
-  Every good starving artist needs a watering hole. Mine used to be the <a href="http://maps.google.com/maps/place?client=safari&rls=en&oe=UTF-8&um=1&ie=UTF-8&q=Taphouse+Grill+Norfolk&fb=1&gl=us&hq=Taphouse+Grill&hnear=0x89ba973a5322ca45:0xab99107fce7a1e0a,Norfolk,+VA&cid=13700420888534827238">Tap House Grill At Ghent</a>. Doing menu and beer tap design was a great way to pay for the basic staples of life, food and beer! Most of my friends worked there as well. Even after all these years, The Taphouse Grill still seems to be going strong in the same location. So here are a few of those beer tap designs. The "Sex Ina Canoe" tap was a joke against Yuengling Lager and referenced the joke, What does American beer and sex in canoe have in common?
-</p>
-
-<p><img src="/assets/design/beer_labels.png" alt="My Beer Label Designs For The Taphouse Grill In Norfolk, Virginia" width="774" height="327" /></p>
-
-<h2>Logos</h2>
-
-<p>
-  On top of doing tons of 4-color brochure and package design, I used to love doing logo work. The one for the Virginia Stage Company was never used and the middle was a logo for my old online moniker before MetaSkills. The last logo was for a friend's Mother's clothing company with heavy art direction.
-</p>
-
-<p><img src="/assets/design/logos.png" alt="My Misc Logo Work" width="774" height="273" /></p>
-
-<h2>Drawing Collaborations</h2>
-
-<p>
-  One thing I really enjoyed doing was working with illustrations by my friend Jeff Stephenson. He sketched tons of different things while making his way thru the day. I believe some of his drawings were purely cathartic or helped him cope in one way or another. Most times I would rescue them from the trash bin and scan them in for artwork. The first below is a t-shirt design for the Taphouse Grill's Cindo De Micro event. I remember piecing different illustrations together with some heavily inspired artwork I gathered while shopping for frozen burritos to eat that night. The end result was awesome. Lastly, what can I about Superfly Bundt Cackes? I think the wings came out nicely.
-</p>
-
-<div class="center mb20">
-  <span class="photofancy">
-    <img src="/assets/design/cinco_de_micro.jpg" alt="The Cinco De Micro Taphouse Grill T-Shirt Collaboration With Jeff Stephenson" width="542" height="390" />
-  </span>
-</div>
-
-<div class="center">
-  <span class="photofancy">
-    <img src="/assets/design/superfly_bundt_cakes.jpg" alt="Superfly Bundt Cakes Was Just A Silly Experiment" width="561" height="426" />
-  </span>
-</div>
-
-<h2>Experimental</h2>
-
-<p>
-  Even designers have to perform occupational maintenance. I was always reading design articles (before blogs were invented) and learning the different techniques and power of PhotoShop 4 and its numerous plug-ins. Below is a mixed bag of those results.
-</p>
-
-<div class="center mb20">
-  <span class="photofancy">
-    <img src="/assets/design/shocking.jpg" alt="Shocking Design Expierment For Lighting Effect In PhotoShop" width="695" height="132" />
-  </span>
-</div>
-
-<div class="center mb20">
-  <span class="photofancy">
-    <img src="/assets/design/virus.jpg" alt="Virus Design Expierment With Text And Backgrounds" width="559" height="419" />
-  </span>
-</div>
-
-<div class="center">
-  <span class="photofancy">
-    <img src="/assets/design/laugh_soup.jpg" alt="A Laugh Soup CD Design Expierment With Text And Backgrounds" width="462" height="450" />
-  </span>
-</div>
-
-<h2>Design Is Important</h2>
-
-<p>
-  I think it is critical that every designer or programmer have a basic skill in the other field. It adds tons of value and streamlines communication across the disciplines. For me however, I have made a career decision that I will never open a PSD file again or try to facilitate the design role. I can if I have to, but not doing it all the time means that the time I do spend designing is not as efficient as someone else in that role. My place is now spent pushing pixels via code!
-</p>
-]]>
     </content>
  </entry>
  

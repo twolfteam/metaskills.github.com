@@ -5,7 +5,7 @@
     <meta name="author" content="Ken Collins">
     <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
     <title>
-      Stop Exception Notifications With The ZombieShotgun @MetaSkills.net
+      Using Dotenv In Rails @MetaSkills.net
     </title>
     <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
     <link rel="author" href="mailto:ken@metaskills.net">
@@ -57,84 +57,106 @@
       <section id="content">
         <article id="post">
           <header>
-            <time pubdate="" datetime="2008-07-06T00:00:00-04:00"><span class="day">06</span> <span class="month">Jul</span> <span class=
-            "year">2008</span></time>
+            <time pubdate="" datetime="2013-10-03T00:00:00-04:00"><span class="day">03</span> <span class="month">Oct</span> <span class=
+            "year">2013</span></time>
             <h1>
-              Stop Exception Notifications With The ZombieShotgun
+              Using Dotenv In Rails
             </h1>
           </header>
           <p>
-            <span class="photofancy floatr ml20"><img src="/assets/zombie_shotgun.jpg" alt="Resident Evil Zombie Shotgun" width="320" height=
-            "213"></span> I am all about knowing how to survive a zombie invasion â€“ as much as I am a firm believer of using the right tool for a
-            given job. It can not be argued that killing zombies with a shotgun to the head is as natural a fit as peanut butter to chocolate. They
-            simply just go together.
+            Environment variables as a configuration means are everywhere in Ruby. For instance, ActiveRecord will use the single
+            <code>DATABASE_URL</code> environment variable for every part of it&#39;s configuration, no database.yml needed! If you are not on board
+            with environment variables, check out <a href="http://12factor.net/config">The Twelve-Factor App</a> for configuration. This is exactly
+            how good software platforms like <a href="https://www.heroku.com">Heroku</a> work, all through environment variables.
           </p>
           <p>
-            Now real zombies may not be a daily nuisance, but <a href="http://en.wikipedia.org/wiki/Zombie_computer">computer zombies</a> are a daily
-            pain in the butt to network administrators as well as software engineers alike. If you have ever deployed a rails application into
-            production that used some sort of exception notification, then you may at some time seen some zombie attacks throw a bunch of exceptions.
-            My solution a few years back was to build my own ZombieShotgun module, see below.
+            But using environment variables in a Rails application can be tricky. During local development, you may not want to set everything in
+            your Bash or ZSH profile. Perhaps you want per project settings. And then there is the trouble of using different environment variables
+            when running your tests. Enter the <a href="https://github.com/bkeepers/dotenv">Dotenv</a> project.
           </p>
           <p>
-            The idea is simple, include the module and add this line to the very top of your filter chain <code>before_filter :shoot_zombies</code>.
-            Just like in real life, if rails detects a zombie attack, it will issue a 404 not found error in the beautiful rails syntax <code>head
-            :not_found</code>. I love it when code models the real world! Please note that there are a ton of better ways to accomplish user agent
-            filtering, most notably, in your web server config... but that does not mean this is not a fun module to use.
+            In my examples below of how to integrate Dotenv, I will be using @ecbypi&#39;s fork until this <a href=
+            "https://github.com/bkeepers/dotenv/pull/61">pull request for overloading environment variables</a> is accepted. This pull request is key
+            to overriding development or local settings for our Rails test environment. If you like how these examples look below, weigh in on that
+            pull request and lobby for a fresh hot Dotenv release.
+          </p>
+          <p>
+            Let&#39;s get started. First, let&#39;s add the gem to your Rails project&#39;s Gemfile.
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">module</span> <span class="nn">ZombieShotgun</span>
-
-  <span class="no">ZOMBIE_AGENTS</span>       <span class="o">=</span> <span class="o">[</span><span class=
-"s1">&#39;Microsoft Office Protocol Discovery&#39;</span><span class="p">,</span><span class=
-"s1">&#39;Microsoft Data Access Internet Publishing Provider Protocol Discovery&#39;</span><span class="p">,</span><span class=
-"s1">&#39;FrontPage&#39;</span><span class="o">]</span>
-  <span class="no">ZOMBIE_ATTACK_DIRS</span>  <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;_vti_bin&#39;</span><span class=
-"p">,</span><span class="s1">&#39;MSOffice&#39;</span><span class="p">,</span><span class="s1">&#39;verify-VCNstrict&#39;</span><span class=
-"p">,</span><span class="s1">&#39;notified-VCNstrict&#39;</span><span class="o">]</span>
-
-  <span class="kp">protected</span>
-
-  <span class="k">def</span> <span class="nf">shoot_zombies</span>
-    <span class="n">head</span> <span class="ss">:not_found</span> <span class="k">if</span> <span class="n">zombie_attack?</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">zombie_attack?</span>
-    <span class="n">zombie_attack_on_directory?</span> <span class="o">||</span> <span class="n">zombie_agent_attack?</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">zombie_attack_on_directory?</span>
-    <span class="n">attack</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class=
-"n">path</span><span class="o">.</span><span class="n">from</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">attack_dir</span> <span class="o">=</span> <span class="n">attack</span><span class="o">.</span><span class=
-"n">index</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">.</span><span class=
-"n">nil?</span> <span class="p">?</span> <span class="n">attack</span> <span class="p">:</span> <span class="n">attack</span><span class=
-"o">.</span><span class="n">to</span><span class="p">(</span><span class="n">attack</span><span class="o">.</span><span class=
-"n">index</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">-</span><span class=
-"mi">1</span><span class="p">)</span>    
-    <span class="no">ZOMBIE_ATTACK_DIRS</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class=
-"n">attack_dir</span><span class="p">)</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">zombie_agent_attack?</span>
-    <span class="n">ua</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">env</span><span class=
-"o">[</span><span class="s1">&#39;HTTP_USER_AGENT&#39;</span><span class="o">]</span>
-    <span class="o">!</span><span class="n">ua</span><span class="o">.</span><span class="n">blank?</span> <span class=
-"o">&amp;&amp;</span> <span class="no">ZOMBIE_AGENTS</span><span class="o">.</span><span class="n">any?</span> <span class="p">{</span> <span class=
-"o">|</span><span class="n">za</span><span class="o">|</span> <span class="n">za</span> <span class="o">=~</span> <span class=
-"sr">/</span><span class="si">#{</span><span class="n">ua</span><span class="si">}</span><span class="sr">/</span> <span class="p">}</span>
-  <span class="k">end</span>
-
-
-<span class="k">end</span>
+<code class="ruby"><span class="c1"># In Gemfile</span>
+<span class="n">gem</span> <span class="s1">&#39;dotenv&#39;</span><span class="p">,</span> <span class="ss">github</span><span class=
+"p">:</span> <span class="s1">&#39;ecbypi/dotenv&#39;</span><span class="p">,</span> <span class="ss">branch</span><span class=
+"p">:</span> <span class="s1">&#39;overload-environment-variables&#39;</span>
 </code>
 </pre>
           </div>
+          <p>
+            Next up, open your <code>config/application.rb</code> and add this line right after the require &#39;rails/all&#39; line. This will
+            require the Dotenv gem, then load your own per-developer local settings (if present), then a .env file that matches the current
+            <code>Rails.env</code>.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="c1"># In config/application.rb</span>
+<span class="nb">require</span> <span class="s1">&#39;rails/all&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;dotenv&#39;</span> <span class="p">;</span> <span class="no">Dotenv</span><span class=
+"o">.</span><span class="n">load</span> <span class="s2">&quot;.env.local&quot;</span><span class="p">,</span> <span class=
+"s2">&quot;.env.</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class=
+"si">}</span><span class="s2">&quot;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Next, create individual <code>.env.RAILS_ENV</code> files with your configurations. YMMV on this one, but the idea is to check all of
+            these in. The <code>.env.development</code> will hold all the default configurations for a new developer to get up and running quickly.
+            The <code>.env.test</code> will hold all the configurations for your test runs. Past that, how you handle the production file or not, is
+            left up to you. In my examples below, we are setting the environment variable for the Awesome gem.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="text">$ echo &quot;AWESOME_GEM_URL=https://awesome.dev&quot;          &gt; .env.development
+$ echo &quot;AWESOME_GEM_URL=https://sandbox.awesome.com&quot;  &gt; .env.test
+$ echo &quot;AWESOME_GEM_URL=https://awesome.com&quot;          &gt; .env.production
+</code>
+</pre>
+          </div>
+          <p>
+            This covers our bases, but what if a developer wants to override a configuration. They can use good ol&#39; environment variables and get
+            the behavior they expect. Or they create their own <code>.env.local</code> file and set their configurations there. The benefit of the
+            local file is that your Rails application via the console or the development server (for example Pow) will automatically get the same
+            thing when using the .env.local file. Oh yea, it is a good idea to add the this file to your <code>.gitignore</code>.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="text">$ echo &quot;AWESOME_GEM_URL=https://my-awesome.dev&quot;       &gt; .env.local
+</code>
+</pre>
+          </div>
+          <p>
+            Now, one last thing. We need to make sure that our tests do not use any real, development or local environment settings. This is where
+            @ecbypi overload feature comes in handy. I have added this to the top of the Rails <code>test/test_helper.rb</code> file.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby"><span class="c1"># In test/test_helper.rb</span>
+<span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;RAILS_ENV&quot;</span><span class="o">]</span> <span class=
+"o">=</span> <span class="s2">&quot;test&quot;</span>
+<span class="o">+</span><span class="nb">require</span> <span class="s1">&#39;dotenv&#39;</span> <span class="p">;</span> <span class=
+"no">Dotenv</span><span class="o">.</span><span class="n">overload</span> <span class="s2">&quot;.env.test&quot;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Happy environment usage! Have you been solving environment and application configuration in a different way (don&#39;t say YAML), if so,
+            I would love to hear about it!
+          </p>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';
-            var disqus_identifier = '/2008/07/06/stop-exception-notifications-with-the-zombieshotgun/';
-            var disqus_title = "Stop Exception Notifications With The ZombieShotgun";
+            var disqus_identifier = '/2013/10/03/using-dotenv-in-rails';
+            var disqus_title = "Using Dotenv In Rails";
             (function() {
             var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
             dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
@@ -194,7 +216,7 @@ var disqus_shortname = 'metaskillsnet';
             </h4>
             <p>
               <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
+              ActiveRecord will use the single DATABASE_URL environment variable for every part of it&#39;s configuration, no database.yml needed!
               If...</a>
             </p>
           </article>
@@ -203,8 +225,8 @@ var disqus_shortname = 'metaskillsnet';
               Jekyll Tips And Tricks
             </h4>
             <p>
-              <a href="/2013/09/02/jekyll-tips-and-tricks">IT'S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has a
-              few days left. Don't miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
+              <a href="/2013/09/02/jekyll-tips-and-tricks">IT&#39;S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has
+              a few days left. Don&#39;t miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
             </p>
           </article>
           <article>
@@ -212,8 +234,8 @@ var disqus_shortname = 'metaskillsnet';
               In Loving Memory of Kenneth Earle Collins
             </h4>
             <p>
-              <a href="/2013/01/05/in-loving-memory-kenneth-earle-collins">#### Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away
-              January 5th, 2013. My father, known to his friends and family as Kenny, was born in Logan, West Virginia and...</a>
+              <a href="/2013/01/05/in-loving-memory-kenneth-earle-collins">Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away January
+              5th, 2013. My father, known to his friends and family as Kenny, was born in Logan, West Virginia and was...</a>
             </p>
           </article>
           <aside id="powered">
