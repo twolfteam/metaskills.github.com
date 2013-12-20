@@ -106,7 +106,7 @@
           </ul>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="nb">puts</span> <span class="s2">&quot;This code will be highlighted&quot;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">puts</span> <span class="s2">&quot;This code will be highlighted&quot;</span>
 </code>
 </pre>
           </div>
@@ -123,7 +123,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="nv">$ </span><span class="nb">cd</span> ../my_app_name
+<code class="bash language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">cd</span> ../my_app_name
 <span class="nv">$ </span>bundle <span class="nb">exec </span>rake <span class="nb">test</span>:all
 </code>
 </pre>
@@ -161,10 +161,10 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper&#39;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper&#39;</span>
 
-<span class="k">class</span> <span class="nc">UserTest</span> <span class="o">&lt;</span> <span class="ss">ActiveSupport</span><span class=
-"p">:</span><span class="ss">:TestCase</span>
+<span class="k">class</span> <span class="nc">UserTest</span> <span class="o">&lt;</span> <span class="no">ActiveSupport</span><span class=
+"o">::</span><span class="no">TestCase</span>
 
   <span class="n">let</span><span class="p">(</span><span class="ss">:bob</span><span class="p">)</span>   <span class="p">{</span> <span class=
 "n">users</span><span class="p">(</span><span class="ss">:bob</span><span class="p">)</span> <span class="p">}</span>
@@ -216,10 +216,10 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper_integration&#39;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper_integration&#39;</span>
 
-<span class="k">class</span> <span class="nc">ApplicationTest</span> <span class="o">&lt;</span> <span class="ss">ActionDispatch</span><span class=
-"p">:</span><span class="ss">:IntegrationTest</span>
+<span class="k">class</span> <span class="nc">ApplicationTest</span> <span class="o">&lt;</span> <span class="no">ActionDispatch</span><span class=
+"o">::</span><span class="no">IntegrationTest</span>
 
   <span class="n">before</span> <span class="p">{</span> <span class="n">visit</span> <span class="n">root_path</span> <span class="p">}</span>
 
@@ -287,7 +287,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="nv">$ </span>rake <span class="nb">test</span>:all     <span class=
+<code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>rake <span class="nb">test</span>:all     <span class=
 "c"># Runs all Rails tests, then Konacha tests.</span>
 </code>
 </pre>
@@ -303,7 +303,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="nv">$ </span>guard             <span class="c"># Monitor both Ruby and JavaScript tests.</span>
+<code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>guard             <span class=
+"c"># Monitor both Ruby and JavaScript tests.</span>
 <span class="nv">$ </span>guard -g ruby     <span class="c"># Monitor Ruby tests.</span>
 <span class="nv">$ </span>guard -g js       <span class="c"># Monitor JavaScript tests.</span>
 </code>
@@ -338,17 +339,17 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># In test/factories/user_factory.rb</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In test/factories/user_factory.rb</span>
 
 <span class="no">FactoryGirl</span><span class="o">.</span><span class="n">define</span> <span class="k">do</span>
 
   <span class="n">factory</span> <span class="ss">:user</span> <span class="k">do</span>
-    <span class="n">email</span>      <span class="p">{</span> <span class="ss">Forgery</span><span class="p">:</span><span class=
-"ss">:Email</span><span class="o">.</span><span class="n">address</span> <span class="p">}</span>
-    <span class="n">first_name</span> <span class="p">{</span> <span class="ss">Forgery</span><span class="p">:</span><span class=
-"ss">:Name</span><span class="o">.</span><span class="n">first_name</span> <span class="p">}</span>
-    <span class="n">last_name</span>  <span class="p">{</span> <span class="ss">Forgery</span><span class="p">:</span><span class=
-"ss">:Name</span><span class="o">.</span><span class="n">first_name</span> <span class="p">}</span>
+    <span class="n">email</span>      <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class=
+"no">Email</span><span class="o">.</span><span class="n">address</span> <span class="p">}</span>
+    <span class="n">first_name</span> <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class=
+"no">Name</span><span class="o">.</span><span class="n">first_name</span> <span class="p">}</span>
+    <span class="n">last_name</span>  <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class=
+"no">Name</span><span class="o">.</span><span class="n">first_name</span> <span class="p">}</span>
     <span class="n">password</span>   <span class="s1">&#39;test&#39;</span>  
   <span class="k">end</span>
 
@@ -364,12 +365,12 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># In db/test/seeds.rb</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In db/test/seeds.rb</span>
 
 <span class="nb">require</span> <span class="s1">&#39;factory_girl&#39;</span>
 <span class="no">FactoryGirl</span><span class="o">.</span><span class="n">find_definitions</span> <span class="k">rescue</span> <span class=
 "kp">true</span>
-<span class="kp">include</span> <span class="ss">FactoryGirl</span><span class="p">:</span><span class="ss">:Syntax</span><span class=
+<span class="kp">include</span> <span class="no">FactoryGirl</span><span class="o">::</span><span class="no">Syntax</span><span class=
 "o">::</span><span class="no">Methods</span>
 
 <span class="vi">@admin</span> <span class="o">=</span> <span class="n">create</span> <span class="ss">:user</span><span class=
@@ -389,7 +390,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># In test/test_helper.rb</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In test/test_helper.rb</span>
 
 <span class="k">class</span> <span class="nc">ActiveSupport</span><span class="o">::</span><span class="no">TestCase</span>
 
@@ -418,9 +419,9 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="coffeescript"><span class="k">class</span> <span class="nx">@MyAppName</span><span class="p">.</span><span class=
-"nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class="nx">User</span> <span class=
-"k">extends</span> <span class="nx">View</span>  
+<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="k">class</span> <span class="nx">@MyAppName</span><span class=
+"p">.</span><span class="nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class=
+"nx">User</span> <span class="k">extends</span> <span class="nx">View</span>  
   <span class="nx">@configure</span> <span class="s">&#39;User&#39;</span><span class="p">,</span> <span class="s">&#39;id&#39;</span><span class=
 "p">,</span> <span class="s">&#39;email&#39;</span>
 </code>
@@ -467,7 +468,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="coffeescript"><span class="vi">@initApplication = </span><span class="nf">(callback) =&gt;</span>
+<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="vi">@initApplication = </span><span class=
+"nf">(callback) =&gt;</span>
   <span class="nv">bob = </span><span class="nx">MyAppName</span><span class="p">.</span><span class="nx">Test</span><span class=
 "p">.</span><span class="nx">Seeds</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">bob</span>
   <span class="nx">$</span><span class="p">.</span><span class="nx">mockjax</span> <span class="nv">url: </span><span class=
@@ -509,7 +511,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="text">├── application.css
+<code class="text language-text" data-lang="text">├── application.css
 ├── application
 │   ├── _layout.scss
 │   ├── index.scss
@@ -535,7 +537,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="css"><span class="c">/*</span>
+<code class="css language-css" data-lang="css"><span class="c">/*</span>
 <span class="c"> *= require application/twitter</span>
 <span class="c"> *= require application/index</span>
 <span class="c">*/</span>
@@ -565,7 +567,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="sass"><span class="c1">// Think of this file as your own compass. Importing the base, never generates CSS.</span>
+<code class="sass language-sass" data-lang="sass"><span class=
+"c1">// Think of this file as your own compass. Importing the base, never generates CSS.</span>
 
 <span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;bootstrap/mixins&quot;;</span>
@@ -590,7 +593,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="sass"><span class="k">@import</span> <span class="s">&quot;shared/base&quot;;</span>
+<code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">&quot;shared/base&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;./layout&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;components/*&quot;;</span>
 </code>
@@ -617,7 +620,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="sass"><span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
+<code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;bootstrap&quot;;</span>
 <span class="k">@import</span> <span class="s">&quot;font-awesome&quot;;</span>
 
@@ -699,6 +702,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Using Dotenv In Rails
             </h4>
             <p>
@@ -714,15 +726,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/09/02/jekyll-tips-and-tricks">IT'S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has a
               few days left. Don't miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              In Loving Memory of Kenneth Earle Collins
-            </h4>
-            <p>
-              <a href="/2013/01/05/in-loving-memory-kenneth-earle-collins">#### Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away
-              January 5th, 2013. My father, known to his friends and family as Kenny, was born in Logan, West Virginia and...</a>
             </p>
           </article>
           <aside id="powered">

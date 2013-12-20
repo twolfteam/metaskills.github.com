@@ -120,7 +120,7 @@ $ which wkhtmltopdf
           </aside>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="o">!!!</span> <span class="mi">5</span>
 <span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class=
 "s1">&#39;en&#39;</span><span class="p">}</span>
   <span class="o">%</span><span class="n">head</span>
@@ -161,7 +161,7 @@ $ which wkhtmltopdf
           </p>
           <div class="highlight">
             <pre>
-<code class="css"><span class="c">/* Reset CSS. http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css  */</span>
+<code class="css language-css" data-lang="css"><span class="c">/* Reset CSS. http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css  */</span>
 <span class="nt">html</span><span class="p">{</span><span class="k">color</span><span class="o">:</span><span class="m">#000</span><span class=
 "p">;</span><span class="k">background</span><span class="o">:</span><span class="m">#FFF</span><span class="p">;}</span><span class=
 "nt">body</span><span class="o">,</span><span class="nt">div</span><span class="o">,</span><span class="nt">dl</span><span class=
@@ -265,7 +265,8 @@ $ which wkhtmltopdf
             tag that forces a new page break makes sure that we always start a new page when rendering each document.
             <div class="highlight">
               <pre>
-<code class="ruby"><span class="o">%</span><span class="n">div</span><span class="o">.</span><span class="n">pb_before</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="o">%</span><span class="n">div</span><span class="o">.</span><span class=
+"n">pb_before</span>
   <span class="o">=</span> <span class="n">render</span> <span class="ss">:partial</span> <span class="o">=&gt;</span> <span class=
 "s1">&#39;pdf/orders/print&#39;</span>
 <span class="o">%</span><span class="n">div</span><span class="o">.</span><span class="n">pb_before</span>
@@ -290,9 +291,9 @@ $ which wkhtmltopdf
             </p>
             <div class="highlight">
               <pre>
-<code class="ruby"><span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;pdfkit-footer_html&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class=
-"o">=&gt;</span> <span class="n">pdf_footer_url</span><span class="p">}</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class=
+"ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdfkit-footer_html&#39;</span><span class="p">,</span> <span class=
+"ss">:content</span> <span class="o">=&gt;</span> <span class="n">pdf_footer_url</span><span class="p">}</span>
 </code>
 </pre>
             </div>
@@ -312,8 +313,8 @@ $ which wkhtmltopdf
             </p>
             <div class="highlight">
               <pre>
-<code class="ruby"><span class="no">PDFKit</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span> <span class=
-"o">|</span><span class="n">config</span><span class="o">|</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="no">PDFKit</span><span class="o">.</span><span class="n">configure</span> <span class=
+"k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
   <span class="n">config</span><span class="o">.</span><span class="n">default_options</span> <span class="o">=</span> <span class="p">{</span>
     <span class="ss">:page_size</span>     <span class="o">=&gt;</span> <span class="s1">&#39;Letter&#39;</span><span class="p">,</span>
     <span class="ss">:margin_top</span>    <span class="o">=&gt;</span> <span class="s1">&#39;0.5in&#39;</span><span class="p">,</span>
@@ -332,8 +333,8 @@ $ which wkhtmltopdf
             </p>
             <div class="highlight">
               <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">PdfController</span> <span class="o">&lt;</span> <span class=
-"no">ApplicationController</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">PdfController</span> <span class=
+"o">&lt;</span> <span class="no">ApplicationController</span>
 
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">perform_caching</span> <span class=
 "p">;</span> <span class="kp">true</span> <span class="p">;</span> <span class="k">end</span>
@@ -370,7 +371,7 @@ $ which wkhtmltopdf
             </p>
             <div class="highlight">
               <pre>
-<code class="ruby"><span class="o">!!!</span> <span class="mi">5</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="o">!!!</span> <span class="mi">5</span>
 <span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class=
 "s1">&#39;en&#39;</span><span class="p">}</span>
   <span class="o">%</span><span class="n">head</span>
@@ -479,6 +480,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Using Dotenv In Rails
             </h4>
             <p>
@@ -494,15 +504,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/09/02/jekyll-tips-and-tricks">IT'S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has a
               few days left. Don't miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              In Loving Memory of Kenneth Earle Collins
-            </h4>
-            <p>
-              <a href="/2013/01/05/in-loving-memory-kenneth-earle-collins">#### Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away
-              January 5th, 2013. My father, known to his friends and family as Kenny, was born in Logan, West Virginia and...</a>
             </p>
           </article>
           <aside id="powered">

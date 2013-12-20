@@ -1,0 +1,468 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      Instrumenting Your Code With ActiveSupport Notifications @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css">
+    <link rel="stylesheet" href="/resource/site.css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/jquery-1.7.1.min.js">
+</script>
+    <script src="/resource/site.js">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="U">About Me</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="/pages/resume.html" class="button" data-icon="N">Resume</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Twitter</a>
+            </li>
+            <li>
+              <a href="/archive.html" class="button" data-icon="l">Archives</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate="" datetime="2013-12-15T00:00:00-05:00"><span class="day">15</span> <span class="month">Dec</span> <span class=
+            "year">2013</span></time>
+            <h1>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h1>
+          </header>
+          <p>
+            <span class="photofancy floatr ml20 mb10"><img src="/assets/asn_log_lady.jpg" alt=
+            "Moving past the supernatural ability to garner information from the log!" width="300" height="243"></span> Have you ever wondered how
+            tools like New Relic are able to gain valuable metrics to your Rails application&#39;s internals? Or maybe you are interested in learning
+            how to write your own libraries and gems so they can be instrumented using those same techniques? Once again the answer is to look deep
+            into the Rails source code – and the answer is <a href=
+            "http://apidock.com/rails/ActiveSupport/Notifications"><code>ActiveSupport::Notifications</code></a>. A simple and powerful
+            instrumentation API for Ruby available in Rails v3.0 and upward.
+          </p>
+          <p>
+            Today I want to share a working example of how you might use ActiveSupport::Notifications. Instead of presenting some contrived code, I
+            thought it would be fun to <a href="http://vimeo.com/17420638#t=27m27s">freedom-patch</a> a popular gem so that we can garner
+            supernatural metrics that would have otherwise been lost or hidden deep in our log. For this exercise I have chosen the <a href=
+            "https://github.com/nulayer/subexec">Subexec</a> gem. Subexec is a simple library that spawns an external command with an optional
+            timeout parameter. It is used by other gems like <a href="https://github.com/minimagick/minimagick">MiniMagick</a> – a popular minimal
+            replacement for RMagick.
+          </p>
+          <h2 id="toc_0">
+            Building Subexec::Notifications
+          </h2>
+          <p>
+            Our goal will be to build a new gem called subexec-notifications that instruments all commands run by the Subexec library. Once
+            completed, third-party subscribers would be able collect these metrics thereby opening up developer/operational insights into how long
+            certain commands were taking and on which server(s).
+          </p>
+          <p>
+            Lucky for us, the Subexec gem has one interface, the <code>Subexec#run!</code> method. So our work is going to be straight forward. All
+            we have to do is <a href="http://erniemiller.org/2011/02/03/when-to-use-alias_method_chain/">alias method chain</a> that instance method
+            and wrap it with some instrumentation. Assuming you are up to speed on this practice, here is our new implementation.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">run_with_notifications!</span>
+  <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="nb">sub</span><span class="p">:</span> <span class=
+"nb">self</span><span class="p">,</span> <span class="ss">hostname</span><span class="p">:</span> <span class="no">Socket</span><span class=
+"o">.</span><span class="n">gethostname</span><span class="p">}</span>
+  <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Notifications</span><span class="o">.</span><span class=
+"n">instrument</span> <span class="s2">&quot;subexec.run&quot;</span><span class="p">,</span> <span class="n">payload</span> <span class=
+"k">do</span>
+    <span class="n">run_without_notifications!</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            This small snippet of code exemplifies how simple it is to instrument our code. The Notifications instrument class method takes two
+            arguments, a string for the name and an optional payload hash. The name will be used by subscribers and the payload hash can contain
+            anything you want.
+          </p>
+          <p>
+            Since the Subexec instance has tons of valuable information like the commands output, process id, exit status, and the command string
+            itself - I decided to include it with our payload. The host name is provided with the payload to help us aggregate or subdivide our
+            metrics for each server.
+          </p>
+          <p>
+            Believe it or not, that pretty much wraps up all that is needed for our new gem&#39;s code. Everything else like tests and gem structure
+            are orthogonal to our learning today. But please, browse the entire <a href=
+            "https://github.com/customink/subexec-notifications">subexec-notifications</a> gem if you are interested in how it is put together.
+          </p>
+          <h2 id="toc_1">
+            Choosing A Metrics Service
+          </h2>
+          <p>
+            So now we have a way to instrument all of our system commands, but how do we collect and view that data? To be honest, your options are
+            incredibly numerous at this point. While learning ActiveSupport::Notifications myself, these two services kept appearing.
+          </p>
+          <ul>
+            <li>
+              <a href="http://www.datadoghq.com">Datadog - Monitoring Service</a>
+            </li>
+            <li>
+              <a href="https://metrics.librato.com">Librato - Highly Scalable Metrics, Monitoring &amp; Alerts</a>
+            </li>
+          </ul>
+          <p>
+            My examples below will use Librato since I found their service extremely simple to use. I was able to quickly get metrics submitted to
+            them and viewable via their dashboard gauges. Librato also has a very nice presence on Github and some impressive tools for Ruby. Datadog
+            is no slouch in any of these areas either. So please use what is best fits your own needs.
+          </p>
+          <p>
+            IMPORTANT: The example Rails application code that follows makes direct use of the <a href=
+            "https://github.com/librato/librato-metrics">librato-metrics</a> gem. This means that submissions will happen synchronously while your
+            application is running. You would never do this in your Rails application! If you choose to use Librato, please use the <a href=
+            "https://github.com/librato/librato-rails">librato-rails</a> gem instead. Metrics are then delivered asynchronously behind the scenes so
+            they won&#39;t affect the performance of your requests. Other possibilities would be to use background jobs or some other worker message
+            queue.
+          </p>
+          <h2 id="toc_2">
+            Subscribing To Events
+          </h2>
+          <p>
+            Assuming we have a Rails application that makes use of MiniMagick, Subexec or both, all we have to do now is bundle up our new
+            notification gem along with librato-metrics.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In Gemfile</span>
+
+<span class="n">gem</span> <span class="s1">&#39;subexec-notifications&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;librato-metrics&#39;</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Now we need to subscribe to the <code>subexec.run</code> events that we instrumented in the subexec-notifications gem. For a Rails
+            application, this is best done in an initializer named after the gem.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In config/initializers/subexec_notifications.rb</span>
+
+<span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Notifications</span><span class="o">.</span><span class=
+"n">subscribe</span> <span class="s1">&#39;subexec.run&#39;</span> <span class="k">do</span> <span class="o">|*</span><span class=
+"n">args</span><span class="o">|</span>
+  <span class="no">Subscribers</span><span class="o">::</span><span class="no">SubexecLibrato</span><span class="o">.</span><span class=
+"n">new</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <h2 id="toc_3">
+            Publishing Metrics
+          </h2>
+          <p>
+            As you can see in the code above, subscribing to an event will yield an array of arguments. Technically, these will be the name of the
+            event, a few timestamps, a unique id, and the payload. Because dealing with individual arguments is not very object-oriented, I always
+            recommend creating an event object using the <code>ActiveSupport::Notifications::Event</code> class. It consumes these arguments and
+            gives you a clean interface to the <code>duration</code> of the event, <code>payload</code>, and more.
+          </p>
+          <p>
+            To accomplish this in one place for our publishing code, I created a simple base class for all our subscribers to inherit from. This base
+            class creates our <code>event</code> object as well as a <code>process</code> method that subclasses must implement.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In app/models/subscribers/base.rb</span>
+
+<span class="k">module</span> <span class="nn">Subscribers</span>
+  <span class="k">class</span> <span class="nc">Base</span>
+
+    <span class="kp">attr_reader</span> <span class="ss">:event</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">*</span><span class=
+"n">args</span><span class="p">)</span>
+      <span class="vi">@event</span> <span class="o">=</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class=
+"no">Notifications</span><span class="o">::</span><span class="no">Event</span><span class="o">.</span><span class="n">new</span><span class=
+"p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+      <span class="n">process</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">process</span>
+      <span class="k">raise</span> <span class="no">NotImplementedError</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Now to the fun part, sending some metrics to Librato. Below is the full implementation of our <code>SubexecLibrato</code> event consumer.
+            This creates two different types of metrics. One for each command/binary that was run and the other for the host the commands are run on.
+            Each of these metrics will allow us to build some interesting gauges. The Librato site has a great developer section titled <a href=
+            "http://dev.librato.com/v1/metrics">What Are Metrics</a> that can guide you on what type of data you may want to submit.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In app/models/subscribers/subexec_librato.rb</span>
+
+<span class="k">module</span> <span class="nn">Subscribers</span>
+  <span class="k">class</span> <span class="nc">SubexecLibrato</span> <span class="o">&lt;</span> <span class="no">Base</span>
+
+    <span class="k">def</span> <span class="nf">process</span>
+      <span class="nb">sub</span>   <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class=
+"n">payload</span><span class="o">[</span><span class="ss">:sub</span><span class="o">]</span>
+      <span class="n">dur</span>   <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">duration</span>
+      <span class="n">type</span>  <span class="o">=</span> <span class="nb">sub</span><span class="o">.</span><span class=
+"n">command</span><span class="o">.</span><span class="n">split</span><span class="o">.</span><span class="n">first</span>
+      <span class="n">host</span>  <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class=
+"n">payload</span><span class="o">[</span><span class="ss">:hostname</span><span class="o">]</span>
+      <span class="n">time</span>  <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">current</span>
+      <span class="no">Librato</span><span class="o">::</span><span class="no">Metrics</span><span class="o">.</span><span class=
+"n">submit</span> <span class="s1">&#39;subexec.hosts&#39;</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
+"n">measure_time</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> <span class="ss">value</span><span class=
+"p">:</span> <span class="n">dur</span><span class="p">,</span> <span class="ss">source</span><span class="p">:</span> <span class=
+"n">host</span><span class="p">}</span>
+      <span class="no">Librato</span><span class="o">::</span><span class="no">Metrics</span><span class="o">.</span><span class=
+"n">submit</span> <span class="s1">&#39;subexec.types&#39;</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
+"n">measure_time</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> <span class="ss">value</span><span class=
+"p">:</span> <span class="n">dur</span><span class="p">,</span> <span class="ss">source</span><span class="p">:</span> <span class=
+"n">type</span><span class="p">}</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <h2 id="toc_4">
+            Viewing Metrics
+          </h2>
+          <p>
+            Here are what each of these metrics look like in Librato. To generate some commands, I wrote a small tests case that did some random
+            MiniMagick commands along with a few <code>echo</code> and <code>uptime</code> commands. All of these ran on my local machine.
+          </p>
+          <div class="center">
+            <span class="photofancy"><img src="/assets/asn_metrics_command.png" alt="Librato - Subexec Commands" width="650"></span>
+          </div>
+          <div class="center">
+            <span class="photofancy"><img src="/assets/asn_metrics_host.png" alt="Librato - Subexec Hosts" width="650"></span>
+          </div>
+          <h2 id="toc_5">
+            In Closing
+          </h2>
+          <p>
+            Hopefully these simple examples we built will help get you excited both about instrumenting your application as well as collecting and
+            viewing those metrics. If you are hungry for more, check out the links in the resources below. You can even dig deep into the Rails
+            source to see where and how it uses ActiveSupport::Notifications. Thanks!
+          </p>
+          <h2 id="toc_6">
+            Other Resources
+          </h2>
+          <ul>
+            <li>
+              <a href="http://apidock.com/rails/ActiveSupport/Notifications">APIdock ActiveSupport::Notifications</a>
+            </li>
+            <li>
+              <a href="https://speakerdeck.com/nextmat/digging-deep-with-activesupportnotifications">Digging Deep with
+              ActiveSupport::Notifications</a>
+            </li>
+            <li>
+              <a href="https://github.com/customink/subexec-notifications">Instrumentation for Subexec commands using
+              ActiveSupport::Notifications</a>
+            </li>
+            <li>
+              <a href="http://www.datadoghq.com">Datadog - Monitoring Service</a>
+            </li>
+            <li>
+              <a href="https://github.com/DataDog">Datadog - On Github</a>
+            </li>
+            <li>
+              <a href="https://metrics.librato.com">Librato - Highly Scalable Metrics, Monitoring &amp; Alerts</a>
+            </li>
+            <li>
+              <a href="https://github.com/librato">Librato - On Github</a>
+            </li>
+          </ul>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2013/12/15/instrumenting-your-code-with-activesupport-notifications';
+            var disqus_title = "Instrumenting Your Code With ActiveSupport Notifications";
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application&#39;s internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Using Dotenv In Rails
+            </h4>
+            <p>
+              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
+              ActiveRecord will use the single DATABASE_URL environment variable for every part of it&#39;s configuration, no database.yml needed!
+              If...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Jekyll Tips And Tricks
+            </h4>
+            <p>
+              <a href="/2013/09/02/jekyll-tips-and-tricks">IT&#39;S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has
+              a few days left. Don&#39;t miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+            <li>
+              <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://technology.customink.com">CustomInk Technology</a>
+            </li>
+            <li>
+              <a href="http://fearoffish.com">Jamie van Dyke</a>
+            </li>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://brennandunn.com">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

@@ -116,7 +116,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="c">#!/usr/bin/env bash</span>
+<code class="bash language-bash" data-lang="bash"><span class="c">#!/usr/bin/env bash</span>
 <span class="nb">set</span> -e
 
 jekyll build <span class="nv">$*</span>
@@ -132,7 +132,7 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
           </p>
           <div class="highlight">
             <pre>
-<code class="text">$ ./tasks/post &quot;Jekyll Tips And Tricks&quot;
+<code class="text language-text" data-lang="text">$ ./tasks/post &quot;Jekyll Tips And Tricks&quot;
 </code>
 </pre>
           </div>
@@ -147,7 +147,7 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># In _config.yml</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In _config.yml</span>
 <span class="ss">production</span><span class="p">:</span> <span class="kp">false</span>
 <span class="ss">timezone</span><span class="p">:</span> <span class="s2">&quot;America/New_York&quot;</span>
 
@@ -164,7 +164,7 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="c">#!/usr/bin/env bash</span>
+<code class="bash language-bash" data-lang="bash"><span class="c">#!/usr/bin/env bash</span>
 <span class="nb">set</span> -e
 
 ./tasks/jekyll --config _config_production.yml
@@ -177,7 +177,7 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
           </p>
           <div class="highlight">
             <pre>
-<code class="html"><span class="c">&lt;!-- Only show DISQUS comments in production. --&gt;</span>
+<code class="html language-html" data-lang="html"><span class="c">&lt;!-- Only show DISQUS comments in production. --&gt;</span>
 {% if site.production %}
 <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
   <span class="kd">var</span> <span class="nx">disqus_shortname</span> <span class="o">=</span> <span class="s1">&#39;...&#39;</span><span class=
@@ -215,7 +215,7 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;jekyll-assets&#39;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">&#39;jekyll-assets&#39;</span>
 <span class="n">gem</span> <span class="s1">&#39;coffee-script&#39;</span>
 <span class="n">gem</span> <span class="s1">&#39;compass&#39;</span>
 <span class="n">gem</span> <span class="s1">&#39;sass&#39;</span>
@@ -230,7 +230,7 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># In _config.yml</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In _config.yml</span>
 <span class="ss">assets</span><span class="p">:</span>
   <span class="n">js_compressor</span><span class="p">:</span> 
   <span class="n">css_compressor</span><span class="p">:</span> 
@@ -259,7 +259,7 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;rack&#39;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">&#39;rack&#39;</span>
 <span class="n">gem</span> <span class="s1">&#39;rack-rewrite&#39;</span>
 </code>
 </pre>
@@ -269,10 +269,10 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="n">gem</span> <span class="s1">&#39;rack-rewrite&#39;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">&#39;rack-rewrite&#39;</span>
 <span class="nb">require</span> <span class="s1">&#39;rack/rewrite&#39;</span>
 
-<span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Rewrite</span> <span class="k">do</span>
+<span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Rewrite</span> <span class="k">do</span>
   <span class="n">r301</span> <span class="sr">%r{^([^\.]*[^\/])$}</span><span class="p">,</span> <span class="s1">&#39;$1/&#39;</span> 
   <span class="n">r301</span> <span class="sr">%r{^(.*\/)$}</span><span class="p">,</span> <span class="s1">&#39;$1index.html&#39;</span>
 <span class="k">end</span>
@@ -285,7 +285,7 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
           </p>
           <div class="highlight">
             <pre>
-<code class="text">$ ln -s _site public
+<code class="text language-text" data-lang="text">$ ln -s _site public
 $ cd ~/.pow
 $ ln -s /path/to/myjekyllapp
 </code>
@@ -331,7 +331,7 @@ $ ln -s /path/to/myjekyllapp
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="c">#!/usr/bin/env bash</span>
+<code class="bash language-bash" data-lang="bash"><span class="c">#!/usr/bin/env bash</span>
 <span class="nb">set</span> -e
 
 <span class="nb">export </span><span class="nv">LANG</span><span class="o">=</span><span class="s2">&quot;en_US.UTF-8&quot;</span>
@@ -426,6 +426,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Using Dotenv In Rails
             </h4>
             <p>
@@ -441,15 +450,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/09/02/jekyll-tips-and-tricks">IT&#39;S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has
               a few days left. Don&#39;t miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              In Loving Memory of Kenneth Earle Collins
-            </h4>
-            <p>
-              <a href="/2013/01/05/in-loving-memory-kenneth-earle-collins">Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away January
-              5th, 2013. My father, known to his friends and family as Kenny, was born in Logan, West Virginia and was...</a>
             </p>
           </article>
           <aside id="powered">

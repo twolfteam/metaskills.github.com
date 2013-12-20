@@ -145,8 +145,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">UsersController</span> <span class="o">&lt;</span> <span class=
-"no">ApplicationController</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">UsersController</span> <span class=
+"o">&lt;</span> <span class="no">ApplicationController</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nf">create</span>
     <span class="no">User</span><span class="o">.</span><span class="n">create!</span><span class="p">(</span><span class=
@@ -174,12 +174,12 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">module</span> <span class="nn">RenderInvalidRecord</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">RenderInvalidRecord</span>
 
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">included</span><span class="p">(</span><span class=
 "n">base</span><span class="p">)</span>
     <span class="n">base</span><span class="o">.</span><span class="n">rescue_from</span><span class="p">(</span><span class=
-"ss">ActiveRecord</span><span class="p">:</span><span class="ss">:RecordInvalid</span><span class="p">,</span> <span class=
+"no">ActiveRecord</span><span class="o">::</span><span class="no">RecordInvalid</span><span class="p">,</span> <span class=
 "ss">:with</span> <span class="o">=&gt;</span> <span class="ss">:render_invalid_record</span><span class="p">)</span>
   <span class="k">end</span>
 
@@ -288,7 +288,8 @@
           </ul>
           <div class="highlight">
             <pre>
-<code class="javascript"><span class="kd">var</span> <span class="nx">HomeMarksBase</span> <span class="o">=</span> <span class="p">{</span>
+<code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">HomeMarksBase</span> <span class=
+"o">=</span> <span class="p">{</span>
   <span class="nx">getRequestMood</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
 "nx">request</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class=
@@ -440,8 +441,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="o">&lt;</span><span class="sx">% [:good,:bad,:indif].each </span><span class="k">do</span> <span class=
-"o">|</span><span class="n">key</span><span class="o">|</span> <span class="sx">%&gt;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="o">&lt;</span><span class="sx">% [:good,:bad,:indif].each </span><span class=
+"k">do</span> <span class="o">|</span><span class="n">key</span><span class="o">|</span> <span class="sx">%&gt;</span>
 <span class="sx">  &lt;div id=&quot;flash_&lt;%= key %&gt;</span><span class="s2">&quot; class=&quot;</span><span class=
 "n">flash_message</span><span class="s2">&quot; style=&quot;</span><span class="nb">display</span><span class="p">:</span><span class=
 "o">&lt;</span><span class="sx">%= flash[key].blank? ? &#39;none&#39; : &#39;block&#39; %&gt;;&quot;&gt;</span>
@@ -457,7 +458,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="javascript"><span class="kd">var</span> <span class="nx">HomeMarksBase</span> <span class="o">=</span> <span class="p">{</span>
+<code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">HomeMarksBase</span> <span class=
+"o">=</span> <span class="p">{</span>
   <span class="nx">messagesToAlert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
 "nx">request</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="nx">request</span><span class=
@@ -530,9 +532,9 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="javascript"><span class="kd">var</span> <span class="nx">HomeMarksSite</span> <span class="o">=</span> <span class=
-"nx">Class</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">HomeMarksBase</span><span class=
-"p">,{</span> 
+<code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">HomeMarksSite</span> <span class=
+"o">=</span> <span class="nx">Class</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class=
+"nx">HomeMarksBase</span><span class="p">,{</span> 
   <span class="nx">flashModal</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
 "nx">mood</span><span class="p">,</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">moodColor</span> <span class="o">=</span> <span class="k">this</span><span class=
@@ -652,6 +654,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Using Dotenv In Rails
             </h4>
             <p>
@@ -667,15 +678,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/09/02/jekyll-tips-and-tricks">IT'S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has a
               few days left. Don't miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              In Loving Memory of Kenneth Earle Collins
-            </h4>
-            <p>
-              <a href="/2013/01/05/in-loving-memory-kenneth-earle-collins">#### Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away
-              January 5th, 2013. My father, known to his friends and family as Kenny, was born in Logan, West Virginia and...</a>
             </p>
           </article>
           <aside id="powered">

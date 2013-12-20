@@ -108,7 +108,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class=
+<code class="bash language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class=
 "s2">&quot;/usr/local/bin:$PATH&quot;</span>
 <span class="nb">export </span><span class="nv">MANPATH</span><span class="o">=</span><span class=
 "s2">&quot;/usr/local/share/man:$MANPATH&quot;</span>
@@ -124,8 +124,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="nv">path</span><span class="o">=(</span>/opt/local/bin /opt/local/sbin /opt/local/apache2/bin <span class=
-"nv">$path</span><span class="o">)</span>
+<code class="bash language-bash" data-lang="bash"><span class="nv">path</span><span class=
+"o">=(</span>/opt/local/bin /opt/local/sbin /opt/local/apache2/bin <span class="nv">$path</span><span class="o">)</span>
 <span class="nv">manpath</span><span class="o">=(</span>/opt/local/share/man <span class="nv">$manpath</span><span class="o">)</span>
 <span class="nv">infopath</span><span class="o">=(</span>/opt/local/share/info <span class="nv">$infopath</span><span class="o">)</span>
 </code>
@@ -285,7 +285,7 @@ $ sudo port install rb-odbc +utf8
           </p>
           <div class="highlight">
             <pre>
-<code class="text"># A typical Sybase server
+<code class="text language-text" data-lang="text"># A typical Sybase server
 # [egServer50]
 #   host = symachine.domain.com
 #   port = 5000
@@ -310,7 +310,7 @@ $ sudo port install rb-odbc +utf8
           </p>
           <div class="highlight">
             <pre>
-<code class="text">[YOURSERVER]
+<code class="text language-text" data-lang="text">[YOURSERVER]
  host             = yourserver.com
  port             = 1433
  tds version      = 7.0
@@ -335,7 +335,7 @@ $ sudo cp /opt/local/etc/odbcinst.ini.dist /opt/local/etc/odbcinst.ini
           </p>
           <div class="highlight">
             <pre>
-<code class="text">[FreeTDS]
+<code class="text language-text" data-lang="text">[FreeTDS]
 Decscription = FreeTDS driver for SQLServer
 Driver = /opt/local/lib/libtdsodbc.so
 Setup = /opt/local/lib/libtdsodbc.so
@@ -351,7 +351,7 @@ FileUsage = 1
           </p>
           <div class="highlight">
             <pre>
-<code class="text">[my_dev_server_dsn]
+<code class="text language-text" data-lang="text">[my_dev_server_dsn]
 Driver=FreeTDS
 Description=My Server Connection
 Servername=my_dev_server
@@ -368,7 +368,7 @@ Database=killer_app
           </p>
           <div class="highlight">
             <pre>
-<code class="text">development:
+<code class="text language-text" data-lang="text">development:
   adapter: sqlserver
   mode: ODBC
   username: rails
@@ -465,7 +465,7 @@ $ sudo gem install mysql -- --with-mysql-config=/opt/local/bin/mysql_config5
           </p>
           <div class="highlight">
             <pre>
-<code class="bash"><span class="nb">alias </span><span class="nv">my_stop</span><span class="o">=</span><span class=
+<code class="bash language-bash" data-lang="bash"><span class="nb">alias </span><span class="nv">my_stop</span><span class="o">=</span><span class=
 "s2">&quot;sudo launchctl stop org.macports.mysql5&quot;</span>
 <span class="nb">alias </span><span class="nv">my_start</span><span class="o">=</span><span class=
 "s2">&quot;sudo launchctl start org.macports.mysql5&quot;</span>
@@ -535,6 +535,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Using Dotenv In Rails
             </h4>
             <p>
@@ -550,15 +559,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/09/02/jekyll-tips-and-tricks">IT'S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has a
               few days left. Don't miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              In Loving Memory of Kenneth Earle Collins
-            </h4>
-            <p>
-              <a href="/2013/01/05/in-loving-memory-kenneth-earle-collins">#### Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away
-              January 5th, 2013. My father, known to his friends and family as Kenny, was born in Logan, West Virginia and...</a>
             </p>
           </article>
           <aside id="powered">

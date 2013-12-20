@@ -126,7 +126,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class=
+"n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="o">=&gt;</span>
@@ -140,7 +141,8 @@
           </div>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class=
+"no">SpacePort</span>
 <span class="n">view</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class=
 "s1">&#39;ol&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class=
 "s1">&#39;&lt;li&gt;Star Destroyer&lt;/li&gt;&#39;</span><span class="p">)</span>
@@ -162,7 +164,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class="n">extends</span> <span class="no">View</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class=
+"n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="o">=&gt;</span>
@@ -179,7 +182,8 @@
           </div>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class=
+"no">SpacePort</span>
 <span class="n">view</span><span class="o">.</span><span class="n">addShip</span> <span class="s2">&quot;Enterprise&quot;</span>
 </code>
 </pre>
@@ -227,7 +231,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
 
 <span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
 "o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class=
@@ -243,7 +247,7 @@
           </div>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
 
 <span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class=
 "n">Day</span> <span class="n">extends</span> <span class="no">View</span>
@@ -285,8 +289,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class=
-"o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class=
+"n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
@@ -369,9 +373,9 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
-"o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class=
-"n">Controller</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class=
+"n">Controllers</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class=
+"o">.</span><span class="n">Controller</span>
 
   <span class="vi">@events</span><span class="p">:</span> 
     <span class="s1">&#39;click .event&#39;</span><span class="p">:</span> <span class="s1">&#39;selectEvent&#39;</span>
@@ -508,6 +512,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Using Dotenv In Rails
             </h4>
             <p>
@@ -523,15 +536,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/09/02/jekyll-tips-and-tricks">IT'S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has a
               few days left. Don't miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              In Loving Memory of Kenneth Earle Collins
-            </h4>
-            <p>
-              <a href="/2013/01/05/in-loving-memory-kenneth-earle-collins">#### Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away
-              January 5th, 2013. My father, known to his friends and family as Kenny, was born in Logan, West Virginia and...</a>
             </p>
           </article>
           <aside id="powered">

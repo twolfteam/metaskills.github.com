@@ -139,7 +139,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="javascript"><span class="c1">// File app/assets/javascripts/integration.js</span>
+<code class="javascript language-javascript" data-lang="javascript"><span class="c1">// File app/assets/javascripts/integration.js</span>
 
 <span class="c1">//= require sinon-1.4.2</span>
 <span class="c1">//= require integration/sinon</span>
@@ -149,7 +149,8 @@
           </div>
           <div class="highlight">
             <pre>
-<code class="coffeescript"><span class="c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb</span>
+<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class=
+"c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb</span>
 
 <span class="o">&lt;%</span> <span class="nv">central = </span><span class="nx">ActiveSupport</span><span class="o">::</span><span class=
 "nx">TimeZone</span><span class="p">[</span><span class="s">&#39;Central Time (US &amp; Canada)&#39;</span><span class="p">]</span> <span class=
@@ -174,7 +175,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby"><span class="c1"># File test/test_helper_integration.rb</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># File test/test_helper_integration.rb</span>
 
 <span class="nb">require</span> <span class="s2">&quot;test_helper&quot;</span>
 <span class="nb">require</span> <span class="s2">&quot;capybara/rails&quot;</span>
@@ -182,7 +183,7 @@
 <span class="k">module</span> <span class="nn">ActionDispatch</span>
   <span class="k">class</span> <span class="nc">IntegrationTest</span>
 
-  <span class="kp">include</span> <span class="ss">Capybara</span><span class="p">:</span><span class="ss">:DSL</span>
+  <span class="kp">include</span> <span class="no">Capybara</span><span class="o">::</span><span class="no">DSL</span>
 
   <span class="n">before</span> <span class="p">{</span> <span class="n">travel</span> <span class="s1">&#39;8:30am&#39;</span> <span class=
 "p">}</span>
@@ -307,6 +308,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Using Dotenv In Rails
             </h4>
             <p>
@@ -322,15 +332,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/09/02/jekyll-tips-and-tricks">IT'S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has a
               few days left. Don't miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              In Loving Memory of Kenneth Earle Collins
-            </h4>
-            <p>
-              <a href="/2013/01/05/in-loving-memory-kenneth-earle-collins">#### Kenneth Earle Collins, 66, of Chesapeake, Virginia, passed away
-              January 5th, 2013. My father, known to his friends and family as Kenny, was born in Logan, West Virginia and...</a>
             </p>
           </article>
           <aside id="powered">
