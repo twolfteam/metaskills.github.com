@@ -1,0 +1,404 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      Workflow @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css">
+    <link rel="stylesheet" href="/resource/site.css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/jquery-1.7.1.min.js">
+</script>
+    <script src="/resource/site.js">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="U">About Me</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="/pages/resume.html" class="button" data-icon="N">Resume</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Twitter</a>
+            </li>
+            <li>
+              <a href="/archive.html" class="button" data-icon="l">Archives</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <h1>
+          Workflow
+        </h1>
+        <section id="category">
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/08/19/how-to-clean-a-campfire-room-of-uploads">How To Clean A Campfire Room Of Uploads</a>
+              </h3><time pubdate="" datetime="2010-08-19T00:00:00-04:00">19 Aug 2010</time>
+            </header>
+            <p>
+              For us at work, our uploads to campfire are really transitory. Most of the time they are simple screenshots around a current topic.
+              Every now and then vacation photos or even movies, at the end of the day, none of it has value after a certain amount of time. To us as
+              the real value of campfire is our textual transcripts. This morning after 4 years of campfire, we were real close to our 1GB limit of
+              uploads. Time for...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/05/26/the-alias_method_chain-of-rake-override-rake-task">The alias_method_chain of Rake - Override Rake Task</a>
+              </h3><time pubdate="" datetime="2010-05-26T00:00:00-04:00">26 May 2010</time>
+            </header>
+            <p>
+              Rake is cool. It is built so that multiple tasks with the same name run in a reverse defined series. This is great, but sometimes you
+              want to override a task with your own behavior and conditionally call the earlier task. Especially if that task is defined deep
+              somewhere else, like in a rails gem. I have had to solve this problem before in Rake. Awhile back I hacked something up that would
+              totally trump a predefined rake task and...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2010/02/23/git-init-xcode-projects">Git Init XCode Projects</a>
+              </h3><time pubdate="" datetime="2010-02-23T00:00:00-05:00">23 Feb 2010</time>
+            </header>
+            <p>
+              Here is a little ZSH function I have been using for quickly setting up new XCode apps I call tire kickers, little play and learn apps.
+              Being able to track your learning as you go with git. if [[ -x `which git` ]]; then function ginit_xcode () { git init echo &quot;\n\n#
+              XCode\nbuild\n*.mode1v3\n*.mode2v3\n*.nib\n*.swp\n\ *.pbxuser\n*.perspective\n*.perspectivev3\n\n# OSX\n.DS_Store\n\n\ #
+              TextMate\n*.tm_build_errors\n\n\n&quot; &gt;&gt; .gitignore git add .gitignore git commit -m &quot;Ignore Xcode stuff.&quot; git add .
+              git commit -m &quot;Initial Xcode project.&quot; } fi The...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2009/02/01/git-subversion-user-commit-reports">Git & Subversion User Commit Reports</a>
+              </h3><time pubdate="" datetime="2009-02-01T00:00:00-05:00">01 Feb 2009</time>
+            </header>
+            <p>
+              Want a list of the users and the number of commits they made? Git makes it really really easy, while I could not find such an easy
+              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require &#39;rubygems&#39;
+              require &#39;activesupport&#39; log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)[&#39;logentry&#39;] report_hash =
+              svn_logs.inject({}) do |report,log| author = log[&#39;author&#39;][0] report[author] ||= {:commit_count =&gt; 0}
+              report[author][:commit_count] += 1 report end commits_authors = report_hash.keys.map {...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2009/01/20/multiruby-the-macports-way-testing-your-rails-apps-with-ruby-1-9">MultiRuby The MacPorts Way. Testing Your Rails
+                Apps With Ruby 1.9</a>
+              </h3><time pubdate="" datetime="2009-01-20T00:00:00-05:00">20 Jan 2009</time>
+            </header>
+            <p>
+              UPDATE: In a recent article, I covered how to install REE and have hence NOOP&#39;ed this function to ignore the symlinking when REE is
+              installed. Ruby 1.9.1, the stable release, is just around the corner and if your like me, maybe you want to start playing around with
+              it and perhaps test a few projects using 1.9 with edge rails 2.3. If so, and your on a Mac, then perhaps this installation method might
+              appeal to you. I'll break this...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2008/12/30/autotestify-brothers-and-sisters">Autotestify Brothers and Sisters</a>
+              </h3><time pubdate="" datetime="2008-12-30T00:00:00-05:00">30 Dec 2008</time>
+            </header>
+            <p>
+              Based on my previous article Using Autotest For Rails Plugin Development, Brennan Dunn wrote a ZSH function that helps him with his
+              eager rails plugin work. Testing plugins is simply the most fun you will ever have. It's nice to test in isolation and easy to make a
+              plugin test multiple rails versions, etc. Typically plugin testing is very fast to because you are not burdened with excessive tests in
+              a big app that might use it. Just the ones...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2008/09/19/using-autotest-for-rails-plugin-development">Using Autotest For Rails Plugin Development</a>
+              </h3><time pubdate="" datetime="2008-09-19T00:00:00-04:00">19 Sep 2008</time>
+            </header>
+            <p>
+              I love autotest. I have event posted before how to extend the idea of autotest sounds to a red/green playlist but now that I am taking
+              more time to extract some of my work to plugins, I really wanted autotest to come with me. The problem is that the default autotest
+              mappings do not play with rails conventions, the biggest being that test files for a lib match the name of the lib with _test.rb at the
+              END of the...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2008/05/30/coulda-shoulda-woulda">Coulda Shoulda Woulda</a>
+              </h3><time pubdate="" datetime="2008-05-30T00:00:00-04:00">30 May 2008</time>
+            </header>
+            <p>
+              It has been about 6 months now since I started using the Shoulda testing plugin as my BDD/TDD tool of choice. Unlike a lot of other
+              people, I did not flock to the RSpec bandwaggon. Personally I think RSpec is horribly bloated a sledgehammer for a simple issue, the
+              need to have test code organized with nested setups and context blocks. If you are new to Shoulda, I highly urge you to take a look at
+              the Thoughbot project page...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2007/01/31/rake-task-to-read-and-write-the-activerecord-schema-version-table">Rake task to read and write the ActiveRecord
+                schema version table.</a>
+              </h3><time pubdate="" datetime="2007-01-31T00:00:00-05:00">31 Jan 2007</time>
+            </header>
+            <p>
+              After attending Rails Edge in Reston, Virginia I decided to move some common tasks from my ~/.irbrc file and put them into Rake. I
+              thought I would share a task that reads and writes the ActiveRecord schema table. Sometimes in migrations this is either good to know
+              or manually change. Simply copy this in a foo.task file in your project/lib/tasks directory and use rake -T to see the description and
+              usage. I have placed these tasks in the db:version namespace....
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2006/10/02/custom-rake-task-to-unload-fixtures">Custom Rake Task To Unload Fixtures</a>
+              </h3><time pubdate="" datetime="2006-10-02T00:00:00-04:00">02 Oct 2006</time>
+            </header>
+            <p>
+              I made a revised version of a rake task that I have used quite often, for unloading existing DB tables into fixture data and thought I
+              would share. This rake task is the in correct name space and adds a "rake db:fixtures:unload" command to your rails project when you
+              put this in "lib/tasks/foo.rake". It can take an optional TABLES variable or if none is present the whole array of DB tables are
+              converted. I find this rake task helpful when...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2006/06/13/quake-style-terminal-window-on-os-x">Quake Style Terminal Window on OS X</a>
+              </h3><time pubdate="" datetime="2006-06-13T00:00:00-04:00">13 Jun 2006</time>
+            </header>
+            <p>
+              UPDATE: (May 18th, 2012) The modern replacement for VisorTerminal is called TotalTerminal and cand be found on the binaryage site Well
+              this is far beyond cool but highly functional, a Quake like terminal implementation of Terminal.app that is a HotKey away from within
+              any application. A friend turned me on to this after it showed up on the Monday morning Apple links post from arstechnica.com. Although
+              I have never thought of this idea, it seems to have been a popular...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2006/03/19/getting-on-good-terms-with-the-os-x-shell">Getting On Good Terms With The OS X Shell</a>
+              </h3><time pubdate="" datetime="2006-03-19T00:00:00-05:00">19 Mar 2006</time>
+            </header>
+            <p>
+              I will be the first to admit that I am really just learning how to tap into the power of my shell environment and to be honest, I've
+              spent way to many hours reading man pages and figuring out how to do some really neat things that help my automate my workflow and
+              system administration. Mostly these are just basic tasks like my Simple MySQL Backup and Deleting Invisible Resource Files scripts. But
+              in all seriousness, when you get right...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2006/02/24/shell-script-to-delete-all-invisible-_-resource-files">Shell Script To Delete All Invisible ._ Resource
+                Files</a>
+              </h3><time pubdate="" datetime="2006-02-24T00:00:00-05:00">24 Feb 2006</time>
+            </header>
+            <p>
+              If you have ever accessed your website using a network protocol such as the Apple Filing Protocol (AFP), Samba (SMB), Web-based
+              Distributed Authoring and Versioning (WebDAV), or Network File System (NFS) using your Mac â€“ I am sure you have run into this problem
+              before â€“ dreaded invisible resource fork files. These are the files that begin with a ._ and they are normally not seen from within
+              the finder. My understanding is that these files are not even created...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2006/01/11/the-best-font-for-mac-programmers-profont">The Best Font for Mac Programmers, ProFont</a>
+              </h3><time pubdate="" datetime="2006-01-11T00:00:00-05:00">11 Jan 2006</time>
+            </header>
+            <p>
+              After being exposed to using TextMate for all my normal text editing needs, I soon began to do more things than just simple GREP-based
+              search and replace functions. I actually started to look at code more often. Within a few short months, I had gone away from my
+              established norm of the happenstantial viewing of simple CSS, HTML and PlainText files to a ful-time lookey lou of languages such as
+              Ruby, XML, PHP, SQL or any number of configuration files...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
+                <a href="/2005/12/19/how-to-setup-a-simple-mysql-backup-script">How To Setup a Simple MySQL Backup Script</a>
+              </h3><time pubdate="" datetime="2005-12-19T00:00:00-05:00">19 Dec 2005</time>
+            </header>
+            <p>
+              Lately, I've been loving all things that can be solved by using RsyncX. It's my de facto backup utility and I just keep finding more
+              and more tasks for it as each day goes by. It has become the hammer for all my system's needs. So when it came time for me to implement
+              a nice little backup routine for the MySQL databases hosted here at ActionMoniker.com, it was the first tool I considered. My
+              requirements were simple, I needed...
+            </p>
+          </article>
+        </section>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application&#39;s internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Using Dotenv In Rails
+            </h4>
+            <p>
+              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
+              ActiveRecord will use the single DATABASE_URL environment variable for every part of it&#39;s configuration, no database.yml needed!
+              If...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Jekyll Tips And Tricks
+            </h4>
+            <p>
+              <a href="/2013/09/02/jekyll-tips-and-tricks">IT&#39;S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has
+              a few days left. Don&#39;t miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+            <li>
+              <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://technology.customink.com">CustomInk Technology</a>
+            </li>
+            <li>
+              <a href="http://fearoffish.com">Jamie van Dyke</a>
+            </li>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://brennandunn.com">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

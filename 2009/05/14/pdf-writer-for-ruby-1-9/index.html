@@ -1,0 +1,258 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      PDF::Writer For Ruby 1.9 @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css">
+    <link rel="stylesheet" href="/resource/site.css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/jquery-1.7.1.min.js">
+</script>
+    <script src="/resource/site.js">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="U">About Me</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="/pages/resume.html" class="button" data-icon="N">Resume</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Twitter</a>
+            </li>
+            <li>
+              <a href="/archive.html" class="button" data-icon="l">Archives</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate="" datetime="2009-05-14T00:00:00-04:00"><span class="day">14</span> <span class="month">May</span> <span class=
+            "year">2009</span></time>
+            <h1>
+              PDF::Writer For Ruby 1.9
+            </h1>
+          </header>
+          <p>
+            If you have legacy code written for ruby 1.8 and you want to run 1.9 and support your old <a href=
+            "http://ruby-pdf.rubyforge.org/pdf-writer/">PDF::Writer</a> code, then just jump right over to <a href=
+            "http://github.com/metaskills/pdf-writer/tree/master">my Github pdf-writer fork</a> and get it.
+          </p>
+          <pre class="command">
+$ gem install metaskills-pdf-writer
+</pre>
+          <p>
+            If you are interested in knowing some of the dirty details about what pitfalls are under 1.9, read on. The biggest thing for me was
+            getting used to the character encodings. Including string literals in your code that are say UTF-8 or some other encoding will blow up on
+            you real quick. I highly highly suggest that you read <a href="http://blog.grayproductions.net/categories/character_encodings">James
+            Edward Gray II: Everything About Ruby 1.9 Character Encoding Series</a> series. He covers all the basics. If you want to see what two
+            commits I did for pdf-writer, see <a href=
+            "http://github.com/metaskills/pdf-writer/commit/ef9787c050a3b861089fc95f4f3af544f8e39219">here</a> and <a href=
+            "http://github.com/metaskills/pdf-writer/commit/8f0ed3f1bd312bf86da47d721ca2f2070724efd6">here</a>. The second one is very very hackish,
+            it basically add a marshaling support to the Mutex class which 1.9 does not have. The reason this is needed was due to pdf-writer's use
+            of transaction simple to roll back object state as it is drawing across multiple pages. If you are like me and wish all your PDF::Writer
+            code was in Prawn, your not alone!
+          </p>
+          <h2>
+            Resources
+          </h2>
+          <ul>
+            <li>
+              <a href="http://github.com/metaskills/pdf-writer/tree/master">PDF::Writer For Ruby 1.9</a>
+            </li>
+            <li>
+              <a href="http://blog.grayproductions.net/categories/character_encodings">James Edward Gray II: Everything About Ruby 1.9 Character
+              Encoding Series</a>
+            </li>
+            <li>
+              <a href="http://eigenclass.org/hiki.rb?Changes+in+Ruby+1.9">General Changes in Ruby 1.9</a>
+            </li>
+            <li>
+              <a href="http://prawn.majesticseacreature.com/">Prawn: Fast, Nimble PDF Generation For Ruby</a>
+            </li>
+          </ul>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2009/05/14/pdf-writer-for-ruby-1-9/';
+            var disqus_title = "PDF::Writer For Ruby 1.9";
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Using Dotenv In Rails
+            </h4>
+            <p>
+              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
+              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
+              If...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Jekyll Tips And Tricks
+            </h4>
+            <p>
+              <a href="/2013/09/02/jekyll-tips-and-tricks">IT'S DANGEROUS TO GO ALONE! TAKE THIS! Our t-shirt fund-raiser on Booster.com only has a
+              few days left. Don't miss out on this 8-bit-tacular Ruby shirt! Available in men, ladies...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+            <li>
+              <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://technology.customink.com">CustomInk Technology</a>
+            </li>
+            <li>
+              <a href="http://fearoffish.com">Jamie van Dyke</a>
+            </li>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://brennandunn.com">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>
