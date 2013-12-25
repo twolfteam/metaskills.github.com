@@ -4,7 +4,7 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2013-12-24T16:15:47-05:00</updated>
+ <updated>2013-12-24T22:13:45-05:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
@@ -139,7 +139,7 @@ Have you ever wondered how tools like New Relic are able to gain valuable metric
 <ul>
 <li><a href="http://apidock.com/rails/ActiveSupport/Notifications">APIdock ActiveSupport::Notifications</a></li>
 <li><a href="https://speakerdeck.com/nextmat/digging-deep-with-activesupportnotifications">Digging Deep with ActiveSupport::Notifications</a></li>
-<li><a href="https://github.com/customink/subexec-notifications">Instrumentation for Subexec commands using ActiveSupport::Notifications</a></li>
+<li><a href="https://github.com/customink/subexec-notifications">Final Subexec::Notifications Gem</a></li>
 <li><a href="http://www.datadoghq.com">Datadog - Monitoring Service</a></li>
 <li><a href="https://github.com/DataDog">Datadog - On Github</a></li>
 <li><a href="https://metrics.librato.com">Librato - Highly Scalable Metrics, Monitoring &amp; Alerts</a></li>
