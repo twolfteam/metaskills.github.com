@@ -79,32 +79,36 @@
             layout specific for your mobile application. Mine is in <code>app/views/layout/mobile.html.haml</code>. As you can see here, I use HAML,
             so all view examples will be using it vs ERB. Here is a general layout.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="o">!!!</span> <span class="mi">5</span>
-<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;en&#39;</span><span class="p">}</span>
-  <span class="o">%</span><span class="n">head</span>
-    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
-    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;viewport&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;width=device-width, initial-scale=1&#39;</span><span class="p">}</span>
-    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;format-detection&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;telephone=no&#39;</span><span class="p">}</span>
-    <span class="o">%</span><span class="n">title</span><span class="o">=</span> <span class="s1">&#39;My Mobile App&#39;</span>
-    <span class="o">%</span><span class="n">link</span><span class="p">{</span><span class="ss">:rel</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;stylesheet&#39;</span><span class="p">,</span> <span class="ss">:href</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css&#39;</span><span class="p">}</span>
-    <span class="o">%</span><span class="n">script</span><span class="p">{</span><span class="ss">:src</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/jquery-1.6.2.min.js&#39;</span><span class="p">}</span>
-    <span class="o">%</span><span class="n">script</span><span class="p">{</span><span class="ss">:src</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js&#39;</span><span class="p">}</span>
-  <span class="o">%</span><span class="n">body</span>
-    <span class="o">=</span> <span class="k">yield</span><span class="p">(</span><span class="ss">:layout</span><span class="p">)</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+!!! <span class="integer">5</span>
+%html{<span class="symbol">:lang</span> =&gt; <span class="string"><span class="delimiter">'</span><span class="content">en</span><span class=
+"delimiter">'</span></span>}
+  %head
+    %meta{<span class="symbol">:charset</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">utf-8</span><span class="delimiter">'</span></span>}
+    %meta{<span class="symbol">:name</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">viewport</span><span class="delimiter">'</span></span>, <span class="symbol">:content</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">width=device-width, initial-scale=1</span><span class="delimiter">'</span></span>}
+    %meta{<span class="symbol">:name</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">format-detection</span><span class="delimiter">'</span></span>, <span class="symbol">:content</span> =&gt; <span class=
+"string"><span class="delimiter">'</span><span class="content">telephone=no</span><span class="delimiter">'</span></span>}
+    %title= <span class="string"><span class="delimiter">'</span><span class="content">My Mobile App</span><span class="delimiter">'</span></span>
+    %link{<span class="symbol">:rel</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">stylesheet</span><span class="delimiter">'</span></span>, <span class="symbol">:href</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css</span><span class=
+"delimiter">'</span></span>}
+    %script{<span class="symbol">:src</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">http://code.jquery.com/jquery-1.6.2.min.js</span><span class="delimiter">'</span></span>}
+    %script{<span class="symbol">:src</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js</span><span class="delimiter">'</span></span>}
+  %body
+    = <span class="keyword">yield</span>(<span class="symbol">:layout</span>)
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             A few key points here. First, the meta tag for the <code>viewport</code> is recommended as a good base. The other meta tag for
@@ -129,33 +133,36 @@
             "http://weblog.jamisbuck.org/2007/1/17/concerns-in-activerecord">shared concerns module directory</a>. From here I mix this into my test
             helper, and application's view helper. It is that damn useful! You are going to want to use this everywhere!
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># File: app/concerns/mobile_concerns.rb</span>
-<span class="k">module</span> <span class="nn">MobileConcerns</span>  
-  <span class="k">module</span> <span class="nn">Helpers</span>
-    <span class="k">def</span> <span class="nf">mobile_page_id</span><span class="p">(</span><span class="n">path</span> <span class=
-"o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-      <span class="n">path</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class=
-"sr">/\A\/mobile\//</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class=
-"n">gsub</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="s1">&#39;_&#39;</span><span class=
-"p">)</span>
-    <span class="k">end</span>
-  <span class="k">end</span>  
-<span class="k">end</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="comment"># File: app/concerns/mobile_concerns.rb</span>
+<span class="keyword">module</span> <span class="class">MobileConcerns</span>  
+  <span class="keyword">module</span> <span class="class">Helpers</span>
+    <span class="keyword">def</span> <span class="function">mobile_page_id</span>(path = request.path)
+      path.sub(<span class="regexp"><span class="delimiter">/</span><span class="char">\A</span><span class="char">\/</span><span class=
+"content">mobile</span><span class="char">\/</span><span class="delimiter">/</span></span>,<span class="string"><span class=
+"delimiter">'</span><span class="delimiter">'</span></span>).gsub(<span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">'</span><span class=
+"content">_</span><span class="delimiter">'</span></span>)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>  
+<span class="keyword">end</span>
 
-<span class="c1"># Mix into your applications helper.</span>
-<span class="k">module</span> <span class="nn">ApplicationHelper</span>
-  <span class="kp">include</span> <span class="no">MobileConcerns</span><span class="o">::</span><span class="no">Helpers</span>
-<span class="k">end</span>
+<span class="comment"># Mix into your applications helper.</span>
+<span class="keyword">module</span> <span class="class">ApplicationHelper</span>
+  include <span class="constant">MobileConcerns</span>::<span class="constant">Helpers</span>
+<span class="keyword">end</span>
 
-<span class="c1"># Mix into your test helper of choice.</span>
-<span class="k">class</span> <span class="nc">MobileStoriesTest</span> <span class="o">&lt;</span> <span class=
-"no">ActionController</span><span class="o">::</span><span class="no">IntegrationTest</span>
-  <span class="kp">include</span> <span class="no">MobileConcerns</span><span class="o">::</span><span class="no">Helpers</span>
-<span class="k">end</span>
-</code>
+<span class="comment"># Mix into your test helper of choice.</span>
+<span class="keyword">class</span> <span class="class">MobileStoriesTest</span> &lt; <span class="constant">ActionController</span>::<span class=
+"constant">IntegrationTest</span>
+  include <span class="constant">MobileConcerns</span>::<span class="constant">Helpers</span>
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             The <code>mobile_page_id</code> method is primarily for views. I will cover its usage in testing further down. When called without an
@@ -168,28 +175,30 @@
             used in the <code>%h1</code> tag and the <code>data-title</code> page element attribute. Doing this will show the same title in the
             header bar as well as the page title.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="o">-</span> <span class="n">title</span> <span class="o">=</span> <span class=
-"s2">&quot;User Profile&quot;</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+- title = <span class="string"><span class="delimiter">&quot;</span><span class="content">User Profile</span><span class=
+"delimiter">&quot;</span></span>
 
-<span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class=
-"n">mobile_page_id</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
-"ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class=
-"ss">:title</span> <span class="o">=&gt;</span> <span class="n">title</span><span class="p">}}</span>
+%div{<span class="symbol">:id</span> =&gt; mobile_page_id, <span class="symbol">:data</span> =&gt; {<span class=
+"symbol">:role</span> =&gt; <span class="string"><span class="delimiter">'</span><span class="content">page</span><span class=
+"delimiter">'</span></span>, <span class="symbol">:title</span> =&gt; title}}
 
-  <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class=
-"p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;header&#39;</span><span class="p">}}</span>
-    <span class="o">%</span><span class="n">h1</span><span class="o">=</span> <span class="n">title</span>
-  <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class=
-"p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;content&#39;</span><span class="p">}}</span>
-    <span class="n">edit</span> <span class="n">your</span> <span class="n">profile</span><span class="o">.</span><span class=
-"n">.</span><span class="o">.</span>
-  <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class=
-"p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;footer&#39;</span><span class="p">}}</span>
-    <span class="sr">/...</span>
-</code>
+  %div{<span class="symbol">:data</span> =&gt; {<span class="symbol">:role</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">header</span><span class="delimiter">'</span></span>}}
+    %h1= title
+  %div{<span class="symbol">:data</span> =&gt; {<span class="symbol">:role</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">content</span><span class="delimiter">'</span></span>}}
+    edit your profile...
+  %div{<span class="symbol">:data</span> =&gt; {<span class="symbol">:role</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">footer</span><span class="delimiter">'</span></span>}}
+    <span class="regexp"><span class="delimiter">/</span><span class="content">...
+</span></span>
 </pre>
+              </div>
+            </div>
           </div>
           <h2>
             Easy Data Attributes
@@ -200,28 +209,33 @@
             HAML and the latest Rails 3.1 tag helpers can keep things clean. Both allow hashes to be passed to the data attribute. Keys are
             dasherized and values are JSON-encoded except for string and symbols.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># HAML Shorthand For:</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="comment"># HAML Shorthand For:</span>
 <span class=
-"c1"># &lt;div id=&quot;foo&quot; data-role=&quot;page&quot; data-title=&quot;Title&quot; data-rel=&quot;dialog&quot;&gt;&lt;/div&gt;</span>
+"comment"># &lt;div id=&quot;foo&quot; data-role=&quot;page&quot; data-title=&quot;Title&quot; data-rel=&quot;dialog&quot;&gt;&lt;/div&gt;</span>
 
-<span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;foo&#39;</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
-"ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class=
-"ss">:title</span> <span class="o">=&gt;</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class=
-"ss">:rel</span> <span class="o">=&gt;</span> <span class="s1">&#39;dialog&#39;</span><span class="p">}}</span>
+%div{<span class="symbol">:id</span> =&gt; <span class="string"><span class="delimiter">'</span><span class="content">foo</span><span class=
+"delimiter">'</span></span>, <span class="symbol">:data</span> =&gt; {<span class="symbol">:role</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">page</span><span class="delimiter">'</span></span>, <span class="symbol">:title</span> =&gt; <span class=
+"string"><span class="delimiter">'</span><span class="content">Title</span><span class="delimiter">'</span></span>, <span class=
+"symbol">:rel</span> =&gt; <span class="string"><span class="delimiter">'</span><span class="content">dialog</span><span class=
+"delimiter">'</span></span>}}
 
-<span class="c1"># Rails 3.1 Tag Helpers</span>
+<span class="comment"># Rails 3.1 Tag Helpers</span>
 <span class=
-"c1"># &lt;div data-name=&quot;Stephen&quot; data-city-state=&quot;[&amp;quot;Chicago&amp;quot;,&amp;quot;IL&amp;quot;]&quot; /&gt;</span>
+"comment"># &lt;div data-name=&quot;Stephen&quot; data-city-state=&quot;[&amp;quot;Chicago&amp;quot;,&amp;quot;IL&amp;quot;]&quot; /&gt;</span>
 
-<span class="n">tag</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class=
-"ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;Stephen&#39;</span><span class="p">,</span> <span class="ss">:city_state</span> <span class="o">=&gt;</span> <span class=
-"sx">%w(Chicago IL)</span><span class="p">})</span>
-</code>
+tag(<span class="string"><span class="delimiter">&quot;</span><span class="content">div</span><span class=
+"delimiter">&quot;</span></span>, <span class="symbol">:data</span> =&gt; {<span class="symbol">:name</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">Stephen</span><span class="delimiter">'</span></span>, <span class=
+"symbol">:city_state</span> =&gt; <span class="string"><span class="delimiter">%w(</span><span class="content">Chicago IL</span><span class=
+"delimiter">)</span></span>})
 </pre>
+              </div>
+            </div>
           </div>
           <h2>
             Dynamically Setting Layout
@@ -234,31 +248,31 @@
             from an AJAX request. Below is an example of my base mobile controller that all mobile controllers inherit from. Now every action is able
             to load the entire mobile layout or not.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Mobile</span><span class="o">::</span><span class=
-"no">BaseController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">Mobile::BaseController</span> &lt; <span class="constant">ApplicationController</span>
 
-  <span class="no">LAYOUT</span> <span class="o">=</span> <span class="s1">&#39;mobile&#39;</span><span class="o">.</span><span class=
-"n">freeze</span>
-  <span class="n">layout</span> <span class="no">LAYOUT</span>
-  <span class="n">around_filter</span> <span class="ss">:dynamically_assign_layout</span>
-
-  <span class="kp">private</span>
-
-  <span class="k">def</span> <span class="nf">dynamically_assign_layout</span>
-    <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class=
-"n">layout</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class=
-"n">get?</span> <span class="o">&amp;&amp;</span> <span class="n">request</span><span class="o">.</span><span class="n">xhr?</span>
-    <span class="k">yield</span>
-  <span class="k">ensure</span>
-    <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class=
-"n">layout</span> <span class="no">LAYOUT</span>
-  <span class="k">end</span>
-
-<span class="k">end</span>
-</code>
+  <span class="constant">LAYOUT</span> = <span class="string"><span class="delimiter">'</span><span class="content">mobile</span><span class=
+"delimiter">'</span></span>.freeze
+  layout <span class="constant">LAYOUT</span>
+  around_filter <span class="symbol">:dynamically_assign_layout</span>
+  
+  private
+  
+  <span class="keyword">def</span> <span class="function">dynamically_assign_layout</span>
+    <span class="predefined-constant">self</span>.class.layout <span class="predefined-constant">false</span> <span class=
+"keyword">if</span> request.get? &amp;&amp; request.xhr?
+    <span class="keyword">yield</span>
+  <span class="keyword">ensure</span>
+    <span class="predefined-constant">self</span>.class.layout <span class="constant">LAYOUT</span>
+  <span class="keyword">end</span>
+  
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <h2>
             Integration Testing &amp; Capybara-Webkit
@@ -284,33 +298,31 @@
             is easily solvable using the page ids from the <code>mobile_page_id</code> helper method I mentioned above. So whatever your testing
             framework, here are a few helpers that are critical. Assume these are mixed into your test helper.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="kp">private</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+private
 
-<span class="kp">include</span> <span class="no">MobileConcerns</span><span class="o">::</span><span class="no">Helpers</span> <span class=
-"c1"># Mentioned above.</span>
+include <span class="constant">MobileConcerns</span>::<span class="constant">Helpers</span> <span class="comment"># Mentioned above.</span>
 
-<span class="k">def</span> <span class="nf">current_page_id</span><span class="p">(</span><span class="n">path</span><span class=
-"o">=</span><span class="kp">nil</span><span class="p">)</span>
-  <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">||</span> <span class="n">current_path</span>
-  <span class="s2">&quot;div#</span><span class="si">#{</span><span class="n">mobile_page_id</span><span class="p">(</span><span class=
-"n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">.ui-page-active&quot;</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">current_page_id</span>(path=<span class="predefined-constant">nil</span>)
+  path = path || current_path
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">div#</span><span class="inline"><span class=
+"inline-delimiter">#{</span>mobile_page_id(path)<span class="inline-delimiter">}</span></span><span class=
+"content">.ui-page-active</span><span class="delimiter">&quot;</span></span>
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">current_page</span><span class="p">(</span><span class="n">path</span><span class=
-"o">=</span><span class="kp">nil</span><span class="p">)</span>
-  <span class="n">find</span><span class="p">(</span><span class="n">current_page_id</span><span class="p">(</span><span class=
-"n">path</span><span class="p">))</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">current_page</span>(path=<span class="predefined-constant">nil</span>)
+  find(current_page_id(path))
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">within_current_page</span><span class="p">(</span><span class="n">path</span><span class=
-"o">=</span><span class="kp">nil</span><span class="p">)</span>
-  <span class="n">within</span><span class="p">(</span><span class="n">current_page_id</span><span class="p">(</span><span class=
-"n">path</span><span class="p">))</span> <span class="p">{</span> <span class="k">yield</span> <span class="p">}</span>
-<span class="k">end</span>
-</code>
+<span class="keyword">def</span> <span class="function">within_current_page</span>(path=<span class="predefined-constant">nil</span>)
+  within(current_page_id(path)) { <span class="keyword">yield</span> }
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             So let's go over these. First is the <code>current_page_id</code> method. Most of the time you are going to pass a path argument to this
@@ -320,30 +332,30 @@
             leverages Capybara's <code>within</code> helper to scope your action to that particular DOM element. Here is a classic example using
             these.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="n">should</span> <span class=
-"s1">&#39;be able to navigate to logged in user page and change email&#39;</span> <span class="k">do</span>
-  <span class="n">login_as</span> <span class="vi">@user</span>
-  <span class="n">visit</span> <span class="n">mobile_homepage_path</span>
-  <span class="n">click_on</span> <span class="s1">&#39;My Account&#39;</span>
-  <span class="n">user_path</span> <span class="o">=</span> <span class="n">mobile_user_path</span><span class="p">(</span><span class=
-"vi">@user</span><span class="p">)</span>
-  <span class="n">assert</span> <span class="n">current_page</span><span class="p">(</span><span class="n">user_path</span><span class="p">)</span>
-  <span class="c1"># Change email</span>
-  <span class="n">new_email</span> <span class="o">=</span> <span class="no">Forgery</span><span class="p">(</span><span class=
-"ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">address</span>
-  <span class="n">within_current_page</span><span class="p">(</span><span class="n">user_path</span><span class="p">)</span> <span class=
-"k">do</span>
-    <span class="n">fill_in</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="ss">:with</span> <span class=
-"o">=&gt;</span> <span class="n">new_email</span>
-    <span class="n">click_button</span> <span class="s1">&#39;Save Changes&#39;</span>
-  <span class="k">end</span>
-  <span class="vi">@user</span><span class="o">.</span><span class="n">reload</span><span class="o">.</span><span class="n">email</span><span class=
-"o">.</span><span class="n">must_equal</span> <span class="n">new_email</span>
-<span class="k">end</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+should <span class="string"><span class="delimiter">'</span><span class=
+"content">be able to navigate to logged in user page and change email</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
+  login_as <span class="instance-variable">@user</span>
+  visit mobile_homepage_path
+  click_on <span class="string"><span class="delimiter">'</span><span class="content">My Account</span><span class="delimiter">'</span></span>
+  user_path = mobile_user_path(<span class="instance-variable">@user</span>)
+  assert current_page(user_path)
+  <span class="comment"># Change email</span>
+  new_email = Forgery(<span class="symbol">:email</span>).address
+  within_current_page(user_path) <span class="keyword">do</span>
+    fill_in <span class="string"><span class="delimiter">'</span><span class="content">email</span><span class=
+"delimiter">'</span></span>, <span class="symbol">:with</span> =&gt; new_email
+    click_button <span class="string"><span class="delimiter">'</span><span class="content">Save Changes</span><span class=
+"delimiter">'</span></span>
+  <span class="keyword">end</span>
+  <span class="instance-variable">@user</span>.reload.email.must_equal new_email
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Hopefully you can see how this simple page id foundation can help you better test your jQuery Mobile app with Capybara-WebKit. What an
@@ -465,7 +477,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

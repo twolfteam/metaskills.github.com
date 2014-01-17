@@ -93,121 +93,156 @@
             <li>Finally a LightTPD declaration for spawning FastCGI process for PHP.
             </li>
           </ul>
-          <div class="highlight">
-            <pre>
-<code class="c language-c" data-lang="c"><span class="n">simple</span><span class="o">-</span><span class="n">vhost</span><span class=
-"p">.</span><span class="n">server</span><span class="o">-</span><span class="n">root</span>      <span class="o">=</span> <span class=
-"s">&quot;/Library/WebServer/hosts/&quot;</span>
-<span class="n">simple</span><span class="o">-</span><span class="n">vhost</span><span class="p">.</span><span class="k">default</span><span class=
-"o">-</span><span class="n">host</span>     <span class="o">=</span> <span class="s">&quot;default&quot;</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+simple-vhost.server-root      = <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/Library/WebServer/hosts/</span><span class="delimiter">&quot;</span></span>
+simple-vhost.<span class="keyword">default</span>-host     = <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">default</span><span class="delimiter">&quot;</span></span>
 
-<span class="err">$</span><span class="n">HTTP</span><span class="p">[</span><span class="s">&quot;host&quot;</span><span class=
-"p">]</span> <span class="o">=~</span> <span class="s">&quot;^(metaskills.net)|(www.metaskills.net)$&quot;</span> <span class="p">{</span>
-  <span class="n">simple</span><span class="o">-</span><span class="n">vhost</span><span class="p">.</span><span class="k">default</span><span class=
-"o">-</span><span class="n">host</span>     <span class="o">=</span> <span class="s">&quot;metaskills.net&quot;</span>
-  <span class="n">url</span><span class="p">.</span><span class="n">access</span><span class="o">-</span><span class="n">deny</span> <span class=
-"o">=</span> <span class="p">(</span> 
-    <span class="s">&quot;.engine&quot;</span><span class="p">,</span> <span class="s">&quot;.inc&quot;</span><span class="p">,</span> <span class=
-"s">&quot;.install&quot;</span><span class="p">,</span> <span class="s">&quot;.module&quot;</span><span class="p">,</span> <span class=
-"s">&quot;.sh&quot;</span><span class="p">,</span> <span class="s">&quot;.sql&quot;</span><span class="p">,</span> <span class=
-"s">&quot;.pgsql&quot;</span><span class="p">,</span> 
-    <span class="s">&quot;.theme&quot;</span><span class="p">,</span> <span class="s">&quot;.tpl.php&quot;</span><span class=
-"p">,</span> <span class="s">&quot;.xtmpl&quot;</span><span class="p">,</span> <span class="s">&quot;.code-style.pl&quot;</span><span class=
-"p">,</span> <span class="s">&quot;.Repository&quot;</span><span class="p">,</span> <span class="s">&quot;.Root&quot;</span>
-    <span class="p">)</span>
- <span class="n">url</span><span class="p">.</span><span class="n">rewrite</span><span class="o">-</span><span class="n">once</span> <span class=
-"o">=</span> <span class="p">(</span>
-   <span class="err">#</span> <span class="n">hard</span><span class="o">-</span><span class="n">coded</span> <span class=
-"n">rewrites</span> <span class="n">so</span> <span class="n">the</span> <span class="n">drupal</span> <span class="n">catch</span><span class=
-"o">-</span><span class="n">alls</span> <span class="k">do</span> <span class="n">not</span> <span class="n">get</span> <span class=
-"n">them</span><span class="p">.</span>
-   <span class="s">&quot;^/mint/$&quot;</span> <span class="o">=&gt;</span> <span class="s">&quot;/mint/index.php&quot;</span><span class=
-"p">,</span>
-   <span class="s">&quot;^/mint/\?(.*)&quot;</span> <span class="o">=&gt;</span> <span class="s">&quot;/mint/index.php?$1&quot;</span><span class=
-"p">,</span>
-   <span class="err">#</span> <span class="n">drupal</span> <span class="n">rules</span> <span class="k">for</span> <span class=
-"p">(</span><span class="n">meta</span><span class="o">-</span><span class="n">theme</span><span class="o">-</span><span class=
-"k">for</span><span class="o">-</span><span class="n">durpal</span><span class="p">)</span> <span class="n">multi</span><span class=
-"o">-</span><span class="n">site</span><span class="p">,</span> <span class="n">these</span> <span class="n">MUST</span> <span class=
-"n">BE</span> <span class="n">FIRST</span><span class="p">.</span>
-   <span class="s">&quot;^/meta-theme-for-drupal/system/test/(.*)$&quot;</span>  <span class="o">=&gt;</span> <span class=
-"s">&quot;/meta-theme-for-drupal/index.php?q=system/test/$1&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/meta-theme-for-drupal/search/node/(.*)$&quot;</span>  <span class="o">=&gt;</span> <span class=
-"s">&quot;/meta-theme-for-drupal/index.php?q=search/node/$1&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/meta-theme-for-drupal/([^.?]*)\?(.*)$&quot;</span>    <span class="o">=&gt;</span> <span class=
-"s">&quot;/meta-theme-for-drupal/index.php?q=$1&amp;$2&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/meta-theme-for-drupal/([^.?]*)$&quot;</span>          <span class="o">=&gt;</span> <span class=
-"s">&quot;/meta-theme-for-drupal/index.php?q=$1&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/meta-theme-for-drupal$&quot;</span>                   <span class="o">=&gt;</span> <span class=
-"s">&quot;/meta-theme-for-drupal/index.php&quot;</span><span class="p">,</span>
-   <span class="err">#</span> <span class="n">drupal</span> <span class="n">rules</span> <span class="k">for</span> <span class=
-"k">default</span> <span class="n">site</span> <span class="n">behavior</span><span class="p">.</span>
-   <span class="s">&quot;^/system/test/(.*)$&quot;</span>        <span class="o">=&gt;</span> <span class=
-"s">&quot;/index.php?q=system/test/$1&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/search/node/(.*)$&quot;</span>        <span class="o">=&gt;</span> <span class=
-"s">&quot;/index.php?q=search/node/$1&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/([^.?]*)\?(.*)$&quot;</span>          <span class="o">=&gt;</span> <span class=
-"s">&quot;/index.php?q=$1&amp;$2&quot;</span><span class="p">,</span>
-   <span class="s">&quot;^/([^.?]*)$&quot;</span>                <span class="o">=&gt;</span> <span class="s">&quot;/index.php?q=$1&quot;</span>
-   <span class="p">)</span>
-  <span class="n">expire</span><span class="p">.</span><span class="n">url</span> <span class="o">=</span> <span class="p">(</span> 
-    <span class="s">&quot;/favicon.ico&quot;</span>              <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span> 
-    <span class="s">&quot;/files/&quot;</span>                   <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span> 
-    <span class="s">&quot;/misc/&quot;</span>                    <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/css/&quot;</span>         <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/images/&quot;</span>      <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/js/&quot;</span>          <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/meta-black/&quot;</span>  <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/meta-grey/&quot;</span>   <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/meta-paper/&quot;</span>  <span class="o">=&gt;</span> <span class=
-"s">&quot;access 3 days&quot;</span><span class="p">,</span>
-    <span class="s">&quot;/themes/meta/meta-pink/&quot;</span>   <span class="o">=&gt;</span> <span class="s">&quot;access 3 days&quot;</span> 
-    <span class="p">)</span>
-  <span class="n">compress</span><span class="p">.</span><span class="n">cache</span><span class="o">-</span><span class=
-"n">dir</span>            <span class="o">=</span> <span class="n">webserver</span><span class="o">-</span><span class="n">root</span> <span class=
-"o">+</span> <span class="s">&quot;tmp/cache_metaskills/&quot;</span>
-  <span class="n">server</span><span class="p">.</span><span class="n">errorlog</span>               <span class="o">=</span> <span class=
-"n">webserver</span><span class="o">-</span><span class="n">root</span> <span class="o">+</span> <span class=
-"s">&quot;logs/metaskills.error.log&quot;</span>
-  <span class="n">accesslog</span><span class="p">.</span><span class="n">filename</span>            <span class="o">=</span> <span class=
-"n">webserver</span><span class="o">-</span><span class="n">root</span> <span class="o">+</span> <span class=
-"s">&quot;logs/metaskills.access.log&quot;</span>
-  <span class="n">fastcgi</span><span class="p">.</span><span class="n">server</span>                <span class="o">=</span> <span class=
-"p">(</span> <span class="s">&quot;.php&quot;</span> <span class="o">=&gt;</span>
-                                    <span class="p">(</span> <span class="s">&quot;localhost&quot;</span> <span class="o">=&gt;</span>
-                                      <span class="p">(</span> 
-                                        <span class="s">&quot;socket&quot;</span> <span class="o">=&gt;</span> <span class=
-"s">&quot;/tmp/php-fastcgi.socket&quot;</span><span class="p">,</span>
-                                        <span class="s">&quot;bin-path&quot;</span> <span class="o">=&gt;</span> <span class=
-"s">&quot;/opt/local/bin/php-fcgi&quot;</span><span class="p">,</span>
-                                        <span class="s">&quot;max-procs&quot;</span> <span class="o">=&gt;</span> <span class=
-"mi">4</span><span class="p">,</span>
-                                        <span class="s">&quot;bin-environment&quot;</span> <span class="o">=&gt;</span> <span class="p">(</span> 
-                                          <span class="s">&quot;PHP_FCGI_CHILDREN&quot;</span> <span class="o">=&gt;</span> <span class=
-"s">&quot;16&quot;</span><span class="p">,</span>
-                                          <span class="s">&quot;PHP_FCGI_MAX_REQUESTS&quot;</span> <span class="o">=&gt;</span> <span class=
-"s">&quot;10000&quot;</span>
-                                        <span class="p">),</span>
-                                        <span class="s">&quot;bin-copy-environment&quot;</span> <span class="o">=&gt;</span> <span class="p">(</span>
-                                          <span class="s">&quot;PATH&quot;</span><span class="p">,</span> <span class=
-"s">&quot;SHELL&quot;</span><span class="p">,</span> <span class="s">&quot;USER&quot;</span>
-                                        <span class="p">),</span>
-                                        <span class="s">&quot;broken-scriptfilename&quot;</span> <span class="o">=&gt;</span> <span class=
-"s">&quot;enable&quot;</span>
-                                      <span class="p">)</span>
-                                    <span class="p">)</span>
-                                  <span class="p">)</span>
-<span class="p">}</span>
-</code>
+$HTTP[<span class="string"><span class="delimiter">&quot;</span><span class="content">host</span><span class=
+"delimiter">&quot;</span></span>] =~ <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">^(metaskills.net)|(www.metaskills.net)$</span><span class="delimiter">&quot;</span></span> {
+  simple-vhost.<span class="keyword">default</span>-host     = <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">metaskills.net</span><span class="delimiter">&quot;</span></span>
+  url.access-deny = ( 
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">.engine</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.inc</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.install</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.module</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.sh</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.sql</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.pgsql</span><span class=
+"delimiter">&quot;</span></span>, 
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">.theme</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.tpl.php</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.xtmpl</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.code-style.pl</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.Repository</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">.Root</span><span class=
+"delimiter">&quot;</span></span>
+    )
+ url.rewrite-once = (
+   <span class="preprocessor"># hard</span>-coded rewrites so the drupal catch-alls <span class="keyword">do</span> not get them.
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/mint/$</span><span class=
+"delimiter">&quot;</span></span> =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/mint/index.php</span><span class="delimiter">&quot;</span></span>,
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/mint/</span></span><span class="error">\</span>?(.*)<span class=
+"string"><span class="delimiter">&quot;</span><span class="content"> =&gt; </span><span class=
+"delimiter">&quot;</span></span>/mint/index.php?$<span class="integer">1</span><span class="string"><span class="delimiter">&quot;</span><span class=
+"content">,</span></span>
+   <span class="preprocessor"># drupal</span> rules <span class="keyword">for</span> (meta-theme-<span class=
+"keyword">for</span>-durpal) multi-site, these MUST BE FIRST.
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/meta-theme-for-drupal/system/test/(.*)$</span><span class=
+"delimiter">&quot;</span></span>  =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/meta-theme-for-drupal/index.php?q=system/test/$1</span><span class="delimiter">&quot;</span></span>,
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/meta-theme-for-drupal/search/node/(.*)$</span><span class=
+"delimiter">&quot;</span></span>  =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/meta-theme-for-drupal/index.php?q=search/node/$1</span><span class="delimiter">&quot;</span></span>,
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/meta-theme-for-drupal/([^.?]*)</span></span><span class=
+"error">\</span>?(.*)$<span class="string"><span class="delimiter">&quot;</span><span class="content">    =&gt; </span><span class=
+"delimiter">&quot;</span></span>/meta-theme-<span class="keyword">for</span>-drupal/index.php?q=$<span class="integer">1</span>&amp;$<span class=
+"integer">2</span><span class="string"><span class="delimiter">&quot;</span><span class="content">,</span></span>
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/meta-theme-for-drupal/([^.?]*)$</span><span class=
+"delimiter">&quot;</span></span>          =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/meta-theme-for-drupal/index.php?q=$1</span><span class="delimiter">&quot;</span></span>,
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/meta-theme-for-drupal$</span><span class=
+"delimiter">&quot;</span></span>                   =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/meta-theme-for-drupal/index.php</span><span class="delimiter">&quot;</span></span>,
+   <span class="preprocessor"># drupal</span> rules <span class="keyword">for</span> <span class="keyword">default</span> site behavior.
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/system/test/(.*)$</span><span class=
+"delimiter">&quot;</span></span>        =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/index.php?q=system/test/$1</span><span class="delimiter">&quot;</span></span>,
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/search/node/(.*)$</span><span class=
+"delimiter">&quot;</span></span>        =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/index.php?q=search/node/$1</span><span class="delimiter">&quot;</span></span>,
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/([^.?]*)</span></span><span class=
+"error">\</span>?(.*)$<span class="string"><span class="delimiter">&quot;</span><span class="content">          =&gt; </span><span class=
+"delimiter">&quot;</span></span>/index.php?q=$<span class="integer">1</span>&amp;$<span class="integer">2</span><span class="string"><span class=
+"delimiter">&quot;</span><span class="content">,</span></span>
+   <span class="string"><span class="delimiter">&quot;</span><span class="content">^/([^.?]*)$</span><span class=
+"delimiter">&quot;</span></span>                =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/index.php?q=$1</span><span class="delimiter">&quot;</span></span>
+   )
+  expire.url = ( 
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">/favicon.ico</span><span class=
+"delimiter">&quot;</span></span>              =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">access 3 days</span><span class="delimiter">&quot;</span></span>, 
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">/files/</span><span class=
+"delimiter">&quot;</span></span>                   =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">access 3 days</span><span class="delimiter">&quot;</span></span>, 
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">/misc/</span><span class=
+"delimiter">&quot;</span></span>                    =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">access 3 days</span><span class="delimiter">&quot;</span></span>,
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">/themes/meta/css/</span><span class=
+"delimiter">&quot;</span></span>         =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">access 3 days</span><span class="delimiter">&quot;</span></span>,
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">/themes/meta/images/</span><span class=
+"delimiter">&quot;</span></span>      =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">access 3 days</span><span class="delimiter">&quot;</span></span>,
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">/themes/meta/js/</span><span class=
+"delimiter">&quot;</span></span>          =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">access 3 days</span><span class="delimiter">&quot;</span></span>,
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">/themes/meta/meta-black/</span><span class=
+"delimiter">&quot;</span></span>  =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">access 3 days</span><span class="delimiter">&quot;</span></span>,
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">/themes/meta/meta-grey/</span><span class=
+"delimiter">&quot;</span></span>   =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">access 3 days</span><span class="delimiter">&quot;</span></span>,
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">/themes/meta/meta-paper/</span><span class=
+"delimiter">&quot;</span></span>  =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">access 3 days</span><span class="delimiter">&quot;</span></span>,
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">/themes/meta/meta-pink/</span><span class=
+"delimiter">&quot;</span></span>   =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">access 3 days</span><span class="delimiter">&quot;</span></span> 
+    )
+  compress.cache-dir            = webserver-root + <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">tmp/cache_metaskills/</span><span class="delimiter">&quot;</span></span>
+  server.errorlog               = webserver-root + <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">logs/metaskills.error.log</span><span class="delimiter">&quot;</span></span>
+  accesslog.filename            = webserver-root + <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">logs/metaskills.access.log</span><span class="delimiter">&quot;</span></span>
+  fastcgi.server                = ( <span class="string"><span class="delimiter">&quot;</span><span class="content">.php</span><span class=
+"delimiter">&quot;</span></span> =&gt;
+                                    ( <span class="string"><span class="delimiter">&quot;</span><span class="content">localhost</span><span class=
+"delimiter">&quot;</span></span> =&gt;
+                                      ( 
+                                        <span class="string"><span class="delimiter">&quot;</span><span class="content">socket</span><span class=
+"delimiter">&quot;</span></span> =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/tmp/php-fastcgi.socket</span><span class="delimiter">&quot;</span></span>,
+                                        <span class="string"><span class="delimiter">&quot;</span><span class="content">bin-path</span><span class=
+"delimiter">&quot;</span></span> =&gt; <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">/opt/local/bin/php-fcgi</span><span class="delimiter">&quot;</span></span>,
+                                        <span class="string"><span class="delimiter">&quot;</span><span class="content">max-procs</span><span class=
+"delimiter">&quot;</span></span> =&gt; <span class="integer">4</span>,
+                                        <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">bin-environment</span><span class="delimiter">&quot;</span></span> =&gt; ( 
+                                          <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">PHP_FCGI_CHILDREN</span><span class="delimiter">&quot;</span></span> =&gt; <span class="string"><span class=
+"delimiter">&quot;</span><span class="content">16</span><span class="delimiter">&quot;</span></span>,
+                                          <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">PHP_FCGI_MAX_REQUESTS</span><span class="delimiter">&quot;</span></span> =&gt; <span class="string"><span class=
+"delimiter">&quot;</span><span class="content">10000</span><span class="delimiter">&quot;</span></span>
+                                        ),
+                                        <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">bin-copy-environment</span><span class="delimiter">&quot;</span></span> =&gt; (
+                                          <span class="string"><span class="delimiter">&quot;</span><span class="content">PATH</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">SHELL</span><span class=
+"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">USER</span><span class=
+"delimiter">&quot;</span></span>
+                                        ),
+                                        <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">broken-scriptfilename</span><span class="delimiter">&quot;</span></span> =&gt; <span class="string"><span class=
+"delimiter">&quot;</span><span class="content">enable</span><span class="delimiter">&quot;</span></span>
+                                      )
+                                    )
+                                  )
+}
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Obviously this configuration is dependant on php-fcgi being installed and If you followed along in my past <a href=
@@ -259,7 +294,7 @@ $ sudo -u mysql /opt/local/lib/mysql5/bin/mysql_install_db
             Manual. Remember, I am pretty sure that you do not have to do these steps if you just restart your computer.
           </p>
           <pre class="command">
-$ sudo -u mysql /opt/local/lib/mysql5/bin/mysqld_safe &
+$ sudo -u mysql /opt/local/lib/mysql5/bin/mysqld_safe &amp;
 $ sudo /opt/local/lib/mysql5/bin/mysqladmin shutdown
 $ sudo -u mysql /opt/local/etc/LaunchDaemons/org.darwinports.mysql5/mysql5.wrapper start
 $ sudo -u mysql /opt/local/etc/LaunchDaemons/org.darwinports.mysql5/mysql5.wrapper stop
@@ -299,11 +334,14 @@ $ sudo cp /opt/local/etc/php.ini-recommended /opt/local/etc/php.ini
             Now add this line of code to the php.ini file somewhere at the end of the section called "Paths and Directories" that is about mid way
             down. See also this <a href="http://trac.lighttpd.net/trac/wiki/TutorialLighttpdAndPHP">web page</a> for more info on this.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="php language-php" data-lang="php"><span class="x">cgi.fix_pathinfo = 1</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+cgi.fix_pathinfo = <span class="integer">1</span>
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -394,7 +432,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

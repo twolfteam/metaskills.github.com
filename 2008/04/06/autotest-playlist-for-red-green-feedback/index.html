@@ -89,7 +89,7 @@ $ sudo port install qtplay
 $ cd ~
 $ curl -O http://cdn.metaskills.net/downloads/autotest_playlist.tar
 $ tar -xf autotest_playlist.tar
-$ mv autotest_playlist .autotest_playlist && rm autotest_playlist.tar
+$ mv autotest_playlist .autotest_playlist &amp;&amp; rm autotest_playlist.tar
 </pre>
           <h2>
             Step 3: Modify Your .autotest File
@@ -101,11 +101,15 @@ $ mv autotest_playlist .autotest_playlist && rm autotest_playlist.tar
             the new Alex voice in Leopard. I hijacked some text to speech and then ran an audio tool called WavePad to speed change, flange, and
             chorus the voice a little bit.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;~/.autotest_playlist/playlist&#39;</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+require <span class="string"><span class="delimiter">'</span><span class="content">~/.autotest_playlist/playlist</span><span class=
+"delimiter">'</span></span>
 </pre>
+              </div>
+            </div>
           </div>
           <h2>
             Credits:
@@ -202,7 +206,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

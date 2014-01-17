@@ -113,31 +113,35 @@
             <li>A new entry line which is not obscured by the items up above.
             </li>
           </ul>
-          <div class="highlight">
-            <pre>
-<code class="bash language-bash" data-lang="bash"><span class="c"># User colors (root colors in /etc/bashrc)</span>
-<span class="nb">export </span><span class="nv">TERM</span><span class="o">=</span><span class="s2">&quot;xterm-color&quot;</span>
-<span class="nv">C1</span><span class="o">=</span><span class="s2">&quot;\[\033[1;32m\]&quot;</span>
-<span class="nv">C2</span><span class="o">=</span><span class="s2">&quot;\[\033[1;30m\]&quot;</span>
-<span class="nv">C3</span><span class="o">=</span><span class="s2">&quot;\[\033[0m\]&quot;</span>
-<span class="nv">C4</span><span class="o">=</span><span class="s2">&quot;\[\033[0;36m\]&quot;</span>
-<span class="nb">export </span><span class="nv">PS1</span><span class="o">=</span><span class=
-"s2">&quot;${C2}(${C1}\u${C2}@${C4}\h${C2}) - (${C4}\A${C2}) - (${C4}\w${C2})\n${C2}-${C1}=&gt;&gt;${C3}&quot;</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+# User colors (root colors in /etc/bashrc)
+export TERM=&quot;xterm-color&quot;
+C1=&quot;\[\033[1;32m\]&quot;
+C2=&quot;\[\033[1;30m\]&quot;
+C3=&quot;\[\033[0m\]&quot;
+C4=&quot;\[\033[0;36m\]&quot;
+export PS1=&quot;${C2}(${C1}\u${C2}@${C4}\h${C2}) - (${C4}\A${C2}) - (${C4}\w${C2})\n${C2}-${C1}=&gt;&gt;${C3}&quot;
 </pre>
+              </div>
+            </div>
           </div>
-          <div class="highlight">
-            <pre>
-<code class="bash language-bash" data-lang="bash"><span class="c"># Root colors (user colors in ~/.bash_profile)</span>
-<span class="nb">export </span><span class="nv">TERM</span><span class="o">=</span><span class="s2">&quot;xterm-color&quot;</span>
-<span class="nv">C1</span><span class="o">=</span><span class="s2">&quot;\[\033[0;31m\]&quot;</span>
-<span class="nv">C2</span><span class="o">=</span><span class="s2">&quot;\[\033[1;30m\]&quot;</span>
-<span class="nv">C3</span><span class="o">=</span><span class="s2">&quot;\[\033[0m\]&quot;</span>
-<span class="nv">C4</span><span class="o">=</span><span class="s2">&quot;\[\033[0;36m\]&quot;</span>
-<span class="nb">export </span><span class="nv">PS1</span><span class="o">=</span><span class=
-"s2">&quot;${C2}(${C1}\u${C2}@${C4}\h${C2}) - (${C4}\A${C2}) - (${C4}\w${C2})\n${C2}-${C1}=&gt;&gt;${C3}&quot;</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+# Root colors (user colors in ~/.bash_profile)
+export TERM=&quot;xterm-color&quot;
+C1=&quot;\[\033[0;31m\]&quot;
+C2=&quot;\[\033[1;30m\]&quot;
+C3=&quot;\[\033[0m\]&quot;
+C4=&quot;\[\033[0;36m\]&quot;
+export PS1=&quot;${C2}(${C1}\u${C2}@${C4}\h${C2}) - (${C4}\A${C2}) - (${C4}\w${C2})\n${C2}-${C1}=&gt;&gt;${C3}&quot;
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Here is how to install these, they go into two separate places. The first customization commands go into your user home directory in a
@@ -253,7 +257,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

@@ -146,7 +146,10 @@ $ tail -f /the/path/to/your/logfile.log
             Using the Live HTTP Headers extension is really easy. All you have to do is open the window by going to the &quot;Tools&quot; menu in
             Firefox and clicking on &quot;Live HTTP headers&quot;, this will open a blank window. When you use Firefox to go to a page or file, the
             HTTP header(s) will appear in that new window. Below is an example:
-          </p><br>
+          </p>
+          <p>
+            <br>
+          </p>
           <div class="center">
             <img src="/assets/live-http-headers.gif" alt="A preview of the Live HTTP headers window in Firefox." width="468" height="398" class=
             "center">
@@ -167,7 +170,10 @@ $ tail -f /the/path/to/your/logfile.log
             "/2006/2/19/how-to-control-browser-caching-with-apache-2#tail">described above</a>. While leaving the terminal window open, navigate to
             your site with your browser. You should see additions to your log file appear live in your terminal window and it would look something
             like this picture below.
-          </p><br>
+          </p>
+          <p>
+            <br>
+          </p>
           <div class="center">
             <img src="/assets/tail-command-in-terminal.gif" alt="The Mac OS X terminal window using the tail command on my Apache 2 log file." width=
             "547" height="226" class="shadow">
@@ -197,9 +203,11 @@ $ tail -f /the/path/to/your/logfile.log | grep 10.0.1.4
             mentioned above or by using the Unix <a href="http://furl.darwinports.com/">furl</a> program if it is installed on your system. A common
             HTTP header response will look something like this.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text language-text" data-lang="text">HTTP/1.1 200 OK
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+HTTP/1.1 200 OK
 Date: Sun, 19 Feb 2006 16:42:05 GMT
 Server: Apache/2.0.55 (Unix) DAV/2 PHP/5.1.1
 Last-Modified: Sun, 08 Jan 2006 16:17:25 GMT
@@ -210,8 +218,9 @@ Cache-Control: max-age=7200
 Expires: Sun, 19 Feb 2006 18:42:05 GMT
 Connection: close
 Content-Type: image/png
-</code>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             What we are looking for in the header are the &quot;Cache-Control&quot; and &quot;Expires&quot; fields. These fields control how long the
@@ -226,12 +235,15 @@ Content-Type: image/png
             to make sure that they are turned on by opening the http.conf file and making sure the following two lines do not have an # sign in front
             of them.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="apache language-apache" data-lang="apache"><span class="nb">LoadModule</span> expires_module modules/mod_expires.so
-<span class="nb">LoadModule</span> headers_module modules/mod_headers.so
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+LoadModule expires_module modules/mod_expires.so
+LoadModule headers_module modules/mod_headers.so
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             When these modules are loaded and working, we can then start to use the correct Apache 2 directives to control how browsers cache
@@ -257,23 +269,25 @@ Content-Type: image/png
             be used &quot;as is&quot; for most users. The directives here can be placed into the &lt;Directory&gt; directive of your virtual host in
             http.conf or it can be placed loosely in a .htaccess file in the root of your website.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="apache language-apache" data-lang="apache"><span class="nt">&lt;IfModule</span> <span class="s">mod_expires.c</span><span class=
-"nt">&gt;</span>
-  <span class="nb">ExpiresActive</span> <span class="k">On</span>
-  <span class="nb">ExpiresDefault</span> <span class="s2">&quot;access plus 1 seconds&quot;</span>
-  <span class="nb">ExpiresByType</span> text/html <span class="s2">&quot;access plus 1 seconds&quot;</span>
-  <span class="nb">ExpiresByType</span> image/gif <span class="s2">&quot;access plus 120 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> image/jpeg <span class="s2">&quot;access plus 120 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> image/png <span class="s2">&quot;access plus 120 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> text/css <span class="s2">&quot;access plus 60 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> text/javascript <span class="s2">&quot;access plus 60 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> application/x-javascript <span class="s2">&quot;access plus 60 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> text/xml <span class="s2">&quot;access plus 60 minutes&quot;</span>
-<span class="nt">&lt;/IfModule&gt;</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+&lt;IfModule mod_expires.c&gt;
+  ExpiresActive On
+  ExpiresDefault &quot;access plus 1 seconds&quot;
+  ExpiresByType text/html &quot;access plus 1 seconds&quot;
+  ExpiresByType image/gif &quot;access plus 120 minutes&quot;
+  ExpiresByType image/jpeg &quot;access plus 120 minutes&quot;
+  ExpiresByType image/png &quot;access plus 120 minutes&quot;
+  ExpiresByType text/css &quot;access plus 60 minutes&quot;
+  ExpiresByType text/javascript &quot;access plus 60 minutes&quot;
+  ExpiresByType application/x-javascript &quot;access plus 60 minutes&quot;
+  ExpiresByType text/xml &quot;access plus 60 minutes&quot;
+&lt;/IfModule&gt;
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Let's examine what is happening here in brief. If you are interested <a href="http://httpd.apache.org/docs/2.0/mod/mod_expires.html">full
@@ -405,7 +419,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

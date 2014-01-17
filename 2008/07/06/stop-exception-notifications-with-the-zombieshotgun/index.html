@@ -81,54 +81,54 @@
             :not_found</code>. I love it when code models the real world! Please note that there are a ton of better ways to accomplish user agent
             filtering, most notably, in your web server config... but that does not mean this is not a fun module to use.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">ZombieShotgun</span>
-
-  <span class="no">ZOMBIE_AGENTS</span>       <span class="o">=</span> <span class="o">[</span><span class=
-"s1">&#39;Microsoft Office Protocol Discovery&#39;</span><span class="p">,</span><span class=
-"s1">&#39;Microsoft Data Access Internet Publishing Provider Protocol Discovery&#39;</span><span class="p">,</span><span class=
-"s1">&#39;FrontPage&#39;</span><span class="o">]</span>
-  <span class="no">ZOMBIE_ATTACK_DIRS</span>  <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;_vti_bin&#39;</span><span class=
-"p">,</span><span class="s1">&#39;MSOffice&#39;</span><span class="p">,</span><span class="s1">&#39;verify-VCNstrict&#39;</span><span class=
-"p">,</span><span class="s1">&#39;notified-VCNstrict&#39;</span><span class="o">]</span>
-
-  <span class="kp">protected</span>
-
-  <span class="k">def</span> <span class="nf">shoot_zombies</span>
-    <span class="n">head</span> <span class="ss">:not_found</span> <span class="k">if</span> <span class="n">zombie_attack?</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">zombie_attack?</span>
-    <span class="n">zombie_attack_on_directory?</span> <span class="o">||</span> <span class="n">zombie_agent_attack?</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">zombie_attack_on_directory?</span>
-    <span class="n">attack</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class=
-"n">path</span><span class="o">.</span><span class="n">from</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">attack_dir</span> <span class="o">=</span> <span class="n">attack</span><span class="o">.</span><span class=
-"n">index</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">.</span><span class=
-"n">nil?</span> <span class="p">?</span> <span class="n">attack</span> <span class="p">:</span> <span class="n">attack</span><span class=
-"o">.</span><span class="n">to</span><span class="p">(</span><span class="n">attack</span><span class="o">.</span><span class=
-"n">index</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">-</span><span class=
-"mi">1</span><span class="p">)</span>    
-    <span class="no">ZOMBIE_ATTACK_DIRS</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class=
-"n">attack_dir</span><span class="p">)</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">zombie_agent_attack?</span>
-    <span class="n">ua</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">env</span><span class=
-"o">[</span><span class="s1">&#39;HTTP_USER_AGENT&#39;</span><span class="o">]</span>
-    <span class="o">!</span><span class="n">ua</span><span class="o">.</span><span class="n">blank?</span> <span class=
-"o">&amp;&amp;</span> <span class="no">ZOMBIE_AGENTS</span><span class="o">.</span><span class="n">any?</span> <span class="p">{</span> <span class=
-"o">|</span><span class="n">za</span><span class="o">|</span> <span class="n">za</span> <span class="o">=~</span> <span class=
-"sr">/</span><span class="si">#{</span><span class="n">ua</span><span class="si">}</span><span class="sr">/</span> <span class="p">}</span>
-  <span class="k">end</span>
-
-
-<span class="k">end</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">module</span> <span class="class">ZombieShotgun</span>
+  
+  <span class="constant">ZOMBIE_AGENTS</span>       = [<span class="string"><span class="delimiter">'</span><span class=
+"content">Microsoft Office Protocol Discovery</span><span class="delimiter">'</span></span>,<span class="string"><span class=
+"delimiter">'</span><span class="content">Microsoft Data Access Internet Publishing Provider Protocol Discovery</span><span class=
+"delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">FrontPage</span><span class=
+"delimiter">'</span></span>]
+  <span class="constant">ZOMBIE_ATTACK_DIRS</span>  = [<span class="string"><span class="delimiter">'</span><span class=
+"content">_vti_bin</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class=
+"content">MSOffice</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class=
+"content">verify-VCNstrict</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class=
+"content">notified-VCNstrict</span><span class="delimiter">'</span></span>]
+  
+  protected
+  
+  <span class="keyword">def</span> <span class="function">shoot_zombies</span>
+    head <span class="symbol">:not_found</span> <span class="keyword">if</span> zombie_attack?
+  <span class="keyword">end</span>
+  
+  <span class="keyword">def</span> <span class="function">zombie_attack?</span>
+    zombie_attack_on_directory? || zombie_agent_attack?
+  <span class="keyword">end</span>
+  
+  <span class="keyword">def</span> <span class="function">zombie_attack_on_directory?</span>
+    attack = request.path.from(<span class="integer">1</span>)
+    attack_dir = attack.index(<span class="string"><span class="delimiter">'</span><span class="content">/</span><span class=
+"delimiter">'</span></span>).nil? ? attack : attack.to(attack.index(<span class="string"><span class="delimiter">'</span><span class=
+"content">/</span><span class="delimiter">'</span></span>)-<span class="integer">1</span>)    
+    <span class="constant">ZOMBIE_ATTACK_DIRS</span>.include?(attack_dir)
+  <span class="keyword">end</span>
+  
+  <span class="keyword">def</span> <span class="function">zombie_agent_attack?</span>
+    ua = request.env[<span class="string"><span class="delimiter">'</span><span class="content">HTTP_USER_AGENT</span><span class=
+"delimiter">'</span></span>]
+    !ua.blank? &amp;&amp; <span class="constant">ZOMBIE_AGENTS</span>.any? { |za| za =~ <span class="regexp"><span class=
+"delimiter">/</span><span class="inline"><span class="inline-delimiter">#{</span>ua<span class="inline-delimiter">}</span></span><span class=
+"delimiter">/</span></span> }
+  <span class="keyword">end</span>
+  
+  
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -219,7 +219,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

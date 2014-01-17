@@ -67,32 +67,36 @@
             Here is a little ZSH function I have been using for quickly setting up new XCode apps I call tire kickers, little play and learn apps.
             Being able to track your learning as you go with git.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash language-bash" data-lang="bash"><span class="k">if</span> <span class="o">[[</span> -x <span class=
-"sb">`</span>which git<span class="sb">`</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
-
-<span class="k">    function </span>ginit_xcode <span class="o">()</span> <span class="o">{</span>
-      git init
-      <span class="nb">echo</span> <span class="s2">&quot;\n\n# XCode\nbuild\n*.mode1v3\n*.mode2v3\n*.nib\n*.swp\n\</span>
-<span class="s2">*.pbxuser\n*.perspective\n*.perspectivev3\n\n# OSX\n.DS_Store\n\n\</span>
-<span class="s2"># TextMate\n*.tm_build_errors\n\n\n&quot;</span> &gt;&gt; .gitignore
-      git add .gitignore
-      git commit -m <span class="s2">&quot;Ignore Xcode stuff.&quot;</span>
-      git add .
-      git commit -m <span class="s2">&quot;Initial Xcode project.&quot;</span>
-    <span class="o">}</span>
-
-<span class="k">fi</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+if [[ -x `which git` ]]; then
+  
+  function ginit_xcode () {
+    git init
+    echo &quot;\n\n# XCode\nbuild\n*.mode1v3\n*.mode2v3\n*.nib\n*.swp\n\
+*.pbxuser\n*.perspective\n*.perspectivev3\n\n# OSX\n.DS_Store\n\n\
+# TextMate\n*.tm_build_errors\n\n\n&quot; &gt;&gt; .gitignore
+    git add .gitignore
+    git commit -m &quot;Ignore Xcode stuff.&quot;
+    git add .
+    git commit -m &quot;Initial Xcode project.&quot;
+  }
+  
+fi
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             The echo lines puts out a .gitignore file that will look something like this.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text language-text" data-lang="text"># XCode
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+# XCode
 build
 *.mode1v3
 *.mode2v3
@@ -107,8 +111,9 @@ build
 
 # TextMate
 *.tm_build_errors
-</code>
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -199,7 +204,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

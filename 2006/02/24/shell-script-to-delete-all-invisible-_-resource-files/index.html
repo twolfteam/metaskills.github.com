@@ -106,12 +106,15 @@
             case, remove, as indicated by the <code>rm</code> at the end. The <code>-t</code> after <code>xargs</code> is optional, it is useful if
             you are running this from your terminal since it echos the command to you before it is executed. The final shell script looks like this.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash language-bash" data-lang="bash"><span class="c">#! /bin/bash</span>
-find /Volumes/Your_NetworkVolume -name <span class="s1">&#39;._*&#39;</span> -print <span class="p">|</span> xargs -t rm
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+#! /bin/bash
+find /Volumes/Your_NetworkVolume -name '._*' -print | xargs -t rm
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             To customize this script you will need to change &quot;<code>Your_NetworkVolume</code>&quot; where it appears above to the name of your
@@ -140,12 +143,15 @@ find /Volumes/Your_NetworkVolume -name <span class="s1">&#39;._*&#39;</span> -pr
             understanding, but if that is the case then you will have to use this modified version. It includes what I call a shielded version of the
             -print and xargs commands so they can understand how to escape or deal with the spaces and special characters.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash language-bash" data-lang="bash"><span class="c">#! /bin/bash</span>
-find /Volumes/Your_NetworkVolume -name <span class="s1">&#39;._*&#39;</span> -print0 <span class="p">|</span> xargs -t0 rm
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+#! /bin/bash
+find /Volumes/Your_NetworkVolume -name '._*' -print0 | xargs -t0 rm
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -236,7 +242,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

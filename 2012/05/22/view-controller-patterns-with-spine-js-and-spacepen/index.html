@@ -124,36 +124,43 @@
             stay DRY and build Spine.JS web applications that hit the MVC mark. So what is SpacePen? Basically a CoffeeScript subclass of a jQuery
             object.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class=
-"n">extends</span> <span class="no">View</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">SpacePort</span> extends <span class="constant">View</span>
 
-  <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="vi">@div</span> <span class="o">=&gt;</span>
-      <span class="vi">@h1</span> <span class="s2">&quot;Space Ships&quot;</span>
-      <span class="vi">@ol</span> <span class="o">=&gt;</span>
-        <span class="vi">@li</span> <span class="s2">&quot;Apollo&quot;</span>
-        <span class="vi">@li</span> <span class="s2">&quot;Soyuz&quot;</span>
-        <span class="vi">@li</span> <span class="s2">&quot;Space Shuttle&quot;</span>
-</code>
+  <span class="instance-variable">@content</span>: -&gt;
+    <span class="instance-variable">@div</span> =&gt;
+      <span class="instance-variable">@h1</span> <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">Space Ships</span><span class="delimiter">&quot;</span></span>
+      <span class="instance-variable">@ol</span> =&gt;
+        <span class="instance-variable">@li</span> <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">Apollo</span><span class="delimiter">&quot;</span></span>
+        <span class="instance-variable">@li</span> <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">Soyuz</span><span class="delimiter">&quot;</span></span>
+        <span class="instance-variable">@li</span> <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">Space Shuttle</span><span class="delimiter">&quot;</span></span>
 </pre>
+              </div>
+            </div>
           </div>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class=
-"no">SpacePort</span>
-<span class="n">view</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class=
-"s1">&#39;ol&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class=
-"s1">&#39;&lt;li&gt;Star Destroyer&lt;/li&gt;&#39;</span><span class="p">)</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+view = new <span class="constant">SpacePort</span>
+view.find(<span class="string"><span class="delimiter">'</span><span class="content">ol</span><span class=
+"delimiter">'</span></span>).append(<span class="string"><span class="delimiter">'</span><span class=
+"content">&lt;li&gt;Star Destroyer&lt;/li&gt;</span><span class="delimiter">'</span></span>)
 
-<span class="n">view</span><span class="o">.</span><span class="n">click</span> <span class="s1">&#39;li&#39;</span><span class=
-"p">,</span> <span class="o">-&gt;</span>
-  <span class="n">alert</span> <span class="s2">&quot;You clicked on </span><span class="si">#{</span><span class="err">$</span><span class=
-"p">(</span><span class="n">this</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class=
-"p">()</span><span class="si">}</span><span class="s2">&quot;</span>
-</code>
+view.click <span class="string"><span class="delimiter">'</span><span class="content">li</span><span class="delimiter">'</span></span>, -&gt;
+  alert <span class="string"><span class="delimiter">&quot;</span><span class="content">You clicked on </span><span class="inline"><span class=
+"inline-delimiter">#{</span><span class="error">$</span>(this).text()<span class="inline-delimiter">}</span></span><span class=
+"delimiter">&quot;</span></span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             This simple example shows how your SpacePen view class defines its markup in a <code>@content</code> class function. This function yields
@@ -162,31 +169,37 @@
             more on that advice later. But first, I did say that views should expose interfaces to controllers and are first class code citizens that
             champion their own concerns right? Let's look at a common pattern, views building new nodes within itself.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">SpacePort</span> <span class=
-"n">extends</span> <span class="no">View</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">SpacePort</span> extends <span class="constant">View</span>
 
-  <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="vi">@div</span> <span class="o">=&gt;</span>
-      <span class="vi">@h1</span> <span class="s2">&quot;SpacePort&quot;</span>
-      <span class="vi">@ol</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;shipList&#39;</span>
+  <span class="instance-variable">@content</span>: -&gt;
+    <span class="instance-variable">@div</span> =&gt;
+      <span class="instance-variable">@h1</span> <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">SpacePort</span><span class="delimiter">&quot;</span></span>
+      <span class="instance-variable">@ol</span> <span class="key">outlet</span>: <span class="string"><span class="delimiter">'</span><span class=
+"content">shipList</span><span class="delimiter">'</span></span>
 
-  <span class="ss">addShip</span><span class="p">:</span> <span class="p">(</span><span class="n">ship</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="vi">@shipList</span><span class="o">.</span><span class="n">append</span> <span class="s2">&quot;&lt;li&gt;</span><span class=
-"si">#{</span><span class="n">ship</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class=
-"s2">&lt;/li&gt;&quot;</span>
-</code>
+  <span class="key">addShip</span>: (ship) -&gt;
+    <span class="instance-variable">@shipList</span>.append <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">&lt;li&gt;</span><span class="inline"><span class="inline-delimiter">#{</span>ship.name<span class=
+"inline-delimiter">}</span></span><span class="content">&lt;/li&gt;</span><span class="delimiter">&quot;</span></span>
 </pre>
+              </div>
+            </div>
           </div>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class=
-"no">SpacePort</span>
-<span class="n">view</span><span class="o">.</span><span class="n">addShip</span> <span class="s2">&quot;Enterprise&quot;</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+view = new <span class="constant">SpacePort</span>
+view.addShip <span class="string"><span class="delimiter">&quot;</span><span class="content">Enterprise</span><span class=
+"delimiter">&quot;</span></span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             The example has been changed slightly so that the view now exposes a public function called <code>addShip()</code> which takes an object
@@ -229,42 +242,41 @@
             controller and view is out of the scope of this article, but its one of many day "content" controllers and view are perfect examples.
             Here we go!
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="comment"># In app/assets/javascripts/app/controller/day.js.coffee</span>
 
-<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class=
-"o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class=
-"n">Controller</span>
-
-  <span class="ss">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class=
-"o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span>
-    <span class="k">super</span> <span class="ss">el</span><span class="p">:</span> <span class="vi">@view</span>
-</code>
+<span class="keyword">class</span> <span class="class">App</span>.Controllers.Day extends <span class="constant">Spine</span>.Controller
+  
+  <span class="key">constructor</span>: (params) -&gt;
+    <span class="instance-variable">@view</span> = new <span class="constant">App</span>.Views.Day
+    <span class="keyword">super</span> <span class="key">el</span>: <span class="instance-variable">@view</span>
 </pre>
+              </div>
+            </div>
           </div>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="comment"># In app/assets/javascripts/app/views/day.js.coffee</span>
 
-<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class=
-"n">Day</span> <span class="n">extends</span> <span class="no">View</span>
+<span class="keyword">class</span> <span class="class">App</span>.Views.Day extends <span class="constant">View</span>
+  
+  <span class="instance-variable">@content</span>: (params) -&gt;
+    <span class="instance-variable">@div</span> <span class="key">class</span>: <span class="string"><span class="delimiter">'</span><span class=
+"content">day</span><span class="delimiter">'</span></span>, =&gt;
+      <span class="comment"># ...</span>
 
-  <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="vi">@div</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class=
-"p">,</span> <span class="o">=&gt;</span>
-      <span class="c1"># ...</span>
-
-  <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="n">params</span><span class=
-"o">.</span><span class="n">moment</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class=
-"s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
-</code>
+  <span class="key">initialize</span>: (params) -&gt;
+    <span class="instance-variable">@attr</span> <span class="string"><span class="delimiter">'</span><span class=
+"content">data-date</span><span class="delimiter">'</span></span>, params.moment.format(<span class="string"><span class=
+"delimiter">'</span><span class="content">YYYY-MM-DD</span><span class="delimiter">'</span></span>)
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             So rule number one, always create an instance of a SpacePen view and assign that to the <code>@view</code> property of every Spine.JS
@@ -287,83 +299,73 @@
             find the DOM element for a model object and then use the <code>view()</code> function provided by SpacePen to get to the SpacePen
             instance for this node.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class=
-"n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">App</span>.Views.Day extends <span class="constant">View</span>
+  
+  <span class="instance-variable">@content</span>: (params) -&gt;
+    <span class="instance-variable">@div</span> <span class="key">class</span>: <span class="string"><span class="delimiter">'</span><span class=
+"content">day</span><span class="delimiter">'</span></span>, =&gt;
+      <span class="comment"># ...</span>
+      <span class="instance-variable">@div</span> <span class="key">outlet</span>: <span class="string"><span class="delimiter">'</span><span class=
+"content">events</span><span class="delimiter">'</span></span>, <span class="key">class</span>: <span class="string"><span class=
+"delimiter">'</span><span class="content">events</span><span class="delimiter">'</span></span>
+      <span class="comment"># ...</span>
+  
+  <span class="key">initialize</span>: (params) -&gt;
+    <span class="instance-variable">@date</span> = params.moment.clone()
+    <span class="instance-variable">@attr</span> <span class="string"><span class="delimiter">'</span><span class=
+"content">data-date</span><span class="delimiter">'</span></span>, <span class="instance-variable">@date</span>.format(<span class=
+"string"><span class="delimiter">'</span><span class="content">YYYY-MM-DD</span><span class="delimiter">'</span></span>)
+    
+  <span class="key">addEvent</span>: (event) -&gt;
+    view = new EventView(event)
+    <span class="instance-variable">@events</span>.append
+  
+  <span class="key">updateEvent</span>: (event) -&gt;
+    <span class="instance-variable">@findEvent</span>(event)?.update(event)
 
-  <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="vi">@div</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class=
-"p">,</span> <span class="o">=&gt;</span>
-      <span class="c1"># ...</span>
-      <span class="vi">@div</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span><span class=
-"p">,</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span>
-      <span class="c1"># ...</span>
+  <span class="key">removeEvent</span>: (event) -&gt;
+    <span class="instance-variable">@findEvent</span>(event)?.remove()
+  
+  <span class="comment"># Private</span>
+  
+  <span class="key">findEvent</span>: (event) -&gt;
+    selector = <span class="string"><span class="delimiter">&quot;</span><span class="content">.event[data-event-id='</span><span class=
+"inline"><span class="inline-delimiter">#{</span>event.startsAtFormat()<span class="inline-delimiter">}</span></span><span class=
+"content">']</span><span class="delimiter">&quot;</span></span>
+    <span class="instance-variable">@events</span>.find(selector).view()
 
-  <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class=
-"n">moment</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-    <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="vi">@date</span><span class=
-"o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
+  <span class="key">afterAttach</span>: -&gt; 
+    <span class="instance-variable">@startSpinner</span>()
+    <span class="instance-variable">@loadEvents</span>()
+  
+  <span class="comment"># ...</span>
 
-  <span class="ss">addEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">EventView</span><span class=
-"p">(</span><span class="n">event</span><span class="p">)</span>
-    <span class="vi">@events</span><span class="o">.</span><span class="n">append</span>
-
-  <span class="ss">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?</span><span class=
-"o">.</span><span class="n">update</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-
-  <span class="ss">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?</span><span class=
-"o">.</span><span class="n">remove</span><span class="p">()</span>
-
-  <span class="c1"># Private</span>
-
-  <span class="ss">findEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="n">selector</span> <span class="o">=</span> <span class="s2">&quot;.event[data-event-id=&#39;</span><span class=
-"si">#{</span><span class="n">event</span><span class="o">.</span><span class="n">startsAtFormat</span><span class="p">()</span><span class=
-"si">}</span><span class="s2">&#39;]&quot;</span>
-    <span class="vi">@events</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class=
-"n">selector</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
-
-  <span class="ss">afterAttach</span><span class="p">:</span> <span class="o">-&gt;</span> 
-    <span class="vi">@startSpinner</span><span class="p">()</span>
-    <span class="vi">@loadEvents</span><span class="p">()</span>
-
-  <span class="c1"># ...</span>
-
-<span class="k">class</span> <span class="nc">EventView</span> <span class="n">extends</span> <span class="no">View</span>
-
-  <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="vi">@div</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;.event&#39;</span><span class=
-"p">,</span> <span class="s1">&#39;data-event-id&#39;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class=
-"n">id</span> <span class="o">=&gt;</span>
-      <span class="vi">@div</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;description&#39;</span>
-      <span class="vi">@div</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;duration&#39;</span>
-
-  <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@update</span> <span class="n">event</span>
-
-  <span class="ss">update</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="vi">@attr</span> <span class="s1">&#39;data-starts-at&#39;</span><span class="p">,</span> <span class="n">event</span><span class=
-"o">.</span><span class="n">startsAtFormat</span><span class="p">()</span>
-    <span class="vi">@description</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class=
-"o">.</span><span class="n">description</span>
-    <span class="vi">@duration</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class=
-"o">.</span><span class="n">duration</span>
-</code>
+<span class="keyword">class</span> <span class="class">EventView</span> extends <span class="constant">View</span>
+  
+  <span class="instance-variable">@content</span>: (event) -&gt;
+    <span class="instance-variable">@div</span> <span class="key">class</span>: <span class="string"><span class="delimiter">'</span><span class=
+"content">.event</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class=
+"content">data-event-id</span><span class="delimiter">'</span></span>: event.id =&gt;
+      <span class="instance-variable">@div</span> <span class="key">outlet</span>: <span class="string"><span class="delimiter">'</span><span class=
+"content">description</span><span class="delimiter">'</span></span>
+      <span class="instance-variable">@div</span> <span class="key">outlet</span>: <span class="string"><span class="delimiter">'</span><span class=
+"content">duration</span><span class="delimiter">'</span></span>
+  
+  <span class="key">initialize</span>: (event) -&gt;
+    <span class="instance-variable">@update</span> event
+  
+  <span class="key">update</span>: (event) -&gt;
+    <span class="instance-variable">@attr</span> <span class="string"><span class="delimiter">'</span><span class=
+"content">data-starts-at</span><span class="delimiter">'</span></span>, event.startsAtFormat()
+    <span class="instance-variable">@description</span>.text event.description
+    <span class="instance-variable">@duration</span>.text event.duration
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Next up, the expanded day controller example that manages the view above. In this example we bind to two of the the Spine.JS
@@ -371,50 +373,49 @@
             any work necessary. Just in case this controller is ever discarded for performance reasons, we hook into the <code>release()</code>
             function provided by Spine.JS controllers to remove the event listeners.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class=
-"n">Controllers</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class=
-"o">.</span><span class="n">Controller</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">App</span>.Controllers.Day extends <span class="constant">Spine</span>.Controller
+  
+  <span class="instance-variable">@events</span>: 
+    <span class="string"><span class="delimiter">'</span><span class="content">click .event</span><span class=
+"delimiter">'</span></span>: <span class="string"><span class="delimiter">'</span><span class="content">selectEvent</span><span class=
+"delimiter">'</span></span>
+  
+  <span class="key">constructor</span>: (params) -&gt;
+    <span class="instance-variable">@date</span> = params.moment
+    <span class="instance-variable">@view</span> = new <span class="constant">App</span>.Views.Day <span class="key">moment</span>: <span class=
+"instance-variable">@date</span>
+    <span class="keyword">super</span> <span class="key">el</span>: <span class="instance-variable">@view</span>
+    <span class="constant">CalendarEvent</span>.bind <span class="string"><span class="delimiter">'</span><span class=
+"content">update</span><span class="delimiter">'</span></span>, <span class="instance-variable">@updateEvent</span>
+    <span class="constant">CalendarEvent</span>.bind <span class="string"><span class="delimiter">'</span><span class=
+"content">beforeDestroy</span><span class="delimiter">'</span></span>, <span class="instance-variable">@destroyEvent</span>
+  
+  <span class="key">release</span>:
+    <span class="constant">CalendarEvent</span>.unbind <span class="string"><span class="delimiter">'</span><span class=
+"content">update</span><span class="delimiter">'</span></span>, <span class="instance-variable">@updateEvent</span>
+    <span class="constant">CalendarEvent</span>.unbind <span class="string"><span class="delimiter">'</span><span class=
+"content">beforeDestroy</span><span class="delimiter">'</span></span>, <span class="instance-variable">@removeEvent</span>
+    <span class="keyword">super</span>
 
-  <span class="vi">@events</span><span class="p">:</span> 
-    <span class="s1">&#39;click .event&#39;</span><span class="p">:</span> <span class="s1">&#39;selectEvent&#39;</span>
+  <span class="comment"># Private</span>
 
-  <span class="ss">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">moment</span>
-    <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class=
-"o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="ss">moment</span><span class=
-"p">:</span> <span class="vi">@date</span>
-    <span class="k">super</span> <span class="ss">el</span><span class="p">:</span> <span class="vi">@view</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">bind</span> <span class="s1">&#39;update&#39;</span><span class=
-"p">,</span> <span class="vi">@updateEvent</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">bind</span> <span class=
-"s1">&#39;beforeDestroy&#39;</span><span class="p">,</span> <span class="vi">@destroyEvent</span>
+  <span class="key">selectEvent</span>: -&gt;
+    <span class="comment"># ...</span>
 
-  <span class="ss">release</span><span class="p">:</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">unbind</span> <span class="s1">&#39;update&#39;</span><span class=
-"p">,</span> <span class="vi">@updateEvent</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">unbind</span> <span class=
-"s1">&#39;beforeDestroy&#39;</span><span class="p">,</span> <span class="vi">@removeEvent</span>
-    <span class="k">super</span>
+  <span class="key">updateEvent</span>: (event) -&gt;
+    <span class="instance-variable">@view</span>.updateEvent event
+    <span class="comment"># ...</span>
 
-  <span class="c1"># Private</span>
-
-  <span class="ss">selectEvent</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="c1"># ...</span>
-
-  <span class="ss">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@view</span><span class="o">.</span><span class="n">updateEvent</span> <span class="n">event</span>
-    <span class="c1"># ...</span>
-
-  <span class="ss">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class=
-"p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@view</span><span class="o">.</span><span class="n">removeEvent</span> <span class="n">event</span>
-    <span class="c1"># ...</span>
-</code>
+  <span class="key">removeEvent</span>: (event) -&gt;
+    <span class="instance-variable">@view</span>.removeEvent event
+    <span class="comment"># ...</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Hope you found this mini introduction to SpacePen and Spine.JS controllers useful. There is literally tons of ways you can use these
@@ -541,7 +542,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

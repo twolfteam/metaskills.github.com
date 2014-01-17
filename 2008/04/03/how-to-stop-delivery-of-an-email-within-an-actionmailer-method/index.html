@@ -78,42 +78,46 @@
             one fell swoop. I like this usage too, but the challenge is how to tell an instance of a the ActionMailer::Base class that it needs to
             stop delivery within a method definition that is all set to deliver? The answer is Ruby singleton method magic.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">ActionMailer</span>
-  <span class="k">class</span> <span class="nc">Base</span>
-
-    <span class="c1"># A simple way to short circuit the delivery of an email from within</span>
-    <span class="c1"># deliver_* methods defined in ActionMailer::Base subclases.</span>
-    <span class="k">def</span> <span class="nf">do_not_deliver!</span>
-      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">deliver!</span> <span class=
-"p">;</span> <span class="kp">false</span> <span class="p">;</span> <span class="k">end</span>
-    <span class="k">end</span>
-
-  <span class="k">end</span>
-<span class="k">end</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">module</span> <span class="class">ActionMailer</span>
+  <span class="keyword">class</span> <span class="class">Base</span>
+    
+    <span class="comment"># A simple way to short circuit the delivery of an email from within</span>
+    <span class="comment"># deliver_* methods defined in ActionMailer::Base subclases.</span>
+    <span class="keyword">def</span> <span class="function">do_not_deliver!</span>
+      <span class="keyword">def</span> <span class="predefined-constant">self</span>.<span class="function">deliver!</span> ; <span class=
+"predefined-constant">false</span> ; <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             I suggest placing this code into your <code>lib/core_ext/action_mailer.rb</code> file. It will allow you to write mailer methods that can
             short circuit themselves to stop delivery. For instance:
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">MyMailerClass</span> <span class=
-"o">&lt;</span> <span class="no">ActionMailer</span><span class="o">::</span><span class="no">Base</span>
-  <span class="k">def</span> <span class="nf">user_notification</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-    <span class="c1"># ... </span>
-    <span class="n">do_not_deliver!</span> <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class=
-"n">email</span><span class="o">.</span><span class="n">blank?</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-<span class="c1"># In your controller code.</span>
-<span class="no">MyMailerClass</span><span class="o">.</span><span class="n">deliver_user_notification</span><span class="p">(</span><span class=
-"vi">@user</span><span class="p">)</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">MyMailerClass</span> &lt; <span class="constant">ActionMailer</span>::<span class=
+"constant">Base</span>
+  <span class="keyword">def</span> <span class="function">user_notification</span>(user)
+    <span class="comment"># ... </span>
+    do_not_deliver! <span class="keyword">if</span> user.email.blank?
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="comment"># In your controller code.</span>
+<span class="constant">MyMailerClass</span>.deliver_user_notification(<span class="instance-variable">@user</span>)
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Now you do not have to worry about placing delivery concerns in the controller and even worse duplicate that code when you have to use
@@ -220,7 +224,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

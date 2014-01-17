@@ -64,26 +64,27 @@
             </h1>
           </header>
           <p>
-            Last nights <a href="http://757rb.org/">757.rb</a> meeting was a great success. We did a talk titled <em>Introduction To Ruby &
+            Last nights <a href="http://757rb.org/">757.rb</a> meeting was a great success. We did a talk titled <em>Introduction To Ruby &amp;
             Rails</em> for all the new comers that might have been interested in learning more about both - from the ground up. Since Ruby was my
             first language and my toolbelt only extends to JavaScript and Objective-C, I'm always interested in how other languages do the things
             that I love so much in Ruby. One of the biggest pluses for Ruby, to me, is the support for meta programming. In a typical rails model,
             you might see something like this.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class=
-"no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">has_many</span>                <span class="ss">:articles</span>
-  <span class="n">named_scope</span>             <span class="ss">:active</span><span class="p">,</span> <span class=
-"ss">:conditions</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:active</span> <span class=
-"o">=&gt;</span> <span class="kp">true</span><span class="p">}</span>
-  <span class="n">validates_uniqueness_of</span> <span class="ss">:email</span>
-  <span class="n">validates_presence_of</span>   <span class="ss">:email</span><span class="p">,</span> <span class="ss">:username</span><span class=
-"p">,</span> <span class="ss">:twitter_handle</span>
-<span class="k">end</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">User</span> &lt; <span class="constant">ActiveRecord</span>::<span class=
+"constant">Base</span>
+  has_many                <span class="symbol">:articles</span>
+  named_scope             <span class="symbol">:active</span>, <span class="symbol">:conditions</span> =&gt; {<span class=
+"symbol">:active</span> =&gt; <span class="predefined-constant">true</span>}
+  validates_uniqueness_of <span class="symbol">:email</span>
+  validates_presence_of   <span class="symbol">:email</span>, <span class="symbol">:username</span>, <span class="symbol">:twitter_handle</span>
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             For the untrained, those are class level methods writing code for an model that persists objects to a database. It looks like you are
@@ -97,33 +98,35 @@
             two class definitions below are equal and the interface of the object is the same. One is you do not have to write code over an over
             again in an vanilla class you care to have getter/setter methods for.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">MyClass</span>
-  <span class="kp">attr_accessor</span> <span class="ss">:foo</span>
-<span class="k">end</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">MyClass</span>
+  attr_accessor <span class="symbol">:foo</span>
+<span class="keyword">end</span>
 
-<span class="c1"># Same as writing</span>
+<span class="comment"># Same as writing</span>
 
-<span class="k">class</span> <span class="nc">MyClass</span>
-  <span class="k">def</span> <span class="nf">foo</span>
-    <span class="vi">@foo</span>
-  <span class="k">end</span>
-  <span class="k">def</span> <span class="nf">foo</span><span class="o">=</span><span class="p">(</span><span class="n">value</span><span class=
-"p">)</span>
-    <span class="vi">@foo</span> <span class="o">=</span> <span class="n">value</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+<span class="keyword">class</span> <span class="class">MyClass</span>
+  <span class="keyword">def</span> <span class="function">foo</span>
+    <span class="instance-variable">@foo</span>
+  <span class="keyword">end</span>
+  <span class="keyword">def</span> <span class="function">foo=</span>(value)
+    <span class="instance-variable">@foo</span> = value
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 
-<span class="c1"># Same results</span>
+<span class="comment"># Same results</span>
 
-<span class="n">o</span> <span class="o">=</span> <span class="no">MyClass</span><span class="o">.</span><span class="n">new</span>
-<span class="n">o</span><span class="o">.</span><span class="n">foo</span>           <span class="c1"># =&gt; nil</span>
-<span class="n">o</span><span class="o">.</span><span class="n">foo</span> <span class="o">=</span> <span class=
-"s1">&#39;bar&#39;</span>   <span class="c1"># =&gt; &quot;bar&quot;</span>
-<span class="n">o</span>               <span class="c1"># =&gt; #&lt;MyClass:0x100172b80 @foo=&quot;bar&quot;&gt;</span>
-</code>
+o = <span class="constant">MyClass</span>.new
+o.foo           <span class="comment"># =&gt; nil</span>
+o.foo = <span class="string"><span class="delimiter">'</span><span class="content">bar</span><span class="delimiter">'</span></span>   <span class=
+"comment"># =&gt; &quot;bar&quot;</span>
+o               <span class="comment"># =&gt; #&lt;MyClass:0x100172b80 @foo=&quot;bar&quot;&gt;</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             So here is where I want to learn. I know how to write Ruby well enough that I can show one way below of how to write
@@ -134,57 +137,60 @@
             <code>attr_accessor</code> method takes multiple args and generates methods for each. For simplicity I narrowed down my examples and code
             to only take one argument so we can all stay focused.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">MetaSkills</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">module</span> <span class="class">MetaSkills</span>
+  
+  <span class="keyword">def</span> <span class="predefined-constant">self</span>.<span class="function">included</span>(klass)
+    klass.class_eval <span class="keyword">do</span>
+      include <span class="constant">ClassMethods</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  
+  <span class="keyword">module</span> <span class="class">ClassMethods</span>
+    
+    <span class="keyword">def</span> <span class="function">attribute_accessor</span>(name)
+      attribute_reader(name)
+      attribute_writer(name)
+    <span class="keyword">end</span>
 
-  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">included</span><span class="p">(</span><span class=
-"n">klass</span><span class="p">)</span>
-    <span class="n">klass</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span>
-      <span class="kp">include</span> <span class="no">ClassMethods</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
+    <span class="keyword">def</span> <span class="function">attribute_reader</span>(name)
+      define_method(name) <span class="keyword">do</span>
+        instance_variable_get <span class="string"><span class="delimiter">&quot;</span><span class="content">@</span><span class=
+"inline"><span class="inline-delimiter">#{</span>name<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
 
-  <span class="k">module</span> <span class="nn">ClassMethods</span>
+    <span class="keyword">def</span> <span class="function">attribute_writer</span>(name)
+      define_method <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
+"inline-delimiter">#{</span>name<span class="inline-delimiter">}</span></span><span class="content">=</span><span class=
+"delimiter">&quot;</span></span> <span class="keyword">do</span> |value|
+        instance_variable_set <span class="string"><span class="delimiter">&quot;</span><span class="content">@</span><span class=
+"inline"><span class="inline-delimiter">#{</span>name<span class="inline-delimiter">}</span></span><span class=
+"delimiter">&quot;</span></span>, value
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    
+  <span class="keyword">end</span>
+  
+<span class="keyword">end</span>
 
-    <span class="k">def</span> <span class="nf">attribute_accessor</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-      <span class="n">attribute_reader</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-      <span class="n">attribute_writer</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-    <span class="k">end</span>
+<span class="constant">Class</span>.send <span class="symbol">:include</span>, <span class="constant">MetaSkills</span>
 
-    <span class="k">def</span> <span class="nf">attribute_reader</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-      <span class="n">define_method</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span> <span class="k">do</span>
-        <span class="nb">instance_variable_get</span> <span class="s2">&quot;@</span><span class="si">#{</span><span class=
-"nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
-      <span class="k">end</span>
-    <span class="k">end</span>
+<span class="keyword">class</span> <span class="class">MyClass</span>
+  attribute_accessor <span class="symbol">:foo</span>
+<span class="keyword">end</span>
 
-    <span class="k">def</span> <span class="nf">attribute_writer</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-      <span class="n">define_method</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="nb">name</span><span class=
-"si">}</span><span class="s2">=&quot;</span> <span class="k">do</span> <span class="o">|</span><span class="n">value</span><span class="o">|</span>
-        <span class="nb">instance_variable_set</span> <span class="s2">&quot;@</span><span class="si">#{</span><span class=
-"nb">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span>
-      <span class="k">end</span>
-    <span class="k">end</span>
-
-  <span class="k">end</span>
-
-<span class="k">end</span>
-
-<span class="no">Class</span><span class="o">.</span><span class="n">send</span> <span class="ss">:include</span><span class=
-"p">,</span> <span class="no">MetaSkills</span>
-
-<span class="k">class</span> <span class="nc">MyClass</span>
-  <span class="n">attribute_accessor</span> <span class="ss">:foo</span>
-<span class="k">end</span>
-
-<span class="n">o</span> <span class="o">=</span> <span class="no">MyClass</span><span class="o">.</span><span class="n">new</span>
-<span class="n">o</span><span class="o">.</span><span class="n">foo</span>           <span class="c1"># =&gt; nil</span>
-<span class="n">o</span><span class="o">.</span><span class="n">foo</span> <span class="o">=</span> <span class=
-"s1">&#39;bar&#39;</span>   <span class="c1"># =&gt; &quot;bar&quot;</span>
-<span class="n">o</span>               <span class="c1"># =&gt; #&lt;MyClass:0x100171c80 @foo=&quot;bar&quot;&gt;</span>
-</code>
+o = <span class="constant">MyClass</span>.new
+o.foo           <span class="comment"># =&gt; nil</span>
+o.foo = <span class="string"><span class="delimiter">'</span><span class="content">bar</span><span class="delimiter">'</span></span>   <span class=
+"comment"># =&gt; &quot;bar&quot;</span>
+o               <span class="comment"># =&gt; #&lt;MyClass:0x100171c80 @foo=&quot;bar&quot;&gt;</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Update: A friend was asking me about the namespaces you see in the module. It is technically possible to just open up the Class object
@@ -282,7 +288,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

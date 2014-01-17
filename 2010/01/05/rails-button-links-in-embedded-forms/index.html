@@ -69,43 +69,38 @@
             because it generates another form inside of a form? If so, here is a simple rails view helper I made that creates simple button links for
             embedded forms by making an input with a javascript function. Tag soup you ask, hell yeah, but worth if if you need it.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">button_to_link</span><span class=
-"p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">link</span><span class="p">,</span> <span class=
-"n">options</span><span class="o">=</span><span class="p">{})</span>
-  <span class="n">confirm_option</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class=
-"n">delete</span><span class="p">(</span><span class="ss">:confirm</span><span class="p">)</span>
-  <span class="n">popup_option</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class=
-"n">delete</span><span class="p">(</span><span class="ss">:popup</span><span class="p">)</span>
-  <span class="n">link_function</span> <span class="o">=</span> <span class="n">popup_option</span> <span class="p">?</span> <span class=
-"n">redirect_function</span><span class="p">(</span><span class="n">link</span><span class="p">,</span><span class=
-"ss">:new_window</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span> <span class="p">:</span> <span class=
-"n">redirect_function</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
-  <span class="n">link_function</span> <span class="o">=</span> <span class="s2">&quot;if (confirm(&#39;</span><span class="si">#{</span><span class=
-"n">escape_javascript</span><span class="p">(</span><span class="n">confirm_option</span><span class="p">)</span><span class=
-"si">}</span><span class="s2">&#39;)) { </span><span class="si">#{</span><span class="n">link_function</span><span class="si">}</span><span class=
-"s2">; }&quot;</span> <span class="k">if</span> <span class="n">confirm_option</span>
-  <span class="n">button_to_function</span> <span class="nb">name</span><span class="p">,</span> <span class="n">link_function</span><span class=
-"p">,</span> <span class="n">options</span>
-<span class="k">end</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">def</span> <span class="function">button_to_link</span>(name, link, options={})
+  confirm_option = options.delete(<span class="symbol">:confirm</span>)
+  popup_option = options.delete(<span class="symbol">:popup</span>)
+  link_function = popup_option ? redirect_function(link,<span class="symbol">:new_window</span> =&gt; <span class=
+"predefined-constant">true</span>) : redirect_function(link)
+  link_function = <span class="string"><span class="delimiter">&quot;</span><span class="content">if (confirm('</span><span class=
+"inline"><span class="inline-delimiter">#{</span>escape_javascript(confirm_option)<span class="inline-delimiter">}</span></span><span class=
+"content">')) { </span><span class="inline"><span class="inline-delimiter">#{</span>link_function<span class=
+"inline-delimiter">}</span></span><span class="content">; }</span><span class="delimiter">&quot;</span></span> <span class=
+"keyword">if</span> confirm_option
+  button_to_function name, link_function, options
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">redirect_function</span><span class="p">(</span><span class="n">location</span><span class=
-"p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
-  <span class="n">location</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class=
-"n">is_a?</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span> <span class="p">?</span> <span class=
-"n">location</span> <span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="n">location</span><span class=
-"p">)</span>
-  <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:new_window</span><span class="o">]</span>
-    <span class="sx">%|window.open(&#39;</span><span class="si">#{</span><span class="n">location</span><span class="si">}</span><span class=
-"sx">&#39;)|</span>
-  <span class="k">else</span>
-    <span class="sx">%|{window.location.href=&#39;</span><span class="si">#{</span><span class="n">location</span><span class=
-"si">}</span><span class="sx">&#39;}|</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code>
+<span class="keyword">def</span> <span class="function">redirect_function</span>(location, options={})
+  location = location.is_a?(<span class="constant">String</span>) ? location : url_for(location)
+  <span class="keyword">if</span> options[<span class="symbol">:new_window</span>]
+    <span class="string"><span class="delimiter">%|</span><span class="content">window.open('</span><span class="inline"><span class=
+"inline-delimiter">#{</span>location<span class="inline-delimiter">}</span></span><span class="content">')</span><span class=
+"delimiter">|</span></span>
+  <span class="keyword">else</span>
+    <span class="string"><span class="delimiter">%|</span><span class="content">{window.location.href='</span><span class="inline"><span class=
+"inline-delimiter">#{</span>location<span class="inline-delimiter">}</span></span><span class="content">'}</span><span class=
+"delimiter">|</span></span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -196,7 +191,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

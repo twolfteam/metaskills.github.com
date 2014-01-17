@@ -83,35 +83,43 @@
             some generated form tags for all sorts of :remote links, buttons, etc. If your interested in reading more about these, look into the
             source, but I thought you might like to see some places where these are used by the framework now.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="html language-html" data-lang="html"><span class="nt">&lt;head&gt;</span>
-  <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">&quot;Content-Type&quot;</span> <span class=
-"na">content=</span><span class="s">&quot;text/html; charset=utf-8&quot;</span><span class="nt">/&gt;</span>
-  <span class="err">&lt;</span>%= csrf_meta_tag %&gt;
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attribute-name">http-equiv</span>=<span class="string"><span class=
+"delimiter">&quot;</span><span class="content">Content-Type</span><span class="delimiter">&quot;</span></span> <span class=
+"attribute-name">content</span>=<span class="string"><span class="delimiter">&quot;</span><span class=
+"content">text/html; charset=utf-8</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+  <span class="error">&lt;</span>%= csrf_meta_tag %<span class="error">&gt;</span>
 </pre>
+              </div>
+            </div>
           </div>
-          <div class="highlight">
-            <pre>
-<code class="javascript language-javascript" data-lang="javascript"><span class="nb">document</span><span class="p">.</span><span class=
-"nx">observe</span><span class="p">(</span><span class="s2">&quot;dom:loaded&quot;</span><span class="p">,</span> <span class=
-"kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">authToken</span> <span class="o">=</span> <span class="nx">$$</span><span class=
-"p">(</span><span class="s1">&#39;meta[name=csrf-token]&#39;</span><span class="p">).</span><span class="nx">first</span><span class=
-"p">().</span><span class="nx">readAttribute</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">),</span>
-    <span class="nx">authParam</span> <span class="o">=</span> <span class="nx">$$</span><span class="p">(</span><span class=
-"s1">&#39;meta[name=csrf-param]&#39;</span><span class="p">).</span><span class="nx">first</span><span class="p">().</span><span class=
-"nx">readAttribute</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">),</span>
-    <span class="nx">formTemplate</span> <span class="o">=</span> <span class=
-"s1">&#39;&lt;form method=&quot;#{method}&quot; action=&quot;#{action}&quot;&gt;\</span>
-<span class="s1">      #{realmethod}&lt;input name=&quot;#{param}&quot; value=&quot;#{token}&quot; type=&quot;hidden&quot;&gt;\</span>
-<span class="s1">      &lt;/form&gt;&#39;</span><span class="p">,</span>
-    <span class="nx">realmethodTemplate</span> <span class="o">=</span> <span class=
-"s1">&#39;&lt;input name=&quot;_method&quot; value=&quot;#{method}&quot; type=&quot;hidden&quot;&gt;&#39;</span><span class="p">;</span>
-  <span class="c1">//... etc</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+document.observe(<span class="string"><span class="delimiter">&quot;</span><span class="content">dom:loaded</span><span class=
+"delimiter">&quot;</span></span>, <span class="keyword">function</span>() {
+  <span class="keyword">var</span> authToken = <span class="predefined">$$</span>(<span class="string"><span class="delimiter">'</span><span class=
+"content">meta[name=csrf-token]</span><span class="delimiter">'</span></span>).first().readAttribute(<span class="string"><span class=
+"delimiter">'</span><span class="content">content</span><span class="delimiter">'</span></span>),
+    authParam = <span class="predefined">$$</span>(<span class="string"><span class="delimiter">'</span><span class=
+"content">meta[name=csrf-param]</span><span class="delimiter">'</span></span>).first().readAttribute(<span class="string"><span class=
+"delimiter">'</span><span class="content">content</span><span class="delimiter">'</span></span>),
+    formTemplate = <span class="string"><span class="delimiter">'</span><span class=
+"content">&lt;form method=&quot;#{method}&quot; action=&quot;#{action}&quot;&gt;</span><span class="content">\
+</span><span class=
+"content">      #{realmethod}&lt;input name=&quot;#{param}&quot; value=&quot;#{token}&quot; type=&quot;hidden&quot;&gt;</span><span class="content">\
+</span><span class="content">      &lt;/form&gt;</span><span class="delimiter">'</span></span>,
+    realmethodTemplate = <span class="string"><span class="delimiter">'</span><span class=
+"content">&lt;input name=&quot;_method&quot; value=&quot;#{method}&quot; type=&quot;hidden&quot;&gt;</span><span class="delimiter">'</span></span>;
+  <span class="comment">//... etc</span>
 </pre>
+              </div>
+            </div>
           </div>
           <h2>
             Now Our RESTful AJAX with Forgery Protection
@@ -124,45 +132,43 @@
             name/value of the authentication token. Then in ever AJAX request I merge these parameters in with what ever I am serializing for that
             request. Pretty simple eh? Did I miss anything?
           </p>
-          <div class="highlight">
-            <pre>
-<code class="javascript language-javascript" data-lang="javascript"><span class="c1">// A base JS object.</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="comment">// A base JS object.</span>
 
-<span class="kd">var</span> <span class="nx">MyBase</span> <span class="o">=</span> <span class="p">{</span>
+<span class="keyword">var</span> MyBase = {
 
-  <span class="nx">authParams</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="kd">var</span> <span class="nx">authParam</span> <span class="o">=</span> <span class="nx">$$</span><span class=
-"p">(</span><span class="s1">&#39;meta[name=csrf-param]&#39;</span><span class="p">).</span><span class="nx">first</span><span class=
-"p">().</span><span class="nx">readAttribute</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">authToken</span> <span class="o">=</span> <span class="nx">$$</span><span class=
-"p">(</span><span class="s1">&#39;meta[name=csrf-token]&#39;</span><span class="p">).</span><span class="nx">first</span><span class=
-"p">().</span><span class="nx">readAttribute</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">);</span>
-    <span class="nx">params</span><span class="p">[</span><span class="nx">authParam</span><span class="p">]</span> <span class=
-"o">=</span> <span class="nx">authToken</span>
-    <span class="k">return</span> <span class="nx">$H</span><span class="p">(</span><span class="nx">params</span><span class="p">);</span>
-  <span class="p">}</span>
+  <span class="function">authParams</span>: <span class="keyword">function</span>() {
+    <span class="keyword">var</span> params = {}
+    <span class="keyword">var</span> authParam = <span class="predefined">$$</span>(<span class="string"><span class="delimiter">'</span><span class=
+"content">meta[name=csrf-param]</span><span class="delimiter">'</span></span>).first().readAttribute(<span class="string"><span class=
+"delimiter">'</span><span class="content">content</span><span class="delimiter">'</span></span>);
+    <span class="keyword">var</span> authToken = <span class="predefined">$$</span>(<span class="string"><span class="delimiter">'</span><span class=
+"content">meta[name=csrf-token]</span><span class="delimiter">'</span></span>).first().readAttribute(<span class="string"><span class=
+"delimiter">'</span><span class="content">content</span><span class="delimiter">'</span></span>);
+    params[authParam] = authToken
+    <span class="keyword">return</span> <span class="predefined">$H</span>(params);
+  }
 
-<span class="p">};</span>
+};
 
-<span class="c1">// Mixed Into Other Classes.</span>
+<span class="comment">// Mixed Into Other Classes.</span>
 
-<span class="kd">var</span> <span class="nx">SomeClass</span> <span class="o">=</span> <span class="nx">Class</span><span class=
-"p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">MyBase</span><span class="p">,{</span>
+<span class="keyword">var</span> SomeClass = Class.create(MyBase,{
 
-  <span class="nx">doAjaxRequest</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">new</span> <span class="nx">Ajax</span><span class="p">.</span><span class="nx">Request</span><span class=
-"p">(</span><span class="nx">elmnt</span><span class="p">.</span><span class="nx">action</span><span class="p">,{</span>
-      <span class="nx">parameters</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class=
-"nx">form</span><span class="p">.</span><span class="nx">serialize</span><span class="p">(</span><span class="kc">true</span><span class=
-"p">).</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class=
-"nx">authParams</span><span class="p">()),</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
+  <span class="function">doAjaxRequest</span>: <span class="keyword">function</span>() {
+    <span class="keyword">new</span> Ajax.Request(elmnt.action,{
+      <span class="key">parameters</span>: <span class="local-variable">this</span>.form.serialize(<span class=
+"predefined-constant">true</span>).merge(<span class="local-variable">this</span>.authParams()),
+    });
+  }
 
-<span class="p">});</span>
-</code>
+});
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -253,7 +259,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

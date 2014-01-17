@@ -76,63 +76,46 @@ $ git log | git shortlog -n -s
           <h2>
             Subversion
           </h2>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="c1">#!/usr/bin/env ruby</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="doctype">#!/usr/bin/env ruby</span>
 
-<span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;activesupport&#39;</span>
+require <span class="string"><span class="delimiter">'</span><span class="content">rubygems</span><span class="delimiter">'</span></span>
+require <span class="string"><span class="delimiter">'</span><span class="content">activesupport</span><span class="delimiter">'</span></span>
 
-<span class="n">log_xml</span> <span class="o">=</span> <span class="sb">`svn log -q --xml`</span>
-<span class="n">svn_logs</span> <span class="o">=</span> <span class="no">XmlSimple</span><span class="o">.</span><span class=
-"n">xml_in</span><span class="p">(</span><span class="n">log_xml</span><span class="p">)</span><span class="o">[</span><span class=
-"s1">&#39;logentry&#39;</span><span class="o">]</span>
+log_xml = <span class="shell"><span class="delimiter">`</span><span class="content">svn log -q --xml</span><span class="delimiter">`</span></span>
+svn_logs = <span class="constant">XmlSimple</span>.xml_in(log_xml)[<span class="string"><span class="delimiter">'</span><span class=
+"content">logentry</span><span class="delimiter">'</span></span>]
 
-<span class="n">report_hash</span> <span class="o">=</span> <span class="n">svn_logs</span><span class="o">.</span><span class=
-"n">inject</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="n">report</span><span class=
-"p">,</span><span class="n">log</span><span class="o">|</span>
-  <span class="n">author</span> <span class="o">=</span> <span class="n">log</span><span class="o">[</span><span class=
-"s1">&#39;author&#39;</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span>
-  <span class="n">report</span><span class="o">[</span><span class="n">author</span><span class="o">]</span> <span class="o">||=</span> <span class=
-"p">{</span><span class="ss">:commit_count</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">}</span>
-  <span class="n">report</span><span class="o">[</span><span class="n">author</span><span class="o">][</span><span class=
-"ss">:commit_count</span><span class="o">]</span> <span class="o">+=</span> <span class="mi">1</span>
-  <span class="n">report</span>
-<span class="k">end</span>
+report_hash = svn_logs.inject({}) <span class="keyword">do</span> |report,log|
+  author = log[<span class="string"><span class="delimiter">'</span><span class="content">author</span><span class=
+"delimiter">'</span></span>][<span class="integer">0</span>]
+  report[author] ||= {<span class="symbol">:commit_count</span> =&gt; <span class="integer">0</span>}
+  report[author][<span class="symbol">:commit_count</span>] += <span class="integer">1</span>
+  report
+<span class="keyword">end</span>
 
-<span class="n">commits_authors</span> <span class="o">=</span> <span class="n">report_hash</span><span class="o">.</span><span class=
-"n">keys</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="o">|</span><span class=
-"n">a</span><span class="o">|</span> <span class="o">[</span><span class="n">report_hash</span><span class="o">[</span><span class=
-"n">a</span><span class="o">][</span><span class="ss">:commit_count</span><span class="o">]</span><span class="p">,</span> <span class=
-"n">a</span><span class="o">]</span> <span class="p">}</span>
-<span class="n">commits_authors</span> <span class="o">=</span> <span class="n">commits_authors</span><span class="o">.</span><span class=
-"n">sort_by</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:first</span><span class="p">)</span><span class=
-"o">.</span><span class="n">reverse</span>
+commits_authors = report_hash.keys.map { |a| [report_hash[a][<span class="symbol">:commit_count</span>], a] }
+commits_authors = commits_authors.sort_by(&amp;<span class="symbol">:first</span>).reverse
 
-<span class="n">cc_colsize</span> <span class="o">=</span> <span class="n">commits_authors</span><span class="o">.</span><span class=
-"n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:first</span><span class="p">)</span><span class=
-"o">.</span><span class="n">max</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">size</span>
-<span class="n">a_colsize</span> <span class="o">=</span> <span class="n">commits_authors</span><span class="o">.</span><span class=
-"n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:last</span><span class="p">)</span><span class=
-"o">.</span><span class="n">inject</span><span class="p">{</span><span class="o">|</span><span class="n">m</span><span class="p">,</span><span class=
-"n">w</span><span class="o">|</span> <span class="n">m</span><span class="o">.</span><span class="n">length</span> <span class=
-"o">&gt;</span> <span class="n">w</span><span class="o">.</span><span class="n">length</span> <span class="p">?</span> <span class=
-"n">m</span> <span class="p">:</span> <span class="n">w</span> <span class="p">}</span><span class="o">.</span><span class="n">size</span>
+cc_colsize = commits_authors.map(&amp;<span class="symbol">:first</span>).max.to_s.size
+a_colsize = commits_authors.map(&amp;<span class="symbol">:last</span>).inject{|m,w| m.length &gt; w.length ? m : w }.size
 
-<span class="n">final_report</span> <span class="o">=</span> <span class="n">commits_authors</span><span class="o">.</span><span class=
-"n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">ca</span><span class="o">|</span>
-  <span class="n">c</span><span class="p">,</span><span class="n">a</span> <span class="o">=</span> <span class="n">ca</span>
-  <span class="s2">&quot; </span><span class="si">#{</span><span class="n">c</span><span class="o">.</span><span class="n">to_s</span><span class=
-"o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">cc_colsize</span><span class="p">)</span><span class=
-"si">}</span><span class="s2">  </span><span class="si">#{</span><span class="n">a</span><span class="o">.</span><span class=
-"n">ljust</span><span class="p">(</span><span class="n">a_colsize</span><span class="p">)</span><span class="si">}</span><span class=
-"s2">&quot;</span>
-<span class="k">end</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class=
-"se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+final_report = commits_authors.map <span class="keyword">do</span> |ca|
+  c,a = ca
+  <span class="string"><span class="delimiter">&quot;</span><span class="content"> </span><span class="inline"><span class=
+"inline-delimiter">#{</span>c.to_s.rjust(cc_colsize)<span class="inline-delimiter">}</span></span><span class="content">  </span><span class=
+"inline"><span class="inline-delimiter">#{</span>a.ljust(a_colsize)<span class="inline-delimiter">}</span></span><span class=
+"delimiter">&quot;</span></span>
+<span class="keyword">end</span>.join(<span class="string"><span class="delimiter">&quot;</span><span class="char">\n</span><span class=
+"delimiter">&quot;</span></span>)
 
-<span class="nb">puts</span> <span class="n">final_report</span>
-</code>
+puts final_report
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -223,7 +206,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

@@ -94,14 +94,17 @@
             your local system account, not the DB user account associated with the database you are tying to backup. If you are reading this article
             because you have tried using MySQL Administrator's backup system, you may have seen a system message like this:
           </p>
-          <div class="highlight">
-            <pre>
-<code class="text language-text" data-lang="text">From: kencollins@ken-pb.local (Cron Daemon)
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+From: kencollins@ken-pb.local (Cron Daemon)
 To: kencollins@ken-pb.local
 Date: Mon, 19 Dec 2005 23:04:01 -0500 (EST)
 Subject: Cron &lt;kencollins@ken-pb&gt; &quot;/Applications/MySQL Administrator.app/Contents/Resources/mabackup&quot; --directory=&quot;/Users/kencollins/Desktop&quot; --connection=&quot;localhost&quot; --prefix=&quot;MetaDB&quot; MetaDB
-</code>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Before I get to that simple solution and if you are one of the unlucky that tried backups with MySQL Administrator, let's digress for a
@@ -130,14 +133,16 @@ Subject: Cron &lt;kencollins@ken-pb&gt; &quot;/Applications/MySQL Administrator.
             OK, now that our system has less junk processes, to the fun part, a simple and working MySQL backup. For this task I created a really
             simple script. Let's take a look at it below.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
-<span class="nv">timestamp</span><span class="o">=</span><span class="s2">&quot;$(date -u +%Y-%m-%d_%a)&quot;</span>
-/usr/local/mysql/bin/mysqldump -uXXXX -pXXXX metadb &gt; /Backups/MetaDB_<span class="k">${</span><span class="nv">timestamp</span><span class=
-"k">}</span>.sql
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+#!/bin/bash
+timestamp=&quot;$(date -u +%Y-%m-%d_%a)&quot;
+/usr/local/mysql/bin/mysqldump -uXXXX -pXXXX metadb &gt; /Backups/MetaDB_${timestamp}.sql
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             There are two parts to this script, the first line sets a variable called "timestamp" in the friendliest format I can think of
@@ -243,7 +248,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

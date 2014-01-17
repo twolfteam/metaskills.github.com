@@ -68,24 +68,26 @@
             "http://api.rubyonrails.org/classes/ActiveRecord/Store.html">ActiveRecord::Store</a> which bills itself as a simple key/value store for
             your models. The code below is pulled right from their example usage.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class=
-"no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">store</span> <span class="ss">:settings</span><span class="p">,</span> <span class="ss">accessors</span><span class=
-"p">:</span> <span class="o">[</span><span class="ss">:color</span><span class="p">,</span> <span class="ss">:homepage</span><span class="o">]</span>
-<span class="k">end</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">User</span> &lt; <span class="constant">ActiveRecord</span>::<span class=
+"constant">Base</span>
+  store <span class="symbol">:settings</span>, <span class="key">accessors</span>: [<span class="symbol">:color</span>, <span class=
+"symbol">:homepage</span>]
+<span class="keyword">end</span>
 
-<span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class=
-"p">(</span><span class="ss">color</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class=
-"ss">homepage</span><span class="p">:</span> <span class="s1">&#39;37signals.com&#39;</span><span class="p">)</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">color</span>            <span class="c1"># =&gt; &#39;black&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class=
-"ss">:color</span><span class="o">]</span> <span class="c1"># =&gt; &#39;black&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class=
-"ss">:remember_me</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
-</code>
+<span class="instance-variable">@user</span> = <span class="constant">User</span>.new(<span class="key">color</span>: <span class=
+"string"><span class="delimiter">'</span><span class="content">black</span><span class="delimiter">'</span></span>, <span class=
+"key">homepage</span>: <span class="string"><span class="delimiter">'</span><span class="content">37signals.com</span><span class=
+"delimiter">'</span></span>)
+<span class="instance-variable">@user</span>.color            <span class="comment"># =&gt; 'black'</span>
+<span class="instance-variable">@user</span>.settings[<span class="symbol">:color</span>] <span class="comment"># =&gt; 'black'</span>
+<span class="instance-variable">@user</span>.settings[<span class="symbol">:remember_me</span>] = <span class="predefined-constant">true</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Most people know that I love simple tools. But when I found myself considering <code>ActiveRecord::Store</code>, I found it seriously
@@ -110,30 +112,26 @@
             Perfect right? Here is a simple example of its usage below. If you want to learn more, checkout the <a href=
             "https://github.com/metaskills/store_configurable">project on github</a> with the full README.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class=
-"no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">store_configurable</span>
-<span class="k">end</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">User</span> &lt; <span class="constant">ActiveRecord</span>::<span class=
+"constant">Base</span>
+  store_configurable
+<span class="keyword">end</span>
 
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class=
-"n">remember_me</span> <span class="o">=</span> <span class="kp">true</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class=
-"n">sortable_tables</span><span class="o">.</span><span class="n">column</span>    <span class="o">=</span> <span class=
-"s1">&#39;created_at&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class=
-"n">sortable_tables</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;asc&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">you</span><span class=
-"o">.</span><span class="n">should</span><span class="o">.</span><span class="n">never</span><span class="o">.</span><span class=
-"n">need</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">do</span><span class="o">.</span><span class=
-"n">this</span><span class="o">.</span><span class="n">but</span><span class="o">.</span><span class="n">you</span><span class=
-"o">.</span><span class="n">could</span><span class="o">.</span><span class="n">if</span><span class="o">.</span><span class=
-"n">you</span><span class="o">.</span><span class="n">wanted</span><span class="o">.</span><span class="n">to</span> <span class=
-"o">=</span> <span class="s1">&#39;deep_value&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config_changed?</span> <span class="c1"># =&gt; true</span>
-</code>
+<span class="instance-variable">@user</span>.config.remember_me = <span class="predefined-constant">true</span>
+<span class="instance-variable">@user</span>.config.sortable_tables.column    = <span class="string"><span class="delimiter">'</span><span class=
+"content">created_at</span><span class="delimiter">'</span></span>
+<span class="instance-variable">@user</span>.config.sortable_tables.direction = <span class="string"><span class="delimiter">'</span><span class=
+"content">asc</span><span class="delimiter">'</span></span>
+<span class="instance-variable">@user</span>.config.you.should.never.need.to.do.this.but.you.could.if.you.wanted.to = <span class=
+"string"><span class="delimiter">'</span><span class="content">deep_value</span><span class="delimiter">'</span></span>
+<span class="instance-variable">@user</span>.config_changed? <span class="comment"># =&gt; true</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Rather than talking about how StoreConfigurable might be a good fit for you, I would instead like to discuss how my first practical usage
@@ -150,27 +148,27 @@
             value. That block is passed in the current hash object and the key that is missing so you can do some fancy things if needed. Here are
             some quick examples of both techniques.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># Default value passed to new.</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="comment"># Default value passed to new.</span>
 
-<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class=
-"p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>  <span class="c1"># =&gt; {}</span>
-<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class=
-"c1"># =&gt; &quot;default&quot;</span>
+hash = <span class="constant">Hash</span>.new(<span class="string"><span class="delimiter">'</span><span class="content">default</span><span class=
+"delimiter">'</span></span>)  <span class="comment"># =&gt; {}</span>
+hash[<span class="symbol">:foo</span>]                  <span class="comment"># =&gt; &quot;default&quot;</span>
 
-<span class="c1"># Default value from new&#39;s block.</span>
+<span class="comment"># Default value from new's block.</span>
 
-<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class=
-"p">{</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class=
-"o">|</span> <span class="s2">&quot;Missing </span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class=
-"s2"> for hash with id </span><span class="si">#{</span><span class="nb">hash</span><span class="o">.</span><span class=
-"n">object_id</span><span class="si">}</span><span class="s2">.&quot;</span> <span class="p">}</span>
-<span class="nb">hash</span>                        <span class="c1"># =&gt; {}</span>
-<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class=
-"c1"># =&gt; &quot;Missing foo for hash with id 283829283.&quot;</span>
-</code>
+hash = <span class="constant">Hash</span>.new { |hash, key| <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">Missing </span><span class="inline"><span class="inline-delimiter">#{</span>key<span class="inline-delimiter">}</span></span><span class=
+"content"> for hash with id </span><span class="inline"><span class="inline-delimiter">#{</span>hash.object_id<span class=
+"inline-delimiter">}</span></span><span class="content">.</span><span class="delimiter">&quot;</span></span> }
+hash                        <span class="comment"># =&gt; {}</span>
+hash[<span class="symbol">:foo</span>]                  <span class="comment"># =&gt; &quot;Missing foo for hash with id 283829283.&quot;</span>
 </pre>
+              </div>
+            </div>
           </div>
           <h2>
             Recursion
@@ -180,31 +178,26 @@
             replicate itself for key misses. Here is a fundamental example to make your own Hash object return new instances of itself when keys are
             missing.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">RecursiveHash</span> <span class=
-"o">&lt;</span> <span class="no">Hash</span>
-  <span class="no">Recursive</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class=
-"o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class=
-"o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class=
-"n">class</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
-  <span class="k">def</span> <span class="nf">initialize</span>
-    <span class="k">super</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Recursive</span><span class="p">)</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">RecursiveHash</span> &lt; <span class="constant">Hash</span>
+  <span class="constant">Recursive</span> = lambda { |h,k| h[k] = h.class.new }
+  <span class="keyword">def</span> <span class="function">initialize</span>
+    <span class="keyword">super</span>(&amp;<span class="constant">Recursive</span>)
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 
-<span class="nb">hash</span> <span class="o">=</span> <span class="no">RecursiveHash</span><span class="o">.</span><span class=
-"n">new</span>  <span class="c1"># =&gt; {}</span>
-<span class="nb">hash</span><span class="o">.</span><span class="n">class</span>                <span class="c1"># =&gt; RecursiveHash</span>
-<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                <span class=
-"c1"># =&gt; {}</span>
-<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">].</span><span class=
-"n">class</span>          <span class="c1"># =&gt; RecursiveHash</span>
-<span class="nb">hash</span><span class="o">[</span><span class="ss">:a</span><span class="o">][</span><span class="ss">:b</span><span class=
-"o">][</span><span class="ss">:c</span><span class="o">]</span>          <span class="c1"># =&gt; {}</span>
-<span class="nb">hash</span>                      <span class="c1"># =&gt; {:foo=&gt;{}, :a=&gt;{:b=&gt;{:c=&gt;{}}}}</span>
-</code>
+hash = <span class="constant">RecursiveHash</span>.new  <span class="comment"># =&gt; {}</span>
+hash.class                <span class="comment"># =&gt; RecursiveHash</span>
+hash[<span class="symbol">:foo</span>]                <span class="comment"># =&gt; {}</span>
+hash[<span class="symbol">:foo</span>].class          <span class="comment"># =&gt; RecursiveHash</span>
+hash[<span class="symbol">:a</span>][<span class="symbol">:b</span>][<span class="symbol">:c</span>]          <span class="comment"># =&gt; {}</span>
+hash                      <span class="comment"># =&gt; {:foo=&gt;{}, :a=&gt;{:b=&gt;{:c=&gt;{}}}}</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             In this example, I create a <a href="http://www.ruby-doc.org/core-1.9.3/Proc.html">Proc</a> object via the lambda keyword and I use this
@@ -215,30 +208,24 @@
             So default hashes in Ruby and simple recursion techniques are what make up some of the key points of StoreConfigurable. I also use
             recursion when loading the hash values from the YAML stored in the database. Here is what that technique looks like.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="n">loader</span> <span class="o">=</span> <span class="nb">lambda</span> <span class=
-"k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class=
-"p">,</span> <span class="n">value</span><span class="o">|</span>
-  <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class=
-"no">Hash</span><span class="p">)</span>
-    <span class="n">value</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class=
-"n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class=
-"o">.</span><span class="n">call</span><span class="p">(</span><span class="nb">hash</span><span class="o">.</span><span class=
-"n">send</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">k</span><span class=
-"p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
-  <span class="k">else</span>
-    <span class="n">options</span><span class="o">.</span><span class="n">send</span> <span class="s2">&quot;</span><span class=
-"si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="n">value</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+loader = lambda <span class="keyword">do</span> |hash, key, value|
+  <span class="keyword">if</span> value.is_a?(<span class="constant">Hash</span>)
+    value.each { |k,v| loader.call(hash.send(key), k, v) }
+  <span class="keyword">else</span>
+    options.send <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
+"inline-delimiter">#{</span>key<span class="inline-delimiter">}</span></span><span class="content">=</span><span class=
+"delimiter">&quot;</span></span>, value
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 
-<span class="n">data</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class=
-"n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class=
-"o">.</span><span class="n">call</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class=
-"n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
-</code>
+data.each { |k,v| loader.call(config, k, v) }
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Hopefully this dive into Ruby or maybe StoreConfigurable is helpful!
@@ -344,7 +331,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

@@ -64,8 +64,7 @@
             </h1>
           </header>
           <aside class="flash_info">
-            UPDATE:<br>
-            <a href="/2011/03/26/using-minitest-spec-with-rails/">Using MiniTest::Spec With Rails</a> &amp; <a href=
+            UPDATE: <a href="/2011/03/26/using-minitest-spec-with-rails/">Using MiniTest::Spec With Rails</a> &amp; <a href=
             "/2011/03/26/using-minitest-spec-with-rails/">From Test::Unit &amp; Shoulda To MiniTest::Spec &amp; MiniShoulda</a>
           </aside>
           <p>
@@ -76,14 +75,15 @@
             Just add 'mini_backtrace' to your Gemfile's :test group and your should automatically see a huge difference. Any additions to the
             Rails.backtrace_cleaner should now work.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="no">Rails</span><span class="o">.</span><span class=
-"n">backtrace_cleaner</span><span class="o">.</span><span class="n">add_silencer</span> <span class="p">{</span> <span class="o">|</span><span class=
-"n">line</span><span class="o">|</span> <span class="n">line</span> <span class="o">=~</span> <span class="sr">/my_noisy_library/</span> <span class=
-"p">}</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="constant">Rails</span>.backtrace_cleaner.add_silencer { |line| line =~ <span class="regexp"><span class="delimiter">/</span><span class=
+"content">my_noisy_library</span><span class="delimiter">/</span></span> }
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -174,7 +174,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

@@ -74,30 +74,29 @@
             and unacceptable to someone dealing with their own objects to encapsulate behavior. Today I found two ways of dealing with my problem, a
             jQuery way and a CoffeeScript way. First a code example.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">MyObject</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">MyObject</span>
+  
+  <span class="key">constructor</span>: -&gt;
+    <span class="instance-variable">@myDomElement</span> = <span class="error">$</span>(<span class="string"><span class=
+"delimiter">'</span><span class="content">#myDomElement</span><span class="delimiter">'</span></span>)
+    <span class="error">@</span>._initBehavior()
 
-  <span class="ss">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="vi">@myDomElement</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class=
-"s1">&#39;#myDomElement&#39;</span><span class="p">)</span>
-    <span class="err">@</span><span class="o">.</span><span class="n">_initBehavior</span><span class="p">()</span>
+  <span class="key">handler</span>: (event) -&gt;
+    console.log(this)
+    <span class="predefined-constant">false</span>
 
-  <span class="ss">handler</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">this</span><span class=
-"p">)</span>
-    <span class="kp">false</span>
+  <span class="key">_initBehavior</span>: -&gt;
+    <span class="error">$</span>(window).resize <span class="instance-variable">@handler</span>
 
-  <span class="ss">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
-"n">resize</span> <span class="vi">@handler</span>
-
-<span class="n">jQuery</span> <span class="o">-&gt;</span>
-  <span class="n">window</span><span class="o">.</span><span class="n">myObject</span> <span class="o">=</span> <span class=
-"kp">new</span> <span class="no">MyObject</span><span class="p">();</span>
-</code>
+jQuery -&gt;
+  window.myObject = new MyObject();
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Here is a simple class using CoffeeScript's methods. It initializes itself with a static property <code>this.myDomElement</code> to some
@@ -106,14 +105,15 @@
             the raw DOM element, in this case the window object. One way of fixing this is to use <a href=
             "http://api.jquery.com/jQuery.proxy/">jQuery's proxy</a> function like so
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="ss">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
-  <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
-"n">resize</span> <span class="n">jQuery</span><span class="o">.</span><span class="n">proxy</span><span class="p">(</span><span class=
-"vi">@handler</span><span class="p">,</span><span class="n">this</span><span class="p">)</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="key">_initBehavior</span>: -&gt;
+  <span class="error">$</span>(window).resize jQuery.proxy(<span class="instance-variable">@handler</span>,this)
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             This works, but seems a little verbose to me and can clutter up your event initialization code. The other way is to use CoffeeScript's
@@ -128,30 +128,29 @@
             So all we have to do is change <code>-&gt;</code> to <code>=&gt;</code> for any of our callbacks or event handlers and now
             <code>this</code> is our own object and not the DOM element. Hot damn!
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">MyObject</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">MyObject</span>
+  
+  <span class="key">constructor</span>: -&gt;
+    <span class="instance-variable">@myDomElement</span> = <span class="error">$</span>(<span class="string"><span class=
+"delimiter">'</span><span class="content">#myDomElement</span><span class="delimiter">'</span></span>)
+    <span class="error">@</span>._initBehavior()
 
-  <span class="ss">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="vi">@myDomElement</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class=
-"s1">&#39;#myDomElement&#39;</span><span class="p">)</span>
-    <span class="err">@</span><span class="o">.</span><span class="n">_initBehavior</span><span class="p">()</span>
+  <span class="key">handler</span>: (event) =&gt;
+    console.log(this)
+    <span class="predefined-constant">false</span>
 
-  <span class="ss">handler</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">=&gt;</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">this</span><span class=
-"p">)</span>
-    <span class="kp">false</span>
+  <span class="key">_initBehavior</span>: -&gt;
+    <span class="error">$</span>(window).resize <span class="instance-variable">@handler</span>
 
-  <span class="ss">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
-"n">resize</span> <span class="vi">@handler</span>
-
-<span class="n">jQuery</span> <span class="o">-&gt;</span>
-  <span class="n">window</span><span class="o">.</span><span class="n">myObject</span> <span class="o">=</span> <span class=
-"kp">new</span> <span class="no">MyObject</span><span class="p">();</span>
-</code>
+jQuery -&gt;
+  window.myObject = new MyObject();
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -242,7 +241,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

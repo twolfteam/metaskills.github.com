@@ -119,45 +119,44 @@
             full control. This means we get the same CSS and JavaScript as our real application along with a solid foundation to extend Jasminerice
             at our whim. This leaves us with a clean canvas suitable for Jasmine unit, functional and integraiton testing all wrapped up into one.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In: config/initializers/jasminerice.rb</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="comment"># In: config/initializers/jasminerice.rb</span>
 
-<span class="k">module</span> <span class="nn">Jasminerice</span>
-
-  <span class="k">module</span> <span class="nn">MyApplication</span>
-    <span class="kp">extend</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Concern</span>
-    <span class="n">included</span> <span class="k">do</span>
-      <span class="n">delegate</span> <span class="ss">:foo_path</span><span class="p">,</span> <span class="ss">to</span><span class=
-"p">:</span> <span class="o">::</span><span class="no">Rails</span><span class="o">.</span><span class="n">application</span><span class=
-"o">.</span><span class="n">routes_url_helpers</span>
-    <span class="k">end</span>
-    <span class="k">def</span> <span class="nf">jasminerice?</span>
-      <span class="kp">true</span>
-    <span class="k">end</span>
-    <span class="k">def</span> <span class="nf">current_user</span>
-      <span class="vi">@current_user</span> <span class="o">||=</span> <span class="no">User</span><span class="o">.</span><span class=
-"n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-
-  <span class="no">ApplicationHelper</span><span class="o">.</span><span class="n">send</span> <span class="ss">:include</span><span class=
-"p">,</span> <span class="no">MyApplication</span>
-
-  <span class="k">class</span> <span class="nc">SpecController</span> <span class="o">&lt;</span> <span class="no">Jasminerice</span><span class=
-"o">::</span><span class="no">ApplicationController</span>
-    <span class="k">def</span> <span class="nf">index</span>
-      <span class="n">render</span> <span class="ss">template</span><span class="p">:</span> <span class="s1">&#39;users/home&#39;</span><span class=
-"p">,</span> <span class="ss">layout</span><span class="p">:</span> <span class="s1">&#39;application&#39;</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-
-<span class="k">end</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class=
-"no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class=
-"o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class=
-"no">Rails</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
-</code>
+<span class="keyword">module</span> <span class="class">Jasminerice</span>
+  
+  <span class="keyword">module</span> <span class="class">MyApplication</span>
+    extend <span class="constant">ActiveSupport</span>::<span class="constant">Concern</span>
+    included <span class="keyword">do</span>
+      delegate <span class="symbol">:foo_path</span>, <span class="key">to</span>: ::<span class=
+"constant">Rails</span>.application.routes_url_helpers
+    <span class="keyword">end</span>
+    <span class="keyword">def</span> <span class="function">jasminerice?</span>
+      <span class="predefined-constant">true</span>
+    <span class="keyword">end</span>
+    <span class="keyword">def</span> <span class="function">current_user</span>
+      <span class="instance-variable">@current_user</span> ||= <span class="constant">User</span>.find(<span class="integer">1</span>)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  
+  <span class="constant">ApplicationHelper</span>.send <span class="symbol">:include</span>, <span class="constant">MyApplication</span>
+  
+  <span class="keyword">class</span> <span class="class">SpecController</span> &lt; <span class="constant">Jasminerice</span>::<span class=
+"constant">ApplicationController</span>
+    <span class="keyword">def</span> <span class="function">index</span>
+      render <span class="key">template</span>: <span class="string"><span class="delimiter">'</span><span class=
+"content">users/home</span><span class="delimiter">'</span></span>, <span class="key">layout</span>: <span class="string"><span class=
+"delimiter">'</span><span class="content">application</span><span class="delimiter">'</span></span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  
+<span class="keyword">end</span> <span class="keyword">if</span> <span class="keyword">defined?</span>(<span class=
+"constant">Jasminerice</span>) &amp;&amp; <span class="constant">Jasminerice</span>.environments.include?(<span class="constant">Rails</span>.env)
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             There we go, a simple example pulled from my current project. What we are doing here is freedom-patching that spec controller's index
@@ -172,31 +171,35 @@
             Now that we have full control and some reflection for Jasminerice, let's reviw our appliation's main layout. Here is an example of my
             <code>app/views/layouts/application.html.haml</code> file.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="o">!!!</span> <span class="mi">5</span>
-<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;en&#39;</span><span class="p">}</span>
-  <span class="o">%</span><span class="n">head</span>
-    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
-    <span class="o">=</span> <span class="n">csrf_meta_tags</span>
-    <span class="o">%</span><span class="n">title</span> <span class="no">My</span> <span class="no">Application</span>
-    <span class="o">-</span> <span class="k">if</span> <span class="n">jasminerice?</span>
-      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">&#39;spec&#39;</span>
-      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">&#39;spec&#39;</span>
-    <span class="o">-</span> <span class="k">else</span>
-      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">&#39;application&#39;</span>
-      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">&#39;application&#39;</span>
-      <span class="o">%</span><span class="n">script</span> <span class="n">jQuery</span><span class="p">(</span><span class=
-"n">function</span><span class="p">(){</span> <span class="no">MyApp</span><span class="o">.</span><span class="n">App</span><span class=
-"o">.</span><span class="n">Home</span><span class="o">.</span><span class="n">init</span><span class="p">();</span> <span class="p">});</span>
-  <span class="o">%</span><span class="n">body</span>
-    <span class="o">%</span><span class="n">section</span><span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class=
-"s1">&#39;app&#39;</span><span class="p">,</span> <span class="ss">data</span><span class="p">:</span> <span class="p">{</span><span class=
-"nb">id</span><span class="p">:</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">}}</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+!!! <span class="integer">5</span>
+%html{<span class="symbol">:lang</span> =&gt; <span class="string"><span class="delimiter">'</span><span class="content">en</span><span class=
+"delimiter">'</span></span>}
+  %head
+    %meta{<span class="symbol">:charset</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">utf-8</span><span class="delimiter">'</span></span>}
+    = csrf_meta_tags
+    %title <span class="constant">My</span> <span class="constant">Application</span>
+    - <span class="keyword">if</span> jasminerice?
+      = stylesheet_link_tag <span class="string"><span class="delimiter">'</span><span class="content">spec</span><span class=
+"delimiter">'</span></span>
+      = javascript_include_tag <span class="string"><span class="delimiter">'</span><span class="content">spec</span><span class=
+"delimiter">'</span></span>
+    - <span class="keyword">else</span>
+      = stylesheet_link_tag <span class="string"><span class="delimiter">'</span><span class="content">application</span><span class=
+"delimiter">'</span></span>
+      = javascript_include_tag <span class="string"><span class="delimiter">'</span><span class="content">application</span><span class=
+"delimiter">'</span></span>
+      %script jQuery(function(){ <span class="constant">MyApp</span>.App.Home.init(); });
+  %body
+    %section{<span class="key">id</span>: <span class="string"><span class="delimiter">'</span><span class="content">app</span><span class=
+"delimiter">'</span></span>, <span class="key">data</span>: {<span class="key">id</span>: current_user.id}}
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             It is really that simple! It has a single condition that says if Jasminerice is loading this page, use the top level <code>spec</code>
@@ -205,36 +208,38 @@
             Jasminerce. This allows us to stub AJAX calls in specs then initialization the Spine.JS app when we are fully ready. So now, let us take
             a look at what both the <code>spec/javascripts/spec.css</code> and <code>spec/javascripts/spec.js</code> manifests may look like.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="css language-css" data-lang="css"><span class="c">/*</span>
-<span class="c"> *= require jasmine</span>
-<span class="c"> *= require application</span>
-<span class="c"> */</span>
-<span class="nc">.jasmine_reporter</span> <span class="p">{</span> <span class="k">display</span><span class="o">:</span> <span class=
-"k">none</span><span class="p">;</span> <span class="p">}</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="comment">/*
+ *= require jasmine
+ *= require application
+ */</span>
+<span class="class">.jasmine_reporter</span> { <span class="key">display</span>: <span class="value">none</span>; }
 </pre>
+              </div>
+            </div>
           </div>
-          <div class="highlight">
-            <pre>
-<code class="javascript language-javascript" data-lang="javascript"><span class="err">#</span><span class="o">=</span> <span class=
-"nx">require</span> <span class="nx">jasminerice</span>
-<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">mock</span><span class="o">-</span><span class=
-"nx">ajax</span>
-<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">application</span>
-<span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasmine</span><span class=
-"o">-</span><span class="nx">myapp</span>
-<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class=
-"nx">lib</span><span class="o">/</span>
-<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class=
-"nx">models</span><span class="o">/</span>
-<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class=
-"nx">controllers</span><span class="o">/</span>
-<span class="err">#</span><span class="o">=</span> <span class="nx">require_tree</span> <span class="p">.</span><span class="o">/</span><span class=
-"nx">views</span><span class="o">/</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="error">#</span>= require jasminerice
+<span class="error">#</span>= require mock-ajax
+<span class="error">#</span>= require application
+<span class="error">#</span>= require jasmine-myapp
+<span class="error">#</span>= require_tree .<span class="regexp"><span class="delimiter">/</span><span class="content">lib</span><span class=
+"delimiter">/</span></span>
+<span class="error">#</span>= require_tree .<span class="regexp"><span class="delimiter">/</span><span class="content">models</span><span class=
+"delimiter">/</span></span>
+<span class="error">#</span>= require_tree .<span class="regexp"><span class="delimiter">/</span><span class="content">controllers</span><span class=
+"delimiter">/</span></span>
+<span class="error">#</span>= require_tree .<span class="regexp"><span class="delimiter">/</span><span class="content">views</span><span class=
+"delimiter">/</span></span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             These should be self explanatory. The <code>spec.css</code> manifest requires the jasmine styles, then our application's styles. It then
@@ -370,7 +375,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

@@ -65,7 +65,7 @@
           </header>
           <aside class="flash_warn">
             UPDATE: In a recent article, I <a href="/2009/10/27/installing-ree-with-the-snow-leopard-sql-server-stack/">covered how to install
-            REE</a> and have hence NOOP&#39;ed this function to ignore the symlinking when REE is installed.
+            REE</a> and have hence NOOP'ed this function to ignore the symlinking when REE is installed.
           </aside>
           <p>
             Ruby 1.9.1, the stable release, is just around the corner and if your like me, maybe you want to start playing around with it and perhaps
@@ -75,7 +75,7 @@
             "http://github.com/metaskills/homemarks/tree/master">HomeMarks</a>.
           </p>
           <h2>
-            Installing Ruby 1.9 & Change Ruby Function
+            Installing Ruby 1.9 &amp; Change Ruby Function
           </h2>
           <p>
             I love MacPorts and recommend using it even though OS X comes with ruby pre-installed. Doing so simply keeps things clean and separated
@@ -130,35 +130,32 @@ $ sudo mv /opt/local/bin/testrb /opt/local/bin/testrb1.8
             "http://github.com/metaskills/zshkit/tree/master">.zshkit</a> or dotfile of choice and it will create/change symlinks for your ruby, irb,
             rake, etc.. that each point to the version you want to use. Calling it multiple times will simply toggle your ruby versions.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash language-bash" data-lang="bash">chruby <span class="o">()</span> <span class="o">{</span>
-  <span class="nv">ree</span><span class="o">=</span><span class="sb">`</span>ruby -e <span class=
-"s2">&quot;puts RUBY_DESCRIPTION.include?(&#39;Ruby Enterprise Edition&#39;)&quot;</span><span class="sb">`</span>
-  <span class="k">if</span> <span class="o">[</span> <span class="nv">$ree</span> <span class="o">=</span> <span class=
-"s2">&quot;true&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then </span>
-<span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;NOOP: Currently using REE in your path.&quot;</span>
-  <span class="k">else</span>
-<span class="k">    </span><span class="nv">v</span><span class="o">=</span><span class="sb">`</span>ruby -e <span class=
-"s2">&quot;puts RUBY_VERSION.split(&#39;.&#39;)[0,2].join(&#39;.&#39;)&quot;</span><span class="sb">`</span>
-    <span class="k">if</span> <span class="o">[</span> <span class="nv">$v</span> <span class="o">=</span> <span class=
-"s2">&quot;1.9&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then </span>
-<span class="k">      </span><span class="nv">cv</span><span class="o">=</span><span class="s2">&quot;1.8&quot;</span>
-    <span class="k">else</span>
-<span class="k">      </span><span class="nv">cv</span><span class="o">=</span><span class="s2">&quot;1.9&quot;</span>
-    <span class="k">fi</span>
-<span class="k">    </span><span class="nv">rubyexes</span><span class=
-"o">=(</span>erb gem irb rake rdoc ri ruby testrb autotest unit_diff rails<span class="o">)</span>
-    <span class="k">for </span>i in <span class="nv">$rubyexes</span><span class="p">;</span> <span class="k">do</span>
-<span class="k">      </span>sudo unlink <span class="s2">&quot;/opt/local/bin/${i}&quot;</span>
-      sudo ln -s <span class="s2">&quot;/opt/local/bin/${i}${cv}&quot;</span> <span class="s2">&quot;/opt/local/bin/${i}&quot;</span>
-    <span class="k">done</span>
-<span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Now Running: &quot;</span><span class="sb">`</span>ruby -v<span class=
-"sb">`</span>
-  <span class="k">fi</span>
-<span class="o">}</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+chruby () {
+  ree=`ruby -e &quot;puts RUBY_DESCRIPTION.include?('Ruby Enterprise Edition')&quot;`
+  if [ $ree = &quot;true&quot; ]; then 
+    echo &quot;NOOP: Currently using REE in your path.&quot;
+  else
+    v=`ruby -e &quot;puts RUBY_VERSION.split('.')[0,2].join('.')&quot;`
+    if [ $v = &quot;1.9&quot; ]; then 
+      cv=&quot;1.8&quot;
+    else
+      cv=&quot;1.9&quot;
+    fi
+    rubyexes=(erb gem irb rake rdoc ri ruby testrb autotest unit_diff rails)
+    for i in $rubyexes; do
+      sudo unlink &quot;/opt/local/bin/${i}&quot;
+      sudo ln -s &quot;/opt/local/bin/${i}${cv}&quot; &quot;/opt/local/bin/${i}&quot;
+    done
+    echo &quot;Now Running: &quot;`ruby -v`
+  fi
+}
 </pre>
+              </div>
+            </div>
           </div>
           <pre class="command">
 $ chruby
@@ -181,7 +178,7 @@ Now Running: ruby 1.9.1 (2008-12-01 revision 20438) [i386-darwin9]
             just change it to the true sym link.
           </p>
           <h2>
-            Exploring Rails 2.3 & Ruby 1.9
+            Exploring Rails 2.3 &amp; Ruby 1.9
           </h2>
           <p>
             So far my HomeMarks project does not have any major issues with ruby 1.9. I'm not surprised, it's very very slim ruby code due to the
@@ -292,7 +289,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

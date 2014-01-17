@@ -71,103 +71,95 @@
             earlier. Below is a simple rake task suitable to place in your rails <code>lib/tasks/heroku.task</code> file. I'll explain some things I
             learned below when writing this.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;heroku&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;heroku/command&#39;</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+require <span class="string"><span class="delimiter">'</span><span class="content">heroku</span><span class="delimiter">'</span></span>
+require <span class="string"><span class="delimiter">'</span><span class="content">heroku/command</span><span class="delimiter">'</span></span>
 
-<span class="no">HEROKU_BACKUP_BUCKET</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
-"no">Heroku</span><span class="o">::</span><span class="no">Command</span><span class="o">::</span><span class="no">Base</span><span class=
-"o">.</span><span class="n">selected_application</span><span class="si">}</span><span class="s2">-backups&quot;</span>
+<span class="constant">HEROKU_BACKUP_BUCKET</span> = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
+"inline-delimiter">#{</span><span class="constant">Heroku</span>::<span class="constant">Command</span>::<span class=
+"constant">Base</span>.selected_application<span class="inline-delimiter">}</span></span><span class="content">-backups</span><span class=
+"delimiter">&quot;</span></span>
 
-<span class="n">namespace</span> <span class="ss">:heroku</span> <span class="k">do</span>
+namespace <span class="symbol">:heroku</span> <span class="keyword">do</span>
+  
+  desc <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">Use the `heroku pgbackups` with my S3 bucket.</span><span class="delimiter">&quot;</span></span>
+  task <span class="symbol">:backup</span> =&gt; <span class="symbol">:connect_to_s3</span> <span class="keyword">do</span>
+    info = capture_heroku_command <span class="string"><span class="delimiter">'</span><span class="content">pgbackups</span><span class=
+"delimiter">'</span></span>
+    <span class="keyword">if</span> heroku_existing_backup?(info)
+      last_backup_info = info.split(<span class="string"><span class="delimiter">&quot;</span><span class="char">\n</span><span class=
+"delimiter">&quot;</span></span>).last.split(<span class="string"><span class="delimiter">&quot;</span><span class="content"> | </span><span class=
+"delimiter">&quot;</span></span>)
+      last_backup_id = last_backup_info[<span class="integer">0</span>]
+      last_backup_time = last_backup_info[<span class="integer">1</span>]
+      puts <span class="string"><span class="delimiter">&quot;</span><span class="content">Deleting last backup - ID: </span><span class=
+"inline"><span class="inline-delimiter">#{</span>last_backup_id<span class="inline-delimiter">}</span></span><span class=
+"content"> BackupTime: </span><span class="inline"><span class="inline-delimiter">#{</span>last_backup_time<span class=
+"inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+      heroku_command <span class="string"><span class="delimiter">'</span><span class="content">pgbackups:destroy</span><span class=
+"delimiter">'</span></span>, last_backup_id
+    <span class="keyword">end</span>
+    heroku_command <span class="string"><span class="delimiter">'</span><span class="content">pgbackups:capture</span><span class=
+"delimiter">'</span></span>
+    backup_url = capture_heroku_command <span class="string"><span class="delimiter">'</span><span class="content">pgbackups:url</span><span class=
+"delimiter">'</span></span>
+    backup_filename = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
+"inline-delimiter">#{</span><span class="constant">Heroku</span>::<span class="constant">Command</span>::<span class=
+"constant">Base</span>.selected_application<span class="inline-delimiter">}</span></span><span class="content">_</span><span class=
+"inline"><span class="inline-delimiter">#{</span><span class="constant">Time</span>.now.xmlschema<span class=
+"inline-delimiter">}</span></span><span class="content">.dump</span><span class="delimiter">&quot;</span></span>
+    backup_data = <span class="constant">Net</span>::<span class="constant">HTTP</span>.get_response(<span class=
+"constant">URI</span>.parse(backup_url)).body
+    <span class="constant">AWS</span>::<span class="constant">S3</span>::<span class=
+"constant">S3Object</span>.store backup_filename, backup_data, <span class="constant">HEROKU_BACKUP_BUCKET</span>
+  <span class="keyword">end</span>
+  
+  task <span class="symbol">:connect_to_s3</span> <span class="keyword">do</span>
+    <span class="constant">AWS</span>::<span class="constant">S3</span>::<span class="constant">Base</span>.establish_connection!(
+      <span class="symbol">:access_key_id</span>     =&gt; <span class="predefined-constant">ENV</span>[<span class="string"><span class=
+"delimiter">'</span><span class="content">AMAZON_ACCESS_KEY_ID</span><span class="delimiter">'</span></span>],
+      <span class="symbol">:secret_access_key</span> =&gt; <span class="predefined-constant">ENV</span>[<span class="string"><span class=
+"delimiter">'</span><span class="content">AMAZON_SECRET_ACCESS_KEY</span><span class="delimiter">'</span></span>])
+    <span class="keyword">begin</span>
+      <span class="constant">AWS</span>::<span class="constant">S3</span>::<span class="constant">Bucket</span>.find(<span class=
+"constant">HEROKU_BACKUP_BUCKET</span>)
+    <span class="keyword">rescue</span> <span class="constant">AWS</span>::<span class="constant">S3</span>::<span class=
+"constant">NoSuchBucket</span>
+      <span class="constant">AWS</span>::<span class="constant">S3</span>::<span class="constant">Bucket</span>.create(<span class=
+"constant">HEROKU_BACKUP_BUCKET</span>)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  
+<span class="keyword">end</span>
 
-  <span class="n">desc</span> <span class="s2">&quot;Use the `heroku pgbackups` with my S3 bucket.&quot;</span>
-  <span class="n">task</span> <span class="ss">:backup</span> <span class="o">=&gt;</span> <span class="ss">:connect_to_s3</span> <span class=
-"k">do</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="n">capture_heroku_command</span> <span class="s1">&#39;pgbackups&#39;</span>
-    <span class="k">if</span> <span class="n">heroku_existing_backup?</span><span class="p">(</span><span class="n">info</span><span class=
-"p">)</span>
-      <span class="n">last_backup_info</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class=
-"n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class=
-"p">)</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">split</span><span class=
-"p">(</span><span class="s2">&quot; | &quot;</span><span class="p">)</span>
-      <span class="n">last_backup_id</span> <span class="o">=</span> <span class="n">last_backup_info</span><span class="o">[</span><span class=
-"mi">0</span><span class="o">]</span>
-      <span class="n">last_backup_time</span> <span class="o">=</span> <span class="n">last_backup_info</span><span class="o">[</span><span class=
-"mi">1</span><span class="o">]</span>
-      <span class="nb">puts</span> <span class="s2">&quot;Deleting last backup - ID: </span><span class="si">#{</span><span class=
-"n">last_backup_id</span><span class="si">}</span><span class="s2"> BackupTime: </span><span class="si">#{</span><span class=
-"n">last_backup_time</span><span class="si">}</span><span class="s2">&quot;</span>
-      <span class="n">heroku_command</span> <span class="s1">&#39;pgbackups:destroy&#39;</span><span class="p">,</span> <span class=
-"n">last_backup_id</span>
-    <span class="k">end</span>
-    <span class="n">heroku_command</span> <span class="s1">&#39;pgbackups:capture&#39;</span>
-    <span class="n">backup_url</span> <span class="o">=</span> <span class="n">capture_heroku_command</span> <span class=
-"s1">&#39;pgbackups:url&#39;</span>
-    <span class="n">backup_filename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
-"no">Heroku</span><span class="o">::</span><span class="no">Command</span><span class="o">::</span><span class="no">Base</span><span class=
-"o">.</span><span class="n">selected_application</span><span class="si">}</span><span class="s2">_</span><span class="si">#{</span><span class=
-"no">Time</span><span class="o">.</span><span class="n">now</span><span class="o">.</span><span class="n">xmlschema</span><span class=
-"si">}</span><span class="s2">.dump&quot;</span>
-    <span class="n">backup_data</span> <span class="o">=</span> <span class="no">Net</span><span class="o">::</span><span class=
-"no">HTTP</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="no">URI</span><span class=
-"o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">backup_url</span><span class="p">))</span><span class=
-"o">.</span><span class="n">body</span>
-    <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class=
-"no">S3Object</span><span class="o">.</span><span class="n">store</span> <span class="n">backup_filename</span><span class="p">,</span> <span class=
-"n">backup_data</span><span class="p">,</span> <span class="no">HEROKU_BACKUP_BUCKET</span>
-  <span class="k">end</span>
+private
 
-  <span class="n">task</span> <span class="ss">:connect_to_s3</span> <span class="k">do</span>
-    <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class="no">Base</span><span class=
-"o">.</span><span class="n">establish_connection!</span><span class="p">(</span>
-      <span class="ss">:access_key_id</span>     <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class=
-"s1">&#39;AMAZON_ACCESS_KEY_ID&#39;</span><span class="o">]</span><span class="p">,</span>
-      <span class="ss">:secret_access_key</span> <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class=
-"s1">&#39;AMAZON_SECRET_ACCESS_KEY&#39;</span><span class="o">]</span><span class="p">)</span>
-    <span class="k">begin</span>
-      <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class=
-"no">Bucket</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="no">HEROKU_BACKUP_BUCKET</span><span class=
-"p">)</span>
-    <span class="k">rescue</span> <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class=
-"no">NoSuchBucket</span>
-      <span class="no">AWS</span><span class="o">::</span><span class="no">S3</span><span class="o">::</span><span class=
-"no">Bucket</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class=
-"no">HEROKU_BACKUP_BUCKET</span><span class="p">)</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
+<span class="keyword">def</span> <span class="function">heroku_command</span>(*cmds)
+  <span class="constant">Heroku</span>::<span class="constant">Command</span>::<span class="constant">Base</span>.command(*cmds)
+<span class="keyword">end</span>
 
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">capture_heroku_command</span>(*cmds)
+  stdout = <span class="predefined-constant">STDOUT</span>
+  <span class="constant">StringIO</span>.new.tap <span class="keyword">do</span> |out|
+    <span class="keyword">def</span> out.<span class="function">flush</span> ; <span class="keyword">end</span>
+    <span class="global-variable">$stdout</span> = out
+    heroku_command(*cmds)
+  <span class="keyword">end</span>.string.chomp
+<span class="keyword">ensure</span>
+  <span class="global-variable">$stdout</span> = stdout
+<span class="keyword">end</span>
 
-<span class="kp">private</span>
-
-<span class="k">def</span> <span class="nf">heroku_command</span><span class="p">(</span><span class="o">*</span><span class=
-"n">cmds</span><span class="p">)</span>
-  <span class="no">Heroku</span><span class="o">::</span><span class="no">Command</span><span class="o">::</span><span class=
-"no">Base</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="o">*</span><span class=
-"n">cmds</span><span class="p">)</span>
-<span class="k">end</span>
-
-<span class="k">def</span> <span class="nf">capture_heroku_command</span><span class="p">(</span><span class="o">*</span><span class=
-"n">cmds</span><span class="p">)</span>
-  <span class="n">stdout</span> <span class="o">=</span> <span class="no">STDOUT</span>
-  <span class="no">StringIO</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">tap</span> <span class=
-"k">do</span> <span class="o">|</span><span class="n">out</span><span class="o">|</span>
-    <span class="k">def</span> <span class="nc">out</span><span class="o">.</span><span class="nf">flush</span> <span class="p">;</span> <span class=
-"k">end</span>
-    <span class="vg">$stdout</span> <span class="o">=</span> <span class="n">out</span>
-    <span class="n">heroku_command</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">)</span>
-  <span class="k">end</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">chomp</span>
-<span class="k">ensure</span>
-  <span class="vg">$stdout</span> <span class="o">=</span> <span class="n">stdout</span>
-<span class="k">end</span>
-
-<span class="k">def</span> <span class="nf">heroku_existing_backup?</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
-  <span class="n">info</span> <span class="o">!~</span> <span class="sr">/no backups/i</span>
-<span class="k">end</span>
-</code>
+<span class="keyword">def</span> <span class="function">heroku_existing_backup?</span>(info)
+  info !~ <span class="regexp"><span class="delimiter">/</span><span class="content">no backups</span><span class="delimiter">/</span><span class=
+"modifier">i</span></span>
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Once installed you can run something like <code>bundle exec rake heroku:backup</code> or if you are not using bundler, <code>rake
@@ -190,38 +182,45 @@
             ~/Library/LaunchAgents/com.actionmoniker.backupMyApp.plist</code> and this will run at 4am every morning. If any one finds out how to
             automate the execution of this rake task on Heroku, please drop me a line!
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash language-bash" data-lang="bash"><span class="c">#! /bin/zsh</span>
-<span class="nb">source</span> /Users/kencollins/.zshenv
-<span class="nb">cd</span> /Users/kencollins/repos/myapp <span class="o">&amp;&amp;</span> /opt/local/bin/rake heroku:backup
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+#! /bin/zsh
+source /Users/kencollins/.zshenv
+cd /Users/kencollins/repos/myapp &amp;&amp; /opt/local/bin/rake heroku:backup
 </pre>
+              </div>
+            </div>
           </div>
-          <div class="highlight">
-            <pre>
-<code class="html language-html" data-lang="html"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
 <span class=
-"cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
-<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
-<span class="nt">&lt;dict&gt;</span>
-  <span class="nt">&lt;key&gt;</span>Label<span class="nt">&lt;/key&gt;</span>
-  <span class="nt">&lt;string&gt;</span>com.actionmoniker.backupMyApp<span class="nt">&lt;/string&gt;</span>
-  <span class="nt">&lt;key&gt;</span>ProgramArguments<span class="nt">&lt;/key&gt;</span>
-  <span class="nt">&lt;array&gt;</span>
-    <span class="nt">&lt;string&gt;</span>/Users/kencollins/repos/myapp/lib/bin/backup.sh<span class="nt">&lt;/string&gt;</span>
-  <span class="nt">&lt;/array&gt;</span>
-  <span class="nt">&lt;key&gt;</span>StartCalendarInterval<span class="nt">&lt;/key&gt;</span>
-  <span class="nt">&lt;dict&gt;</span>
-    <span class="nt">&lt;key&gt;</span>Minute<span class="nt">&lt;/key&gt;</span>
-    <span class="nt">&lt;integer&gt;</span>0<span class="nt">&lt;/integer&gt;</span>
-    <span class="nt">&lt;key&gt;</span>Hour<span class="nt">&lt;/key&gt;</span>
-    <span class="nt">&lt;integer&gt;</span>4<span class="nt">&lt;/integer&gt;</span>
-  <span class="nt">&lt;/dict&gt;</span>
-<span class="nt">&lt;/dict&gt;</span>
-<span class="nt">&lt;/plist&gt;</span>
-</code>
+"doctype">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+<span class="tag">&lt;plist</span> <span class="attribute-name">version</span>=<span class="string"><span class="delimiter">&quot;</span><span class=
+"content">1.0</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="tag">&lt;dict&gt;</span>
+  <span class="tag">&lt;key&gt;</span>Label<span class="tag">&lt;/key&gt;</span>
+  <span class="tag">&lt;string&gt;</span>com.actionmoniker.backupMyApp<span class="tag">&lt;/string&gt;</span>
+  <span class="tag">&lt;key&gt;</span>ProgramArguments<span class="tag">&lt;/key&gt;</span>
+  <span class="tag">&lt;array&gt;</span>
+    <span class="tag">&lt;string&gt;</span>/Users/kencollins/repos/myapp/lib/bin/backup.sh<span class="tag">&lt;/string&gt;</span>
+  <span class="tag">&lt;/array&gt;</span>
+  <span class="tag">&lt;key&gt;</span>StartCalendarInterval<span class="tag">&lt;/key&gt;</span>
+  <span class="tag">&lt;dict&gt;</span>
+    <span class="tag">&lt;key&gt;</span>Minute<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;integer&gt;</span>0<span class="tag">&lt;/integer&gt;</span>
+    <span class="tag">&lt;key&gt;</span>Hour<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;integer&gt;</span>4<span class="tag">&lt;/integer&gt;</span>
+  <span class="tag">&lt;/dict&gt;</span>
+<span class="tag">&lt;/dict&gt;</span>
+<span class="tag">&lt;/plist&gt;</span>
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -312,7 +311,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

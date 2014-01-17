@@ -81,255 +81,262 @@
             immediately started to switch my rvm rake tasks to use the new RVM API and was just floored with how well it did. Below is a copy of that
             rake task. Take a look over it and read below for details and how I have used this with the SQL Server stack.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="no">MYPROJECT_RUBIES</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s1">&#39;ruby-1.8.6-p388&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class=
-"ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj186&#39;</span><span class="p">,</span> <span class=
-"ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">},</span>
-  <span class="s1">&#39;ruby-1.8.7-p299&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class=
-"ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj187&#39;</span><span class="p">,</span> <span class=
-"ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">},</span>
-  <span class="s1">&#39;ruby-1.9.1-p378&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class=
-"ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj191&#39;</span><span class="p">,</span> <span class=
-"ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">},</span>
-  <span class="s1">&#39;ruby-1.9.2-head&#39;</span>   <span class="o">=&gt;</span> <span class="p">{</span><span class=
-"ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprj192&#39;</span><span class="p">,</span> <span class=
-"ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99992pre3&#39;</span><span class="p">},</span>
-  <span class="s1">&#39;ree-1.8.7-2010.02&#39;</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
-"ss">:alias</span> <span class="o">=&gt;</span> <span class="s1">&#39;myprjree&#39;</span><span class="p">,</span> <span class=
-"ss">:odbc</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.99991&#39;</span><span class="p">}</span>
-<span class="p">}</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="constant">MYPROJECT_RUBIES</span> = {
+  <span class="string"><span class="delimiter">'</span><span class="content">ruby-1.8.6-p388</span><span class=
+"delimiter">'</span></span>   =&gt; {<span class="symbol">:alias</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">myprj186</span><span class="delimiter">'</span></span>, <span class="symbol">:odbc</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">0.99991</span><span class="delimiter">'</span></span>},
+  <span class="string"><span class="delimiter">'</span><span class="content">ruby-1.8.7-p299</span><span class=
+"delimiter">'</span></span>   =&gt; {<span class="symbol">:alias</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">myprj187</span><span class="delimiter">'</span></span>, <span class="symbol">:odbc</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">0.99991</span><span class="delimiter">'</span></span>},
+  <span class="string"><span class="delimiter">'</span><span class="content">ruby-1.9.1-p378</span><span class=
+"delimiter">'</span></span>   =&gt; {<span class="symbol">:alias</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">myprj191</span><span class="delimiter">'</span></span>, <span class="symbol">:odbc</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">0.99991</span><span class="delimiter">'</span></span>},
+  <span class="string"><span class="delimiter">'</span><span class="content">ruby-1.9.2-head</span><span class=
+"delimiter">'</span></span>   =&gt; {<span class="symbol">:alias</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">myprj192</span><span class="delimiter">'</span></span>, <span class="symbol">:odbc</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">0.99992pre3</span><span class="delimiter">'</span></span>},
+  <span class="string"><span class="delimiter">'</span><span class="content">ree-1.8.7-2010.02</span><span class=
+"delimiter">'</span></span> =&gt; {<span class="symbol">:alias</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">myprjree</span><span class="delimiter">'</span></span>, <span class="symbol">:odbc</span> =&gt; <span class="string"><span class=
+"delimiter">'</span><span class="content">0.99991</span><span class="delimiter">'</span></span>}
+}
 
-<span class="n">namespace</span> <span class="ss">:rvm</span> <span class="k">do</span>
+namespace <span class="symbol">:rvm</span> <span class="keyword">do</span>
 
-  <span class="n">task</span> <span class="ss">:setup</span> <span class="k">do</span>
-    <span class="k">unless</span> <span class="vi">@rvm_setup</span>
-      <span class="n">rvm_lib_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
-"sb">`echo $rvm_path`</span><span class="o">.</span><span class="n">strip</span><span class="si">}</span><span class="s2">/lib&quot;</span>
-      <span class="vg">$LOAD_PATH</span><span class="o">.</span><span class="n">unshift</span><span class="p">(</span><span class=
-"n">rvm_lib_path</span><span class="p">)</span> <span class="k">unless</span> <span class="vg">$LOAD_PATH</span><span class="o">.</span><span class=
-"n">include?</span><span class="p">(</span><span class="n">rvm_lib_path</span><span class="p">)</span>
-      <span class="nb">require</span> <span class="s1">&#39;rvm&#39;</span>
-      <span class="nb">require</span> <span class="s1">&#39;tmpdir&#39;</span>
-      <span class="vi">@rvm_setup</span> <span class="o">=</span> <span class="kp">true</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
+  task <span class="symbol">:setup</span> <span class="keyword">do</span>
+    <span class="keyword">unless</span> <span class="instance-variable">@rvm_setup</span>
+      rvm_lib_path = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
+"inline-delimiter">#{</span><span class="shell"><span class="delimiter">`</span><span class="content">echo $rvm_path</span><span class=
+"delimiter">`</span></span>.strip<span class="inline-delimiter">}</span></span><span class="content">/lib</span><span class=
+"delimiter">&quot;</span></span>
+      <span class="global-variable">$LOAD_PATH</span>.unshift(rvm_lib_path) <span class="keyword">unless</span> <span class=
+"global-variable">$LOAD_PATH</span>.include?(rvm_lib_path)
+      require <span class="string"><span class="delimiter">'</span><span class="content">rvm</span><span class="delimiter">'</span></span>
+      require <span class="string"><span class="delimiter">'</span><span class="content">tmpdir</span><span class="delimiter">'</span></span>
+      <span class="instance-variable">@rvm_setup</span> = <span class="predefined-constant">true</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
 
-  <span class="n">namespace</span> <span class="ss">:install</span> <span class="k">do</span>
+  namespace <span class="symbol">:install</span> <span class="keyword">do</span>
 
-    <span class="n">task</span> <span class="ss">:all</span> <span class="o">=&gt;</span> <span class="o">[</span><span class=
-"ss">:setup</span><span class="p">,</span><span class="ss">:rubies</span><span class="p">,</span><span class="ss">:odbc</span><span class=
-"p">,</span><span class="ss">:gems</span><span class="o">]</span>
+    task <span class="symbol">:all</span> =&gt; [<span class="symbol">:setup</span>,<span class="symbol">:rubies</span>,<span class=
+"symbol">:odbc</span>,<span class="symbol">:gems</span>]
 
-    <span class="n">task</span> <span class="ss">:rubies</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
-      <span class="n">installed_rubies</span> <span class="o">=</span> <span class="no">RVM</span><span class="o">.</span><span class=
-"n">list_strings</span>
-      <span class="no">MYPROJECT_RUBIES</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class=
-"n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">rubie</span><span class="o">|</span>
-        <span class="k">if</span> <span class="n">installed_rubies</span><span class="o">.</span><span class="n">include?</span><span class=
-"p">(</span><span class="n">rubie</span><span class="p">)</span>
-          <span class="nb">puts</span> <span class="s2">&quot;info: Rubie </span><span class="si">#{</span><span class="n">rubie</span><span class=
-"si">}</span><span class="s2"> already installed.&quot;</span>
-        <span class="k">else</span>
-          <span class="n">with_my_environment_vars</span> <span class="k">do</span>
-            <span class="n">good_msg</span> <span class="o">=</span> <span class="s2">&quot;info: Rubie </span><span class="si">#{</span><span class=
-"n">rubie</span><span class="si">}</span><span class="s2"> installed.&quot;</span>
-            <span class="n">bad_msg</span> <span class="o">=</span> <span class="s2">&quot;Failed </span><span class="si">#{</span><span class=
-"n">rubie</span><span class="si">}</span><span class="s2"> install! Check RVM logs here: </span><span class="si">#{</span><span class=
-"no">RVM</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">/log/</span><span class=
-"si">#{</span><span class="n">rubie</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="nb">puts</span> <span class="s2">&quot;info: Rubie </span><span class="si">#{</span><span class="n">rubie</span><span class=
-"si">}</span><span class="s2"> installation inprogress. This could take awhile...&quot;</span>
-            <span class="no">RVM</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class=
-"n">rubie</span><span class="p">,</span><span class="n">rvm_install_options</span><span class="p">)</span> <span class="p">?</span> <span class=
-"nb">puts</span><span class="p">(</span><span class="n">good_msg</span><span class="p">)</span> <span class="p">:</span> <span class=
-"nb">abort</span><span class="p">(</span><span class="n">bad_msg</span><span class="p">)</span>
-          <span class="k">end</span>
-        <span class="k">end</span>
-        <span class="no">RVM</span><span class="o">.</span><span class="n">alias_create</span> <span class="no">MYPROJECT_RUBIES</span><span class=
-"o">[</span><span class="n">rubie</span><span class="o">][</span><span class="ss">:alias</span><span class="o">]</span><span class=
-"p">,</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class=
-"s2">@myproject&quot;</span>
-      <span class="k">end</span>
-    <span class="k">end</span>
+    task <span class="symbol">:rubies</span> =&gt; <span class="symbol">:setup</span> <span class="keyword">do</span>
+      installed_rubies = <span class="constant">RVM</span>.list_strings
+      <span class="constant">MYPROJECT_RUBIES</span>.keys.each <span class="keyword">do</span> |rubie|
+        <span class="keyword">if</span> installed_rubies.include?(rubie)
+          puts <span class="string"><span class="delimiter">&quot;</span><span class="content">info: Rubie </span><span class="inline"><span class=
+"inline-delimiter">#{</span>rubie<span class="inline-delimiter">}</span></span><span class="content"> already installed.</span><span class=
+"delimiter">&quot;</span></span>
+        <span class="keyword">else</span>
+          with_my_environment_vars <span class="keyword">do</span>
+            good_msg = <span class="string"><span class="delimiter">&quot;</span><span class="content">info: Rubie </span><span class=
+"inline"><span class="inline-delimiter">#{</span>rubie<span class="inline-delimiter">}</span></span><span class=
+"content"> installed.</span><span class="delimiter">&quot;</span></span>
+            bad_msg = <span class="string"><span class="delimiter">&quot;</span><span class="content">Failed </span><span class="inline"><span class=
+"inline-delimiter">#{</span>rubie<span class="inline-delimiter">}</span></span><span class=
+"content"> install! Check RVM logs here: </span><span class="inline"><span class="inline-delimiter">#{</span><span class=
+"constant">RVM</span>.path<span class="inline-delimiter">}</span></span><span class="content">/log/</span><span class="inline"><span class=
+"inline-delimiter">#{</span>rubie<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+            puts <span class="string"><span class="delimiter">&quot;</span><span class="content">info: Rubie </span><span class="inline"><span class=
+"inline-delimiter">#{</span>rubie<span class="inline-delimiter">}</span></span><span class=
+"content"> installation inprogress. This could take awhile...</span><span class="delimiter">&quot;</span></span>
+            <span class="constant">RVM</span>.install(rubie,rvm_install_options) ? puts(good_msg) : abort(bad_msg)
+          <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="constant">RVM</span>.alias_create <span class="constant">MYPROJECT_RUBIES</span>[rubie][<span class=
+"symbol">:alias</span>], <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
+"inline-delimiter">#{</span>rubie<span class="inline-delimiter">}</span></span><span class="content">@myproject</span><span class=
+"delimiter">&quot;</span></span>
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
 
-    <span class="n">task</span> <span class="ss">:odbc</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
-      <span class="n">rvm_each_rubie</span> <span class="k">do</span>
-        <span class="n">odbc</span> <span class="o">=</span> <span class="s2">&quot;ruby-odbc-</span><span class="si">#{</span><span class=
-"n">myproject_current_rubie_info</span><span class="o">[</span><span class="ss">:odbc</span><span class="o">]</span><span class=
-"si">}</span><span class="s2">&quot;</span>
-        <span class="no">RVM</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class=
-"no">Dir</span><span class="o">.</span><span class="n">tmpdir</span><span class="p">)</span> <span class="k">do</span>
-          <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;rm -rf </span><span class=
-"si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">*&quot;</span>
-          <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC downloading </span><span class="si">#{</span><span class=
-"n">odbc</span><span class="si">}</span><span class="s2">...&quot;</span>
-          <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class=
-"s2">&quot;curl -O http://www.ch-werner.de/rubyodbc/</span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class=
-"s2">.tar.gz&quot;</span>
-          <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC extracting clean work directory...&quot;</span>
-          <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;tar -xf </span><span class=
-"si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">.tar.gz&quot;</span>
-          <span class="no">RVM</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class=
-"s2">&quot;</span><span class="si">#{</span><span class="n">odbc</span><span class="si">}</span><span class="s2">/ext&quot;</span><span class=
-"p">)</span> <span class="k">do</span>
-            <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC configuring...&quot;</span>
-            <span class="no">RVM</span><span class="o">.</span><span class="n">ruby</span> <span class="s1">&#39;extconf.rb&#39;</span><span class=
-"p">,</span> <span class="s2">&quot;--with-odbc-dir=</span><span class="si">#{</span><span class="n">rvm_odbc_dir</span><span class=
-"si">}</span><span class="s2">&quot;</span>
-            <span class="nb">puts</span> <span class="s2">&quot;info: RubyODBC make and installing for </span><span class="si">#{</span><span class=
-"n">rvm_current_name</span><span class="si">}</span><span class="s2">...&quot;</span>
-            <span class="no">RVM</span><span class="o">.</span><span class="n">run</span> <span class=
-"s2">&quot;make &amp;&amp; make install&quot;</span>
-          <span class="k">end</span>
-        <span class="k">end</span>
-      <span class="k">end</span>
-    <span class="k">end</span>
+    task <span class="symbol">:odbc</span> =&gt; <span class="symbol">:setup</span> <span class="keyword">do</span>
+      rvm_each_rubie <span class="keyword">do</span>
+        odbc = <span class="string"><span class="delimiter">&quot;</span><span class="content">ruby-odbc-</span><span class="inline"><span class=
+"inline-delimiter">#{</span>myproject_current_rubie_info[<span class="symbol">:odbc</span>]<span class="inline-delimiter">}</span></span><span class=
+"delimiter">&quot;</span></span>
+        <span class="constant">RVM</span>.chdir(<span class="constant">Dir</span>.tmpdir) <span class="keyword">do</span>
+          <span class="constant">RVM</span>.run <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">rm -rf </span><span class="inline"><span class="inline-delimiter">#{</span>odbc<span class="inline-delimiter">}</span></span><span class=
+"content">*</span><span class="delimiter">&quot;</span></span>
+          puts <span class="string"><span class="delimiter">&quot;</span><span class="content">info: RubyODBC downloading </span><span class=
+"inline"><span class="inline-delimiter">#{</span>odbc<span class="inline-delimiter">}</span></span><span class="content">...</span><span class=
+"delimiter">&quot;</span></span>
+          <span class="constant">RVM</span>.run <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">curl -O http://www.ch-werner.de/rubyodbc/</span><span class="inline"><span class="inline-delimiter">#{</span>odbc<span class=
+"inline-delimiter">}</span></span><span class="content">.tar.gz</span><span class="delimiter">&quot;</span></span>
+          puts <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">info: RubyODBC extracting clean work directory...</span><span class="delimiter">&quot;</span></span>
+          <span class="constant">RVM</span>.run <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">tar -xf </span><span class="inline"><span class="inline-delimiter">#{</span>odbc<span class="inline-delimiter">}</span></span><span class=
+"content">.tar.gz</span><span class="delimiter">&quot;</span></span>
+          <span class="constant">RVM</span>.chdir(<span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
+"inline-delimiter">#{</span>odbc<span class="inline-delimiter">}</span></span><span class="content">/ext</span><span class=
+"delimiter">&quot;</span></span>) <span class="keyword">do</span>
+            puts <span class="string"><span class="delimiter">&quot;</span><span class="content">info: RubyODBC configuring...</span><span class=
+"delimiter">&quot;</span></span>
+            <span class="constant">RVM</span>.ruby <span class="string"><span class="delimiter">'</span><span class=
+"content">extconf.rb</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">--with-odbc-dir=</span><span class="inline"><span class="inline-delimiter">#{</span>rvm_odbc_dir<span class=
+"inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+            puts <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">info: RubyODBC make and installing for </span><span class="inline"><span class="inline-delimiter">#{</span>rvm_current_name<span class=
+"inline-delimiter">}</span></span><span class="content">...</span><span class="delimiter">&quot;</span></span>
+            <span class="constant">RVM</span>.run <span class="string"><span class="delimiter">&quot;</span><span class=
+"content">make &amp;&amp; make install</span><span class="delimiter">&quot;</span></span>
+          <span class="keyword">end</span>
+        <span class="keyword">end</span>
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
 
-    <span class="n">task</span> <span class="ss">:gems</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
-      <span class="nb">puts</span> <span class="s2">&quot;info: Installing our app gems.&quot;</span>
-      <span class="n">rvm_each_rubie</span> <span class="k">do</span>
-        <span class="n">myproject_gem_specs</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class=
-"o">|</span><span class="n">spec</span><span class="o">|</span> <span class="n">rvm_install_gem</span><span class="p">(</span><span class=
-"n">spec</span><span class="p">)</span> <span class="p">}</span>
-      <span class="k">end</span>
-    <span class="k">end</span>
+    task <span class="symbol">:gems</span> =&gt; <span class="symbol">:setup</span> <span class="keyword">do</span>
+      puts <span class="string"><span class="delimiter">&quot;</span><span class="content">info: Installing our app gems.</span><span class=
+"delimiter">&quot;</span></span>
+      rvm_each_rubie <span class="keyword">do</span>
+        myproject_gem_specs.each { |spec| rvm_install_gem(spec) }
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
 
-  <span class="k">end</span>
+  <span class="keyword">end</span>
 
-  <span class="n">task</span> <span class="ss">:remove</span> <span class="o">=&gt;</span> <span class="ss">:setup</span> <span class="k">do</span>
-    <span class="n">myproject_rubies</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class=
-"o">|</span><span class="n">rubie</span><span class="o">|</span> <span class="no">RVM</span><span class="o">.</span><span class=
-"n">remove</span><span class="p">(</span><span class="n">rubie</span><span class="p">)</span> <span class="p">}</span>
-  <span class="k">end</span>
+  task <span class="symbol">:remove</span> =&gt; <span class="symbol">:setup</span> <span class="keyword">do</span>
+    myproject_rubies.each { |rubie| <span class="constant">RVM</span>.remove(rubie) }
+  <span class="keyword">end</span>
 
-<span class="k">end</span>
+<span class="keyword">end</span>
 
 
-<span class="k">def</span> <span class="nf">myproject_rubies</span>
-  <span class="no">MYPROJECT_RUBIES</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class=
-"n">map</span><span class="p">{</span> <span class="o">|</span><span class="n">rubie</span><span class="o">|</span> <span class=
-"s2">&quot;</span><span class="si">#{</span><span class="n">rubie</span><span class="si">}</span><span class=
-"s2">@myproject&quot;</span> <span class="p">}</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">myproject_rubies</span>
+  <span class="constant">MYPROJECT_RUBIES</span>.keys.map{ |rubie| <span class="string"><span class="delimiter">&quot;</span><span class=
+"inline"><span class="inline-delimiter">#{</span>rubie<span class="inline-delimiter">}</span></span><span class=
+"content">@myproject</span><span class="delimiter">&quot;</span></span> }
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">myproject_current_rubie_info</span>
-  <span class="no">MYPROJECT_RUBIES</span><span class="o">[</span><span class="n">rvm_current_rubie_name</span><span class="o">]</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">myproject_current_rubie_info</span>
+  <span class="constant">MYPROJECT_RUBIES</span>[rvm_current_rubie_name]
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">myproject_gem_specs</span>
-  <span class="o">[</span>
-    <span class="o">[</span><span class="s1">&#39;rails&#39;</span><span class="p">,</span><span class="s1">&#39;2.3.8&#39;</span><span class=
-"o">]</span><span class="p">,</span>
-    <span class="o">[</span><span class="s1">&#39;activerecord-sqlserver-adapter&#39;</span><span class="p">,</span><span class=
-"s1">&#39;2.3.8&#39;</span><span class="o">]</span><span class="p">,</span>
-    <span class="o">[</span><span class="s1">&#39;erubis&#39;</span><span class="p">,</span><span class="s1">&#39;2.6.6&#39;</span><span class=
-"o">]</span><span class="p">,</span>
-    <span class="o">[</span><span class="s1">&#39;haml&#39;</span><span class="p">,</span><span class="s1">&#39;3.0.13&#39;</span><span class=
-"o">]</span><span class="p">,</span>
-    <span class="o">[</span><span class="s1">&#39;mocha&#39;</span><span class="p">,</span><span class="s1">&#39;0.9.8&#39;</span><span class=
-"o">]</span><span class="p">,</span>
-  <span class="o">]</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">myproject_gem_specs</span>
+  [
+    [<span class="string"><span class="delimiter">'</span><span class="content">rails</span><span class="delimiter">'</span></span>,<span class=
+"string"><span class="delimiter">'</span><span class="content">2.3.8</span><span class="delimiter">'</span></span>],
+    [<span class="string"><span class="delimiter">'</span><span class="content">activerecord-sqlserver-adapter</span><span class=
+"delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">2.3.8</span><span class=
+"delimiter">'</span></span>],
+    [<span class="string"><span class="delimiter">'</span><span class="content">erubis</span><span class="delimiter">'</span></span>,<span class=
+"string"><span class="delimiter">'</span><span class="content">2.6.6</span><span class="delimiter">'</span></span>],
+    [<span class="string"><span class="delimiter">'</span><span class="content">haml</span><span class="delimiter">'</span></span>,<span class=
+"string"><span class="delimiter">'</span><span class="content">3.0.13</span><span class="delimiter">'</span></span>],
+    [<span class="string"><span class="delimiter">'</span><span class="content">mocha</span><span class="delimiter">'</span></span>,<span class=
+"string"><span class="delimiter">'</span><span class="content">0.9.8</span><span class="delimiter">'</span></span>],
+  ]
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">rvm_each_rubie</span>
-  <span class="n">myproject_rubies</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class=
-"o">|</span><span class="n">rubie</span><span class="o">|</span>
-    <span class="no">RVM</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">rubie</span><span class=
-"p">)</span>
-    <span class="k">yield</span>
-  <span class="k">end</span>
-<span class="k">ensure</span>
-  <span class="no">RVM</span><span class="o">.</span><span class="n">reset_current!</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">rvm_each_rubie</span>
+  myproject_rubies.each <span class="keyword">do</span> |rubie|
+    <span class="constant">RVM</span>.use(rubie)
+    <span class="keyword">yield</span>
+  <span class="keyword">end</span>
+<span class="keyword">ensure</span>
+  <span class="constant">RVM</span>.reset_current!
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">rvm_current_rubie_name</span>
-  <span class="n">rvm_current_name</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class=
-"s1">&#39;@myproject&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">rvm_current_rubie_name</span>
+  rvm_current_name.sub(<span class="string"><span class="delimiter">'</span><span class="content">@myproject</span><span class=
+"delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="delimiter">'</span></span>)
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">rvm_current_name</span>
-  <span class="no">RVM</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">expanded_name</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">rvm_current_name</span>
+  <span class="constant">RVM</span>.current.expanded_name
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">rvm_gem_available?</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-  <span class="n">gem</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">spec</span>
-  <span class="no">RVM</span><span class="o">.</span><span class="n">ruby_eval</span><span class="p">(</span><span class=
-"s2">&quot;require &#39;rubygems&#39; ; print Gem.available?(&#39;</span><span class="si">#{</span><span class="n">gem</span><span class=
-"si">}</span><span class="s2">&#39;,&#39;</span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class=
-"s2">&#39;)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">stdout</span> <span class="o">==</span> <span class=
-"s1">&#39;true&#39;</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">rvm_gem_available?</span>(spec)
+  gem, version = spec
+  <span class="constant">RVM</span>.ruby_eval(<span class="string"><span class="delimiter">&quot;</span><span class=
+"content">require 'rubygems' ; print Gem.available?('</span><span class="inline"><span class="inline-delimiter">#{</span>gem<span class=
+"inline-delimiter">}</span></span><span class="content">','</span><span class="inline"><span class="inline-delimiter">#{</span>version<span class=
+"inline-delimiter">}</span></span><span class="content">')</span><span class="delimiter">&quot;</span></span>).stdout == <span class=
+"string"><span class="delimiter">'</span><span class="content">true</span><span class="delimiter">'</span></span>
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">rvm_install_gem</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-  <span class="n">gem</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">spec</span>
-  <span class="k">if</span> <span class="n">rvm_gem_available?</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-    <span class="nb">puts</span> <span class="s2">&quot;info: Gem </span><span class="si">#{</span><span class="n">gem</span><span class=
-"si">}</span><span class="s2">-</span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class=
-"s2"> already installed in </span><span class="si">#{</span><span class="n">rvm_current_name</span><span class="si">}</span><span class=
-"s2">.&quot;</span>
-  <span class="k">else</span>
-    <span class="nb">puts</span> <span class="s2">&quot;info: Installing gem </span><span class="si">#{</span><span class="n">gem</span><span class=
-"si">}</span><span class="s2">-</span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class=
-"s2"> in </span><span class="si">#{</span><span class="n">rvm_current_name</span><span class="si">}</span><span class="s2">...&quot;</span>
-    <span class="nb">puts</span> <span class="no">RVM</span><span class="o">.</span><span class="n">perform_set_operation</span><span class=
-"p">(</span><span class="ss">:gem</span><span class="p">,</span><span class="s1">&#39;install&#39;</span><span class="p">,</span><span class=
-"n">gem</span><span class="p">,</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span><span class="n">version</span><span class=
-"p">)</span><span class="o">.</span><span class="n">stdout</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">rvm_install_gem</span>(spec)
+  gem, version = spec
+  <span class="keyword">if</span> rvm_gem_available?(spec)
+    puts <span class="string"><span class="delimiter">&quot;</span><span class="content">info: Gem </span><span class="inline"><span class=
+"inline-delimiter">#{</span>gem<span class="inline-delimiter">}</span></span><span class="content">-</span><span class="inline"><span class=
+"inline-delimiter">#{</span>version<span class="inline-delimiter">}</span></span><span class="content"> already installed in </span><span class=
+"inline"><span class="inline-delimiter">#{</span>rvm_current_name<span class="inline-delimiter">}</span></span><span class=
+"content">.</span><span class="delimiter">&quot;</span></span>
+  <span class="keyword">else</span>
+    puts <span class="string"><span class="delimiter">&quot;</span><span class="content">info: Installing gem </span><span class=
+"inline"><span class="inline-delimiter">#{</span>gem<span class="inline-delimiter">}</span></span><span class="content">-</span><span class=
+"inline"><span class="inline-delimiter">#{</span>version<span class="inline-delimiter">}</span></span><span class="content"> in </span><span class=
+"inline"><span class="inline-delimiter">#{</span>rvm_current_name<span class="inline-delimiter">}</span></span><span class=
+"content">...</span><span class="delimiter">&quot;</span></span>
+    puts <span class="constant">RVM</span>.perform_set_operation(<span class="symbol">:gem</span>,<span class="string"><span class=
+"delimiter">'</span><span class="content">install</span><span class="delimiter">'</span></span>,gem,<span class="string"><span class=
+"delimiter">'</span><span class="content">-v</span><span class="delimiter">'</span></span>,version).stdout
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">for_macports?</span>
-  <span class="sb">`uname`</span><span class="o">.</span><span class="n">strip</span> <span class="o">==</span> <span class=
-"s1">&#39;Darwin&#39;</span> <span class="o">&amp;&amp;</span> <span class="sb">`which port`</span><span class="o">.</span><span class=
-"n">present?</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">for_macports?</span>
+  <span class="shell"><span class="delimiter">`</span><span class="content">uname</span><span class="delimiter">`</span></span>.strip == <span class=
+"string"><span class="delimiter">'</span><span class="content">Darwin</span><span class="delimiter">'</span></span> &amp;&amp; <span class=
+"shell"><span class="delimiter">`</span><span class="content">which port</span><span class="delimiter">`</span></span>.present?
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">rvm_install_options</span>
-  <span class="p">{}</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">rvm_install_options</span>
+  {}
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">my_environment_vars</span>
-  <span class="k">if</span> <span class="n">for_macports?</span>
-    <span class="p">{</span><span class="s1">&#39;CC&#39;</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;/usr/bin/gcc-4.2&#39;</span><span class="p">,</span>
-     <span class="s1">&#39;CFLAGS&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-O2 -arch x86_64&#39;</span><span class="p">,</span>
-     <span class="s1">&#39;LDFLAGS&#39;</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;-L/opt/local/lib -arch x86_64&#39;</span><span class="p">,</span>
-     <span class="s1">&#39;CPPFLAGS&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-I/opt/local/include&#39;</span><span class=
-"p">}</span>
-  <span class="k">else</span>
-    <span class="p">{}</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">my_environment_vars</span>
+  <span class="keyword">if</span> for_macports?
+    {<span class="string"><span class="delimiter">'</span><span class="content">CC</span><span class="delimiter">'</span></span> =&gt; <span class=
+"string"><span class="delimiter">'</span><span class="content">/usr/bin/gcc-4.2</span><span class="delimiter">'</span></span>,
+     <span class="string"><span class="delimiter">'</span><span class="content">CFLAGS</span><span class=
+"delimiter">'</span></span> =&gt; <span class="string"><span class="delimiter">'</span><span class="content">-O2 -arch x86_64</span><span class=
+"delimiter">'</span></span>,
+     <span class="string"><span class="delimiter">'</span><span class="content">LDFLAGS</span><span class=
+"delimiter">'</span></span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
+"content">-L/opt/local/lib -arch x86_64</span><span class="delimiter">'</span></span>,
+     <span class="string"><span class="delimiter">'</span><span class="content">CPPFLAGS</span><span class=
+"delimiter">'</span></span> =&gt; <span class="string"><span class="delimiter">'</span><span class="content">-I/opt/local/include</span><span class=
+"delimiter">'</span></span>}
+  <span class="keyword">else</span>
+    {}
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">rvm_odbc_dir</span>
-  <span class="n">for_macports?</span> <span class="p">?</span> <span class="s1">&#39;/opt/local&#39;</span> <span class="p">:</span> <span class=
-"s1">&#39;/usr/local&#39;</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">rvm_odbc_dir</span>
+  for_macports? ? <span class="string"><span class="delimiter">'</span><span class="content">/opt/local</span><span class=
+"delimiter">'</span></span> : <span class="string"><span class="delimiter">'</span><span class="content">/usr/local</span><span class=
+"delimiter">'</span></span>
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">set_environment_vars</span><span class="p">(</span><span class="n">vars</span><span class="p">)</span>
-  <span class="n">vars</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class=
-"n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="no">ENV</span><span class="o">[</span><span class=
-"n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">v</span> <span class="p">}</span>
-<span class="k">end</span>
+<span class="keyword">def</span> <span class="function">set_environment_vars</span>(vars)
+  vars.each { |k,v| <span class="predefined-constant">ENV</span>[k] = v }
+<span class="keyword">end</span>
 
-<span class="k">def</span> <span class="nf">with_my_environment_vars</span>
-  <span class="n">my_vars</span> <span class="o">=</span> <span class="n">my_environment_vars</span>
-  <span class="n">current_vars</span> <span class="o">=</span> <span class="n">my_vars</span><span class="o">.</span><span class=
-"n">inject</span><span class="p">({})</span> <span class="p">{</span> <span class="o">|</span><span class="n">cvars</span><span class=
-"p">,</span><span class="n">kv</span><span class="o">|</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class=
-"o">=</span> <span class="n">kv</span> <span class="p">;</span> <span class="n">cvars</span><span class="o">[</span><span class=
-"n">k</span><span class="o">]</span> <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class="n">k</span><span class=
-"o">]</span> <span class="p">;</span> <span class="n">cvars</span> <span class="p">}</span>
-  <span class="n">set_environment_vars</span><span class="p">(</span><span class="n">my_vars</span><span class="p">)</span>
-  <span class="k">yield</span>
-<span class="k">ensure</span>
-  <span class="n">set_environment_vars</span><span class="p">(</span><span class="n">current_vars</span><span class="p">)</span>
-<span class="k">end</span>
-</code>
+<span class="keyword">def</span> <span class="function">with_my_environment_vars</span>
+  my_vars = my_environment_vars
+  current_vars = my_vars.inject({}) { |cvars,kv| k,v = kv ; cvars[k] = <span class="predefined-constant">ENV</span>[k] ; cvars }
+  set_environment_vars(my_vars)
+  <span class="keyword">yield</span>
+<span class="keyword">ensure</span>
+  set_environment_vars(current_vars)
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <h2>
             RVM Rake Task Breakdown
@@ -397,7 +404,7 @@
             </li>
             <li>
               <a href="/2009/9/5/the-ultimate-os-x-snow-leopard-stack-for-rails-development-x86_64-macports-ruby-1-8-1-9-sql-server-more">The
-              Ultimate OS X Snow Leopard Stack For Rails Development - x86_64, MacPorts, Ruby 1.8/1.9, SQL Server, SQLite3, MySQL & More</a>
+              Ultimate OS X Snow Leopard Stack For Rails Development - x86_64, MacPorts, Ruby 1.8/1.9, SQL Server, SQLite3, MySQL &amp; More</a>
             </li>
             <li>
               <a href="http://wiki.github.com/rails-sqlserver/activerecord-sqlserver-adapter/">SQL Server Adapter Wiki</a>
@@ -492,7 +499,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

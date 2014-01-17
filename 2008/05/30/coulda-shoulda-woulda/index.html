@@ -84,66 +84,66 @@
             <code>should_require_login(*actions)</code> macro method that shows off a neat example of how you could use Shoulda in your functional
             tests at the class level.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">AuthSystem</span>
-  <span class="k">module</span> <span class="nn">TestHelper</span>
-
-    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">included</span><span class=
-"p">(</span><span class="n">receiver</span><span class="p">)</span>
-      <span class="n">receiver</span><span class="o">.</span><span class="n">extend</span> <span class="no">ClassMethods</span>
-      <span class="n">receiver</span><span class="o">.</span><span class="n">send</span> <span class="ss">:include</span><span class=
-"p">,</span> <span class="no">InstanceMethods</span>
-    <span class="k">end</span>
-
-    <span class="k">module</span> <span class="nn">ClassMethods</span>
-
-      <span class="k">def</span> <span class="nf">should_require_login</span><span class="p">(</span><span class="o">*</span><span class=
-"n">actions</span><span class="p">)</span>
-        <span class="n">actions</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class=
-"o">|</span><span class="n">action</span><span class="o">|</span>
-          <span class="n">should</span> <span class="s2">&quot;Require login for &#39;</span><span class="si">#{</span><span class=
-"n">action</span><span class="si">}</span><span class="s2">&#39; action&quot;</span> <span class="k">do</span>
-            <span class="n">get</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-            <span class="n">assert_redirected_to</span><span class="p">(</span><span class="n">login_url</span><span class="p">)</span>
-          <span class="k">end</span>
-        <span class="k">end</span>
-      <span class="k">end</span>
-
-    <span class="k">end</span>
-
-    <span class="k">module</span> <span class="nn">InstanceMethods</span>
-
-      <span class="k">def</span> <span class="nf">login_as</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">u</span> <span class="o">=</span> <span class="n">users</span><span class="p">(</span><span class=
-"n">user</span><span class="p">)</span>
-          <span class="vi">@request</span><span class="o">.</span><span class="n">session</span><span class="o">[</span><span class=
-"ss">:user_id</span><span class="o">]</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">id</span>
-        <span class="k">end</span>
-      <span class="k">end</span>
-
-    <span class="k">end</span>
-
-  <span class="k">end</span>
-<span class="k">end</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">module</span> <span class="class">AuthSystem</span>
+  <span class="keyword">module</span> <span class="class">TestHelper</span>
+    
+    <span class="keyword">def</span> <span class="predefined-constant">self</span>.<span class="function">included</span>(receiver)
+      receiver.extend <span class="constant">ClassMethods</span>
+      receiver.send <span class="symbol">:include</span>, <span class="constant">InstanceMethods</span>
+    <span class="keyword">end</span>
+    
+    <span class="keyword">module</span> <span class="class">ClassMethods</span>
+      
+      <span class="keyword">def</span> <span class="function">should_require_login</span>(*actions)
+        actions.each <span class="keyword">do</span> |action|
+          should <span class="string"><span class="delimiter">&quot;</span><span class="content">Require login for '</span><span class=
+"inline"><span class="inline-delimiter">#{</span>action<span class="inline-delimiter">}</span></span><span class=
+"content">' action</span><span class="delimiter">&quot;</span></span> <span class="keyword">do</span>
+            get(action)
+            assert_redirected_to(login_url)
+          <span class="keyword">end</span>
+        <span class="keyword">end</span>
+      <span class="keyword">end</span>
+      
+    <span class="keyword">end</span>
+    
+    <span class="keyword">module</span> <span class="class">InstanceMethods</span>
+      
+      <span class="keyword">def</span> <span class="function">login_as</span>(user)
+        <span class="keyword">if</span> u = users(user)
+          <span class="instance-variable">@request</span>.session[<span class="symbol">:user_id</span>] = u.id
+        <span class="keyword">end</span>
+      <span class="keyword">end</span>
+      
+    <span class="keyword">end</span>
+    
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Here is how it would look in the controller functional test. These are all contrived examples, but I think it illustrates how Shoulda can
             be used and in general how you can make your own macros that test at a higher level.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">UsersControllerTest</span> <span class=
-"o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">TestCase</span>
-
-  <span class="n">should_require_login</span> <span class="ss">:edit</span><span class="p">,</span> <span class="ss">:update</span><span class=
-"p">,</span> <span class="ss">:etc</span>
-
-<span class="k">end</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">UsersControllerTest</span> &lt; <span class="constant">ActionController</span>::<span class=
+"constant">TestCase</span>
+  
+  should_require_login <span class="symbol">:edit</span>, <span class="symbol">:update</span>, <span class="symbol">:etc</span>
+  
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -234,7 +234,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

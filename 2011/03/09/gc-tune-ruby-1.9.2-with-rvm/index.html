@@ -77,25 +77,26 @@
             I have used this RVM hook below for awhile now. It automatically sets and unsets the proper ENV vars to GC tunes my REE. I have now
             updated it to apply the same GC settings to my newly patched 1.9.2 as well. I recommend this go into <code>~/.rvm/hooks/after_use</code>.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="bash language-bash" data-lang="bash"><span class="k">case</span> <span class="s2">&quot;$rvm_ruby_string&quot;</span> in
-  *ree*<span class="p">|</span>*ruby-1.9.2*<span class="o">)</span>
-    <span class="nb">export </span><span class="nv">RUBY_HEAP_MIN_SLOTS</span><span class="o">=</span>1000000
-    <span class="nb">export </span><span class="nv">RUBY_HEAP_SLOTS_INCREMENT</span><span class="o">=</span>1000000
-    <span class="nb">export </span><span class="nv">RUBY_HEAP_SLOTS_GROWTH_FACTOR</span><span class="o">=</span>1
-    <span class="nb">export </span><span class="nv">RUBY_GC_MALLOC_LIMIT</span><span class="o">=</span>1000000000
-    <span class="nb">export </span><span class="nv">RUBY_HEAP_FREE_MIN</span><span class="o">=</span>500000
-    <span class="nb">export </span><span class="nv">RUBY_FREE_MIN</span><span class="o">=</span><span class="nv">$RUBY_HEAP_FREE_MIN</span>
-  <span class="p">;;</span>
-  *<span class="o">)</span>
-    <span class=
-"nb">unset </span>RUBY_HEAP_MIN_SLOTS RUBY_HEAP_SLOTS_INCREMENT RUBY_HEAP_SLOTS_GROWTH_FACTOR RUBY_GC_MALLOC_LIMIT RUBY_HEAP_FREE_MIN RUBY_FREE_MIN
-  <span class=
-"p">;;</span>                                                                                                                                                                                                                                                                                                                        
-<span class="k">esac</span>
-</code>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+case &quot;$rvm_ruby_string&quot; in
+  *ree*|*ruby-1.9.2*)
+    export RUBY_HEAP_MIN_SLOTS=1000000
+    export RUBY_HEAP_SLOTS_INCREMENT=1000000
+    export RUBY_HEAP_SLOTS_GROWTH_FACTOR=1
+    export RUBY_GC_MALLOC_LIMIT=1000000000
+    export RUBY_HEAP_FREE_MIN=500000
+    export RUBY_FREE_MIN=$RUBY_HEAP_FREE_MIN
+  ;;
+  *)
+    unset RUBY_HEAP_MIN_SLOTS RUBY_HEAP_SLOTS_INCREMENT RUBY_HEAP_SLOTS_GROWTH_FACTOR RUBY_GC_MALLOC_LIMIT RUBY_HEAP_FREE_MIN RUBY_FREE_MIN
+  ;;                                                                                                                                                                                                                                                                                                                        
+esac
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -186,7 +187,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>

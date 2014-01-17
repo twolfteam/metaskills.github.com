@@ -72,106 +72,101 @@
             wanted was a nice way to send a key path, basically a string of methods signatures, to an object in the same way. I give you my simple
             <code>#try_keypath</code> method :)
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Object</span>
-  <span class="k">def</span> <span class="nf">try_keypath</span><span class="p">(</span><span class="nb">methods</span><span class=
-"p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class=
-"n">block</span><span class="p">)</span>
-    <span class="nb">methods</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class=
-"n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class=
-"n">inject</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span> <span class=
-"o">|</span><span class="n">result</span><span class="p">,</span> <span class="nb">method</span><span class="o">|</span> <span class=
-"n">result</span><span class="o">.</span><span class="n">try</span><span class="p">(</span><span class="nb">method</span><span class=
-"p">)</span> <span class="p">}</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">Object</span>
+  <span class="keyword">def</span> <span class="function">try_keypath</span>(methods, *args, &amp;block)
+    methods.to_s.split(<span class="string"><span class="delimiter">'</span><span class="content">.</span><span class=
+"delimiter">'</span></span>).inject(<span class="predefined-constant">self</span>) { |result, method| result.try(method) }
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 
-<span class="k">class</span> <span class="nc">NilClass</span>
-  <span class="k">def</span> <span class="nf">try_keypath</span><span class="p">(</span><span class="o">*</span><span class=
-"n">args</span><span class="p">)</span>
-    <span class="kp">nil</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code>
+<span class="keyword">class</span> <span class="class">NilClass</span>
+  <span class="keyword">def</span> <span class="function">try_keypath</span>(*args)
+    <span class="predefined-constant">nil</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Yup, it is that simple. Let's see how this would work. Here are a few basic classes that randomly return nested objects. So staring with
             the <code>Foo</code> object, we have the possibility to get to some deeply nested info.
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Foo</span>
-  <span class="k">def</span> <span class="nf">bar</span>
-    <span class="nb">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class=
-"mi">1</span> <span class="o">?</span> <span class="no">Bar</span><span class="o">.</span><span class="n">new</span> <span class=
-"p">:</span> <span class="kp">nil</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="keyword">class</span> <span class="class">Foo</span>
+  <span class="keyword">def</span> <span class="function">bar</span>
+    rand(<span class="integer">2</span>) == <span class="integer">1</span> ? <span class="constant">Bar</span>.new : <span class=
+"predefined-constant">nil</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 
-<span class="k">class</span> <span class="nc">Bar</span>
-  <span class="k">def</span> <span class="nf">batz</span>
-    <span class="s1">&#39;wohoo&#39;</span>
-  <span class="k">end</span>
-  <span class="k">def</span> <span class="nf">deep</span>
-    <span class="no">Deep</span><span class="o">.</span><span class="n">new</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+<span class="keyword">class</span> <span class="class">Bar</span>
+  <span class="keyword">def</span> <span class="function">batz</span>
+    <span class="string"><span class="delimiter">'</span><span class="content">wohoo</span><span class="delimiter">'</span></span>
+  <span class="keyword">end</span>
+  <span class="keyword">def</span> <span class="function">deep</span>
+    <span class="constant">Deep</span>.new
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 
-<span class="k">class</span> <span class="nc">Deep</span>
-  <span class="k">def</span> <span class="nf">info</span>
-    <span class="p">{</span><span class="ss">:winning</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">}</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code>
+<span class="keyword">class</span> <span class="class">Deep</span>
+  <span class="keyword">def</span> <span class="function">info</span>
+    {<span class="symbol">:winning</span> =&gt; <span class="predefined-constant">true</span>}
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
 </pre>
+              </div>
+            </div>
           </div>
           <p>
             Finally, here is how it would look and return different results. Man I love Ruby!
           </p>
-          <div class="highlight">
-            <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class=
-"o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7dfd0&gt;</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class=
-"ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7ddf0&gt;</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class=
-"ss">:bar</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class=
-"ss">:bar</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class=
-"ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7d4b8&gt;</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class=
-"ss">:bar</span> <span class="c1"># =&gt; nil</span>
+          <div>
+            <div class="CodeRay">
+              <div class="code">
+                <pre>
+<span class="constant">Foo</span>.new.try <span class="symbol">:bar</span> <span class="comment"># =&gt; #&lt;Bar:0x108d7dfd0&gt;</span>
+<span class="constant">Foo</span>.new.try <span class="symbol">:bar</span> <span class="comment"># =&gt; #&lt;Bar:0x108d7ddf0&gt;</span>
+<span class="constant">Foo</span>.new.try <span class="symbol">:bar</span> <span class="comment"># =&gt; nil</span>
+<span class="constant">Foo</span>.new.try <span class="symbol">:bar</span> <span class="comment"># =&gt; nil</span>
+<span class="constant">Foo</span>.new.try <span class="symbol">:bar</span> <span class="comment"># =&gt; #&lt;Bar:0x108d7d4b8&gt;</span>
+<span class="constant">Foo</span>.new.try <span class="symbol">:bar</span> <span class="comment"># =&gt; nil</span>
 
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.batz</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; &quot;wohoo&quot;</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.batz</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; &quot;wohoo&quot;</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.batz</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; nil</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.batz</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; nil</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.batz</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; nil</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.batz</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; &quot;wohoo&quot;</span>
 
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
-</code>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.deep.info</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; nil</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.deep.info</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; {:winning=&gt;true}</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.deep.info</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; nil</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.deep.info</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; nil</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.deep.info</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; {:winning=&gt;true}</span>
+<span class="constant">Foo</span>.new.try_keypath <span class="string"><span class="delimiter">'</span><span class=
+"content">bar.deep.info</span><span class="delimiter">'</span></span> <span class="comment"># =&gt; nil</span>
 </pre>
+              </div>
+            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -262,7 +257,7 @@ var disqus_shortname = 'metaskillsnet';
           <aside id="powered">
             <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
             "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
-            <span>&copy; 2006-2013 Ken Collins. All rights reserved.</span>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
           </aside>
           <aside id="html5_badge">
             <a href="http://www.w3.org/html/logo/"></a>
