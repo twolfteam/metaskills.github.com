@@ -4,6 +4,13 @@
         xmlns:video="http://www.sitemaps.org/schemas/sitemap-video/1.1">
   
   <url> 
+    <loc>http://metaskills.net/2014/03/15/mom</loc> 
+    
+    <lastmod>2014-03-15T00:00:00-04:00</lastmod>
+    
+  </url>
+  
+  <url> 
     <loc>http://metaskills.net/2013/12/15/instrumenting-your-code-with-activesupport-notifications</loc> 
     
     <lastmod>2013-12-15T00:00:00-05:00</lastmod>
