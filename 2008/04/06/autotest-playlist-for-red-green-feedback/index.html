@@ -89,7 +89,7 @@ $ sudo port install qtplay
 $ cd ~
 $ curl -O http://cdn.metaskills.net/downloads/autotest_playlist.tar
 $ tar -xf autotest_playlist.tar
-$ mv autotest_playlist .autotest_playlist &amp;&amp; rm autotest_playlist.tar
+$ mv autotest_playlist .autotest_playlist && rm autotest_playlist.tar
 </pre>
           <h2>
             Step 3: Modify Your .autotest File
@@ -101,15 +101,11 @@ $ mv autotest_playlist .autotest_playlist &amp;&amp; rm autotest_playlist.tar
             the new Alex voice in Leopard. I hijacked some text to speech and then ran an audio tool called WavePad to speed change, flange, and
             chorus the voice a little bit.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-require <span class="string"><span class="delimiter">'</span><span class="content">~/.autotest_playlist/playlist</span><span class=
-"delimiter">'</span></span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;~/.autotest_playlist/playlist&#39;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h2>
             Credits:

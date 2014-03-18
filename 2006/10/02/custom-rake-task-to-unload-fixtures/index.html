@@ -69,47 +69,50 @@
             this in "lib/tasks/foo.rake". It can take an optional TABLES variable or if none is present the whole array of DB tables are converted. I
             find this rake task helpful when dealing with LARGE databases.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-namespace <span class="symbol">:db</span> <span class="keyword">do</span>
-  namespace <span class="symbol">:fixtures</span> <span class="keyword">do</span>
-    desc <span class="string"><span class="delimiter">'</span><span class=
-"content">Create YAML test fixtures from data in specifed tables. Set table names by TABLES=foos,bars,etc</span><span class=
-"delimiter">'</span></span>
-    task <span class="symbol">:unload</span> =&gt; <span class="symbol">:environment</span> <span class="keyword">do</span>
-      sql  = <span class="string"><span class="delimiter">&quot;</span><span class="content">SELECT * FROM %s</span><span class=
-"delimiter">&quot;</span></span>
-      tables = [<span class="string"><span class="delimiter">&quot;</span><span class="content">schema_info</span><span class=
-"delimiter">&quot;</span></span>]
-      <span class="constant">ActiveRecord</span>::<span class="constant">Base</span>.establish_connection
-      (<span class="predefined-constant">ENV</span>[<span class="string"><span class="delimiter">'</span><span class=
-"content">TABLES</span><span class="delimiter">'</span></span>] ? <span class="predefined-constant">ENV</span>[<span class="string"><span class=
-"delimiter">'</span><span class="content">TABLES</span><span class="delimiter">'</span></span>].split(<span class="regexp"><span class=
-"delimiter">/</span><span class="content">,</span><span class="delimiter">/</span></span>) : <span class="constant">ActiveRecord</span>::<span class=
-"constant">Base</span>.connection.tables).each <span class="keyword">do</span> |table_name|
-        i = <span class="string"><span class="delimiter">&quot;</span><span class="content">000</span><span class="delimiter">&quot;</span></span>
-        <span class="constant">File</span>.open(<span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
-"inline-delimiter">#{</span><span class="constant">RAILS_ROOT</span><span class="inline-delimiter">}</span></span><span class=
-"content">/test/fixtures/</span><span class="inline"><span class="inline-delimiter">#{</span>table_name<span class=
-"inline-delimiter">}</span></span><span class="content">.yml</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class=
-"delimiter">'</span><span class="content">w</span><span class="delimiter">'</span></span>) <span class="keyword">do</span> |file|
-          data = <span class="constant">ActiveRecord</span>::<span class="constant">Base</span>.connection.select_all(sql % table_name)
-          file.write data.inject({}) { |hash, record|
-            hash[<span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
-"inline-delimiter">#{</span>table_name<span class="inline-delimiter">}</span></span><span class="content">_</span><span class="inline"><span class=
-"inline-delimiter">#{</span>i.succ!<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>] = record
-            hash
-          }.to_yaml
-        <span class="keyword">end</span>
-      <span class="keyword">end</span>
-    <span class="keyword">end</span>
-  <span class="keyword">end</span>
-<span class="keyword">end</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">namespace</span> <span class="ss">:db</span> <span class="k">do</span>
+  <span class="n">namespace</span> <span class="ss">:fixtures</span> <span class="k">do</span>
+    <span class="n">desc</span> <span class=
+"s1">&#39;Create YAML test fixtures from data in specifed tables. Set table names by TABLES=foos,bars,etc&#39;</span>
+    <span class="n">task</span> <span class="ss">:unload</span> <span class="o">=&gt;</span> <span class="ss">:environment</span> <span class=
+"k">do</span>
+      <span class="n">sql</span>  <span class="o">=</span> <span class="s2">&quot;SELECT * FROM %s&quot;</span>
+      <span class="n">tables</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;schema_info&quot;</span><span class=
+"o">]</span>
+      <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class=
+"n">establish_connection</span>
+      <span class="p">(</span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;TABLES&#39;</span><span class=
+"o">]</span> <span class="p">?</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;TABLES&#39;</span><span class=
+"o">].</span><span class="n">split</span><span class="p">(</span><span class="sr">/,/</span><span class="p">)</span> <span class=
+"p">:</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class=
+"n">connection</span><span class="o">.</span><span class="n">tables</span><span class="p">)</span><span class="o">.</span><span class=
+"n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">table_name</span><span class="o">|</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="s2">&quot;000&quot;</span>
+        <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class=
+"s2">&quot;</span><span class="si">#{</span><span class="no">RAILS_ROOT</span><span class="si">}</span><span class=
+"s2">/test/fixtures/</span><span class="si">#{</span><span class="n">table_name</span><span class="si">}</span><span class=
+"s2">.yml&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">do</span> <span class=
+"o">|</span><span class="n">file</span><span class="o">|</span>
+          <span class="n">data</span> <span class="o">=</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class=
+"no">Base</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">select_all</span><span class=
+"p">(</span><span class="n">sql</span> <span class="o">%</span> <span class="n">table_name</span><span class="p">)</span>
+          <span class="n">file</span><span class="o">.</span><span class="n">write</span> <span class="n">data</span><span class=
+"o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="p">{</span> <span class="o">|</span><span class=
+"nb">hash</span><span class="p">,</span> <span class="n">record</span><span class="o">|</span>
+            <span class="nb">hash</span><span class="o">[</span><span class="s2">&quot;</span><span class="si">#{</span><span class=
+"n">table_name</span><span class="si">}</span><span class="s2">_</span><span class="si">#{</span><span class="n">i</span><span class=
+"o">.</span><span class="n">succ!</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">record</span>
+            <span class="nb">hash</span>
+          <span class="p">}</span><span class="o">.</span><span class="n">to_yaml</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">

@@ -81,86 +81,79 @@
             your own copy of Leopard's Terminal.app then just right click on the app, show package contents, and edit the Info.plist file. Remember
             to rename the app to VisorTerminal.app.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="tag">&lt;key&gt;</span>CFBundleDisplayName<span class="tag">&lt;/key&gt;</span>
-<span class="tag">&lt;string&gt;</span>VisorTerminal<span class="tag">&lt;/string&gt;</span>
+          <div class="highlight">
+            <pre>
+<code class="html language-html" data-lang="html"><span class="nt">&lt;key&gt;</span>CFBundleDisplayName<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>VisorTerminal<span class="nt">&lt;/string&gt;</span>
 ...
-<span class="tag">&lt;key&gt;</span>CFBundleIdentifier<span class="tag">&lt;/key&gt;</span>
-<span class="tag">&lt;string&gt;</span>com.apple.VisorTerminal<span class="tag">&lt;/string&gt;</span>
+<span class="nt">&lt;key&gt;</span>CFBundleIdentifier<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>com.apple.VisorTerminal<span class="nt">&lt;/string&gt;</span>
 ...
-<span class="tag">&lt;key&gt;</span>CFBundleName<span class="tag">&lt;/key&gt;</span>
-<span class="tag">&lt;string&gt;</span>VisorTerminal<span class="tag">&lt;/string&gt;</span>
+<span class="nt">&lt;key&gt;</span>CFBundleName<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>VisorTerminal<span class="nt">&lt;/string&gt;</span>
 ...
-<span class="tag">&lt;key&gt;</span>LSUIElement<span class="tag">&lt;/key&gt;</span>
-<span class="tag">&lt;string&gt;</span>1<span class="tag">&lt;/string&gt;</span>
+<span class="nt">&lt;key&gt;</span>LSUIElement<span class="nt">&lt;/key&gt;</span>
+<span class="nt">&lt;string&gt;</span>1<span class="nt">&lt;/string&gt;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Now we need to edit the installed <code>~/Library/Application Support/SIMBL/Plugins/Visor.bundle</code> so that it focuses on the old
             Leopard's terminal app (now VisorTerminal.app). Again right click on it and show the package contents, here is the complete plist below.
             You can see where I changed 3 places to VisorTerminal.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+          <div class="highlight">
+            <pre>
+<code class="html language-html" data-lang="html"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
 <span class=
-"doctype">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
-<span class="tag">&lt;plist</span> <span class="attribute-name">version</span>=<span class="string"><span class="delimiter">&quot;</span><span class=
-"content">1.0</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
-<span class="tag">&lt;dict&gt;</span>
-  <span class="tag">&lt;key&gt;</span>CFBundleDevelopmentRegion<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;string&gt;</span>English<span class="tag">&lt;/string&gt;</span>
-  <span class="tag">&lt;key&gt;</span>CFBundleExecutable<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;string&gt;</span>Visor<span class="tag">&lt;/string&gt;</span>
-  <span class="tag">&lt;key&gt;</span>CFBundleIdentifier<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;string&gt;</span>com.blacktree.visor<span class="tag">&lt;/string&gt;</span>
-  <span class="tag">&lt;key&gt;</span>CFBundleInfoDictionaryVersion<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;string&gt;</span>6.0<span class="tag">&lt;/string&gt;</span>
-  <span class="tag">&lt;key&gt;</span>CFBundleName<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;string&gt;</span>Visor<span class="tag">&lt;/string&gt;</span>
-  <span class="tag">&lt;key&gt;</span>CFBundlePackageType<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;string&gt;</span>BNDL<span class="tag">&lt;/string&gt;</span>
-  <span class="tag">&lt;key&gt;</span>CFBundleSignature<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;string&gt;</span>????<span class="tag">&lt;/string&gt;</span>
-  <span class="tag">&lt;key&gt;</span>CFBundleVersion<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;string&gt;</span>Custom<span class="tag">&lt;/string&gt;</span>
-  <span class="tag">&lt;key&gt;</span>GoogleML<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;dict&gt;</span>
-    <span class="tag">&lt;key&gt;</span>TargetApplications<span class="tag">&lt;/key&gt;</span>
-    <span class="tag">&lt;array&gt;</span>
-      <span class="tag">&lt;dict&gt;</span>
-        <span class="tag">&lt;key&gt;</span>BundleIdentifier<span class="tag">&lt;/key&gt;</span>
-        <span class="tag">&lt;string&gt;</span>com.apple.VisorTerminal<span class="tag">&lt;/string&gt;</span>
-        <span class="tag">&lt;key&gt;</span>BundleVersionsRE<span class="tag">&lt;/key&gt;</span>
-        <span class="tag">&lt;array&gt;</span>
-          <span class="tag">&lt;string&gt;</span>.*<span class="tag">&lt;/string&gt;</span>
-        <span class="tag">&lt;/array&gt;</span>
-        <span class="tag">&lt;key&gt;</span>ExecPattern<span class="tag">&lt;/key&gt;</span>
-        <span class="tag">&lt;string&gt;</span>*/VisorTerminal.app/Contents/MacOS/Terminal<span class="tag">&lt;/string&gt;</span>
-      <span class="tag">&lt;/dict&gt;</span>
-    <span class="tag">&lt;/array&gt;</span>
-  <span class="tag">&lt;/dict&gt;</span>
-  <span class="tag">&lt;key&gt;</span>NSPrincipalClass<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;string&gt;</span>Visor<span class="tag">&lt;/string&gt;</span>
-  <span class="tag">&lt;key&gt;</span>SIMBLTargetApplications<span class="tag">&lt;/key&gt;</span>
-  <span class="tag">&lt;array&gt;</span>
-    <span class="tag">&lt;dict&gt;</span>
-      <span class="tag">&lt;key&gt;</span>BundleIdentifier<span class="tag">&lt;/key&gt;</span>
-      <span class="tag">&lt;string&gt;</span>com.apple.VisorTerminal<span class="tag">&lt;/string&gt;</span>
-    <span class="tag">&lt;/dict&gt;</span>
-  <span class="tag">&lt;/array&gt;</span>
-<span class="tag">&lt;/dict&gt;</span>
-<span class="tag">&lt;/plist&gt;</span>
+"cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;dict&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleDevelopmentRegion<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>English<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleExecutable<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>Visor<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleIdentifier<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>com.blacktree.visor<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleInfoDictionaryVersion<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>6.0<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleName<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>Visor<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundlePackageType<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>BNDL<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleSignature<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>????<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>CFBundleVersion<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>Custom<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>GoogleML<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;dict&gt;</span>
+    <span class="nt">&lt;key&gt;</span>TargetApplications<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;array&gt;</span>
+      <span class="nt">&lt;dict&gt;</span>
+        <span class="nt">&lt;key&gt;</span>BundleIdentifier<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;string&gt;</span>com.apple.VisorTerminal<span class="nt">&lt;/string&gt;</span>
+        <span class="nt">&lt;key&gt;</span>BundleVersionsRE<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;array&gt;</span>
+          <span class="nt">&lt;string&gt;</span>.*<span class="nt">&lt;/string&gt;</span>
+        <span class="nt">&lt;/array&gt;</span>
+        <span class="nt">&lt;key&gt;</span>ExecPattern<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;string&gt;</span>*/VisorTerminal.app/Contents/MacOS/Terminal<span class="nt">&lt;/string&gt;</span>
+      <span class="nt">&lt;/dict&gt;</span>
+    <span class="nt">&lt;/array&gt;</span>
+  <span class="nt">&lt;/dict&gt;</span>
+  <span class="nt">&lt;key&gt;</span>NSPrincipalClass<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>Visor<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>SIMBLTargetApplications<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;array&gt;</span>
+    <span class="nt">&lt;dict&gt;</span>
+      <span class="nt">&lt;key&gt;</span>BundleIdentifier<span class="nt">&lt;/key&gt;</span>
+      <span class="nt">&lt;string&gt;</span>com.apple.VisorTerminal<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;/dict&gt;</span>
+  <span class="nt">&lt;/array&gt;</span>
+<span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/plist&gt;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Now when you launch VisorTerminal, it will be hidden from the dock and be the app that Visor.bundle focuses on. I really like how this

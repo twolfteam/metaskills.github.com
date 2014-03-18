@@ -73,20 +73,17 @@
             been happening in rails 3 with UJS, check out <a href="http://blog.solnic.eu/2009/09/08/unobtrusive-javascript-helpers-in-rails-3">Piotr
             Solnica's</a> blog for a good run down. Or you can check out the simple code block below.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># This Ruby</span>
-link_to <span class="string"><span class="delimiter">'</span><span class="content">Logout</span><span class=
-"delimiter">'</span></span>, session_path, <span class="symbol">:method</span> =&gt; <span class="symbol">:delete</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># This Ruby</span>
+<span class="n">link_to</span> <span class="s1">&#39;Logout&#39;</span><span class="p">,</span> <span class="n">session_path</span><span class=
+"p">,</span> <span class="ss">:method</span> <span class="o">=&gt;</span> <span class="ss">:delete</span>
 
-<span class="comment"># Will out put this HTML in Rails 3</span>
+<span class="c1"># Will out put this HTML in Rails 3</span>
 <span class=
-"comment"># &lt;a href=&quot;/session&quot; data-method=&quot;delete&quot; data-url &quot;/session&quot; rel=&quot;nofollow&quot;&gt;Logoout&lt;/a&gt;</span>
+"c1"># &lt;a href=&quot;/session&quot; data-method=&quot;delete&quot; data-url &quot;/session&quot; rel=&quot;nofollow&quot;&gt;Logoout&lt;/a&gt;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             So no more tag soup. Yea! There was much rejoicing, but I could not find any illustrated examples of what type of JavaScript to use to
@@ -95,44 +92,50 @@ link_to <span class="string"><span class="delimiter">'</span><span class="conten
             authenticity_token hidden in the generated form, like a <code>button_to</code> would generate. Let's ignore the second problem for a bit
             and see what I came up with for using with Prototype.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="keyword">var</span> MyJsObject = {
-  
-  <span class="function">linkToDelete</span>: <span class="keyword">function</span>(event) {
-    event.stop();
-    <span class="keyword">var</span> e = event.element();
-    <span class="keyword">var</span> a = e.readAttribute(<span class="string"><span class="delimiter">'</span><span class=
-"content">href</span><span class="delimiter">'</span></span>) ? e : e.up(<span class="string"><span class="delimiter">'</span><span class=
-"content">a</span><span class="delimiter">'</span></span>);
-    <span class="keyword">var</span> form = FORM({<span class="key">action</span>:a.href, <span class="key">method</span>:<span class=
-"string"><span class="delimiter">'</span><span class="content">post</span><span class="delimiter">'</span></span>},[
-      INPUT({<span class="key">type</span>:<span class="string"><span class="delimiter">'</span><span class="content">hidden</span><span class=
-"delimiter">'</span></span>,<span class="key">name</span>:<span class="string"><span class="delimiter">'</span><span class=
-"content">_method</span><span class="delimiter">'</span></span>,<span class="key">value</span>:<span class="string"><span class=
-"delimiter">'</span><span class="content">delete</span><span class="delimiter">'</span></span>}),
-      INPUT({<span class="key">type</span>:<span class="string"><span class="delimiter">'</span><span class="content">hidden</span><span class=
-"delimiter">'</span></span>,<span class="key">name</span>:<span class="string"><span class="delimiter">'</span><span class=
-"content">authenticity_token</span><span class="delimiter">'</span></span>,<span class="key">value</span>:authParams.get(<span class=
-"string"><span class="delimiter">'</span><span class="content">authenticity_token</span><span class="delimiter">'</span></span>)})]
-    );
-    form.submit();
-    <span class="keyword">return</span> <span class="predefined-constant">false</span>;
-  }
-  
-};
+          <div class="highlight">
+            <pre>
+<code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">MyJsObject</span> <span class=
+"o">=</span> <span class="p">{</span>
 
-document.observe(<span class="string"><span class="delimiter">'</span><span class="content">dom:loaded</span><span class=
-"delimiter">'</span></span>, <span class="keyword">function</span>(){
-  <span class="predefined">$$</span>(<span class="string"><span class="delimiter">'</span><span class=
-"content">a[data-method=delete]</span><span class="delimiter">'</span></span>).each(<span class="keyword">function</span>(a){ a.observe(<span class=
-"string"><span class="delimiter">'</span><span class="content">click</span><span class="delimiter">'</span></span>, MyJsObject.linkToDelete); });
-});
+  <span class="nx">linkToDelete</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">event</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class=
+"nx">element</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class=
+"nx">readAttribute</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span> <span class="o">?</span> <span class=
+"nx">e</span> <span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">up</span><span class=
+"p">(</span><span class="s1">&#39;a&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">form</span> <span class="o">=</span> <span class="nx">FORM</span><span class=
+"p">({</span><span class="nx">action</span><span class="o">:</span><span class="nx">a</span><span class="p">.</span><span class=
+"nx">href</span><span class="p">,</span> <span class="nx">method</span><span class="o">:</span><span class="s1">&#39;post&#39;</span><span class=
+"p">},[</span>
+      <span class="nx">INPUT</span><span class="p">({</span><span class="nx">type</span><span class="o">:</span><span class=
+"s1">&#39;hidden&#39;</span><span class="p">,</span><span class="nx">name</span><span class="o">:</span><span class=
+"s1">&#39;_method&#39;</span><span class="p">,</span><span class="nx">value</span><span class="o">:</span><span class=
+"s1">&#39;delete&#39;</span><span class="p">}),</span>
+      <span class="nx">INPUT</span><span class="p">({</span><span class="nx">type</span><span class="o">:</span><span class=
+"s1">&#39;hidden&#39;</span><span class="p">,</span><span class="nx">name</span><span class="o">:</span><span class=
+"s1">&#39;authenticity_token&#39;</span><span class="p">,</span><span class="nx">value</span><span class="o">:</span><span class=
+"nx">authParams</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class=
+"s1">&#39;authenticity_token&#39;</span><span class="p">)})]</span>
+    <span class="p">);</span>
+    <span class="nx">form</span><span class="p">.</span><span class="nx">submit</span><span class="p">();</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="p">};</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class=
+"s1">&#39;dom:loaded&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">$$</span><span class="p">(</span><span class="s1">&#39;a[data-method=delete]&#39;</span><span class="p">).</span><span class=
+"nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class=
+"p">){</span> <span class="nx">a</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class=
+"s1">&#39;click&#39;</span><span class="p">,</span> <span class="nx">MyJsObject</span><span class="p">.</span><span class=
+"nx">linkToDelete</span><span class="p">);</span> <span class="p">});</span>
+<span class="p">});</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             In this example I am only covering the DELETE action. This code could be abstracted to take a "method" argument and use it. As you can

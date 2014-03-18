@@ -143,21 +143,20 @@
             which would look like <code>head(:ok)</code>. If you wanted to respond to bad authentication, you might use the 401 code like so,
             <code>head(:unauthorized)</code>. Here is an example from HomeMarks restful user signup action.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="keyword">class</span> <span class="class">UsersController</span> &lt; <span class="constant">ApplicationController</span>
-  <span class="comment"># ...</span>
-  <span class="keyword">def</span> <span class="function">create</span>
-    <span class="constant">User</span>.create!(params[<span class="symbol">:user</span>])
-    head <span class="symbol">:ok</span>
-  <span class="keyword">end</span>
-  <span class="comment"># ...</span>
-<span class="keyword">end</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">UsersController</span> <span class=
+"o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="no">User</span><span class="o">.</span><span class="n">create!</span><span class="p">(</span><span class=
+"n">params</span><span class="o">[</span><span class="ss">:user</span><span class="o">]</span><span class="p">)</span>
+    <span class="n">head</span> <span class="ss">:ok</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             There is actually a number of things going on in those 2 lines of code above. If the user is created, the AJAX request will get a simple
@@ -173,39 +172,46 @@
             delegate exception handling to a method either per controller or site wide for a specific exception class. So enter the <a href=
             "http://github.com/metaskills/homemarks/tree/master/lib/render_invalid_record.rb">RenderInvalidRecord</a> module, show below.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="keyword">module</span> <span class="class">RenderInvalidRecord</span>
-  
-  <span class="keyword">def</span> <span class="predefined-constant">self</span>.<span class="function">included</span>(base)
-    base.rescue_from(<span class="constant">ActiveRecord</span>::<span class="constant">RecordInvalid</span>, <span class=
-"symbol">:with</span> =&gt; <span class="symbol">:render_invalid_record</span>)
-  <span class="keyword">end</span>
-  
-  protected
-  
-  <span class="keyword">def</span> <span class="function">render_invalid_record</span>(exception)
-    record = exception.record
-    respond_to <span class="keyword">do</span> |format|
-      format.html { render <span class="symbol">:action</span> =&gt; (record.new_record? ? <span class="string"><span class=
-"delimiter">'</span><span class="content">new</span><span class="delimiter">'</span></span> : <span class="string"><span class=
-"delimiter">'</span><span class="content">edit</span><span class="delimiter">'</span></span>) }
-      format.js   { render <span class="symbol">:json</span> =&gt; record.errors.full_messages, <span class=
-"symbol">:status</span> =&gt; <span class="symbol">:unprocessable_entity</span>, <span class="symbol">:content_type</span> =&gt; <span class=
-"string"><span class="delimiter">'</span><span class="content">application/json</span><span class="delimiter">'</span></span> }
-      format.xml  { render <span class="symbol">:xml</span> =&gt; record.errors.full_messages,  <span class=
-"symbol">:status</span> =&gt; <span class="symbol">:unprocessable_entity</span> }
-      format.json { render <span class="symbol">:json</span> =&gt; record.errors.full_messages, <span class=
-"symbol">:status</span> =&gt; <span class="symbol">:unprocessable_entity</span> }
-    <span class="keyword">end</span>
-  <span class="keyword">end</span>
-  
-<span class="keyword">end</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">RenderInvalidRecord</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">included</span><span class="p">(</span><span class=
+"n">base</span><span class="p">)</span>
+    <span class="n">base</span><span class="o">.</span><span class="n">rescue_from</span><span class="p">(</span><span class=
+"no">ActiveRecord</span><span class="o">::</span><span class="no">RecordInvalid</span><span class="p">,</span> <span class=
+"ss">:with</span> <span class="o">=&gt;</span> <span class="ss">:render_invalid_record</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="kp">protected</span>
+
+  <span class="k">def</span> <span class="nf">render_invalid_record</span><span class="p">(</span><span class="n">exception</span><span class=
+"p">)</span>
+    <span class="n">record</span> <span class="o">=</span> <span class="n">exception</span><span class="o">.</span><span class="n">record</span>
+    <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+      <span class="nb">format</span><span class="o">.</span><span class="n">html</span> <span class="p">{</span> <span class=
+"n">render</span> <span class="ss">:action</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="n">record</span><span class=
+"o">.</span><span class="n">new_record?</span> <span class="p">?</span> <span class="s1">&#39;new&#39;</span> <span class="p">:</span> <span class=
+"s1">&#39;edit&#39;</span><span class="p">)</span> <span class="p">}</span>
+      <span class="nb">format</span><span class="o">.</span><span class="n">js</span>   <span class="p">{</span> <span class=
+"n">render</span> <span class="ss">:json</span> <span class="o">=&gt;</span> <span class="n">record</span><span class="o">.</span><span class=
+"n">errors</span><span class="o">.</span><span class="n">full_messages</span><span class="p">,</span> <span class="ss">:status</span> <span class=
+"o">=&gt;</span> <span class="ss">:unprocessable_entity</span><span class="p">,</span> <span class="ss">:content_type</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;application/json&#39;</span> <span class="p">}</span>
+      <span class="nb">format</span><span class="o">.</span><span class="n">xml</span>  <span class="p">{</span> <span class=
+"n">render</span> <span class="ss">:xml</span> <span class="o">=&gt;</span> <span class="n">record</span><span class="o">.</span><span class=
+"n">errors</span><span class="o">.</span><span class="n">full_messages</span><span class="p">,</span>  <span class="ss">:status</span> <span class=
+"o">=&gt;</span> <span class="ss">:unprocessable_entity</span> <span class="p">}</span>
+      <span class="nb">format</span><span class="o">.</span><span class="n">json</span> <span class="p">{</span> <span class=
+"n">render</span> <span class="ss">:json</span> <span class="o">=&gt;</span> <span class="n">record</span><span class="o">.</span><span class=
+"n">errors</span><span class="o">.</span><span class="n">full_messages</span><span class="p">,</span> <span class="ss">:status</span> <span class=
+"o">=&gt;</span> <span class="ss">:unprocessable_entity</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Once included in your application.rb file, every ActiveRecord::RecordInvalid exception will be handled by the render_invalid_record
@@ -280,111 +286,142 @@
               </ul>
             </li>
           </ul>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="keyword">var</span> HomeMarksBase = {
-  <span class="function">getRequestMood</span>: <span class="keyword">function</span>(request) {
-    <span class="keyword">return</span> (request.status &gt;= <span class="integer">200</span> &amp;&amp; request.status &lt; <span class=
-"integer">300</span>) ? <span class="string"><span class="delimiter">'</span><span class="content">good</span><span class=
-"delimiter">'</span></span> : <span class="string"><span class="delimiter">'</span><span class="content">bad</span><span class=
-"delimiter">'</span></span>;
-  },
-  <span class="function">messagesToList</span>: <span class="keyword">function</span>(request) {
-    <span class="keyword">var</span> messages = request.responseJSON;
-    <span class="keyword">var</span> messageList = UL();
-    messages.each(<span class="keyword">function</span>(message){ 
-      messageList.appendChild( LI(message.escapeHTML()) );
-    });
-    <span class="keyword">return</span> messageList;
-  }
-};
-<span class="keyword">var</span> HomeMarksSite = Class.create(HomeMarksBase,{ 
-  <span class="function">initialize</span>: <span class="keyword">function</span>() {
-    <span class="local-variable">this</span>.signupForm = <span class="predefined">$</span>(<span class="string"><span class=
-"delimiter">'</span><span class="content">signup_form</span><span class="delimiter">'</span></span>);
-    <span class="local-variable">this</span>.initEvents();
-  },
-  <span class="function">startAjaxForm</span>: <span class="keyword">function</span>(event) {
-    event.stop();
-    <span class="keyword">var</span> form = event.findElement(<span class="string"><span class="delimiter">'</span><span class=
-"content">form</span><span class="delimiter">'</span></span>);
-    <span class="keyword">var</span> options = Object.extend({<span class="key">imgSrc</span>:<span class="string"><span class=
-"delimiter">'</span><span class="content">loading_invert.gif</span><span class="delimiter">'</span></span>}, <span class=
-"local-variable">arguments</span>[<span class="integer">1</span>] || {});
-    <span class="keyword">var</span> loadArea = form.down(<span class="string"><span class="delimiter">'</span><span class=
-"content">#form_loading</span><span class="delimiter">'</span></span>);
-    <span class="keyword">var</span> imgTag = IMG({<span class="key">src</span>:(<span class="string"><span class="delimiter">'</span><span class=
-"content">/images/</span><span class="delimiter">'</span></span>+options.imgSrc)});
-    <span class="predefined">$</span>(loadArea).update(imgTag);
-    <span class="keyword">new</span> Ajax.Request(form.action,{
-      <span class="function">onComplete</span>: <span class="keyword">function</span>(request){ <span class=
-"local-variable">this</span>.delegateCompleteAjaxForm(form,request) }.bind(<span class="local-variable">this</span>),
-      <span class="key">parameters</span>: form.serialize(<span class="predefined-constant">true</span>)
-    });
-    form.disable();
-  },
-  <span class="function">delegateCompleteAjaxForm</span>: <span class="keyword">function</span>(form,request) {
-    <span class="keyword">var</span> mood = <span class="local-variable">this</span>.getRequestMood(request);
-    <span class="local-variable">this</span>.completeAjaxForm(form,{<span class="key">mood</span>:mood});
-    <span class="keyword">if</span> (mood == <span class="string"><span class="delimiter">'</span><span class="content">good</span><span class=
-"delimiter">'</span></span>) { 
-      <span class="keyword">switch</span> (form) { 
-        <span class="keyword">case</span> <span class="local-variable">this</span>.supportForm : <span class=
-"local-variable">this</span>.completeSupportForm(request); <span class="keyword">break</span>;
-      }
-    }
-    <span class="keyword">else</span> { 
-      form.enable();
-      <span class="keyword">if</span> (!request.responseText.blank()) {
-        <span class="keyword">var</span> flashHTML = DIV([H2(<span class="string"><span class="delimiter">'</span><span class=
-"content">Errors On Form!</span><span class="delimiter">'</span></span>),<span class="local-variable">this</span>.messagesToList(request)]);
-        <span class="local-variable">this</span>.flashModal(<span class="string"><span class="delimiter">'</span><span class=
-"content">bad</span><span class="delimiter">'</span></span>,flashHTML);
-      };
-    };
-  },
-  <span class="function">completeAjaxForm</span>: <span class="keyword">function</span>(form) {
-    <span class="keyword">var</span> options = Object.extend({<span class="key">mood</span>:<span class="string"><span class=
-"delimiter">'</span><span class="content">good</span><span class="delimiter">'</span></span>}, <span class=
-"local-variable">arguments</span>[<span class="integer">1</span>] || {});
-    <span class="keyword">var</span> loadArea = form.down(<span class="string"><span class="delimiter">'</span><span class=
-"content">#form_loading</span><span class="delimiter">'</span></span>);
-    <span class="keyword">var</span> completeId = <span class="string"><span class="delimiter">'</span><span class=
-"content">complete_ajax_form_</span><span class="delimiter">'</span></span> + form.id;
-    <span class="keyword">var</span> imgSrc = <span class="string"><span class="delimiter">'</span><span class="content">/images/</span><span class=
-"delimiter">'</span></span>+options.mood+<span class="string"><span class="delimiter">'</span><span class="content">.png</span><span class=
-"delimiter">'</span></span>;
-    <span class="keyword">var</span> moodHtml = SPAN({<span class="key">id</span>:completeId,<span class="key">className</span>:<span class=
-"string"><span class="delimiter">'</span><span class="content">m0 p0</span><span class="delimiter">'</span></span>}, [IMG({<span class=
-"key">src</span>:imgSrc})]);
-    <span class="predefined">$</span>(loadArea).update(moodHtml);
-    setTimeout(<span class="keyword">function</span>() { <span class="predefined">$</span>(completeId).fade(); },<span class="integer">3000</span>);
-  },
-  <span class="function">completeSignupForm</span>: <span class="keyword">function</span>(request) {
-    <span class="keyword">var</span> message = <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">Thank your for signing up for your own HomeMarks page. An email has been sent to </span><span class="delimiter">&quot;</span></span> +
-      <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">your address along with a link to activate your account. If you have not done so already, please </span><span class=
-"delimiter">&quot;</span></span> +
-      <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">take a moment to read the HomeMarks documentation.</span><span class="delimiter">&quot;</span></span>;
-    <span class="keyword">var</span> flashHTML = DIV([H2(<span class="string"><span class="delimiter">'</span><span class=
-"content">Signup Complete:</span><span class="delimiter">'</span></span>),P(message)]);
-    <span class="local-variable">this</span>.flash(<span class="string"><span class="delimiter">'</span><span class="content">good</span><span class=
-"delimiter">'</span></span>,flashHTML);
-  },
-  <span class="function">initEvents</span>: <span class="keyword">function</span>() {
-    <span class="keyword">if</span> (<span class="local-variable">this</span>.signupForm) { <span class=
-"local-variable">this</span>.signupForm.observe(<span class="string"><span class="delimiter">'</span><span class="content">submit</span><span class=
-"delimiter">'</span></span>, <span class="local-variable">this</span>.startAjaxForm.bindAsEventListener(<span class=
-"local-variable">this</span>)); };
-  }
-});
+          <div class="highlight">
+            <pre>
+<code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">HomeMarksBase</span> <span class=
+"o">=</span> <span class="p">{</span>
+  <span class="nx">getRequestMood</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class=
+"nx">status</span> <span class="o">&gt;=</span> <span class="mi">200</span> <span class="o">&amp;&amp;</span> <span class=
+"nx">request</span><span class="p">.</span><span class="nx">status</span> <span class="o">&lt;</span> <span class="mi">300</span><span class=
+"p">)</span> <span class="o">?</span> <span class="s1">&#39;good&#39;</span> <span class="o">:</span> <span class=
+"s1">&#39;bad&#39;</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="nx">messagesToList</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="nx">request</span><span class=
+"p">.</span><span class="nx">responseJSON</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">messageList</span> <span class="o">=</span> <span class="nx">UL</span><span class="p">();</span>
+    <span class="nx">messages</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class=
+"kd">function</span><span class="p">(</span><span class="nx">message</span><span class="p">){</span>
+      <span class="nx">messageList</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span> <span class=
+"nx">LI</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">escapeHTML</span><span class=
+"p">())</span> <span class="p">);</span>
+    <span class="p">});</span>
+    <span class="k">return</span> <span class="nx">messageList</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+<span class="kd">var</span> <span class="nx">HomeMarksSite</span> <span class="o">=</span> <span class="nx">Class</span><span class=
+"p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">HomeMarksBase</span><span class="p">,{</span>
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">signupForm</span> <span class="o">=</span> <span class=
+"nx">$</span><span class="p">(</span><span class="s1">&#39;signup_form&#39;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">initEvents</span><span class="p">();</span>
+  <span class="p">},</span>
+  <span class="nx">startAjaxForm</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">event</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">form</span> <span class="o">=</span> <span class="nx">event</span><span class=
+"p">.</span><span class="nx">findElement</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="nb">Object</span><span class=
+"p">.</span><span class="nx">extend</span><span class="p">({</span><span class="nx">imgSrc</span><span class="o">:</span><span class=
+"s1">&#39;loading_invert.gif&#39;</span><span class="p">},</span> <span class="nx">arguments</span><span class="p">[</span><span class=
+"mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="p">{});</span>
+    <span class="kd">var</span> <span class="nx">loadArea</span> <span class="o">=</span> <span class="nx">form</span><span class=
+"p">.</span><span class="nx">down</span><span class="p">(</span><span class="s1">&#39;#form_loading&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">imgTag</span> <span class="o">=</span> <span class="nx">IMG</span><span class=
+"p">({</span><span class="nx">src</span><span class="o">:</span><span class="p">(</span><span class="s1">&#39;/images/&#39;</span><span class=
+"o">+</span><span class="nx">options</span><span class="p">.</span><span class="nx">imgSrc</span><span class="p">)});</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nx">loadArea</span><span class="p">).</span><span class=
+"nx">update</span><span class="p">(</span><span class="nx">imgTag</span><span class="p">);</span>
+    <span class="k">new</span> <span class="nx">Ajax</span><span class="p">.</span><span class="nx">Request</span><span class=
+"p">(</span><span class="nx">form</span><span class="p">.</span><span class="nx">action</span><span class="p">,{</span>
+      <span class="nx">onComplete</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">request</span><span class="p">){</span> <span class="k">this</span><span class="p">.</span><span class=
+"nx">delegateCompleteAjaxForm</span><span class="p">(</span><span class="nx">form</span><span class="p">,</span><span class=
+"nx">request</span><span class="p">)</span> <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class=
+"k">this</span><span class="p">),</span>
+      <span class="nx">parameters</span><span class="o">:</span> <span class="nx">form</span><span class="p">.</span><span class=
+"nx">serialize</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+    <span class="p">});</span>
+    <span class="nx">form</span><span class="p">.</span><span class="nx">disable</span><span class="p">();</span>
+  <span class="p">},</span>
+  <span class="nx">delegateCompleteAjaxForm</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">form</span><span class="p">,</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">mood</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class=
+"nx">getRequestMood</span><span class="p">(</span><span class="nx">request</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">completeAjaxForm</span><span class="p">(</span><span class=
+"nx">form</span><span class="p">,{</span><span class="nx">mood</span><span class="o">:</span><span class="nx">mood</span><span class="p">});</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">mood</span> <span class="o">==</span> <span class=
+"s1">&#39;good&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">switch</span> <span class="p">(</span><span class="nx">form</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="k">this</span><span class="p">.</span><span class="nx">supportForm</span> <span class=
+"o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">completeSupportForm</span><span class="p">(</span><span class=
+"nx">request</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">form</span><span class="p">.</span><span class="nx">enable</span><span class="p">();</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">request</span><span class="p">.</span><span class=
+"nx">responseText</span><span class="p">.</span><span class="nx">blank</span><span class="p">())</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">flashHTML</span> <span class="o">=</span> <span class="nx">DIV</span><span class=
+"p">([</span><span class="nx">H2</span><span class="p">(</span><span class="s1">&#39;Errors On Form!&#39;</span><span class="p">),</span><span class=
+"k">this</span><span class="p">.</span><span class="nx">messagesToList</span><span class="p">(</span><span class="nx">request</span><span class=
+"p">)]);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">flashModal</span><span class="p">(</span><span class=
+"s1">&#39;bad&#39;</span><span class="p">,</span><span class="nx">flashHTML</span><span class="p">);</span>
+      <span class="p">};</span>
+    <span class="p">};</span>
+  <span class="p">},</span>
+  <span class="nx">completeAjaxForm</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">form</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="nb">Object</span><span class=
+"p">.</span><span class="nx">extend</span><span class="p">({</span><span class="nx">mood</span><span class="o">:</span><span class=
+"s1">&#39;good&#39;</span><span class="p">},</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class=
+"p">]</span> <span class="o">||</span> <span class="p">{});</span>
+    <span class="kd">var</span> <span class="nx">loadArea</span> <span class="o">=</span> <span class="nx">form</span><span class=
+"p">.</span><span class="nx">down</span><span class="p">(</span><span class="s1">&#39;#form_loading&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">completeId</span> <span class="o">=</span> <span class=
+"s1">&#39;complete_ajax_form_&#39;</span> <span class="o">+</span> <span class="nx">form</span><span class="p">.</span><span class=
+"nx">id</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">imgSrc</span> <span class="o">=</span> <span class="s1">&#39;/images/&#39;</span><span class=
+"o">+</span><span class="nx">options</span><span class="p">.</span><span class="nx">mood</span><span class="o">+</span><span class=
+"s1">&#39;.png&#39;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">moodHtml</span> <span class="o">=</span> <span class="nx">SPAN</span><span class=
+"p">({</span><span class="nx">id</span><span class="o">:</span><span class="nx">completeId</span><span class="p">,</span><span class=
+"nx">className</span><span class="o">:</span><span class="s1">&#39;m0 p0&#39;</span><span class="p">},</span> <span class="p">[</span><span class=
+"nx">IMG</span><span class="p">({</span><span class="nx">src</span><span class="o">:</span><span class="nx">imgSrc</span><span class="p">})]);</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nx">loadArea</span><span class="p">).</span><span class=
+"nx">update</span><span class="p">(</span><span class="nx">moodHtml</span><span class="p">);</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class=
+"p">{</span> <span class="nx">$</span><span class="p">(</span><span class="nx">completeId</span><span class="p">).</span><span class=
+"nx">fade</span><span class="p">();</span> <span class="p">},</span><span class="mi">3000</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">completeSignupForm</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">message</span> <span class="o">=</span> <span class=
+"s2">&quot;Thank your for signing up for your own HomeMarks page. An email has been sent to &quot;</span> <span class="o">+</span>
+      <span class=
+"s2">&quot;your address along with a link to activate your account. If you have not done so already, please &quot;</span> <span class="o">+</span>
+      <span class="s2">&quot;take a moment to read the HomeMarks documentation.&quot;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">flashHTML</span> <span class="o">=</span> <span class="nx">DIV</span><span class=
+"p">([</span><span class="nx">H2</span><span class="p">(</span><span class="s1">&#39;Signup Complete:&#39;</span><span class=
+"p">),</span><span class="nx">P</span><span class="p">(</span><span class="nx">message</span><span class="p">)]);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class=
+"s1">&#39;good&#39;</span><span class="p">,</span><span class="nx">flashHTML</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">initEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class=
+"nx">signupForm</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class=
+"nx">signupForm</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class=
+"s1">&#39;submit&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class=
+"nx">startAjaxForm</span><span class="p">.</span><span class="nx">bindAsEventListener</span><span class="p">(</span><span class=
+"k">this</span><span class="p">));</span> <span class="p">};</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h2>
             Client-Side Error Handling
@@ -402,77 +439,84 @@
             the mood and the HTML to embed, viola â€“ I can now call <code>this.flash.('good',someHTML)</code> and I get the same type of flash one
             would have seen if I set it in the controller and rendered. Note, this is what I used on the the signup form success above.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-&lt;<span class="string"><span class="delimiter">% </span><span class="content">[:good,:bad,:indif].each</span><span class=
-"delimiter"> </span></span><span class="keyword">do</span> |key| <span class="string"><span class="delimiter">%&gt;</span><span class="content">
-  &lt;div id=&quot;flash_&lt;%= key %</span><span class="delimiter">&gt;</span></span><span class="string"><span class=
-"delimiter">&quot;</span><span class="content"> class=</span><span class="delimiter">&quot;</span></span>flash_message<span class=
-"string"><span class="delimiter">&quot;</span><span class="content"> style=</span><span class="delimiter">&quot;</span></span><span class=
-"key">display</span>:&lt;<span class="string"><span class="delimiter">%=</span><span class=
-"content"> flash[key].blank? ? 'none' : 'block' %&gt;;&quot;&gt;
-    &lt;span&gt;&lt;%</span><span class="delimiter">=</span></span> flash[key] %&gt;&lt;<span class="regexp"><span class=
-"delimiter">/</span><span class="content">span&gt;
-  &lt;</span><span class="delimiter">/</span></span>div&gt;
-&lt;<span class="string"><span class="delimiter">% </span><span class="content">end</span><span class="delimiter"> </span></span>%&gt;
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="o">&lt;</span><span class="sx">% [:good,:bad,:indif].each </span><span class=
+"k">do</span> <span class="o">|</span><span class="n">key</span><span class="o">|</span> <span class="sx">%&gt;</span>
+<span class="sx">  &lt;div id=&quot;flash_&lt;%= key %&gt;</span><span class="s2">&quot; class=&quot;</span><span class=
+"n">flash_message</span><span class="s2">&quot; style=&quot;</span><span class="nb">display</span><span class="p">:</span><span class=
+"o">&lt;</span><span class="sx">%= flash[key].blank? ? &#39;none&#39; : &#39;block&#39; %&gt;;&quot;&gt;</span>
+<span class="sx">      &lt;span&gt;&lt;%=</span> <span class="n">flash</span><span class="o">[</span><span class="n">key</span><span class=
+"o">]</span> <span class="sx">%&gt;&lt;/span&gt;</span>
+    <span class="o">&lt;</span><span class="sr">/div&gt;</span>
+<span class="sr">&lt;% end %&gt;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             <br>
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="keyword">var</span> HomeMarksBase = {
-  <span class="function">messagesToAlert</span>: <span class="keyword">function</span>(request) {
-    <span class="keyword">var</span> messages = request.responseJSON;
-    <span class="keyword">var</span> alertText = messages.join(<span class="string"><span class="delimiter">&quot;</span><span class=
-"content">.</span><span class="char">\n</span><span class="delimiter">&quot;</span></span>);
-    <span class="keyword">if</span> (alertText.endsWith(<span class="string"><span class="delimiter">'</span><span class=
-"content">.</span><span class="delimiter">'</span></span>)) { alert(alertText); } <span class="keyword">else</span> { alert(alertText+<span class=
-"string"><span class="delimiter">'</span><span class="content">.</span><span class="delimiter">'</span></span>); };
-  },
-  <span class="function">messagesToList</span>: <span class="keyword">function</span>(request) {
-    <span class="keyword">var</span> messages = request.responseJSON;
-    <span class="keyword">var</span> messageList = UL();
-    messages.each(<span class="keyword">function</span>(message){ 
-      messageList.appendChild( LI(message.escapeHTML()) );
-    });
-    <span class="keyword">return</span> messageList;
-  }
-};
-<span class="keyword">var</span> HomeMarksSite = Class.create(HomeMarksBase,{ 
-  <span class="function">initialize</span>: <span class="keyword">function</span>() {
-    <span class="local-variable">this</span>.flashes = <span class="predefined">$$</span>(<span class="string"><span class=
-"delimiter">'</span><span class="content">div.flash_message</span><span class="delimiter">'</span></span>);
-  },
-  <span class="function">clearFlashes</span>: <span class="keyword">function</span>() {
-    <span class="local-variable">this</span>.flashes.invoke(<span class="string"><span class="delimiter">'</span><span class=
-"content">hide</span><span class="delimiter">'</span></span>);
-    <span class="local-variable">this</span>.flashes.invoke(<span class="string"><span class="delimiter">'</span><span class=
-"content">update</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class=
-"delimiter">'</span></span>);
-  },
-  <span class="function">flash</span>: <span class="keyword">function</span>(mood,html) {
-    <span class="local-variable">this</span>.clearFlashes();
-    <span class="keyword">var</span> moodFlash = <span class="local-variable">this</span>.flashes.find(<span class=
-"keyword">function</span>(e){ <span class="keyword">if</span> (e.id == <span class="string"><span class="delimiter">'</span><span class=
-"content">flash_</span><span class="delimiter">'</span></span>+mood) {<span class="keyword">return</span> <span class=
-"predefined-constant">true</span>}; });
-    moodFlash.update(html);
-    moodFlash.show();
-    <span class="predefined">$</span>(<span class="string"><span class="delimiter">'</span><span class="content">site_wrapper</span><span class=
-"delimiter">'</span></span>).scrollTo();
-  }
-});
+          <div class="highlight">
+            <pre>
+<code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">HomeMarksBase</span> <span class=
+"o">=</span> <span class="p">{</span>
+  <span class="nx">messagesToAlert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="nx">request</span><span class=
+"p">.</span><span class="nx">responseJSON</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">alertText</span> <span class="o">=</span> <span class="nx">messages</span><span class=
+"p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;.\n&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">alertText</span><span class="p">.</span><span class=
+"nx">endsWith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span> <span class="p">{</span> <span class=
+"nx">alert</span><span class="p">(</span><span class="nx">alertText</span><span class="p">);</span> <span class="p">}</span> <span class=
+"k">else</span> <span class="p">{</span> <span class="nx">alert</span><span class="p">(</span><span class="nx">alertText</span><span class=
+"o">+</span><span class="s1">&#39;.&#39;</span><span class="p">);</span> <span class="p">};</span>
+  <span class="p">},</span>
+  <span class="nx">messagesToList</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="nx">request</span><span class=
+"p">.</span><span class="nx">responseJSON</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">messageList</span> <span class="o">=</span> <span class="nx">UL</span><span class="p">();</span>
+    <span class="nx">messages</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class=
+"kd">function</span><span class="p">(</span><span class="nx">message</span><span class="p">){</span>
+      <span class="nx">messageList</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span> <span class=
+"nx">LI</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">escapeHTML</span><span class=
+"p">())</span> <span class="p">);</span>
+    <span class="p">});</span>
+    <span class="k">return</span> <span class="nx">messageList</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+<span class="kd">var</span> <span class="nx">HomeMarksSite</span> <span class="o">=</span> <span class="nx">Class</span><span class=
+"p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">HomeMarksBase</span><span class="p">,{</span>
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">flashes</span> <span class="o">=</span> <span class=
+"nx">$$</span><span class="p">(</span><span class="s1">&#39;div.flash_message&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">clearFlashes</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">flashes</span><span class="p">.</span><span class=
+"nx">invoke</span><span class="p">(</span><span class="s1">&#39;hide&#39;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">flashes</span><span class="p">.</span><span class=
+"nx">invoke</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span><span class=
+"s1">&#39;&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">flash</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">mood</span><span class="p">,</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">clearFlashes</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">moodFlash</span> <span class="o">=</span> <span class="k">this</span><span class=
+"p">.</span><span class="nx">flashes</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class=
+"kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span> <span class="k">if</span> <span class=
+"p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">id</span> <span class="o">==</span> <span class=
+"s1">&#39;flash_&#39;</span><span class="o">+</span><span class="nx">mood</span><span class="p">)</span> <span class="p">{</span><span class=
+"k">return</span> <span class="kc">true</span><span class="p">};</span> <span class="p">});</span>
+    <span class="nx">moodFlash</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class=
+"nx">html</span><span class="p">);</span>
+    <span class="nx">moodFlash</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;site_wrapper&#39;</span><span class="p">).</span><span class=
+"nx">scrollTo</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <div class="center">
             <video title="HomeMarks v2 Signup" src="/assets/login.mp4" width="617" height="473" controls="" preload=""></video>
@@ -486,19 +530,23 @@
             will automatically crate the modal HTML using Builder. If you want to use it, make sure to get the CSS and images the project too. Below
             is a function that I put in my site class that allows me to call <code>this.flashModal('good',someHTML))</code>.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="keyword">var</span> HomeMarksSite = Class.create(HomeMarksBase,{ 
-  <span class="function">flashModal</span>: <span class="keyword">function</span>(mood,html) {
-    <span class="keyword">var</span> moodColor = <span class="local-variable">this</span>.flashMoodColors.get(mood);
-    HmModal.show(html,{<span class="key">color</span>:moodColor});
-  }
-});
+          <div class="highlight">
+            <pre>
+<code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">HomeMarksSite</span> <span class=
+"o">=</span> <span class="nx">Class</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class=
+"nx">HomeMarksBase</span><span class="p">,{</span>
+  <span class="nx">flashModal</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">mood</span><span class="p">,</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">moodColor</span> <span class="o">=</span> <span class="k">this</span><span class=
+"p">.</span><span class="nx">flashMoodColors</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class=
+"nx">mood</span><span class="p">);</span>
+    <span class="nx">HmModal</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class=
+"nx">html</span><span class="p">,{</span><span class="nx">color</span><span class="o">:</span><span class="nx">moodColor</span><span class=
+"p">});</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h2>
             Wrapping It Up

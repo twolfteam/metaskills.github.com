@@ -79,148 +79,169 @@
             browser in an abstract way. Here is the link to the <a href="http://pradador.com/code/quickiejs/">original Quickie.js</a>. If you use
             MooTools, fine, it is real close to Prototype and has my respect, but if you use Prototype, here is my rewrite of the class.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment">/*
+          <div class="highlight">
+            <pre>
+<code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
 
-Author:
-  Ken Collins &lt;metaskills.net&gt;
+<span class="cm">Author:</span>
+<span class="cm">  Ken Collins &lt;metaskills.net&gt;</span>
 
-Options:
-  id - (string: defaults to 'Quickie_' + unique id) The id of the Quickie object.
-  width - (number: defaults to 1) The width of the Quickie object.
-  height - (number: defaults to 1) The height of the Quickie object.
-  container - (element) The container into which the Quickie object will be injected.
-  attributes - (object) QuickTime attributes for the element. See http://www.apple.com/quicktime/tutorials/embed.html for possible attributes.
-  
-Returns:
-  - (element) A new HTML object Element with browser appropriate QuickTime embed code.
+<span class="cm">Options:</span>
+<span class="cm">  id - (string: defaults to &#39;Quickie_&#39; + unique id) The id of the Quickie object.</span>
+<span class="cm">  width - (number: defaults to 1) The width of the Quickie object.</span>
+<span class="cm">  height - (number: defaults to 1) The height of the Quickie object.</span>
+<span class="cm">  container - (element) The container into which the Quickie object will be injected.</span>
+<span class=
+"cm">  attributes - (object) QuickTime attributes for the element. See http://www.apple.com/quicktime/tutorials/embed.html for possible attributes.</span>
 
-Example:
-  var myQuickie = new Quickie('myMovie.mov', {
-    id: 'myQuicktimeMovie',
-    width: 640,
-    height: 480,
-    container: 'qtmovie',
-    attributes: {
-      controller: 'true',
-      autoplay: 'false'
-    }
-  });
+<span class="cm">Returns:</span>
+<span class="cm">  - (element) A new HTML object Element with browser appropriate QuickTime embed code.</span>
 
-Credits:
-  Mootools Implementaiton: http://pradador.com/code/quickiejs/
-  
-License:
-  MIT-Style License
+<span class="cm">Example:</span>
+<span class="cm">  var myQuickie = new Quickie(&#39;myMovie.mov&#39;, {</span>
+<span class="cm">    id: &#39;myQuicktimeMovie&#39;,</span>
+<span class="cm">    width: 640,</span>
+<span class="cm">    height: 480,</span>
+<span class="cm">    container: &#39;qtmovie&#39;,</span>
+<span class="cm">    attributes: {</span>
+<span class="cm">      controller: &#39;true&#39;,</span>
+<span class="cm">      autoplay: &#39;false&#39;</span>
+<span class="cm">    }</span>
+<span class="cm">  });</span>
 
-*/</span>
+<span class="cm">Credits:</span>
+<span class="cm">    Mootools Implementaiton: http://pradador.com/code/quickiejs/</span>
 
-<span class="keyword">var</span> Quickie = Class.create({
-  
-  <span class="function">initialize</span>: <span class="keyword">function</span>(path, options){
-    <span class="keyword">var</span> time = Try.these(
-      <span class="keyword">function</span>() { <span class="keyword">return</span> Date.now() },
-      <span class="keyword">function</span>() { <span class="keyword">return</span> +<span class="keyword">new</span> Date }
-    );
-    <span class="keyword">var</span> defaultOptions = {
-      <span class="key">id</span>: <span class="predefined-constant">null</span>,
-      <span class="key">height</span>: <span class="integer">1</span>,
-      <span class="key">width</span>: <span class="integer">1</span>,
-      <span class="key">container</span>: <span class="predefined-constant">null</span>,
-      <span class="key">attributes</span>: {}
-    }
-    <span class="local-variable">this</span>.path = path;
-    <span class="local-variable">this</span>.instance = <span class="string"><span class="delimiter">'</span><span class=
-"content">Quickie_</span><span class="delimiter">'</span></span> + time;
-    <span class="local-variable">this</span>.options = Object.extend(defaultOptions, <span class="local-variable">arguments</span>[<span class=
-"integer">1</span>] || {});
-    <span class="local-variable">this</span>.id = <span class="local-variable">this</span>.options.id || <span class=
-"local-variable">this</span>.instance;
-    <span class="local-variable">this</span>.container = <span class="predefined">$</span>(<span class=
-"local-variable">this</span>.options.container);
-    <span class="local-variable">this</span>.attributes = <span class="local-variable">this</span>.options.attributes;
-    <span class="local-variable">this</span>.attributes.src = <span class="local-variable">this</span>.path;
-    <span class="local-variable">this</span>.height = (<span class="local-variable">this</span>.attributes.controller == <span class=
-"string"><span class="delimiter">'</span><span class="content">true</span><span class="delimiter">'</span></span>) ? <span class=
-"local-variable">this</span>.options.height + <span class="integer">16</span> : <span class="local-variable">this</span>.options.height; 
-    <span class="local-variable">this</span>.width = <span class="local-variable">this</span>.options.width;
-    <span class="local-variable">this</span>._assignElement();
-  },
-  
-  <span class="function">toElement</span>: <span class="keyword">function</span>() {
-    <span class="keyword">return</span> <span class="local-variable">this</span>.element;
-  },
-  
-  <span class="function">_assignElement</span>: <span class="keyword">function</span>() {
-    <span class="keyword">var</span> build = (Prototype.Browser.IE) ? <span class="local-variable">this</span>._buildObjectTag() : <span class=
-"local-variable">this</span>._buildEmbedTag();
-    <span class="local-variable">this</span>.element = ((<span class="local-variable">this</span>.container) ? <span class=
-"local-variable">this</span>.container.update(<span class="string"><span class="delimiter">'</span><span class=
-"delimiter">'</span></span>) : <span class="keyword">new</span> Element(<span class="string"><span class="delimiter">'</span><span class=
-"content">div</span><span class="delimiter">'</span></span>)).update(build).down();
-  },
-  
-  <span class="function">_buildObjectTag</span>: <span class="keyword">function</span>() {
-    <span class="keyword">var</span> build = <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>;
-    build = <span class="string"><span class="delimiter">'</span><span class=
-"content">&lt;object classid=&quot;clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B&quot; codebase=&quot;http://www.apple.com/qtactivex/qtplugin.cab&quot;</span><span class="delimiter">'</span></span>;
-    build += <span class="string"><span class="delimiter">'</span><span class="content"> id=&quot;</span><span class=
-"delimiter">'</span></span> + <span class="local-variable">this</span>.id + <span class="string"><span class="delimiter">'</span><span class=
-"content">&quot;</span><span class="delimiter">'</span></span>;
-    build += <span class="string"><span class="delimiter">'</span><span class="content"> width=&quot;</span><span class=
-"delimiter">'</span></span> + <span class="local-variable">this</span>.width + <span class="string"><span class="delimiter">'</span><span class=
-"content">&quot;</span><span class="delimiter">'</span></span>;
-    build += <span class="string"><span class="delimiter">'</span><span class="content"> height=&quot;</span><span class=
-"delimiter">'</span></span> + <span class="local-variable">this</span>.height + <span class="string"><span class="delimiter">'</span><span class=
-"content">&quot;</span><span class="delimiter">'</span></span>;
-    build += <span class="string"><span class="delimiter">'</span><span class="content">&gt;</span><span class="delimiter">'</span></span>;
-    <span class="keyword">for</span> (<span class="keyword">var</span> attribute <span class="keyword">in</span> <span class=
-"local-variable">this</span>.attributes) {
-      <span class="keyword">if</span> (<span class="local-variable">this</span>.attributes[attribute]) {
-        build += <span class="string"><span class="delimiter">'</span><span class="content">&lt;param name=&quot;</span><span class=
-"delimiter">'</span></span> + attribute + <span class="string"><span class="delimiter">'</span><span class=
-"content">&quot; value=&quot;</span><span class="delimiter">'</span></span> + <span class=
-"local-variable">this</span>.attributes[attribute] + <span class="string"><span class="delimiter">'</span><span class=
-"content">&quot; /&gt;</span><span class="delimiter">'</span></span>;
-      }
-    }
-    build += <span class="string"><span class="delimiter">'</span><span class="content">&lt;/object&gt;</span><span class=
-"delimiter">'</span></span>;
-    <span class="keyword">return</span> build;
-  },
-  
-  <span class="function">_buildEmbedTag</span>: <span class="keyword">function</span>() {
-    <span class="keyword">var</span> build = <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>;
-    build = <span class="string"><span class="delimiter">'</span><span class="content">&lt;embed </span><span class="delimiter">'</span></span>;
-    build += <span class="string"><span class="delimiter">'</span><span class="content"> id=&quot;</span><span class=
-"delimiter">'</span></span> + <span class="local-variable">this</span>.id + <span class="string"><span class="delimiter">'</span><span class=
-"content">&quot;</span><span class="delimiter">'</span></span>;
-    build += <span class="string"><span class="delimiter">'</span><span class="content"> width=&quot;</span><span class=
-"delimiter">'</span></span> + <span class="local-variable">this</span>.width + <span class="string"><span class="delimiter">'</span><span class=
-"content">&quot;</span><span class="delimiter">'</span></span>;
-    build += <span class="string"><span class="delimiter">'</span><span class="content"> height=&quot;</span><span class=
-"delimiter">'</span></span> + <span class="local-variable">this</span>.height + <span class="string"><span class="delimiter">'</span><span class=
-"content">&quot;</span><span class="delimiter">'</span></span>;
-    <span class="keyword">for</span> (attribute <span class="keyword">in</span> <span class="local-variable">this</span>.attributes) {
-      <span class="keyword">if</span> (<span class="local-variable">this</span>.attributes[attribute]) {
-        build += <span class="string"><span class="delimiter">'</span><span class="content"> </span><span class=
-"delimiter">'</span></span> + attribute + <span class="string"><span class="delimiter">'</span><span class="content">=&quot;</span><span class=
-"delimiter">'</span></span> + <span class="local-variable">this</span>.attributes[attribute] + <span class="string"><span class=
-"delimiter">'</span><span class="content">&quot;</span><span class="delimiter">'</span></span>;
-      }
-    }
-    build += <span class="string"><span class="delimiter">'</span><span class=
-"content"> pluginspage=&quot;http://www.apple.com/quicktime/download/&quot;&gt;&lt;/embed&gt;</span><span class="delimiter">'</span></span>;
-    <span class="keyword">return</span> build;
-  }
+<span class="cm">License:</span>
+<span class="cm">    MIT-Style License</span>
 
-});
+<span class="cm">*/</span>
+
+<span class="kd">var</span> <span class="nx">Quickie</span> <span class="o">=</span> <span class="nx">Class</span><span class=
+"p">.</span><span class="nx">create</span><span class="p">({</span>
+
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">path</span><span class="p">,</span> <span class="nx">options</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="nx">Try</span><span class="p">.</span><span class=
+"nx">these</span><span class="p">(</span>
+      <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class=
+"nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="p">},</span>
+      <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class=
+"o">+</span><span class="k">new</span> <span class="nb">Date</span> <span class="p">}</span>
+    <span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">defaultOptions</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nx">height</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nx">width</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nx">container</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nx">attributes</span><span class="o">:</span> <span class="p">{}</span>
+    <span class="p">}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">path</span><span class=
+"p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">instance</span> <span class="o">=</span> <span class=
+"s1">&#39;Quickie_&#39;</span> <span class="o">+</span> <span class="nx">time</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class=
+"nb">Object</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">defaultOptions</span><span class=
+"p">,</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class=
+"o">||</span> <span class="p">{});</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="k">this</span><span class=
+"p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">instance</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">container</span> <span class="o">=</span> <span class=
+"nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class=
+"p">.</span><span class="nx">container</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">=</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">attributes</span><span class=
+"p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class=
+"nx">src</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">path</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="p">(</span><span class=
+"k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">controller</span> <span class=
+"o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class=
+"p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">height</span> <span class="o">+</span> <span class=
+"mi">16</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class=
+"p">.</span><span class="nx">height</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="k">this</span><span class=
+"p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_assignElement</span><span class="p">();</span>
+  <span class="p">},</span>
+
+  <span class="nx">toElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">element</span><span class="p">;</span>
+  <span class="p">},</span>
+
+  <span class="nx">_assignElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="p">(</span><span class=
+"nx">Prototype</span><span class="p">.</span><span class="nx">Browser</span><span class="p">.</span><span class="nx">IE</span><span class=
+"p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_buildObjectTag</span><span class=
+"p">()</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_buildEmbedTag</span><span class=
+"p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="p">((</span><span class=
+"k">this</span><span class="p">.</span><span class="nx">container</span><span class="p">)</span> <span class="o">?</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">container</span><span class="p">.</span><span class="nx">update</span><span class=
+"p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="k">new</span> <span class=
+"nx">Element</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">)).</span><span class="nx">update</span><span class=
+"p">(</span><span class="nx">build</span><span class="p">).</span><span class="nx">down</span><span class="p">();</span>
+  <span class="p">},</span>
+
+  <span class="nx">_buildObjectTag</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+    <span class="nx">build</span> <span class="o">=</span> <span class=
+"s1">&#39;&lt;object classid=&quot;clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B&quot; codebase=&quot;http://www.apple.com/qtactivex/qtplugin.cab&quot;&#39;</span><span class="p">;</span>
+    <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39; id=&quot;&#39;</span> <span class="o">+</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class=
+"p">;</span>
+    <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39; width=&quot;&#39;</span> <span class="o">+</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">width</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class=
+"p">;</span>
+    <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39; height=&quot;&#39;</span> <span class="o">+</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">height</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class=
+"p">;</span>
+    <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">attribute</span> <span class=
+"k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class=
+"nx">attributes</span><span class="p">[</span><span class="nx">attribute</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39;&lt;param name=&quot;&#39;</span> <span class=
+"o">+</span> <span class="nx">attribute</span> <span class="o">+</span> <span class="s1">&#39;&quot; value=&quot;&#39;</span> <span class=
+"o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class=
+"nx">attribute</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&quot; /&gt;&#39;</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39;&lt;/object&gt;&#39;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">build</span><span class="p">;</span>
+  <span class="p">},</span>
+
+  <span class="nx">_buildEmbedTag</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+    <span class="nx">build</span> <span class="o">=</span> <span class="s1">&#39;&lt;embed &#39;</span><span class="p">;</span>
+    <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39; id=&quot;&#39;</span> <span class="o">+</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class=
+"p">;</span>
+    <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39; width=&quot;&#39;</span> <span class="o">+</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">width</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class=
+"p">;</span>
+    <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39; height=&quot;&#39;</span> <span class="o">+</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">height</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class=
+"p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">attribute</span> <span class="k">in</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class=
+"nx">attributes</span><span class="p">[</span><span class="nx">attribute</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">build</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class=
+"nx">attribute</span> <span class="o">+</span> <span class="s1">&#39;=&quot;&#39;</span> <span class="o">+</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">attribute</span><span class=
+"p">]</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">build</span> <span class="o">+=</span> <span class=
+"s1">&#39; pluginspage=&quot;http://www.apple.com/quicktime/download/&quot;&gt;&lt;/embed&gt;&#39;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">build</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="p">});</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             If you ask me this is far cleaner than the original. It encapsulates factory methods and all the initialize does is just setup vars, not
@@ -229,36 +250,80 @@ License:
             has a toElement method. Here is the way I am using it in my upcoming project. Just like the Tapbots website, I am creating
           </p>
           <div>
-            <code>tags that have all the attributes I need and are the container elements. On page load, I update all those containers with generate
-            QuickTime source code. See the example below. ~~~javascript /* Example Container</code>
-            <div id="mymovie_container" class="quicktime_video" rel=
-            "src=/video/mymovie.mov|width=280|height=393|loop=true|autoplay=true|video_id=mymovie"></div><code>*/ document.observe('dom:loaded',
-            function(){ $$('.quicktime_video').each(function(container){ var attributes = {}; attributes.controller = 'false'; attributes.autoplay =
-            'true'; attributes.loop = 'false'; attributes.enablejavascript = 'false';
-            container.readAttribute('rel').split('|').each(function(keyvalue) { pair = keyvalue.split('='); attributes[pair[0]] = pair[1]; }); var qt
-            = new Quickie(attributes['src'], { id: attributes['video_id'], width: parseInt(attributes['width']), height:
-            parseInt(attributes['height']), container: container, attributes: attributes }); container.update(qt); }); }); ~~~</code>
+            tags that have all the attributes I need and are the container elements. On page load, I update all those containers with generate
+            QuickTime source code. See the example below.
+            <div class="highlight">
+              <pre>
+<code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<span class="cm">Example Container</span>
+<span class=
+"cm">&lt;div id=&quot;mymovie_container&quot; class=&quot;quicktime_video&quot; rel=&quot;src=/video/mymovie.mov|width=280|height=393|loop=true|autoplay=true|video_id=mymovie&quot;&gt;&lt;/div&gt;</span>
+<span class="cm">*/</span>
+
+<span class="nb">document</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class=
+"s1">&#39;dom:loaded&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">$$</span><span class="p">(</span><span class="s1">&#39;.quicktime_video&#39;</span><span class="p">).</span><span class=
+"nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">container</span><span class=
+"p">){</span>
+    <span class="kd">var</span> <span class="nx">attributes</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="nx">attributes</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class=
+"s1">&#39;false&#39;</span><span class="p">;</span>
+    <span class="nx">attributes</span><span class="p">.</span><span class="nx">autoplay</span> <span class="o">=</span> <span class=
+"s1">&#39;true&#39;</span><span class="p">;</span>
+    <span class="nx">attributes</span><span class="p">.</span><span class="nx">loop</span> <span class="o">=</span> <span class=
+"s1">&#39;false&#39;</span><span class="p">;</span>
+    <span class="nx">attributes</span><span class="p">.</span><span class="nx">enablejavascript</span> <span class="o">=</span> <span class=
+"s1">&#39;false&#39;</span><span class="p">;</span>
+    <span class="nx">container</span><span class="p">.</span><span class="nx">readAttribute</span><span class="p">(</span><span class=
+"s1">&#39;rel&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class=
+"s1">&#39;|&#39;</span><span class="p">).</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class=
+"p">(</span><span class="nx">keyvalue</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">pair</span> <span class="o">=</span> <span class="nx">keyvalue</span><span class="p">.</span><span class=
+"nx">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">);</span>
+      <span class="nx">attributes</span><span class="p">[</span><span class="nx">pair</span><span class="p">[</span><span class=
+"mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">pair</span><span class="p">[</span><span class=
+"mi">1</span><span class="p">];</span>
+    <span class="p">});</span>
+    <span class="kd">var</span> <span class="nx">qt</span> <span class="o">=</span> <span class="k">new</span> <span class=
+"nx">Quickie</span><span class="p">(</span><span class="nx">attributes</span><span class="p">[</span><span class=
+"s1">&#39;src&#39;</span><span class="p">],</span> <span class="p">{</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="nx">attributes</span><span class="p">[</span><span class=
+"s1">&#39;video_id&#39;</span><span class="p">],</span>
+      <span class="nx">width</span><span class="o">:</span> <span class="nb">parseInt</span><span class="p">(</span><span class=
+"nx">attributes</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]),</span>
+      <span class="nx">height</span><span class="o">:</span> <span class="nb">parseInt</span><span class="p">(</span><span class=
+"nx">attributes</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]),</span>
+      <span class="nx">container</span><span class="o">:</span> <span class="nx">container</span><span class="p">,</span>
+      <span class="nx">attributes</span><span class="o">:</span> <span class="nx">attributes</span>
+    <span class="p">});</span>
+    <span class="nx">container</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class=
+"nx">qt</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code>
+</pre>
+            </div>
             <h2>
-              <code>Resources</code>
+              Resources
             </h2>
             <ul>
               <li>
-                <code><a href="http://github.com/metaskills/quickie.js">Quickie.js on Github</a></code>
+                <a href="http://github.com/metaskills/quickie.js">Quickie.js on Github</a>
               </li>
             </ul>
-          </div>
-          <footer id="disqus_thread">
-            <script type="text/javascript">
+            <footer id="disqus_thread">
+              <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';
-            var disqus_identifier = '/2010/01/25/quickie-js-prototype-wrapper-for-quicktime/';
-            var disqus_title = "Quickie.js - Prototype wrapper for QuickTime";
-            (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-            </script>
-          </footer>
+              var disqus_identifier = '/2010/01/25/quickie-js-prototype-wrapper-for-quicktime/';
+              var disqus_title = "Quickie.js - Prototype wrapper for QuickTime";
+              (function() {
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+              })();
+              </script>
+            </footer>
+          </div>
         </article>
       </section>
       <nav>

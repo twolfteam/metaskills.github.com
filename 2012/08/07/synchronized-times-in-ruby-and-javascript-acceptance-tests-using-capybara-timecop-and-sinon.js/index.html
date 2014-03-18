@@ -137,32 +137,32 @@
             ERB and then initializing Sinon.JS' fake timers to a default time. In my case, this is 8:30am central standard time. Now we can assure
             that Capybara's browser engine will be frozen at that time and ready to move forward for each test.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment">// File app/assets/javascripts/integration.js</span>
+          <div class="highlight">
+            <pre>
+<code class="javascript language-javascript" data-lang="javascript"><span class="c1">// File app/assets/javascripts/integration.js</span>
 
-<span class="comment">//= require sinon-1.4.2</span>
-<span class="comment">//= require integration/sinon</span>
-<span class="comment">//= require application</span>
+<span class="c1">//= require sinon-1.4.2</span>
+<span class="c1">//= require integration/sinon</span>
+<span class="c1">//= require application</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-# File app/assets/javascripts/integration/sinon.js.coffee.erb
+          <div class="highlight">
+            <pre>
+<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class=
+"c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb</span>
 
-&lt;% central = ActiveSupport::TimeZone['Central Time (US &amp; Canada)'] %&gt;
-&lt;% today = central.parse('8:30am').to_i * 1000 %&gt;
+<span class="o">&lt;%</span> <span class="nv">central = </span><span class="nx">ActiveSupport</span><span class="o">::</span><span class=
+"nx">TimeZone</span><span class="p">[</span><span class="s">&#39;Central Time (US &amp; Canada)&#39;</span><span class="p">]</span> <span class=
+"o">%&gt;</span>
+<span class="o">&lt;%</span> <span class="nv">today = </span><span class="nx">central</span><span class="p">.</span><span class=
+"nx">parse</span><span class="p">(</span><span class="s">&#39;8:30am&#39;</span><span class="p">).</span><span class="nx">to_i</span> <span class=
+"o">*</span> <span class="mi">1000</span> <span class="o">%&gt;</span>
 
-window.clock = sinon.useFakeTimers &lt;%= today %&gt;
+<span class="nb">window</span><span class="p">.</span><span class="nv">clock = </span><span class="nx">sinon</span><span class=
+"p">.</span><span class="nx">useFakeTimers</span> <span class="o">&lt;%=</span> <span class="nx">today</span> <span class="o">%&gt;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Now, the Ruby code. Here is slimmed down version of my base integration test case which <a href=
@@ -173,53 +173,58 @@ window.clock = sinon.useFakeTimers &lt;%= today %&gt;
             advancement and sends that directly to Sinon.JS' fake timers using Capybara's <code>#execute_script</code> method. So calling
             <code>advance_time(seconds:20)</code> in Ruby now moves time forward in both Ruby and JavaScript. Epic win!!!
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># File test/test_helper_integration.rb</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># File test/test_helper_integration.rb</span>
 
-require <span class="string"><span class="delimiter">&quot;</span><span class="content">test_helper</span><span class=
-"delimiter">&quot;</span></span>
-require <span class="string"><span class="delimiter">&quot;</span><span class="content">capybara/rails</span><span class=
-"delimiter">&quot;</span></span>
+<span class="nb">require</span> <span class="s2">&quot;test_helper&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;capybara/rails&quot;</span>
 
-<span class="keyword">module</span> <span class="class">ActionDispatch</span>
-  <span class="keyword">class</span> <span class="class">IntegrationTest</span>
+<span class="k">module</span> <span class="nn">ActionDispatch</span>
+  <span class="k">class</span> <span class="nc">IntegrationTest</span>
 
-  include <span class="constant">Capybara</span>::<span class="constant">DSL</span>
+  <span class="kp">include</span> <span class="no">Capybara</span><span class="o">::</span><span class="no">DSL</span>
 
-  before { travel <span class="string"><span class="delimiter">'</span><span class="content">8:30am</span><span class="delimiter">'</span></span> }
-  after  { <span class="constant">Capybara</span>.reset_sessions! }
-  
-  private
+  <span class="n">before</span> <span class="p">{</span> <span class="n">travel</span> <span class="s1">&#39;8:30am&#39;</span> <span class=
+"p">}</span>
+  <span class="n">after</span>  <span class="p">{</span> <span class="no">Capybara</span><span class="o">.</span><span class=
+"n">reset_sessions!</span> <span class="p">}</span>
 
-  <span class="keyword">def</span> <span class="function">travel</span>(parseable_time)
-    <span class="constant">Timecop</span>.return
-    <span class="constant">Timecop</span>.travel parse_time(parseable_time)
-  <span class="keyword">end</span>
+  <span class="kp">private</span>
 
-  <span class="keyword">def</span> <span class="function">parse_time</span>(time)
-    time.is_a?(<span class="constant">String</span>) ? <span class="constant">Chronic</span>.parse(time) : time
-  <span class="keyword">end</span>
+  <span class="k">def</span> <span class="nf">travel</span><span class="p">(</span><span class="n">parseable_time</span><span class="p">)</span>
+    <span class="no">Timecop</span><span class="o">.</span><span class="n">return</span>
+    <span class="no">Timecop</span><span class="o">.</span><span class="n">travel</span> <span class="n">parse_time</span><span class=
+"p">(</span><span class="n">parseable_time</span><span class="p">)</span>
+  <span class="k">end</span>
 
-  <span class="keyword">def</span> <span class="function">advance_time</span>(options)
-    now_ms = <span class="constant">Time</span>.current.to_i * <span class="integer">1000</span>
-    <span class="constant">Timecop</span>.travel <span class="constant">Time</span>.current.advance(options)
-    traveled_ms = (<span class="constant">Time</span>.current.to_i * <span class="integer">1000</span>) - now_ms
-    advance_sinon traveled_ms
-  <span class="keyword">end</span>
+  <span class="k">def</span> <span class="nf">parse_time</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">String</span><span class=
+"p">)</span> <span class="p">?</span> <span class="no">Chronic</span><span class="o">.</span><span class="n">parse</span><span class=
+"p">(</span><span class="n">time</span><span class="p">)</span> <span class="p">:</span> <span class="n">time</span>
+  <span class="k">end</span>
 
-  <span class="keyword">def</span> <span class="function">advance_sinon</span>(ms)
-    page.execute_script <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">if (window.clock) { window.clock.tick(</span><span class="inline"><span class="inline-delimiter">#{</span>ms<span class=
-"inline-delimiter">}</span></span><span class="content">); }</span><span class="delimiter">&quot;</span></span>
-  <span class="keyword">end</span>
+  <span class="k">def</span> <span class="nf">advance_time</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">now_ms</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class=
+"n">current</span><span class="o">.</span><span class="n">to_i</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="no">Timecop</span><span class="o">.</span><span class="n">travel</span> <span class="no">Time</span><span class=
+"o">.</span><span class="n">current</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class=
+"n">options</span><span class="p">)</span>
+    <span class="n">traveled_ms</span> <span class="o">=</span> <span class="p">(</span><span class="no">Time</span><span class=
+"o">.</span><span class="n">current</span><span class="o">.</span><span class="n">to_i</span> <span class="o">*</span> <span class=
+"mi">1000</span><span class="p">)</span> <span class="o">-</span> <span class="n">now_ms</span>
+    <span class="n">advance_sinon</span> <span class="n">traveled_ms</span>
+  <span class="k">end</span>
 
-<span class="keyword">end</span>
+  <span class="k">def</span> <span class="nf">advance_sinon</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>
+    <span class="n">page</span><span class="o">.</span><span class="n">execute_script</span> <span class=
+"s2">&quot;if (window.clock) { window.clock.tick(</span><span class="si">#{</span><span class="n">ms</span><span class="si">}</span><span class=
+"s2">); }&quot;</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             I have found the following technique critical to fully testing a recent time based JavaScript application I have developed. I hope you

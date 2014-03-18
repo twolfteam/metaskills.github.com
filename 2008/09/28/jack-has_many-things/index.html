@@ -65,7 +65,7 @@
           </header>
           <aside class="flash_info">
             UPDATE: [12/06/2011] The <a href="https://github.com/metaskills/grouped_scope">GroupedScope</a> gem has been updated for Rails 3.1. Many
-            new features have been added with a few mentioned below. Check the project's readme for complete details.
+            new features have been added with a few mentioned below. Check the project&#39;s readme for complete details.
           </aside>
           <p>
             <span class="photofancy floatl mr20"><img src="/assets/jack.png" alt="Jack Has Many Things" width="320" height="214"></span> I am Jack's
@@ -103,62 +103,55 @@
           <p>
             First we need to install the gem. So bundle up in your Gemfile.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-gem <span class="string"><span class="delimiter">'</span><span class="content">grouped_scope</span><span class=
-"delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">~&gt; 3.1.0</span><span class=
-"delimiter">'</span></span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">&#39;grouped_scope&#39;</span><span class=
+"p">,</span> <span class="s1">&#39;~&gt; 3.1.0&#39;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Now let's open up our people schema and the Person model, so Jack can share. First we add a group_id column to the people table.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="keyword">class</span> <span class="class">PeopleCanChooseAGroup</span> &lt; <span class="constant">ActiveRecord</span>::<span class=
-"constant">Migration</span>
-  <span class="keyword">def</span> <span class="function">up</span>
-    add_column <span class="symbol">:people</span>, <span class="symbol">:group_id</span>, <span class="symbol">:integer</span>
-  <span class="keyword">end</span>
-  <span class="keyword">def</span> <span class="function">down</span>
-    remove_column <span class="symbol">:people</span>, <span class="symbol">:group_id</span>
-  <span class="keyword">end</span>
-<span class="keyword">end</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">PeopleCanChooseAGroup</span> <span class=
+"o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+  <span class="k">def</span> <span class="nf">up</span>
+    <span class="n">add_column</span> <span class="ss">:people</span><span class="p">,</span> <span class="ss">:group_id</span><span class=
+"p">,</span> <span class="ss">:integer</span>
+  <span class="k">end</span>
+  <span class="k">def</span> <span class="nf">down</span>
+    <span class="n">remove_column</span> <span class="ss">:people</span><span class="p">,</span> <span class="ss">:group_id</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Next we declare grouped_scope on a few associations.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="keyword">class</span> <span class="class">Person</span> &lt; <span class="constant">ActiveRecord</span>::<span class=
-"constant">Base</span>
-  has_many <span class="symbol">:things</span>
-  has_many <span class="symbol">:acquaintances</span>
-  has_many <span class="symbol">:problems</span>
-  grouped_scope <span class="symbol">:things</span>, <span class="symbol">:problems</span>
-<span class="keyword">end</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Person</span> <span class=
+"o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">has_many</span> <span class="ss">:things</span>
+  <span class="n">has_many</span> <span class="ss">:acquaintances</span>
+  <span class="n">has_many</span> <span class="ss">:problems</span>
+  <span class="n">grouped_scope</span> <span class="ss">:things</span><span class="p">,</span> <span class="ss">:problems</span>
+<span class="k">end</span>
 
-<span class="instance-variable">@jack</span> = <span class="constant">Person</span>.find_by_name(<span class="string"><span class=
-"delimiter">'</span><span class="content">Jack</span><span class="delimiter">'</span></span>)
-<span class="instance-variable">@bob</span>  = <span class="constant">Person</span>.find_by_name(<span class="string"><span class=
-"delimiter">'</span><span class="content">Bob</span><span class="delimiter">'</span></span>)
+<span class="vi">@jack</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class=
+"n">find_by_name</span><span class="p">(</span><span class="s1">&#39;Jack&#39;</span><span class="p">)</span>
+<span class="vi">@bob</span>  <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class=
+"n">find_by_name</span><span class="p">(</span><span class="s1">&#39;Bob&#39;</span><span class="p">)</span>
 
-<span class="instance-variable">@jack</span>.update_attribute <span class="symbol">:group_id</span>, <span class="integer">1</span>
-<span class="instance-variable">@bob</span>.update_attribute <span class="symbol">:group_id</span>, <span class="integer">1</span>
+<span class="vi">@jack</span><span class="o">.</span><span class="n">update_attribute</span> <span class="ss">:group_id</span><span class=
+"p">,</span> <span class="mi">1</span>
+<span class="vi">@bob</span><span class="o">.</span><span class="n">update_attribute</span> <span class="ss">:group_id</span><span class=
+"p">,</span> <span class="mi">1</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             So now every Person object in our app is now ready to share their <code>:things</code> and their <code>:problems</code>. I have also just
@@ -166,15 +159,12 @@ gem <span class="string"><span class="delimiter">'</span><span class="content">g
             instance method that will allow us to either reflect on the group or delegate to the associations we have declared as now haveing grouped
             scope.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="instance-variable">@jack</span>.group   <span class=
-"comment"># =&gt; [#&lt;Person id: 1, name: &quot;Jack&quot;, group_id: 1&gt;, #&lt;Person id: 2, name: &quot;Bob&quot;, group_id: 1&gt;]</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="vi">@jack</span><span class="o">.</span><span class="n">group</span>   <span class=
+"c1"># =&gt; [#&lt;Person id: 1, name: &quot;Jack&quot;, group_id: 1&gt;, #&lt;Person id: 2, name: &quot;Bob&quot;, group_id: 1&gt;]</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h2>
             We all started seeing things differently.
@@ -185,20 +175,21 @@ gem <span class="string"><span class="delimiter">'</span><span class="content">g
             grouped association reflections which mimic their originals. Essentially giving the group access to all associated objects of its
             members, in this case their <code>:things</code> and <code>:problems</code>. Did I loose you?
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="instance-variable">@jack</span>.problems.size   <span class="comment"># =&gt; 6</span>
-<span class="instance-variable">@bob</span>.problems.size    <span class="comment"># =&gt; 2</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="vi">@jack</span><span class="o">.</span><span class="n">problems</span><span class=
+"o">.</span><span class="n">size</span>   <span class="c1"># =&gt; 6</span>
+<span class="vi">@bob</span><span class="o">.</span><span class="n">problems</span><span class="o">.</span><span class=
+"n">size</span>    <span class="c1"># =&gt; 2</span>
 
-<span class="instance-variable">@bob</span>.group.problems        <span class=
-"comment"># =&gt; [#&lt;Problem...&gt;,#&lt;Problem...&gt;,#&lt;Problem...&gt;,#&lt;Problem...&gt;,....]</span>
-<span class="instance-variable">@bob</span>.group.problems.size   <span class="comment"># =&gt; 8</span>
-<span class="instance-variable">@jack</span>.group.problems.size  <span class="comment"># =&gt; 8</span>
+<span class="vi">@bob</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class=
+"n">problems</span>        <span class="c1"># =&gt; [#&lt;Problem...&gt;,#&lt;Problem...&gt;,#&lt;Problem...&gt;,#&lt;Problem...&gt;,....]</span>
+<span class="vi">@bob</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">problems</span><span class=
+"o">.</span><span class="n">size</span>   <span class="c1"># =&gt; 8</span>
+<span class="vi">@jack</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">problems</span><span class=
+"o">.</span><span class="n">size</span>  <span class="c1"># =&gt; 8</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Without going into the detail of Jack's and Bob's problems, we can see that within the group, they are all shared. This is what the
@@ -212,32 +203,35 @@ gem <span class="string"><span class="delimiter">'</span><span class="content">g
             <code>:though</code>, and <code>:extend</code> will just work! It also lets you chain scopes existing scopes or use your custom
             association extensions on the original associations. Here is very contrived example:
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="keyword">class</span> <span class="class">Person</span> &lt; <span class="constant">ActiveRecord</span>::<span class=
-"constant">Base</span>
-  has_many <span class="symbol">:mental_issues</span>, <span class="symbol">:class_name</span> =&gt; <span class="string"><span class=
-"delimiter">&quot;</span><span class="content">MentalState</span><span class="delimiter">&quot;</span></span>, <span class=
-"symbol">:foreign_key</span> =&gt; <span class="symbol">:name</span> <span class="keyword">do</span>
-    <span class="keyword">def</span> <span class="function">dangerous</span>
-      where(<span class="symbol">:snap_tolerance</span> =&gt; <span class="integer">10</span>)
-    <span class="keyword">end</span>
-  <span class="keyword">end</span>
-  grouped_scope <span class="symbol">:mental_issues</span>
-<span class="keyword">end</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Person</span> <span class=
+"o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">has_many</span> <span class="ss">:mental_issues</span><span class="p">,</span> <span class="ss">:class_name</span> <span class=
+"o">=&gt;</span> <span class="s2">&quot;MentalState&quot;</span><span class="p">,</span> <span class="ss">:foreign_key</span> <span class=
+"o">=&gt;</span> <span class="ss">:name</span> <span class="k">do</span>
+    <span class="k">def</span> <span class="nf">dangerous</span>
+      <span class="n">where</span><span class="p">(</span><span class="ss">:snap_tolerance</span> <span class="o">=&gt;</span> <span class=
+"mi">10</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="n">grouped_scope</span> <span class="ss">:mental_issues</span>
+<span class="k">end</span>
 
-<span class="keyword">class</span> <span class="class">MentalState</span> &lt; <span class="constant">ActiveRecord</span>::<span class=
-"constant">Base</span>
-  scope <span class="symbol">:treatable_by</span>, lambda { |doctor| where(<span class="symbol">:doctor_id</span> = doctor.id) }
-<span class="keyword">end</span>
+<span class="k">class</span> <span class="nc">MentalState</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class=
+"o">::</span><span class="no">Base</span>
+  <span class="n">scope</span> <span class="ss">:treatable_by</span><span class="p">,</span> <span class="nb">lambda</span> <span class=
+"p">{</span> <span class="o">|</span><span class="n">doctor</span><span class="o">|</span> <span class="n">where</span><span class=
+"p">(</span><span class="ss">:doctor_id</span> <span class="o">=</span> <span class="n">doctor</span><span class="o">.</span><span class=
+"n">id</span><span class="p">)</span> <span class="p">}</span>
+<span class="k">end</span>
 
-<span class="instance-variable">@jack</span>.group.mental_issues.dangerous.treatable_by(<span class="instance-variable">@doctor</span>) <span class=
-"comment"># =&gt; [#&lt;MentalState...&gt;,#&lt;MentalState...&gt;]</span>
+<span class="vi">@jack</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class=
+"n">mental_issues</span><span class="o">.</span><span class="n">dangerous</span><span class="o">.</span><span class=
+"n">treatable_by</span><span class="p">(</span><span class="vi">@doctor</span><span class="p">)</span> <span class=
+"c1"># =&gt; [#&lt;MentalState...&gt;,#&lt;MentalState...&gt;]</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h2>
             This is probably one of those "cry for help" things.

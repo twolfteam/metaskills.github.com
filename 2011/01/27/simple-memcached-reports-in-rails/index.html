@@ -75,80 +75,105 @@
             Rails developer.
           </p>
           <div class="h20"></div>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="keyword">module</span> <span class="class">ActiveSupport</span>
-  <span class="keyword">module</span> <span class="class">Cache</span>
-    <span class="keyword">class</span> <span class="class">MemCacheStore</span> &lt; <span class="constant">Store</span>
-      
-      include <span class="constant">ActionView</span>::<span class="constant">Helpers</span>::<span class="constant">DateHelper</span>
-      include <span class="constant">ActionView</span>::<span class="constant">Helpers</span>::<span class="constant">NumberHelper</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">ActiveSupport</span>
+  <span class="k">module</span> <span class="nn">Cache</span>
+    <span class="k">class</span> <span class="nc">MemCacheStore</span> <span class="o">&lt;</span> <span class="no">Store</span>
 
-      <span class="comment"># Higher percentages, above 90%, are good.</span>
-      <span class="keyword">def</span> <span class="function">hit_ratio</span>
-        stats.inject({}) <span class="keyword">do</span> |memo, (server,stat)|
-          value = (stat[<span class="string"><span class="delimiter">'</span><span class="content">get_hits</span><span class=
-"delimiter">'</span></span>].to_f / stat[<span class="string"><span class="delimiter">'</span><span class="content">cmd_get</span><span class=
-"delimiter">'</span></span>].to_f) * <span class="integer">100</span>
-          memo[server] = number_to_percentage(value,<span class="symbol">:precision</span>=&gt;<span class="integer">2</span>)
-          memo
-        <span class="keyword">end</span>
-      <span class="keyword">end</span>
+      <span class="kp">include</span> <span class="no">ActionView</span><span class="o">::</span><span class="no">Helpers</span><span class=
+"o">::</span><span class="no">DateHelper</span>
+      <span class="kp">include</span> <span class="no">ActionView</span><span class="o">::</span><span class="no">Helpers</span><span class=
+"o">::</span><span class="no">NumberHelper</span>
 
-      <span class="comment"># Another good statistic to look at is percentage of gets to sets. For a well-tuned application, </span>
-      <span class="comment"># there should be more gets than sets. High percents are bad, negatives are great.</span>
-      <span class="keyword">def</span> <span class="function">gets_to_sets</span>
-        stats.inject({}) <span class="keyword">do</span> |memo, (server,stat)|
-          sets = stat[<span class="string"><span class="delimiter">'</span><span class="content">cmd_set</span><span class=
-"delimiter">'</span></span>].to_f
-          gets = stat[<span class="string"><span class="delimiter">'</span><span class="content">cmd_get</span><span class=
-"delimiter">'</span></span>].to_f
-          more_sets = sets - gets
-          value = (more_sets / gets) * <span class="integer">100</span>
-          memo[server] = number_to_percentage(value,<span class="symbol">:precision</span>=&gt;<span class="integer">2</span>)
-          memo
-        <span class="keyword">end</span>
-      <span class="keyword">end</span>
+      <span class="c1"># Higher percentages, above 90%, are good.</span>
+      <span class="k">def</span> <span class="nf">hit_ratio</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class=
+"k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class=
+"n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">stat</span><span class=
+"o">[</span><span class="s1">&#39;get_hits&#39;</span><span class="o">].</span><span class="n">to_f</span> <span class="o">/</span> <span class=
+"n">stat</span><span class="o">[</span><span class="s1">&#39;cmd_get&#39;</span><span class="o">].</span><span class="n">to_f</span><span class=
+"p">)</span> <span class="o">*</span> <span class="mi">100</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">number_to_percentage</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class=
+"ss">:precision</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">)</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
 
-      <span class="keyword">def</span> <span class="function">uptime</span>
-        stats.inject({}) <span class="keyword">do</span> |memo, (server,stat)|
-          started_on = stat[<span class="string"><span class="delimiter">'</span><span class="content">uptime</span><span class=
-"delimiter">'</span></span>].seconds.ago
-          utime = distance_of_time_in_words started_on, <span class="constant">Time</span>.now
-          memo[server] = {<span class="symbol">:started_on</span> =&gt; started_on, <span class="symbol">:uptime</span> =&gt; utime}
-          memo
-        <span class="keyword">end</span>
-      <span class="keyword">end</span>
+      <span class="c1"># Another good statistic to look at is percentage of gets to sets. For a well-tuned application,</span>
+      <span class="c1"># there should be more gets than sets. High percents are bad, negatives are great.</span>
+      <span class="k">def</span> <span class="nf">gets_to_sets</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class=
+"k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class=
+"n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">sets</span> <span class="o">=</span> <span class="n">stat</span><span class="o">[</span><span class=
+"s1">&#39;cmd_set&#39;</span><span class="o">].</span><span class="n">to_f</span>
+          <span class="nb">gets</span> <span class="o">=</span> <span class="n">stat</span><span class="o">[</span><span class=
+"s1">&#39;cmd_get&#39;</span><span class="o">].</span><span class="n">to_f</span>
+          <span class="n">more_sets</span> <span class="o">=</span> <span class="n">sets</span> <span class="o">-</span> <span class="nb">gets</span>
+          <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">more_sets</span> <span class=
+"o">/</span> <span class="nb">gets</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">number_to_percentage</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class=
+"ss">:precision</span><span class="o">=&gt;</span><span class="mi">2</span><span class="p">)</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
 
-      <span class="keyword">def</span> <span class="function">memory</span>
-        stats.inject({}) <span class="keyword">do</span> |memo, (server,stat)|
-          memory = number_to_human_size stat[<span class="string"><span class="delimiter">'</span><span class=
-"content">limit_maxbytes</span><span class="delimiter">'</span></span>]
-          used = number_to_human_size stat[<span class="string"><span class="delimiter">'</span><span class="content">bytes</span><span class=
-"delimiter">'</span></span>]
-          memo[server] = {<span class="symbol">:memory_total</span> =&gt; memory, <span class="symbol">:memory_used</span> =&gt; used}
-          memo
-        <span class="keyword">end</span>
-      <span class="keyword">end</span>
-      
-      <span class="keyword">def</span> <span class="function">report</span>
-        stats.keys.inject({}) <span class="keyword">do</span> |memo, server|
-          rpt = memory[server].merge(uptime[server])
-          rpt[<span class="symbol">:hit_ratio</span>] = hit_ratio[server]
-          rpt[<span class="symbol">:gets_to_sets</span>] = gets_to_sets[server]
-          memo[server] = rpt
-          memo
-        <span class="keyword">end</span>
-      <span class="keyword">end</span>
-      
-    <span class="keyword">end</span>
-  <span class="keyword">end</span>
-<span class="keyword">end</span>
+      <span class="k">def</span> <span class="nf">uptime</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class=
+"k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class=
+"n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">started_on</span> <span class="o">=</span> <span class="n">stat</span><span class="o">[</span><span class=
+"s1">&#39;uptime&#39;</span><span class="o">].</span><span class="n">seconds</span><span class="o">.</span><span class="n">ago</span>
+          <span class="n">utime</span> <span class="o">=</span> <span class="n">distance_of_time_in_words</span> <span class=
+"n">started_on</span><span class="p">,</span> <span class="no">Time</span><span class="o">.</span><span class="n">now</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class=
+"o">=</span> <span class="p">{</span><span class="ss">:started_on</span> <span class="o">=&gt;</span> <span class="n">started_on</span><span class=
+"p">,</span> <span class="ss">:uptime</span> <span class="o">=&gt;</span> <span class="n">utime</span><span class="p">}</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">memory</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class=
+"k">do</span> <span class="o">|</span><span class="n">memo</span><span class="p">,</span> <span class="p">(</span><span class=
+"n">server</span><span class="p">,</span><span class="n">stat</span><span class="p">)</span><span class="o">|</span>
+          <span class="n">memory</span> <span class="o">=</span> <span class="n">number_to_human_size</span> <span class="n">stat</span><span class=
+"o">[</span><span class="s1">&#39;limit_maxbytes&#39;</span><span class="o">]</span>
+          <span class="n">used</span> <span class="o">=</span> <span class="n">number_to_human_size</span> <span class="n">stat</span><span class=
+"o">[</span><span class="s1">&#39;bytes&#39;</span><span class="o">]</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class=
+"o">=</span> <span class="p">{</span><span class="ss">:memory_total</span> <span class="o">=&gt;</span> <span class="n">memory</span><span class=
+"p">,</span> <span class="ss">:memory_used</span> <span class="o">=&gt;</span> <span class="n">used</span><span class="p">}</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">report</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class=
+"n">inject</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="n">memo</span><span class=
+"p">,</span> <span class="n">server</span><span class="o">|</span>
+          <span class="n">rpt</span> <span class="o">=</span> <span class="n">memory</span><span class="o">[</span><span class=
+"n">server</span><span class="o">].</span><span class="n">merge</span><span class="p">(</span><span class="n">uptime</span><span class=
+"o">[</span><span class="n">server</span><span class="o">]</span><span class="p">)</span>
+          <span class="n">rpt</span><span class="o">[</span><span class="ss">:hit_ratio</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">hit_ratio</span><span class="o">[</span><span class="n">server</span><span class="o">]</span>
+          <span class="n">rpt</span><span class="o">[</span><span class="ss">:gets_to_sets</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">gets_to_sets</span><span class="o">[</span><span class="n">server</span><span class="o">]</span>
+          <span class="n">memo</span><span class="o">[</span><span class="n">server</span><span class="o">]</span> <span class=
+"o">=</span> <span class="n">rpt</span>
+          <span class="n">memo</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">

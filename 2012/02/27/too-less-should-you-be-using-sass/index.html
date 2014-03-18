@@ -121,50 +121,50 @@
             show you a common pattern both I and Compass use in a basic contrived example. You may also want to read my comments in that github issue
             link too. Imagine I have some global colors that I want to mixin to other classes based on a dynamic property. So given this SCSS below:
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="error">$</span><span class="tag">myWhite</span>: <span class="color">rgb(240,240,240)</span>;
-<span class="error">$</span><span class="tag">myGray</span>:  <span class="color">rgb(140,140,140)</span>;
-<span class="error">$</span><span class="tag">myBlack</span>: <span class="color">rgb(30,30,30)</span>;
+          <div class="highlight">
+            <pre>
+<code class="css language-css" data-lang="css"><span class="err">$</span><span class="nt">myWhite</span><span class="o">:</span> <span class=
+"nt">rgb</span><span class="o">(</span><span class="nt">240</span><span class="o">,</span><span class="nt">240</span><span class=
+"o">,</span><span class="nt">240</span><span class="o">);</span>
+<span class="err">$</span><span class="nt">myGray</span><span class="o">:</span>  <span class="nt">rgb</span><span class="o">(</span><span class=
+"nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">);</span>
+<span class="err">$</span><span class="nt">myBlack</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class=
+"nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">);</span>
 
-<span class="directive">@mixin</span> <span class="error">m</span><span class="error">y</span><span class="error">C</span><span class=
-"error">o</span><span class="error">l</span><span class="error">o</span><span class="error">r</span><span class="error">C</span><span class=
-"error">l</span><span class="error">a</span><span class="error">s</span><span class="error">s</span><span class="error">e</span><span class=
-"error">s</span>(<span class="error">$</span><span class="tag">property</span>) {
-  <span class="error">&amp;</span>.<span class="key">white</span>   { <span class="error">#</span>{<span class="error">$</span><span class=
-"key">property</span>}: <span class="error">$</span><span class="value">myWhite</span>; }
-  <span class="error">&amp;</span>.<span class="key">gray</span>    { <span class="error">#</span>{<span class="error">$</span><span class=
-"key">property</span>}: <span class="error">$</span><span class="value">myGray</span>; }
-  <span class="error">&amp;</span>.<span class="key">black</span>   { <span class="error">#</span>{<span class="error">$</span><span class=
-"key">property</span>}: <span class="error">$</span><span class="value">myBlack</span>; }
-}
+<span class="k">@mixin</span> <span class="nt">myColorClasses</span><span class="o">(</span><span class="err">$</span><span class=
+"nt">property</span><span class="o">)</span> <span class="p">{</span>
+  <span class="o">&amp;</span><span class="nc">.white</span>   <span class="p">{</span> <span class="err">#{$</span><span class=
+"n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myWhite</span><span class=
+"o">;</span> <span class="p">}</span>
+  <span class="o">&amp;</span><span class="nc">.gray</span>    <span class="p">{</span> <span class="err">#{$</span><span class=
+"n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myGray</span><span class=
+"o">;</span> <span class="err">}</span>
+  <span class="o">&amp;</span><span class="nc">.black</span>   <span class="p">{</span> <span class="err">#{$</span><span class=
+"n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myBlack</span><span class=
+"o">;</span> <span class="err">}</span>
+<span class="err">}</span>
 
-<span class="class">.box</span> {
-  <span class="directive">@include</span> <span class="error">m</span><span class="error">y</span><span class="error">C</span><span class=
-"error">o</span><span class="error">l</span><span class="error">o</span><span class="error">r</span><span class="error">C</span><span class=
-"error">l</span><span class="error">a</span><span class="error">s</span><span class="error">s</span><span class="error">e</span><span class=
-"error">s</span>(<span class="key">background-color</span>);
-}
+<span class="nc">.box</span> <span class="p">{</span>
+  <span class="o">@</span><span class="n">include</span> <span class="n">myColorClasses</span><span class="p">(</span><span class=
+"k">background-color</span><span class="p">);</span>
+<span class="p">}</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             It would output something like the following. Notice how I use the variable string <code>background-color</code> and generate dynamic
             properties?
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="class">.box</span><span class="class">.white</span> { <span class="key">background-color</span>: <span class="color">#f0f0f0</span>; }
-<span class="class">.box</span><span class="class">.gray</span>  { <span class="key">background-color</span>: <span class="color">#8c8c8c</span>; }
-<span class="class">.box</span><span class="class">.black</span> { <span class="key">background-color</span>: <span class="color">#1e1e1e</span>; }
+          <div class="highlight">
+            <pre>
+<code class="css language-css" data-lang="css"><span class="nc">.box.white</span> <span class="p">{</span> <span class=
+"k">background-color</span><span class="o">:</span> <span class="m">#f0f0f0</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.box.gray</span>  <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class=
+"m">#8c8c8c</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.box.black</span> <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class=
+"m">#1e1e1e</span><span class="p">;</span> <span class="p">}</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Astute observers may point out that you can achieve the same with sub classes and be more efficient in the generated CSS too. You would

@@ -77,16 +77,13 @@
             test case. Tricking it to use MiniTest::Spec instead of MiniTest::Unit. Here is an example Gemfile that shows the usage of
             MiniTestSpecRails. That is all you have to do!
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-group <span class="symbol">:test</span> <span class="keyword">do</span>
-  gem <span class="string"><span class="delimiter">'</span><span class="content">minitest-spec-rails</span><span class="delimiter">'</span></span>
-<span class="keyword">end</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">group</span> <span class="ss">:test</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">&#39;minitest-spec-rails&#39;</span>
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h2>
             Advantages?
@@ -112,32 +109,27 @@ group <span class="symbol">:test</span> <span class="keyword">do</span>
             One thing that I try to do is to change my test assertions from the old Test::Unit style to the new MiniTest::Spec style. I commonly use
             this <a href="http://cheat.errtheblog.com/s/minitest/1">cheat sheet</a> to remember them. For instance:
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># This:</span>
-assert_not_nil <span class="instance-variable">@foo</span>.bar
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># This:</span>
+<span class="n">assert_not_nil</span> <span class="vi">@foo</span><span class="o">.</span><span class="n">bar</span>
 
-<span class="comment"># Would Become This:</span>
-<span class="instance-variable">@foo</span>.bar.wont_be_nil
+<span class="c1"># Would Become This:</span>
+<span class="vi">@foo</span><span class="o">.</span><span class="n">bar</span><span class="o">.</span><span class="n">wont_be_nil</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Likewise, MiniTest::Spec is consistently getting new features added. One patch that I advocated for now allows the <code>must_be</code>
             and <code>wont_be</code> low-level assertions to work with a predicate method symbol. Meaning, if the symbol ends in a question mark,
             then it will implicitly call that mehod on the subject for truthy or falsy matching. For instance:
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="instance-variable">@user</span>.must_be <span class="symbol">:valid?</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="vi">@user</span><span class="o">.</span><span class="n">must_be</span> <span class=
+"ss">:valid?</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h2>
             Known Issues

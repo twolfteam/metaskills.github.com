@@ -91,103 +91,129 @@
             system</a>, <a href="http://documentcloud.github.com/backbone/">Backbone.js's class system</a>, or jQuery's deeply nested plugin class
             system that is hidden away. So lets get to fixing that. Here is 32 lines of dirt simple JavaScript inheritance.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment">/* Simple JavaScript Class
-   By John Resig. MIT Licensed. &lt;http://ejohn.org/blog/simple-javascript-inheritance/&gt; */</span>
-(<span class="keyword">function</span>(){
-  <span class="keyword">var</span> initializing = <span class="predefined-constant">false</span>, fnTest = <span class="regexp"><span class=
-"delimiter">/</span><span class="content">xyz</span><span class="delimiter">/</span></span>.test(<span class=
-"keyword">function</span>(){xyz;}) ? <span class="regexp"><span class="delimiter">/</span><span class="char">\b</span><span class=
-"content">_super</span><span class="char">\b</span><span class="delimiter">/</span></span> : <span class="regexp"><span class=
-"delimiter">/</span><span class="content">.*</span><span class="delimiter">/</span></span>;
-  <span class="local-variable">this</span>.<span class="function">JQClass</span> = <span class="keyword">function</span>(){};
-  JQClass.<span class="function">extend</span> = <span class="keyword">function</span>(prop) {
-    <span class="keyword">var</span> _super = <span class="local-variable">this</span>.prototype;
-    initializing = <span class="predefined-constant">true</span>;
-    <span class="keyword">var</span> prototype = <span class="keyword">new</span> <span class="local-variable">this</span>();
-    initializing = <span class="predefined-constant">false</span>;
-    <span class="keyword">for</span> (<span class="keyword">var</span> name <span class="keyword">in</span> prop) {
-      prototype[name] = <span class="keyword">typeof</span> prop[name] == <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">function</span><span class="delimiter">&quot;</span></span> &amp;&amp; 
-        <span class="keyword">typeof</span> _super[name] == <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">function</span><span class="delimiter">&quot;</span></span> &amp;&amp; fnTest.test(prop[name]) ?
-        (<span class="keyword">function</span>(name, fn){
-          <span class="keyword">return</span> <span class="keyword">function</span>() {
-            <span class="keyword">var</span> tmp = <span class="local-variable">this</span>._super;
-            <span class="local-variable">this</span>._super = _super[name];
-            <span class="keyword">var</span> ret = fn.apply(<span class="local-variable">this</span>, <span class=
-"local-variable">arguments</span>);        
-            <span class="local-variable">this</span>._super = tmp;
-            <span class="keyword">return</span> ret;
-          };
-        })(name, prop[name]) :
-        prop[name];
-    }
-    <span class="keyword">function</span> <span class="function">JQClass</span>() {
-      <span class="keyword">if</span> ( !initializing &amp;&amp; <span class="local-variable">this</span>.init )
-        <span class="local-variable">this</span>.init.apply(<span class="local-variable">this</span>, <span class="local-variable">arguments</span>);
-    }
-    JQClass.prototype = prototype;
-    JQClass.prototype.constructor = JQClass;
-    JQClass.extend = <span class="local-variable">arguments</span>.callee;
-    <span class="keyword">return</span> JQClass;
-  };
-})();
+          <div class="highlight">
+            <pre>
+<code class="javascript language-javascript" data-lang="javascript"><span class="cm">/* Simple JavaScript Class</span>
+<span class="cm">   By John Resig. MIT Licensed. &lt;http://ejohn.org/blog/simple-javascript-inheritance/&gt; */</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="kd">var</span> <span class="nx">initializing</span> <span class="o">=</span> <span class="kc">false</span><span class=
+"p">,</span> <span class="nx">fnTest</span> <span class="o">=</span> <span class="sr">/xyz/</span><span class="p">.</span><span class=
+"nx">test</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span><span class="nx">xyz</span><span class=
+"p">;})</span> <span class="o">?</span> <span class="sr">/\b_super\b/</span> <span class="o">:</span> <span class="sr">/.*/</span><span class=
+"p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">JQClass</span> <span class="o">=</span> <span class=
+"kd">function</span><span class="p">(){};</span>
+  <span class="nx">JQClass</span><span class="p">.</span><span class="nx">extend</span> <span class="o">=</span> <span class=
+"kd">function</span><span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">_super</span> <span class="o">=</span> <span class="k">this</span><span class=
+"p">.</span><span class="nx">prototype</span><span class="p">;</span>
+    <span class="nx">initializing</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class=
+"k">this</span><span class="p">();</span>
+    <span class="nx">initializing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">name</span> <span class=
+"k">in</span> <span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">prototype</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class=
+"o">=</span> <span class="k">typeof</span> <span class="nx">prop</span><span class="p">[</span><span class="nx">name</span><span class=
+"p">]</span> <span class="o">==</span> <span class="s2">&quot;function&quot;</span> <span class="o">&amp;&amp;</span>
+        <span class="k">typeof</span> <span class="nx">_super</span><span class="p">[</span><span class="nx">name</span><span class=
+"p">]</span> <span class="o">==</span> <span class="s2">&quot;function&quot;</span> <span class="o">&amp;&amp;</span> <span class=
+"nx">fnTest</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">prop</span><span class=
+"p">[</span><span class="nx">name</span><span class="p">])</span> <span class="o">?</span>
+        <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class=
+"p">,</span> <span class="nx">fn</span><span class="p">){</span>
+          <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class=
+"p">.</span><span class="nx">_super</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_super</span> <span class="o">=</span> <span class=
+"nx">_super</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+            <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">fn</span><span class=
+"p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class=
+"nx">arguments</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_super</span> <span class="o">=</span> <span class=
+"nx">tmp</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+          <span class="p">};</span>
+        <span class="p">})(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">prop</span><span class=
+"p">[</span><span class="nx">name</span><span class="p">])</span> <span class="o">:</span>
+        <span class="nx">prop</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="kd">function</span> <span class="nx">JQClass</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">initializing</span> <span class=
+"o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">init</span> <span class="p">)</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class=
+"nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class=
+"p">);</span>
+    <span class="p">}</span>
+    <span class="nx">JQClass</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class=
+"nx">prototype</span><span class="p">;</span>
+    <span class="nx">JQClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class=
+"nx">constructor</span> <span class="o">=</span> <span class="nx">JQClass</span><span class="p">;</span>
+    <span class="nx">JQClass</span><span class="p">.</span><span class="nx">extend</span> <span class="o">=</span> <span class=
+"nx">arguments</span><span class="p">.</span><span class="nx">callee</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">JQClass</span><span class="p">;</span>
+  <span class="p">};</span>
+<span class="p">})();</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             It is <a href="http://ejohn.org/blog/simple-javascript-inheritance/">worth reading the comments</a> John Resig's blog post for this piece
             of work as well as the full documentation. My code example above names this <code>JQClass</code> to avoid namespace collisions with other
             frameworks. Here is a simple example of its usage.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment">// Your namespace.</span>
+          <div class="highlight">
+            <pre>
+<code class="javascript language-javascript" data-lang="javascript"><span class="c1">// Your namespace.</span>
 
-<span class="keyword">var</span> MyApp = {
-  <span class="key">models</span>: {}
-};
+<span class="kd">var</span> <span class="nx">MyApp</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">models</span><span class="o">:</span> <span class="p">{}</span>
+<span class="p">};</span>
 
-<span class="comment">// Simple object example for page flash.</span>
+<span class="c1">// Simple object example for page flash.</span>
 
-MyApp.models.flash = JQClass.extend({
-  
-  <span class="function">init</span>: <span class="keyword">function</span>(aPage) {
-    <span class="local-variable">this</span>.page = <span class="predefined">$</span>(aPage);
-    <span class="local-variable">this</span>.alertDiv = <span class="local-variable">this</span>.page.find(<span class="string"><span class=
-"delimiter">'</span><span class="content">div.flash.alert</span><span class="delimiter">'</span></span>);
-    <span class="local-variable">this</span>.noticeDiv = <span class="local-variable">this</span>.page.find(<span class="string"><span class=
-"delimiter">'</span><span class="content">div.flash.notice</span><span class="delimiter">'</span></span>);
-  },
-  
-  <span class="function">alert</span>:  <span class="keyword">function</span>(content) { <span class=
-"local-variable">this</span>._doFlashFor(<span class="local-variable">this</span>.alertDiv,content); },
-  
-  <span class="function">notice</span>: <span class="keyword">function</span>(content) { <span class=
-"local-variable">this</span>._doFlashFor(<span class="local-variable">this</span>.noticeDiv,content); },
-  
-  <span class="function">clear</span>: <span class="keyword">function</span>() {
-    <span class="error">#</span> ...
-  },
-  
-  <span class="function">_doFlashFor</span>: <span class="keyword">function</span>(flash, content) {
-    <span class="predefined">$</span>.mobile.silentScroll(<span class="integer">0</span>);
-    <span class="local-variable">this</span>.clear();
-    flash.html(content);
-    flash.show();
-  }
-  
-});
+<span class="nx">MyApp</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">flash</span> <span class=
+"o">=</span> <span class="nx">JQClass</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+
+  <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">aPage</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">page</span> <span class="o">=</span> <span class="nx">$</span><span class=
+"p">(</span><span class="nx">aPage</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">alertDiv</span> <span class="o">=</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">page</span><span class="p">.</span><span class="nx">find</span><span class=
+"p">(</span><span class="s1">&#39;div.flash.alert&#39;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">noticeDiv</span> <span class="o">=</span> <span class=
+"k">this</span><span class="p">.</span><span class="nx">page</span><span class="p">.</span><span class="nx">find</span><span class=
+"p">(</span><span class="s1">&#39;div.flash.notice&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+
+  <span class="nx">alert</span><span class="o">:</span>  <span class="kd">function</span><span class="p">(</span><span class=
+"nx">content</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class=
+"nx">_doFlashFor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">alertDiv</span><span class=
+"p">,</span><span class="nx">content</span><span class="p">);</span> <span class="p">},</span>
+
+  <span class="nx">notice</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">content</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class=
+"nx">_doFlashFor</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">noticeDiv</span><span class=
+"p">,</span><span class="nx">content</span><span class="p">);</span> <span class="p">},</span>
+
+  <span class="nx">clear</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="err">#</span> <span class="p">...</span>
+  <span class="p">},</span>
+
+  <span class="nx">_doFlashFor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+"nx">flash</span><span class="p">,</span> <span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">mobile</span><span class="p">.</span><span class=
+"nx">silentScroll</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">clear</span><span class="p">();</span>
+    <span class="nx">flash</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class=
+"nx">content</span><span class="p">);</span>
+    <span class="nx">flash</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+  <span class="p">}</span>
+
+<span class="p">});</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             This code example is pulled from a jQuery mobile project I recently finished. The real usage of the flash objects would be numerous as

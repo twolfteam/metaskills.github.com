@@ -65,9 +65,9 @@
           </header>
           <p>
             Environment variables as a configuration means are everywhere in Ruby. For instance, ActiveRecord will use the single
-            <code>DATABASE_URL</code> environment variable for every part of it’s configuration, no database.yml needed! If you are not on board with
-            environment variables, check out <a href="http://12factor.net/config">The Twelve-Factor App</a> for configuration. This is exactly how
-            good software platforms like <a href="https://www.heroku.com">Heroku</a> work, all through environment variables.
+            <code>DATABASE_URL</code> environment variable for every part of it&#39;s configuration, no database.yml needed! If you are not on board
+            with environment variables, check out <a href="http://12factor.net/config">The Twelve-Factor App</a> for configuration. This is exactly
+            how good software platforms like <a href="https://www.heroku.com">Heroku</a> work, all through environment variables.
           </p>
           <p>
             But using environment variables in a Rails application can be tricky. During local development, you may not want to set everything in
@@ -75,46 +75,38 @@
             when running your tests. Enter the <a href="https://github.com/bkeepers/dotenv">Dotenv</a> project.
           </p>
           <p>
-            In my examples below of how to integrate Dotenv, I will be using @ecbypi’s fork until this <a href=
+            In my examples below of how to integrate Dotenv, I will be using @ecbypi&#39;s fork until this <a href=
             "https://github.com/bkeepers/dotenv/pull/61">pull request for overloading environment variables</a> is accepted. This pull request is key
             to overriding development or local settings for our Rails test environment. If you like how these examples look below, weigh in on that
             pull request and lobby for a fresh hot Dotenv release.
           </p>
           <p>
-            Let’s get started. First, let’s add the gem to your Rails project’s Gemfile.
+            Let&#39;s get started. First, let&#39;s add the gem to your Rails project&#39;s Gemfile.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># In Gemfile</span>
-gem <span class="string"><span class="delimiter">'</span><span class="content">dotenv</span><span class="delimiter">'</span></span>, <span class=
-"key">github</span>: <span class="string"><span class="delimiter">'</span><span class="content">ecbypi/dotenv</span><span class=
-"delimiter">'</span></span>, <span class="key">branch</span>: <span class="string"><span class="delimiter">'</span><span class=
-"content">overload-environment-variables</span><span class="delimiter">'</span></span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In Gemfile</span>
+<span class="n">gem</span> <span class="s1">&#39;dotenv&#39;</span><span class="p">,</span> <span class="ss">github</span><span class=
+"p">:</span> <span class="s1">&#39;ecbypi/dotenv&#39;</span><span class="p">,</span> <span class="ss">branch</span><span class=
+"p">:</span> <span class="s1">&#39;overload-environment-variables&#39;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
-            Next up, open your <code>config/application.rb</code> and add this line right after the require ‘rails/all’ line. This will require the
-            Dotenv gem, then load your own per-developer local settings (if present), then a .env file that matches the current
+            Next up, open your <code>config/application.rb</code> and add this line right after the require &#39;rails/all&#39; line. This will
+            require the Dotenv gem, then load your own per-developer local settings (if present), then a .env file that matches the current
             <code>Rails.env</code>.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># In config/application.rb</span>
-require <span class="string"><span class="delimiter">'</span><span class="content">rails/all</span><span class="delimiter">'</span></span>
-require <span class="string"><span class="delimiter">'</span><span class="content">dotenv</span><span class=
-"delimiter">'</span></span> ; <span class="constant">Dotenv</span>.load <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">.env.local</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">.env.</span><span class="inline"><span class="inline-delimiter">#{</span><span class="constant">Rails</span>.env<span class=
-"inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In config/application.rb</span>
+<span class="nb">require</span> <span class="s1">&#39;rails/all&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;dotenv&#39;</span> <span class="p">;</span> <span class="no">Dotenv</span><span class=
+"o">.</span><span class="n">load</span> <span class="s2">&quot;.env.local&quot;</span><span class="p">,</span> <span class=
+"s2">&quot;.env.</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class=
+"si">}</span><span class="s2">&quot;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Next, create individual <code>.env.RAILS_ENV</code> files with your configurations. YMMV on this one, but the idea is to check all of
@@ -122,44 +114,43 @@ require <span class="string"><span class="delimiter">'</span><span class="conten
             The <code>.env.test</code> will hold all the configurations for your test runs. Past that, how you handle the production file or not, is
             left up to you. In my examples below, we are setting the environment variable for the Awesome gem.
           </p>
-          <pre>
-<code>$ echo "AWESOME_GEM_URL=https://awesome.dev"          &gt; .env.development
-$ echo "AWESOME_GEM_URL=https://sandbox.awesome.com"  &gt; .env.test
-$ echo "AWESOME_GEM_URL=https://awesome.com"          &gt; .env.production
+          <div class="highlight">
+            <pre>
+<code class="text language-text" data-lang="text">$ echo &quot;AWESOME_GEM_URL=https://awesome.dev&quot;          &gt; .env.development
+$ echo &quot;AWESOME_GEM_URL=https://sandbox.awesome.com&quot;  &gt; .env.test
+$ echo &quot;AWESOME_GEM_URL=https://awesome.com&quot;          &gt; .env.production
 </code>
 </pre>
+          </div>
           <p>
-            This covers our bases, but what if a developer wants to override a configuration. They can use good ol’ environment variables and get the
-            behavior they expect. Or they create their own <code>.env.local</code> file and set their configurations there. The benefit of the local
-            file is that your Rails application via the console or the development server (for example Pow) will automatically get the same thing
-            when using the .env.local file. Oh yea, it is a good idea to add the this file to your <code>.gitignore</code>.
+            This covers our bases, but what if a developer wants to override a configuration. They can use good ol&#39; environment variables and get
+            the behavior they expect. Or they create their own <code>.env.local</code> file and set their configurations there. The benefit of the
+            local file is that your Rails application via the console or the development server (for example Pow) will automatically get the same
+            thing when using the .env.local file. Oh yea, it is a good idea to add the this file to your <code>.gitignore</code>.
           </p>
-          <pre>
-<code>$ echo "AWESOME_GEM_URL=https://my-awesome.dev"       &gt; .env.local
+          <div class="highlight">
+            <pre>
+<code class="text language-text" data-lang="text">$ echo &quot;AWESOME_GEM_URL=https://my-awesome.dev&quot;       &gt; .env.local
 </code>
 </pre>
+          </div>
           <p>
             Now, one last thing. We need to make sure that our tests do not use any real, development or local environment settings. This is where
             @ecbypi overload feature comes in handy. I have added this to the top of the Rails <code>test/test_helper.rb</code> file.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># In test/test_helper.rb</span>
-<span class="predefined-constant">ENV</span>[<span class="string"><span class="delimiter">&quot;</span><span class=
-"content">RAILS_ENV</span><span class="delimiter">&quot;</span></span>] = <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">test</span><span class="delimiter">&quot;</span></span>
-+require <span class="string"><span class="delimiter">'</span><span class="content">dotenv</span><span class=
-"delimiter">'</span></span> ; <span class="constant">Dotenv</span>.overload <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">.env.test</span><span class="delimiter">&quot;</span></span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In test/test_helper.rb</span>
+<span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;RAILS_ENV&quot;</span><span class="o">]</span> <span class=
+"o">=</span> <span class="s2">&quot;test&quot;</span>
+<span class="o">+</span><span class="nb">require</span> <span class="s1">&#39;dotenv&#39;</span> <span class="p">;</span> <span class=
+"no">Dotenv</span><span class="o">.</span><span class="n">overload</span> <span class="s2">&quot;.env.test&quot;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
-            Happy environment usage! Have you been solving environment and application configuration in a different way (don’t say YAML), if so, I
-            would love to hear about it!
+            Happy environment usage! Have you been solving environment and application configuration in a different way (don&#39;t say YAML), if so,
+            I would love to hear about it!
           </p>
           <footer id="disqus_thread">
             <script type="text/javascript">
@@ -243,7 +234,7 @@ var disqus_shortname = 'metaskillsnet';
             </h4>
             <p>
               <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single DATABASE_URL environment variable for every part of it’s configuration, no database.yml needed!
+              ActiveRecord will use the single DATABASE_URL environment variable for every part of it&#39;s configuration, no database.yml needed!
               If...</a>
             </p>
           </article>

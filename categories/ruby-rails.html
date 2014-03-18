@@ -67,9 +67,9 @@
               </h3><time pubdate="" datetime="2013-12-15T00:00:00-05:00">15 Dec 2013</time>
             </header>
             <p>
-              Have you ever wondered how tools like New Relic are able to gain valuable metrics to your Rails application’s internals? Or maybe you
-              are interested in learning how to write your own libraries and gems so they can be instrumented using those same techniques? Once again
-              the answer is to look deep into the Rails source code – and the answer is ActiveSupport::Notifications. A simple and powerful
+              Have you ever wondered how tools like New Relic are able to gain valuable metrics to your Rails application&#39;s internals? Or maybe
+              you are interested in learning how to write your own libraries and gems so they can be instrumented using those same techniques? Once
+              again the answer is to look deep into the Rails source code – and the answer is ActiveSupport::Notifications. A simple and powerful
               instrumentation API for Ruby available in Rails v3.0 and upward. Today I want...
             </p>
           </article>
@@ -135,9 +135,9 @@
             <p>
               When ActiveRecord 3.2 was released there was a small addition called ActiveRecord::Store which bills itself as a simple key/value store
               for your models. The code below is pulled right from their example usage. class User &lt; ActiveRecord::Base store :settings,
-              accessors: [:color, :homepage] end @user = User.new(color: 'black', homepage: '37signals.com') @user.color # =&gt; 'black'
-              @user.settings[:color] # =&gt; 'black' @user.settings[:remember_me] = true Most people know that I love simple tools. But when I found
-              myself considering ActiveRecord::Store, I found it seriously lacking...
+              accessors: [:color, :homepage] end @user = User.new(color: &#39;black&#39;, homepage: &#39;37signals.com&#39;) @user.color # =&gt;
+              &#39;black&#39; @user.settings[:color] # =&gt; &#39;black&#39; @user.settings[:remember_me] = true Most people know that I love simple
+              tools. But when I found myself considering ActiveRecord::Store, I found it seriously lacking...
             </p>
           </article>
           <article class="excerpt">
@@ -348,10 +348,10 @@
               </h3><time pubdate="" datetime="2011-02-10T00:00:00-05:00">10 Feb 2011</time>
             </header>
             <p>
-              If you have not done so, please go read my article Modern SQL Server &amp; Rails on the Engine Yard blog. I want to thank Wayne E
-              Seguin for inviting me to write the article. This article details many exciting things that have been happening for those using the SQL
-              Server Adapter for Rails, most notably TinyTDS. The article outlines why everyone still using the ODBC connection mode should really
-              switch over to TinyTDS. Many exciting things are happening thanks...
+              If you have not done so, please go read my article Modern SQL Server & Rails on the Engine Yard blog. I want to thank Wayne E Seguin
+              for inviting me to write the article. This article details many exciting things that have been happening for those using the SQL Server
+              Adapter for Rails, most notably TinyTDS. The article outlines why everyone still using the ODBC connection mode should really switch
+              over to TinyTDS. Many exciting things are happening thanks...
             </p>
           </article>
           <article class="excerpt">
@@ -484,8 +484,8 @@
               I never liked how Webrat shows the complete response body for exceptions when integration testing rails applications. For the longest
               time I redefined the formatted_error method to simple do nothing. Today I used Nokogiri to parse out the good bits from that page. Here
               is the result. Not pretty, but it's working fine so far. Got a better example? Please share! module Webrat class Session def
-              formatted_error doc = Nokogiri::HTML(response_body) exception_name = doc.css('head title').inner_html.squish exception_msg =
-              doc.css('body h1').inner_html.squish exception_detail1 =...
+              formatted_error doc = Nokogiri::HTML(response_body) exception_name = doc.css(&#39;head title&#39;).inner_html.squish exception_msg =
+              doc.css(&#39;body h1&#39;).inner_html.squish exception_detail1 =...
             </p>
           </article>
           <article class="excerpt">
@@ -574,7 +574,7 @@
               </h3><time pubdate="" datetime="2009-11-11T00:00:00-05:00">11 Nov 2009</time>
             </header>
             <p>
-              Last nights 757.rb meeting was a great success. We did a talk titled Introduction To Ruby &amp; Rails for all the new comers that might
+              Last nights 757.rb meeting was a great success. We did a talk titled Introduction To Ruby & Rails for all the new comers that might
               have been interested in learning more about both - from the ground up. Since Ruby was my first language and my toolbelt only extends to
               JavaScript and Objective-C, I'm always interested in how other languages do the things that I love so much in Ruby. One of the biggest
               pluses for Ruby, to me, is...
@@ -590,7 +590,7 @@
               Today I noticed that Ruby Enterprise Edition 2009.10 was released and I have really been wanting to see if I could get the SQL Server
               adapter tested and running under it. I am really curious how the speed improvements might look and will share my results below. This
               article assumes that you read my previous guide titled The Ultimate OS X Snow Leopard Stack For Rails Development - x86_64, MacPorts,
-              Ruby 1.8/1.9, SQL Server, SQLite3, MySQL &amp; More as I...
+              Ruby 1.8/1.9, SQL Server, SQLite3, MySQL & More as I...
             </p>
           </article>
           <article class="excerpt">
@@ -667,10 +667,10 @@
             </header>
             <p>
               Want a list of the users and the number of commits they made? Git makes it really really easy, while I could not find such an easy
-              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require 'rubygems' require
-              'activesupport' log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)['logentry'] report_hash = svn_logs.inject({}) do
-              |report,log| author = log['author'][0] report[author] ||= {:commit_count =&gt; 0} report[author][:commit_count] += 1 report end
-              commits_authors = report_hash.keys.map {...
+              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require &#39;rubygems&#39;
+              require &#39;activesupport&#39; log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)[&#39;logentry&#39;] report_hash =
+              svn_logs.inject({}) do |report,log| author = log[&#39;author&#39;][0] report[author] ||= {:commit_count =&gt; 0}
+              report[author][:commit_count] += 1 report end commits_authors = report_hash.keys.map {...
             </p>
           </article>
           <article class="excerpt">
@@ -681,7 +681,7 @@
               </h3><time pubdate="" datetime="2009-01-20T00:00:00-05:00">20 Jan 2009</time>
             </header>
             <p>
-              UPDATE: In a recent article, I covered how to install REE and have hence NOOP'ed this function to ignore the symlinking when REE is
+              UPDATE: In a recent article, I covered how to install REE and have hence NOOP&#39;ed this function to ignore the symlinking when REE is
               installed. Ruby 1.9.1, the stable release, is just around the corner and if your like me, maybe you want to start playing around with
               it and perhaps test a few projects using 1.9 with edge rails 2.3. If so, and your on a Mac, then perhaps this installation method might
               appeal to you. I'll break this...
@@ -759,8 +759,8 @@
             </header>
             <p>
               UPDATE: [12/06/2011] The GroupedScope gem has been updated for Rails 3.1. Many new features have been added with a few mentioned below.
-              Check the project's readme for complete details. I am Jack's sofa, stereo and wardrobe... I make Jack's life complete. I reside in a
-              ActiveRecord table called "things" and Jack is the only one that has the key. This is Jack's life, and it's ending one minute at a
+              Check the project&#39;s readme for complete details. I am Jack's sofa, stereo and wardrobe... I make Jack's life complete. I reside in
+              a ActiveRecord table called "things" and Jack is the only one that has the key. This is Jack's life, and it's ending one minute at a
               time. As rails developers, we have done this simple relationship...
             </p>
           </article>
@@ -1099,7 +1099,7 @@
             </h4>
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
-              to gain valuable metrics to your Rails application’s internals? Or maybe you are interested in learning how to write...</a>
+              to gain valuable metrics to your Rails application&#39;s internals? Or maybe you are interested in learning how to write...</a>
             </p>
           </article>
           <article>
@@ -1108,7 +1108,7 @@
             </h4>
             <p>
               <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single DATABASE_URL environment variable for every part of it’s configuration, no database.yml needed!
+              ActiveRecord will use the single DATABASE_URL environment variable for every part of it&#39;s configuration, no database.yml needed!
               If...</a>
             </p>
           </article>

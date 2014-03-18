@@ -79,62 +79,52 @@
             for production as the assumption is would precompile your static assets on deploys. Note, make sure your bundle for sass-rails installs
             the matching rc5 too.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># Gems used only for assets and not required</span>
-<span class="comment"># in production environments by default.</span>
-group <span class="symbol">:assets</span> <span class="keyword">do</span>
-  gem <span class="string"><span class="delimiter">'</span><span class="content">sass-rails</span><span class=
-"delimiter">'</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">~&gt; 3.1.0.rc</span><span class=
-"delimiter">&quot;</span></span>
-  gem <span class="string"><span class="delimiter">'</span><span class="content">coffee-rails</span><span class=
-"delimiter">'</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">~&gt; 3.1.0.rc</span><span class=
-"delimiter">&quot;</span></span>
-  gem <span class="string"><span class="delimiter">'</span><span class="content">uglifier</span><span class="delimiter">'</span></span>
-  gem <span class="string"><span class="delimiter">'</span><span class="content">compass</span><span class="delimiter">'</span></span>, <span class=
-"symbol">:git</span> =&gt; <span class="string"><span class="delimiter">'</span><span class=
-"content">git://github.com/chriseppstein/compass.git</span><span class="delimiter">'</span></span>, <span class=
-"symbol">:branch</span> =&gt; <span class="string"><span class="delimiter">'</span><span class="content">rails31</span><span class=
-"delimiter">'</span></span>
-<span class="keyword">end</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># Gems used only for assets and not required</span>
+<span class="c1"># in production environments by default.</span>
+<span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">&#39;sass-rails&#39;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 3.1.0.rc&quot;</span>
+  <span class="n">gem</span> <span class="s1">&#39;coffee-rails&#39;</span><span class="p">,</span> <span class=
+"s2">&quot;~&gt; 3.1.0.rc&quot;</span>
+  <span class="n">gem</span> <span class="s1">&#39;uglifier&#39;</span>
+  <span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class="p">,</span> <span class="ss">:git</span> <span class=
+"o">=&gt;</span> <span class="s1">&#39;git://github.com/chriseppstein/compass.git&#39;</span><span class="p">,</span> <span class=
+"ss">:branch</span> <span class="o">=&gt;</span> <span class="s1">&#39;rails31&#39;</span>
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Now here is a crazy gotcha. Rails 3.1.0.rc5 has changed the application.rb bundler line a little to account for this new :assets group.
             Find the bundler line and make sure it looks like this.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="constant">Bundler</span>.require *<span class="constant">Rails</span>.groups(<span class="symbol">:assets</span>) <span class=
-"keyword">if</span> <span class="keyword">defined?</span>(<span class="constant">Bundler</span>)
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="no">Bundler</span><span class="o">.</span><span class="n">require</span> <span class=
+"o">*</span><span class="no">Rails</span><span class="o">.</span><span class="n">groups</span><span class="p">(</span><span class=
+"ss">:assets</span><span class="p">)</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class=
+"no">Bundler</span><span class="p">)</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Lastly, we need to get the compass files in the the load path. The sass-rails gem has set us up for this. I choose to hook into it using
             my <code>config/initializers/sass.rb</code> like so. I imagine that compass will be doing this on its own at some point in the future
             too. After this you should be all set!
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="constant">Rails</span>.configuration.sass.tap <span class="keyword">do</span> |config|
-  config.load_paths &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
-"inline-delimiter">#{</span><span class="constant">Gem</span>.loaded_specs[<span class="string"><span class="delimiter">'</span><span class=
-"content">compass</span><span class="delimiter">'</span></span>].full_gem_path<span class="inline-delimiter">}</span></span><span class=
-"content">/frameworks/compass/stylesheets</span><span class="delimiter">&quot;</span></span>
-<span class="keyword">end</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="no">Rails</span><span class="o">.</span><span class=
+"n">configuration</span><span class="o">.</span><span class="n">sass</span><span class="o">.</span><span class="n">tap</span> <span class=
+"k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class=
+"s2">&quot;</span><span class="si">#{</span><span class="no">Gem</span><span class="o">.</span><span class="n">loaded_specs</span><span class=
+"o">[</span><span class="s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class=
+"si">}</span><span class="s2">/frameworks/compass/stylesheets&quot;</span>
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">

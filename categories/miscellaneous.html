@@ -93,10 +93,10 @@
             </header>
             <p>
               Want a list of the users and the number of commits they made? Git makes it really really easy, while I could not find such an easy
-              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require 'rubygems' require
-              'activesupport' log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)['logentry'] report_hash = svn_logs.inject({}) do
-              |report,log| author = log['author'][0] report[author] ||= {:commit_count =&gt; 0} report[author][:commit_count] += 1 report end
-              commits_authors = report_hash.keys.map {...
+              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require &#39;rubygems&#39;
+              require &#39;activesupport&#39; log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)[&#39;logentry&#39;] report_hash =
+              svn_logs.inject({}) do |report,log| author = log[&#39;author&#39;][0] report[author] ||= {:commit_count =&gt; 0}
+              report[author][:commit_count] += 1 report end commits_authors = report_hash.keys.map {...
             </p>
           </article>
           <article class="excerpt">
@@ -225,7 +225,7 @@
             </h4>
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
-              to gain valuable metrics to your Rails application’s internals? Or maybe you are interested in learning how to write...</a>
+              to gain valuable metrics to your Rails application&#39;s internals? Or maybe you are interested in learning how to write...</a>
             </p>
           </article>
           <article>
@@ -234,7 +234,7 @@
             </h4>
             <p>
               <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single DATABASE_URL environment variable for every part of it’s configuration, no database.yml needed!
+              ActiveRecord will use the single DATABASE_URL environment variable for every part of it&#39;s configuration, no database.yml needed!
               If...</a>
             </p>
           </article>

@@ -78,15 +78,12 @@
           <p>
             First, bundle up the compass, but do not require it. Add this to your <code>Gemfile</code>.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-gem <span class="string"><span class="delimiter">'</span><span class="content">compass</span><span class="delimiter">'</span></span>, <span class=
-"symbol">:require</span> =&gt; <span class="predefined-constant">false</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class=
+"p">,</span> <span class="ss">:require</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Next, add a Sass initializer in <code>config/initializers/sass.rb</code> and fill it in with the code below. This will add two more load
@@ -94,58 +91,50 @@ gem <span class="string"><span class="delimiter">'</span><span class="content">c
             structure in that directory and use relative paths from each file. The second will put the entire compass Sass framework files into the
             Sass load path.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="constant">Sass</span>::<span class="constant">Engine</span>::<span class="constant">DEFAULT_OPTIONS</span>[<span class=
-"symbol">:load_paths</span>].tap <span class="keyword">do</span> |load_paths|
-  load_paths &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
-"inline-delimiter">#{</span><span class="constant">Rails</span>.root<span class="inline-delimiter">}</span></span><span class=
-"content">/app/assets/stylesheets</span><span class="delimiter">&quot;</span></span>
-  load_paths &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class=
-"inline-delimiter">#{</span><span class="constant">Gem</span>.loaded_specs[<span class="string"><span class="delimiter">'</span><span class=
-"content">compass</span><span class="delimiter">'</span></span>].full_gem_path<span class="inline-delimiter">}</span></span><span class=
-"content">/frameworks/compass/stylesheets</span><span class="delimiter">&quot;</span></span>
-<span class="keyword">end</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="no">Sass</span><span class="o">::</span><span class="no">Engine</span><span class=
+"o">::</span><span class="no">DEFAULT_OPTIONS</span><span class="o">[</span><span class="ss">:load_paths</span><span class="o">].</span><span class=
+"n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">load_paths</span><span class="o">|</span>
+  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
+"no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/app/assets/stylesheets&quot;</span>
+  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
+"no">Gem</span><span class="o">.</span><span class="n">loaded_specs</span><span class="o">[</span><span class=
+"s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class="si">}</span><span class=
+"s2">/frameworks/compass/stylesheets&quot;</span>
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Now in your rails <code>app/assets/stylesheets/foo.scss</code> file you can use Sass' <code>@import</code> with paths to the compass
             framework.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">compass/css3/opacity</span><span class="delimiter">&quot;</span></span>;
-<span class="id">#mylogo</span> { <span class="directive">@include</span> <span class="error">o</span><span class="error">p</span><span class=
-"error">a</span><span class="error">c</span><span class="error">i</span><span class="error">t</span><span class="error">y</span>(<span class=
-"float">0.5</span>); }
+          <div class="highlight">
+            <pre>
+<code class="css language-css" data-lang="css"><span class="k">@import</span> <span class="s2">&quot;compass/css3/opacity&quot;</span><span class=
+"p">;</span>
+<span class="nf">#mylogo</span> <span class="p">{</span> <span class="o">@</span><span class="n">include</span> <span class=
+"k">opacity</span><span class="p">(</span><span class="m">0</span><span class="o">.</span><span class="m">5</span><span class=
+"p">);</span> <span class="p">}</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             That is an example loading up the opacity helpers. Your generated css file will look like this! CSS is never going to be the same again!
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="id">#mylogo</span> {
-  <span class="key">-ms-filter</span>: <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">progid:DXImageTransform.Microsoft.Alpha(Opacity=50)</span><span class="delimiter">&quot;</span></span>;
-  <span class="key">filter</span>: <span class="value">progid</span>:<span class="value">DXImageTransform</span>.<span class=
-"value">Microsoft</span>.<span class="error">A</span><span class="error">l</span><span class="error">p</span><span class="error">h</span><span class=
-"error">a</span>(<span class="value">Opacity</span>=<span class="float">50</span>);
-  <span class="key">opacity</span>: <span class="float">0.5</span>; }
+          <div class="highlight">
+            <pre>
+<code class="css language-css" data-lang="css"><span class="nf">#mylogo</span> <span class="p">{</span>
+  <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">filter</span><span class="o">:</span> <span class=
+"s2">&quot;progid:DXImageTransform.Microsoft.Alpha(Opacity=50)&quot;</span><span class="p">;</span>
+  <span class="n">filter</span><span class="o">:</span> <span class="n">progid</span><span class="o">:</span><span class=
+"n">DXImageTransform</span><span class="o">.</span><span class="n">Microsoft</span><span class="o">.</span><span class="n">Alpha</span><span class=
+"p">(</span><span class="n">Opacity</span><span class="o">=</span><span class="m">50</span><span class="p">);</span>
+  <span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span><span class=
+"p">;</span> <span class="p">}</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">

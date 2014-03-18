@@ -95,31 +95,27 @@ sudo ln -s /System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resour
           <div class="center">
             <img src="/assets/jsc_tmbundle.gif" alt="TextMate Bundle Window" width="520" class="shadow">
           </div>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="doctype">#!/usr/bin/env ruby</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1">#!/usr/bin/env ruby</span>
 
-require <span class="predefined-constant">ENV</span>[<span class="string"><span class="delimiter">'</span><span class=
-"content">TM_SUPPORT_PATH</span><span class="delimiter">'</span></span>] + <span class="string"><span class="delimiter">'</span><span class=
-"content">/lib/escape.rb</span><span class="delimiter">'</span></span>
+<span class="nb">require</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;TM_SUPPORT_PATH&#39;</span><span class=
+"o">]</span> <span class="o">+</span> <span class="s1">&#39;/lib/escape.rb&#39;</span>
 
-<span class="keyword">def</span> <span class="function">terminal_script_filepath</span>
-  <span class="string"><span class="delimiter">%|</span><span class="content">tell application &quot;Terminal&quot;
-      activate
-      do script &quot;jsc -i </span><span class="inline"><span class="inline-delimiter">#{</span>e_as(e_sh(<span class=
-"predefined-constant">ENV</span>[<span class="string"><span class="delimiter">'</span><span class="content">TM_FILEPATH</span><span class=
-"delimiter">'</span></span>]))<span class="inline-delimiter">}</span></span><span class="content">&quot;
-    end tell</span><span class="delimiter">|</span></span>
-<span class="keyword">end</span>
+<span class="k">def</span> <span class="nf">terminal_script_filepath</span>
+  <span class="sx">%|tell application &quot;Terminal&quot;</span>
+<span class="sx">      activate</span>
+<span class="sx">      do script &quot;jsc -i </span><span class="si">#{</span><span class="n">e_as</span><span class="p">(</span><span class=
+"n">e_sh</span><span class="p">(</span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;TM_FILEPATH&#39;</span><span class=
+"o">]</span><span class="p">))</span><span class="si">}</span><span class="sx">&quot;</span>
+<span class="sx">    end tell|</span>
+<span class="k">end</span>
 
-open(<span class="string"><span class="delimiter">&quot;</span><span class="content">|osascript</span><span class=
-"delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">w</span><span class=
-"delimiter">&quot;</span></span>) { |io| io &lt;&lt; terminal_script_filepath }
+<span class="nb">open</span><span class="p">(</span><span class="s2">&quot;|osascript&quot;</span><span class="p">,</span> <span class=
+"s2">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">io</span><span class=
+"o">|</span> <span class="n">io</span> <span class="o">&lt;&lt;</span> <span class="n">terminal_script_filepath</span> <span class="p">}</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             With that simple bundle command done, you can now use the <code>Command-R</code> keyboard shortcut to load the windows JavaScript file

@@ -113,33 +113,27 @@ $ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts
             asset pipeline using Sprockets. So if you had used the spine-rails generator above and had your spine requires in
             <code>app/assets/javascripts/app/index.js.coffee</code>, you would now be able to change what should have looked like this:
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment">#= require spine</span>
-<span class="comment">#= require spine/manager</span>
-<span class="comment">#= require spine/ajax</span>
-<span class="comment">#= require spine/route</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1">#= require spine</span>
+<span class="c1">#= require spine/manager</span>
+<span class="c1">#= require spine/ajax</span>
+<span class="c1">#= require spine/route</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             To something like the following. Since the <code>spine/src</code> directory is where the source CoffeeScript files from our submodule
             above and Sprockets will render these just fine, it all just works!
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment">#= require spine/src/spine</span>
-<span class="comment">#= require spine/src/manager</span>
-<span class="comment">#= require spine/src/ajax</span>
-<span class="comment">#= require spine/src/route</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1">#= require spine/src/spine</span>
+<span class="c1">#= require spine/src/manager</span>
+<span class="c1">#= require spine/src/ajax</span>
+<span class="c1">#= require spine/src/route</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             So now you can easily update your Spine dependency using a simple git workflow with the added benefit that you can open up any of the

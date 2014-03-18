@@ -106,32 +106,30 @@
             <a href="http://guide.macports.org/">their installation instructions</a>. At the time of this writing, the current version is 1.8 and has
             tons of new stuff for Snow Leopard. If you use bash, the default shell on OS X, then add this to your ~/.profile.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-export PATH=&quot;/usr/local/bin:$PATH&quot;
-export MANPATH=&quot;/usr/local/share/man:$MANPATH&quot;
-export INFOPATH=&quot;/usr/local/share/info:$INFOPATH&quot;
+          <div class="highlight">
+            <pre>
+<code class="bash language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class=
+"s2">&quot;/usr/local/bin:$PATH&quot;</span>
+<span class="nb">export </span><span class="nv">MANPATH</span><span class="o">=</span><span class=
+"s2">&quot;/usr/local/share/man:$MANPATH&quot;</span>
+<span class="nb">export </span><span class="nv">INFOPATH</span><span class="o">=</span><span class=
+"s2">&quot;/usr/local/share/info:$INFOPATH&quot;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             However, if you have <a href=
-            "http://books.google.com/books?id=jKY-rDoJx3wC&amp;pg=PA115&amp;lpg=PA115&amp;dq=system+preferences+account+right+click+os+x+switch+to+zsh+default+shell&amp;source=bl&amp;ots=J0eyfcuH37&amp;sig=F4MrA0-NmqeprnqEneAhAdqJBPg&amp;hl=en&amp;ei=FFigSs73GMqc8QaAzoDeDw&amp;sa=X&amp;oi=book_result&amp;ct=result&amp;resnum=2#v=onepage&amp;q=system%20preferences%20account%20right%20click%20os%20x%20switch%20to%20zsh%20default%20shell&amp;f=false">
+            "http://books.google.com/books?id=jKY-rDoJx3wC&pg=PA115&lpg=PA115&dq=system+preferences+account+right+click+os+x+switch+to+zsh+default+shell&source=bl&ots=J0eyfcuH37&sig=F4MrA0-NmqeprnqEneAhAdqJBPg&hl=en&ei=FFigSs73GMqc8QaAzoDeDw&sa=X&oi=book_result&ct=result&resnum=2#v=onepage&q=system%20preferences%20account%20right%20click%20os%20x%20switch%20to%20zsh%20default%20shell&f=false">
             changed your default shell to ZSH</a>, then put this in your ~/.zshenv file. I highly recommend switching your default shell to ZSH.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-path=(/opt/local/bin /opt/local/sbin /opt/local/apache2/bin $path)
-manpath=(/opt/local/share/man $manpath)
-infopath=(/opt/local/share/info $infopath)
+          <div class="highlight">
+            <pre>
+<code class="bash language-bash" data-lang="bash"><span class="nv">path</span><span class=
+"o">=(</span>/opt/local/bin /opt/local/sbin /opt/local/apache2/bin <span class="nv">$path</span><span class="o">)</span>
+<span class="nv">manpath</span><span class="o">=(</span>/opt/local/share/man <span class="nv">$manpath</span><span class="o">)</span>
+<span class="nv">infopath</span><span class="o">=(</span>/opt/local/share/info <span class="nv">$infopath</span><span class="o">)</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h3>
             Important x86_64 Arch Notice
@@ -158,7 +156,7 @@ infopath=(/opt/local/share/info $infopath)
             we want them for our low level SQL Server libraries and their dependencies. The goal here is to avoid dependency hell.
           </p>
           <pre class="command">
-$ sudo port install ruby  
+$ sudo port install ruby
 
 $ which ruby
 /opt/local/bin/ruby
@@ -284,14 +282,44 @@ $ sudo port install rb-odbc +utf8
             above when running <code>tsql I</code>, if you do not see a utf-8 locale setting, you may have to add this line <code>client charset =
             UTF-8</code> to your configuration file. Here is a thread on <a href="http://lists.ibiblio.org/pipermail/freetds/2006q3/020396.html">how
             to set tsql's client character set</a>.
-          </p>~~~text # A typical Sybase server # [egServer50] # host = symachine.domain.com # port = 5000 # tds version = 5.0 # A typical Microsoft
-          server # [egServer70] # host = ntmachine.domain.com # port = 1433 # tds version = 7.0 [my_dev_server] host = 192.168.1.58 port = 1433 tds
-          version = 8.0 ~~~
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="text language-text" data-lang="text"># A typical Sybase server
+# [egServer50]
+#   host = symachine.domain.com
+#   port = 5000
+#   tds version = 5.0
+
+# A typical Microsoft server
+# [egServer70]
+#   host = ntmachine.domain.com
+#   port = 1433
+#   tds version = 7.0
+
+[my_dev_server]
+  host = 192.168.1.58
+  port = 1433
+  tds version = 8.0
+</code>
+</pre>
+          </div>
           <p>
             It has been noted that Windows user may want to include client encodings and character sets that set UTF-8 values. If you are running on
             Windows, try out this style freetds conf.
-          </p>~~~text [YOURSERVER] host = yourserver.com port = 1433 tds version = 7.0 text size = 64512 client encoding = UTF-8 client charset =
-          UTF-8 ~~~
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="text language-text" data-lang="text">[YOURSERVER]
+ host             = yourserver.com
+ port             = 1433
+ tds version      = 7.0
+ text size = 64512
+ client encoding  = UTF-8
+ client charset   = UTF-8
+</code>
+</pre>
+          </div>
           <p>
             So after you have added your own server here, it is now time to configure unixODBC to use FreeTDS. Let's copy the default distribution
             files to the correctly named ones that unixODBC will look for.
@@ -304,20 +332,52 @@ $ sudo cp /opt/local/etc/odbcinst.ini.dist /opt/local/etc/odbcinst.ini
             Open up the newly copied <code>/opt/local/etc/odbcinst.ini</code> file. More than likely, this will be the only time you ever edit this
             file. Add a FreeTDS configuration to it like so. No personal configuration options here, this just links up the MacPort installed
             unixODBC and FreeTDS.
-          </p>~~~text [FreeTDS] Decscription = FreeTDS driver for SQLServer Driver = /opt/local/lib/libtdsodbc.so Setup =
-          /opt/local/lib/libtdsodbc.so FileUsage = 1 ~~~
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="text language-text" data-lang="text">[FreeTDS]
+Decscription = FreeTDS driver for SQLServer
+Driver = /opt/local/lib/libtdsodbc.so
+Setup = /opt/local/lib/libtdsodbc.so
+FileUsage = 1
+</code>
+</pre>
+          </div>
           <p>
             So the last thing is to create some DSNs in your <code>/opt/local/etc/odbc.ini</code> file. It is very likely that you could edit this
             file often. Perhaps you do a lot of development and DB server changes. My personal file has over 20 some DSNs here. Here is one example.
             The name and description of the DSN is up to you. Take note how I made the server name "my_dev_server" line up to that used in the
             FreeTDS conf file. That is important. Flavor this to your tastes.
-          </p>~~~text [my_dev_server_dsn] Driver=FreeTDS Description=My Server Connection Servername=my_dev_server Server=my_dev_server Port=1433
-          Database=killer_app ~~~
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="text language-text" data-lang="text">[my_dev_server_dsn]
+Driver=FreeTDS
+Description=My Server Connection
+Servername=my_dev_server
+Server=my_dev_server
+Port=1433
+Database=killer_app
+</code>
+</pre>
+          </div>
           <p>
             Here is an example of what your database.yml will look like. So by now you should be able to connect and work with your database. I have
             this working on quite a few Macs. If you found any issues, let me know, but a good place to start is running the adapter tests. That is
             of course if you have the stack setup right.
-          </p>~~~text development: adapter: sqlserver mode: ODBC username: rails password: secret database: killer_app dsn: my_dev_server_dsn ~~~
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="text language-text" data-lang="text">development:
+  adapter: sqlserver
+  mode: ODBC
+  username: rails
+  password: secret
+  database: killer_app
+  dsn: my_dev_server_dsn
+</code>
+</pre>
+          </div>
           <h2>
             Going The Extra Mile With Ruby 1.9.x
           </h2>
@@ -333,7 +393,7 @@ $ sudo cp /opt/local/etc/odbcinst.ini.dist /opt/local/etc/odbcinst.ini
             MacPorts to recompile and reinstall that for us. Here is how I did it. First make sure you in the right ruby version.
           </p>
           <pre class="command">
-$ ruby -v                                 
+$ ruby -v
 ruby 1.9.1p243 (2009-07-16 revision 24175) [i386-darwin10]
 </pre>
           <p>
@@ -402,8 +462,19 @@ $ sudo gem install mysql -- --with-mysql-config=/opt/local/bin/mysql_config5
             choose to copy the large conf like so <code>sudo cp /opt/local/share/mysql5/mysql/my-large.cnf /opt/local/etc/mysql5/my.cnf</code>. Then
             I edit the conf file and uncomment the link that says "skip-networking". That way no one on the local network can hit my DBs. Lastly,
             here are some helpful aliases that I use.
-          </p>~~~bash alias my_stop="sudo launchctl stop org.macports.mysql5" alias my_start="sudo launchctl start org.macports.mysql5" alias
-          my_rs="my_stop ; my_start" alias myconf="mate /opt/local/etc/mysql5/my.cnf" ~~~
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="bash language-bash" data-lang="bash"><span class="nb">alias </span><span class="nv">my_stop</span><span class="o">=</span><span class=
+"s2">&quot;sudo launchctl stop org.macports.mysql5&quot;</span>
+<span class="nb">alias </span><span class="nv">my_start</span><span class="o">=</span><span class=
+"s2">&quot;sudo launchctl start org.macports.mysql5&quot;</span>
+<span class="nb">alias </span><span class="nv">my_rs</span><span class="o">=</span><span class="s2">&quot;my_stop ; my_start&quot;</span>
+<span class="nb">alias </span><span class="nv">myconf</span><span class="o">=</span><span class=
+"s2">&quot;mate /opt/local/etc/mysql5/my.cnf&quot;</span>
+</code>
+</pre>
+          </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
 var disqus_shortname = 'metaskillsnet';

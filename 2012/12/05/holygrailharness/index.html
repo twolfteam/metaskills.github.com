@@ -101,18 +101,14 @@
             <li>
               <a href="https://github.com/metaskills/holy_grail_harness/archive/master.zip">Download</a> the project.
             </li>
-            <li>Now from the root of “holy_grail_harness” directory.
+            <li>Now from the root of &quot;holy_grail_harness&quot; directory.
             </li>
           </ul>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-puts <span class="string"><span class="delimiter">&quot;</span><span class="content">This code will be highlighted</span><span class=
-"delimiter">&quot;</span></span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">puts</span> <span class="s2">&quot;This code will be highlighted&quot;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Make sure to replace <code>my_app_name</code> above with the name of your new Rails application. The setup script has a few options, but
@@ -125,15 +121,12 @@ puts <span class="string"><span class="delimiter">&quot;</span><span class="cont
             The script will rename your directory and prompt you to <code>cd</code> to that directory. Once you do that, run <code>rake
             test:all</code> to see that everything is working.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-$ cd ../my_app_name
-$ bundle exec rake test:all
+          <div class="highlight">
+            <pre>
+<code class="bash language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">cd</span> ../my_app_name
+<span class="nv">$ </span>bundle <span class="nb">exec </span>rake <span class="nb">test</span>:all
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h1 id="rails-3">
             Rails 3
@@ -154,46 +147,44 @@ $ bundle exec rake test:all
           <h1 id="testing">
             Testing
           </h1>
-          <h3 id="minitestspec-all-the-way-across-the-sky">
+          <h3 id="minitest::spec-all-the-way-across-the-sky!">
             MiniTest::Spec All The Way Across The Sky!
           </h3>
           <p>
-            Don’t wait for Rails 4 to use MiniTest::Spec! This application is using the <a href=
+            Don&#39;t wait for Rails 4 to use MiniTest::Spec! This application is using the <a href=
             "https://github.com/metaskills/minitest-spec-rails">minitest-spec-rails</a> gem which forces <code>ActiveSupport::TestCase</code> to
-            subclass <code>MiniTest::Spec</code>. This means that you can start using the MiniTest’s Spec or Unit structure and assertions directly
-            within the familiar Rails unit, functional, or integration directories. For full details, check out the <a href=
+            subclass <code>MiniTest::Spec</code>. This means that you can start using the MiniTest&#39;s Spec or Unit structure and assertions
+            directly within the familiar Rails unit, functional, or integration directories. For full details, check out the <a href=
             "https://github.com/metaskills/minitest-spec-rails">minitest-spec-rails</a> documentation or some of the <a href=
             "https://github.com/metaskills/holy_grail_harness/blob/master/test/functional/application_controller_test.rb">test shims</a> within
             HolyGrailHarness. For example, a <code>test/unit/user_test.rb</code> might look like this.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-require <span class="string"><span class="delimiter">'</span><span class="content">test_helper</span><span class="delimiter">'</span></span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper&#39;</span>
 
-<span class="keyword">class</span> <span class="class">UserTest</span> &lt; <span class="constant">ActiveSupport</span>::<span class=
-"constant">TestCase</span>
-  
-  let(<span class="symbol">:bob</span>)   { users(<span class="symbol">:bob</span>) }
-  let(<span class="symbol">:admin</span>) { users(<span class="symbol">:admin</span>) }
+<span class="k">class</span> <span class="nc">UserTest</span> <span class="o">&lt;</span> <span class="no">ActiveSupport</span><span class=
+"o">::</span><span class="no">TestCase</span>
 
-  it <span class="string"><span class="delimiter">'</span><span class=
-"content">must respond true to #admin? for administrators only</span><span class="delimiter">'</span></span> <span class="keyword">do</span>
-    admin.must_be <span class="symbol">:admin?</span>
-    bob.wont_be   <span class="symbol">:admin?</span>
-  <span class="keyword">end</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:bob</span><span class="p">)</span>   <span class="p">{</span> <span class=
+"n">users</span><span class="p">(</span><span class="ss">:bob</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:admin</span><span class="p">)</span> <span class="p">{</span> <span class=
+"n">users</span><span class="p">(</span><span class="ss">:admin</span><span class="p">)</span> <span class="p">}</span>
 
-<span class="keyword">end</span>
+  <span class="n">it</span> <span class="s1">&#39;must respond true to #admin? for administrators only&#39;</span> <span class="k">do</span>
+    <span class="n">admin</span><span class="o">.</span><span class="n">must_be</span> <span class="ss">:admin?</span>
+    <span class="n">bob</span><span class="o">.</span><span class="n">wont_be</span>   <span class="ss">:admin?</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h3 id="capybara-integration-tests-with-poltergeist-using-phantomjs">
             Capybara Integration Tests With Poltergeist Using PhantomJS
           </h3>
           <p>
-            You don’t need Cucumber to write good integration tests. Instead use the basic <a href=
+            You don&#39;t need Cucumber to write good integration tests. Instead use the basic <a href=
             "https://github.com/jnicklas/capybara#the-dsl">Capybara DSL</a> directly within a Rails integration tests with the most bad ass driver
             available, <a href="https://github.com/jonleighton/poltergeist">Poltergeist</a>, which is built on top of <a href=
             "http://phantomjs.org">PhantomJS</a>. Never again worry about installing Qt so you can compile capybara-webkit, just go download a
@@ -207,7 +198,7 @@ require <span class="string"><span class="delimiter">'</span><span class="conten
             the following base features.
           </p>
           <ul>
-            <li>Sets page size to that of a 13” MacBook Air.
+            <li>Sets page size to that of a 13&quot; MacBook Air.
             </li>
             <li>Resets Capybara sessions after each test.
             </li>
@@ -223,30 +214,25 @@ require <span class="string"><span class="delimiter">'</span><span class="conten
             "https://github.com/metaskills/holy_grail_harness/blob/master/test/integration/application_test.rb">test/integration/application_test.rb</a>
             file. An integration test might look something like this.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-require <span class="string"><span class="delimiter">'</span><span class="content">test_helper_integration</span><span class=
-"delimiter">'</span></span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper_integration&#39;</span>
 
-<span class="keyword">class</span> <span class="class">ApplicationTest</span> &lt; <span class="constant">ActionDispatch</span>::<span class=
-"constant">IntegrationTest</span>
-  
-  before { visit root_path }
+<span class="k">class</span> <span class="nc">ApplicationTest</span> <span class="o">&lt;</span> <span class="no">ActionDispatch</span><span class=
+"o">::</span><span class="no">IntegrationTest</span>
 
-  let(<span class="symbol">:h1</span>) { find <span class="string"><span class="delimiter">'</span><span class="content">h1</span><span class=
-"delimiter">'</span></span> }
+  <span class="n">before</span> <span class="p">{</span> <span class="n">visit</span> <span class="n">root_path</span> <span class="p">}</span>
 
-  it <span class="string"><span class="delimiter">'</span><span class="content">renders</span><span class="delimiter">'</span></span> <span class=
-"keyword">do</span>
-    h1.must_be <span class="symbol">:present?</span>
-  <span class="keyword">end</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:h1</span><span class="p">)</span> <span class="p">{</span> <span class=
+"n">find</span> <span class="s1">&#39;h1&#39;</span> <span class="p">}</span>
 
-<span class="keyword">end</span>
+  <span class="n">it</span> <span class="s1">&#39;renders&#39;</span> <span class="k">do</span>
+    <span class="n">h1</span><span class="o">.</span><span class="n">must_be</span> <span class="ss">:present?</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h3 id="konacha-javascript-tests-using-phantomjs">
             Konacha JavaScript Tests Using PhantomJS
@@ -254,10 +240,10 @@ require <span class="string"><span class="delimiter">'</span><span class="conten
           <p>
             Move over Jasmine(rice), <a href="https://github.com/jfirebaugh/konacha">Konacha</a> is the way to test your JavaScript now. Konacha is a
             Rails engine that allows you to test your JavaScript with the <a href="http://visionmedia.github.com/mocha/">Mocha</a> test framework and
-            <a href="http://chaijs.com">Chai</a> assertion library. Konacha’s killer feature is a sandboxed <code>&lt;iframe&gt;</code> for each test
-            spec to run within as well as full Rails asset pipeline integration. The HolyGrailHarness does all the work to get your Konacha <a href=
-            "https://github.com/metaskills/holy_grail_harness/tree/master/spec/javascripts"><code>spec/javascripts</code></a> directory all setup and
-            ready to go. Highlights include:
+            <a href="http://chaijs.com">Chai</a> assertion library. Konacha&#39;s killer feature is a sandboxed <code>&lt;iframe&gt;</code> for each
+            test spec to run within as well as full Rails asset pipeline integration. The HolyGrailHarness does all the work to get your Konacha
+            <a href="https://github.com/metaskills/holy_grail_harness/tree/master/spec/javascripts"><code>spec/javascripts</code></a> directory all
+            setup and ready to go. Highlights include:
           </p>
           <ul>
             <li>An <a href="https://github.com/metaskills/holy_grail_harness/blob/master/config/initializers/konacha.rb">initializer</a> that sets up
@@ -286,7 +272,7 @@ require <span class="string"><span class="delimiter">'</span><span class="conten
               <a href="http://sinonjs.org">Sinon.JS</a> - For spies, stubs, faking time, etc.
             </li>
             <li>
-              <a href="https://github.com/appendto/jquery-mockjax">jQuery Mockjax</a> - Best way to mock jQuery’s AJAX functions.
+              <a href="https://github.com/appendto/jquery-mockjax">jQuery Mockjax</a> - Best way to mock jQuery&#39;s AJAX functions.
             </li>
             <li>
               <a href="https://github.com/chaijs/chai-jquery">Chai jQuery</a> - Chai assertions for jQuery.
@@ -299,14 +285,12 @@ require <span class="string"><span class="delimiter">'</span><span class="conten
             Because your CI system should run all your tests, the HolyGrailHarness has added a Rake task to the test namespace that runs the default
             rails test task (units, functional, integrations) then your Konacha tests.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-$ rake test:all     # Runs all Rails tests, then Konacha tests.
+          <div class="highlight">
+            <pre>
+<code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>rake <span class="nb">test</span>:all     <span class=
+"c"># Runs all Rails tests, then Konacha tests.</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h3 id="guard">
             Guard
@@ -317,16 +301,14 @@ $ rake test:all     # Runs all Rails tests, then Konacha tests.
             too. Unlike most, this one is split into two groups <code>:ruby</code> or <code>:js</code>. This lets you focus on either everything or a
             specific language for your tests.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-$ guard             # Monitor both Ruby and JavaScript tests.
-$ guard -g ruby     # Monitor Ruby tests.
-$ guard -g js       # Monitor JavaScript tests.
+          <div class="highlight">
+            <pre>
+<code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>guard             <span class=
+"c"># Monitor both Ruby and JavaScript tests.</span>
+<span class="nv">$ </span>guard -g ruby     <span class="c"># Monitor Ruby tests.</span>
+<span class="nv">$ </span>guard -g js       <span class="c"># Monitor JavaScript tests.</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             The Guardfile assumes you are running OS X and wish to use the Ruby GNTP (Growl Notification Transport Protocol). If this is not the
@@ -346,60 +328,59 @@ $ guard -g js       # Monitor JavaScript tests.
             The HolyGrailHarness bundles the <a href="https://github.com/metaskills/named_seeds">named_seeds</a> gem along with the <a href=
             "https://github.com/thoughtbot/factory_girl">factory_girl</a> gem. The NamedSeeds library checks for the existence of a <a href=
             "https://github.com/metaskills/holy_grail_harness/blob/master/db/test/seeds.rb"><code>db/test/seeds.rb</code></a> file and if present,
-            loads that file. Just like Rails’ own <code>db/seeds.rb</code> anything in this file goes. The only difference is that this seed file is
-            populated right before you tests are run so they persist between transactions. You also get the benefit of using this same seed data in
-            development as part of the normal Rails <code>db:setup</code> process. Read the <a href=
+            loads that file. Just like Rails&#39; own <code>db/seeds.rb</code> anything in this file goes. The only difference is that this seed file
+            is populated right before you tests are run so they persist between transactions. You also get the benefit of using this same seed data
+            in development as part of the normal Rails <code>db:setup</code> process. Read the <a href=
             "https://github.com/metaskills/named_seeds#namedseeds">full documentationn</a> on their site on how to use it. Below is a brief example.
           </p>
           <p>
             Create factories in the <code>test/factories</code> directory. Note, factories are best when they make <code>valid garbage™</code>, so
             the HolyGrailHarness also requires the <a href="https://github.com/sevenwire/forgery">forgery</a> gem to help with that.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># In test/factories/user_factory.rb</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In test/factories/user_factory.rb</span>
 
-<span class="constant">FactoryGirl</span>.define <span class="keyword">do</span>
-  
-  factory <span class="symbol">:user</span> <span class="keyword">do</span>
-    email      { <span class="constant">Forgery</span>::<span class="constant">Email</span>.address }
-    first_name { <span class="constant">Forgery</span>::<span class="constant">Name</span>.first_name }
-    last_name  { <span class="constant">Forgery</span>::<span class="constant">Name</span>.first_name }
-    password   <span class="string"><span class="delimiter">'</span><span class="content">test</span><span class="delimiter">'</span></span>  
-  <span class="keyword">end</span>
-  
-<span class="keyword">end</span>
+<span class="no">FactoryGirl</span><span class="o">.</span><span class="n">define</span> <span class="k">do</span>
+
+  <span class="n">factory</span> <span class="ss">:user</span> <span class="k">do</span>
+    <span class="n">email</span>      <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class=
+"no">Email</span><span class="o">.</span><span class="n">address</span> <span class="p">}</span>
+    <span class="n">first_name</span> <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class=
+"no">Name</span><span class="o">.</span><span class="n">first_name</span> <span class="p">}</span>
+    <span class="n">last_name</span>  <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class=
+"no">Name</span><span class="o">.</span><span class="n">first_name</span> <span class="p">}</span>
+    <span class="n">password</span>   <span class="s1">&#39;test&#39;</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             When making seed data, be explicit with your attributes that may be forged in the factory, database seeds should be consistent and have
             meaningful attributes. In this example we are creating an admin user. Note too how we are using <code>NamedSeeds.identify</code> which
-            mimics AcctiveRecord’s fixture identity. This gives us a handle to the fixture within our tests. We also create the <code>@admin</code>
-            instance variable because we might want to use that user later on in the fixture story.
+            mimics AcctiveRecord&#39;s fixture identity. This gives us a handle to the fixture within our tests. We also create the
+            <code>@admin</code> instance variable because we might want to use that user later on in the fixture story.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># In db/test/seeds.rb</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In db/test/seeds.rb</span>
 
-require <span class="string"><span class="delimiter">'</span><span class="content">factory_girl</span><span class="delimiter">'</span></span>
-<span class="constant">FactoryGirl</span>.find_definitions <span class="keyword">rescue</span> <span class="predefined-constant">true</span>
-include <span class="constant">FactoryGirl</span>::<span class="constant">Syntax</span>::<span class="constant">Methods</span>
+<span class="nb">require</span> <span class="s1">&#39;factory_girl&#39;</span>
+<span class="no">FactoryGirl</span><span class="o">.</span><span class="n">find_definitions</span> <span class="k">rescue</span> <span class=
+"kp">true</span>
+<span class="kp">include</span> <span class="no">FactoryGirl</span><span class="o">::</span><span class="no">Syntax</span><span class=
+"o">::</span><span class="no">Methods</span>
 
-<span class="instance-variable">@admin</span> = create <span class="symbol">:user</span>, <span class="key">id</span>: <span class=
-"constant">NamedSeeds</span>.identify(<span class="symbol">:admin</span>), 
-                       <span class="key">first_name</span>: <span class="string"><span class="delimiter">'</span><span class=
-"content">Admin</span><span class="delimiter">'</span></span>, <span class="key">last_name</span>: <span class="string"><span class=
-"delimiter">'</span><span class="content">User</span><span class="delimiter">'</span></span>, <span class="key">email</span>: <span class=
-"string"><span class="delimiter">'</span><span class="content">admin@test.com</span><span class="delimiter">'</span></span>
+<span class="vi">@admin</span> <span class="o">=</span> <span class="n">create</span> <span class="ss">:user</span><span class=
+"p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="no">NamedSeeds</span><span class="o">.</span><span class=
+"n">identify</span><span class="p">(</span><span class="ss">:admin</span><span class="p">),</span>
+                       <span class="n">first_name</span><span class="p">:</span> <span class="s1">&#39;Admin&#39;</span><span class=
+"p">,</span> <span class="n">last_name</span><span class="p">:</span> <span class="s1">&#39;User&#39;</span><span class="p">,</span> <span class=
+"ss">email</span><span class="p">:</span> <span class="s1">&#39;admin@test.com&#39;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             Lastly, in your <a href=
@@ -407,20 +388,17 @@ include <span class="constant">FactoryGirl</span>::<span class="constant">Syntax
             that you have a named seed to the users model. This will allow your tests to act just like those with ActiveRecord fixtures and use the
             <code>users(:admin)</code> helper to get to that seeded fixture.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># In test/test_helper.rb</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In test/test_helper.rb</span>
 
-<span class="keyword">class</span> <span class="class">ActiveSupport::TestCase</span>
-  
-  named_seeds <span class="symbol">:users</span>
+<span class="k">class</span> <span class="nc">ActiveSupport</span><span class="o">::</span><span class="no">TestCase</span>
 
-<span class="keyword">end</span>
+  <span class="n">named_seeds</span> <span class="ss">:users</span>
+
+<span class="k">end</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h1 id="mvc-javascript">
             MVC JavaScript
@@ -439,15 +417,15 @@ include <span class="constant">FactoryGirl</span>::<span class="constant">Syntax
             application name as part of the setup task. Here is an example of a User model whose corresponding file would be found in the
             <code>app/assets/javascripts/my_app_name/models/user.js.coffee</code> file.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-class @MyAppName.App.Models.User extends View  
-  @configure 'User', 'id', 'email'
+          <div class="highlight">
+            <pre>
+<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="k">class</span> <span class="nx">@MyAppName</span><span class=
+"p">.</span><span class="nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class=
+"nx">User</span> <span class="k">extends</span> <span class="nx">View</span>
+  <span class="nx">@configure</span> <span class="s">&#39;User&#39;</span><span class="p">,</span> <span class="s">&#39;id&#39;</span><span class=
+"p">,</span> <span class="s">&#39;email&#39;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             The main <a href=
@@ -464,7 +442,7 @@ class @MyAppName.App.Models.User extends View
             SpacePen</em></a> article to learn why views should not be dumb and how you can take advantage of SpacePen no matter what JavaScript MV*
             framework you use.
           </p>
-          <h3 id="with-spinejs">
+          <h3 id="with-spine.js">
             With Spine.js
           </h3>
           <p>
@@ -484,25 +462,32 @@ class @MyAppName.App.Models.User extends View
             "https://github.com/metaskills/holy_grail_harness/blob/master/spec/javascripts/spec_helper.js.coffee"><code>spec_helper.js.coffee</code></a>
             and <a href=
             "https://github.com/metaskills/holy_grail_harness/blob/master/spec/javascripts/spec_helper/fixtures.js.coffee"><code>fixtures.js.coffee</code></a>
-            files. If you examine these files closely, you will see how they make use of Mocha’s <code>done()</code> callback so that you can cleanly
-            abstract AJAX mocks and anything else related to your JavaScript application’s boot process. Here is an example of how you might setup
-            your <code>initApplication()</code>.
+            files. If you examine these files closely, you will see how they make use of Mocha&#39;s <code>done()</code> callback so that you can
+            cleanly abstract AJAX mocks and anything else related to your JavaScript application&#39;s boot process. Here is an example of how you
+            might setup your <code>initApplication()</code>.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-@initApplication = (callback) =&gt;
-  bob = MyAppName.Test.Seeds.users.bob
-  $.mockjax url: &quot;/users/#{bob.id}&quot;, responseText: MyAppName.Test.Response.bobInitial.responseText
-  MyAppName.App.Models.User.fetch id: bob.id
-  MyAppName.App.Models.User.one 'refresh', callback
+          <div class="highlight">
+            <pre>
+<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="vi">@initApplication = </span><span class=
+"nf">(callback) =&gt;</span>
+  <span class="nv">bob = </span><span class="nx">MyAppName</span><span class="p">.</span><span class="nx">Test</span><span class=
+"p">.</span><span class="nx">Seeds</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">bob</span>
+  <span class="nx">$</span><span class="p">.</span><span class="nx">mockjax</span> <span class="nv">url: </span><span class=
+"s">&quot;/users/</span><span class="si">#{</span><span class="nx">bob</span><span class="p">.</span><span class="nx">id</span><span class=
+"si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">responseText: </span><span class=
+"nx">MyAppName</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Response</span><span class=
+"p">.</span><span class="nx">bobInitial</span><span class="p">.</span><span class="nx">responseText</span>
+  <span class="nx">MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class=
+"nx">Models</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">fetch</span> <span class=
+"nv">id: </span><span class="nx">bob</span><span class="p">.</span><span class="nx">id</span>
+  <span class="nx">MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class=
+"nx">Models</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">one</span> <span class=
+"s">&#39;refresh&#39;</span><span class="p">,</span> <span class="nx">callback</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
-            No JavaScript project should be without a local notification system to help keep disparate components up to date. Thankfully, Spine’s
+            No JavaScript project should be without a local notification system to help keep disparate components up to date. Thankfully, Spine&#39;s
             event module makes a local PubSub system a breeze. The HolyGrailHarness has a <a href=
             "https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/holy_grail_harness/lib/notifications.js.coffee"><code>
             notifications.js.coffee</code></a> that exposes a class level <code>bind()</code> and <code>trigger()</code> to any event
@@ -511,11 +496,11 @@ class @MyAppName.App.Models.User extends View
             to demonstrate. Calling this function will trigger the <code>app.ready</code> event and passing a function to this function will bind
             that function to the same event name.
           </p>
-          <h1 id="sass--compass">
+          <h1 id="sass-&amp;-compass">
             Sass &amp; Compass
           </h1>
           <p>
-            <a href="http://sass-lang.com">Sass</a> is the only way to write CSS for today’s modern web applications. <a href=
+            <a href="http://sass-lang.com">Sass</a> is the only way to write CSS for today&#39;s modern web applications. <a href=
             "http://compass-style.org">Compass</a> is the CSS framework that no Sass user should go without. Together they provide a foundation for
             writing beautiful CSS using pre-built time saving functions. The HolyGrailHarness includes both the <a href=
             "https://github.com/rails/sass-rails">sass-rails</a> and <a href="https://github.com/Compass/compass-rails">compass-rails</a> gems.
@@ -524,8 +509,9 @@ class @MyAppName.App.Models.User extends View
             To get you started on the right path, we have also created a basic structure within the <code>app/assets/stylesheets</code> asset
             pipeline directory to help you organize your Sass files. Here is the directory structure below.
           </p>
-          <pre>
-<code>├── application.css
+          <div class="highlight">
+            <pre>
+<code class="text language-text" data-lang="text">├── application.css
 ├── application
 │   ├── _layout.scss
 │   ├── index.scss
@@ -540,7 +526,8 @@ class @MyAppName.App.Models.User extends View
     └── base.scss
 </code>
 </pre>
-          <h3 id="the-applicationcss-file">
+          </div>
+          <h3 id="the-application.css-file.">
             The application.css file.
           </h3>
           <p>
@@ -548,19 +535,16 @@ class @MyAppName.App.Models.User extends View
             dependency that only requires other top level bundle assets. Here is the contents of that file. Notice how it requires a bundle called
             twitter and an index. One is for twitter bootstrap, see section below, and the other is the index to your own Sass framework.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment">/*
- *= require application/twitter
- *= require application/index
-*/</span>
+          <div class="highlight">
+            <pre>
+<code class="css language-css" data-lang="css"><span class="c">/*</span>
+<span class="c"> *= require application/twitter</span>
+<span class="c"> *= require application/index</span>
+<span class="c">*/</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
-          <h3 id="the-shared-directory">
+          <h3 id="the-shared-directory.">
             The shared directory.
           </h3>
           <p>
@@ -568,49 +552,37 @@ class @MyAppName.App.Models.User extends View
             "https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/stylesheets/shared/base.scss"><code>base.scss</code></a> is your
             single file to <code>@import</code> to get everything loaded and ready to go. <strong>Nothing in any of the shared files should generate
             CSS!</strong> Importing <code>shared/base</code> should act just like importing <code>compass</code>. Use these files for setting your
-            own variables and creating misc helper functions &amp; mixins. There is a variables file for… variables! Another for animations, fonts
+            own variables and creating misc helper functions &amp; mixins. There is a variables file for... variables! Another for animations, fonts
             and mixins too.
           </p>
           <p>
-            Pay special attention to the <code>_placeholders.scss</code> file. If you do not know about Sass 3.2’s placeholder selectors (silent
-            classes) and how they make presentational classes efficiently extended by semantic ones, then I highly suggest you read Dale Sande’s
+            Pay special attention to the <code>_placeholders.scss</code> file. If you do not know about Sass 3.2&#39;s placeholder selectors (silent
+            classes) and how they make presentational classes efficiently extended by semantic ones, then I highly suggest you read Dale Sande&#39;s
             presentation titled <a href="https://speakerdeck.com/anotheruiguy/sass-32-silent-classes">Sass 3.2 Silent Classes</a> on Speaker Deck.
           </p>
           <p>
             Below is the contents of the <code>base.scss</code> file, take note of the order. See too how we import the entire Compass framework.
-            This means that all of your Sass code in any of the shared files can take full advantage of both Bootstrap and Compass’ variables and
+            This means that all of your Sass code in any of the shared files can take full advantage of both Bootstrap and Compass&#39; variables and
             mixins. Epic win!
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"><span class="delimiter">//</span><span class=
-"content"> Think of this file as your own compass. Importing the base, never generates CSS.</span></span>
+          <div class="highlight">
+            <pre>
+<code class="sass language-sass" data-lang="sass"><span class=
+"c1">// Think of this file as your own compass. Importing the base, never generates CSS.</span>
 
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">shared/variables</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">bootstrap/mixins</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">compass</span><span class=
-"delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">compass/layout</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">compass/css3/user-interface</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">shared/fonts</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">shared/mixins</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">shared/animations</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">shared/placeholders</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
+<span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;bootstrap/mixins&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;compass&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;compass/layout&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;compass/css3/user-interface&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;shared/fonts&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;shared/mixins&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;shared/animations&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;shared/placeholders&quot;;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
-          <h3 id="the-application-directory">
+          <h3 id="the-application-directory.">
             The application directory.
           </h3>
           <p>
@@ -619,19 +591,13 @@ class @MyAppName.App.Models.User extends View
             not dependent upon another. Files that might go in here are things like datepicker, navigation, and general files named after components
             or widgets. Below is what the <code>application/index.scss</code> looks like.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">shared/base</span><span class=
-"delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">./layout</span><span class=
-"delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">components/*</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
+          <div class="highlight">
+            <pre>
+<code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">&quot;shared/base&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;./layout&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;components/*&quot;;</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             If you are more advanced with your CSS and like the idea of style guides, take a looks a the <a href=
@@ -652,29 +618,23 @@ class @MyAppName.App.Models.User extends View
             importing bootstrap from the gem. In this way you can define variables that tweak bootstrap. A good example would be button colors,
             column widths, etc. Later on in the file you can extend bootstrap styles to your liking. For instance, add more padding to buttons.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">shared/variables</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">bootstrap</span><span class=
-"delimiter">&quot;</span></span><span class="include">;</span>
-<span class="directive">@import</span> <span class="string"><span class="delimiter">&quot;</span><span class=
-"content">font-awesome</span><span class="delimiter">&quot;</span></span><span class="include">;</span>
+          <div class="highlight">
+            <pre>
+<code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;bootstrap&quot;;</span>
+<span class="k">@import</span> <span class="s">&quot;font-awesome&quot;;</span>
 
-<span class="comment"><span class="delimiter">//</span><span class="content"> Tweak or redefine Twitter classes below.</span></span>
+<span class="c1">// Tweak or redefine Twitter classes below.</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <h3 id="font-awesome">
             Font Awesome
           </h3>
           <p>
-            The glyph icons included in Twitter Bootstrap are horrible for hi-resolution “retina” displays typically found on mobile devices.
-            Thankfully the <a href="http://fortawesome.github.com/Font-Awesome/">Font Awesome</a> project provides a drop in replacement that instead
-            uses icon fonts vs raster images.
+            The glyph icons included in Twitter Bootstrap are horrible for hi-resolution &quot;retina&quot; displays typically found on mobile
+            devices. Thankfully the <a href="http://fortawesome.github.com/Font-Awesome/">Font Awesome</a> project provides a drop in replacement
+            that instead uses icon fonts vs raster images.
           </p>
           <p>
             The HolyGrailHarness vendors these font files and the needed <code>font-awesome.scss</code> file and requires them as part of the Twitter

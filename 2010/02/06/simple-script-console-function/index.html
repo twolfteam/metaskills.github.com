@@ -68,20 +68,17 @@
             all versions of rails. If you did not know, all the script files in rails 3 are gone and the new all-in-one <code>rails</code> executable
             does all the heavy lifting. This little function even passes down all the arguments too.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-sc () {
-  if [ -f ./script/rails ]; then 
-    rails console $argv
-  else
-    ./script/console $argv
-  fi
-}
+          <div class="highlight">
+            <pre>
+<code class="bash language-bash" data-lang="bash">sc <span class="o">()</span> <span class="o">{</span>
+  <span class="k">if</span> <span class="o">[</span> -f ./script/rails <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+<span class="k">    </span>rails console <span class="nv">$argv</span>
+  <span class="k">else</span>
+    ./script/console <span class="nv">$argv</span>
+  <span class="k">fi</span>
+<span class="o">}</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <p>
             One other thing, the way rails uses IRB is different now. I had to change my <code>~/.irbrc</code> file to look like this below to get my
@@ -89,25 +86,25 @@ sc () {
             "http://redmine.ruby-lang.org/issues/show/1556">have to apply this 2 line patch to your save-history.rb file</a>. Worked like a champ for
             me.
           </p>
-          <div>
-            <div class="CodeRay">
-              <div class="code">
-                <pre>
-<span class="comment"># IRB history patch &lt;http://redmine.ruby-lang.org/issues/show/1556&gt;</span>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># IRB history patch &lt;http://redmine.ruby-lang.org/issues/show/1556&gt;</span>
 
-require <span class="string"><span class="delimiter">'</span><span class="content">irb/completion</span><span class="delimiter">'</span></span>
-require <span class="string"><span class="delimiter">'</span><span class="content">irb/ext/save-history</span><span class="delimiter">'</span></span>
+<span class="nb">require</span> <span class="s1">&#39;irb/completion&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;irb/ext/save-history&#39;</span>
 
-<span class="constant">IRB</span>.conf[<span class="symbol">:USE_READLINE</span>] = <span class="predefined-constant">true</span>
-<span class="constant">IRB</span>.conf[<span class="symbol">:SAVE_HISTORY</span>] = <span class="integer">500</span>
-<span class="constant">IRB</span>.conf[<span class="symbol">:HISTORY_FILE</span>] = <span class="string"><span class=
-"delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">#{</span><span class="predefined-constant">ENV</span>[<span class=
-"string"><span class="delimiter">'</span><span class="content">HOME</span><span class="delimiter">'</span></span>]<span class=
-"inline-delimiter">}</span></span><span class="content">/.irb.hist</span><span class="delimiter">&quot;</span></span>
-<span class="constant">IRB</span>.conf[<span class="symbol">:PROMPT_MODE</span>] = <span class="symbol">:SIMPLE</span>
+<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+"ss">:USE_READLINE</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+"ss">:SAVE_HISTORY</span><span class="o">]</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+"ss">:HISTORY_FILE</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
+"no">ENV</span><span class="o">[</span><span class="s1">&#39;HOME&#39;</span><span class="o">]</span><span class="si">}</span><span class=
+"s2">/.irb.hist&quot;</span>
+<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+"ss">:PROMPT_MODE</span><span class="o">]</span> <span class="o">=</span> <span class="ss">:SIMPLE</span>
+</code>
 </pre>
-              </div>
-            </div>
           </div>
           <footer id="disqus_thread">
             <script type="text/javascript">
