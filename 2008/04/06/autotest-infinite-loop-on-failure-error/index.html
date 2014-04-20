@@ -88,7 +88,7 @@ test/unit/bookmark_test.rb:5]:
 &lt;false&gt; is not true.
 
 1 tests, 1 assertions, 1 failures, 0 errors
-[[&quot;config/uuid.state&quot;, Sun Apr 06 13:58:55 -0400 2008]]
+[["config/uuid.state", Sun Apr 06 13:58:55 -0400 2008]]
 Dunno! config/uuid.state
 </code>
 </pre>
@@ -108,13 +108,13 @@ Dunno! config/uuid.state
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="no">Autotest</span><span class="o">.</span><span class=
-"n">add_hook</span> <span class="ss">:initialize</span> <span class="k">do</span> <span class="o">|</span><span class="n">autotest</span><span class=
-"o">|</span>
-  <span class="o">[</span><span class="s1">&#39;.svn&#39;</span><span class="p">,</span><span class="s1">&#39;.hg&#39;</span><span class=
-"p">,</span><span class="s1">&#39;.git&#39;</span><span class="o">].</span><span class="n">each</span> <span class="p">{</span> <span class=
-"o">|</span><span class="n">exception</span><span class="o">|</span> <span class="n">autotest</span><span class="o">.</span><span class=
-"n">add_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span> <span class="p">}</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="no">Autotest</span><span class="p">.</span><span class=
+"nf">add_hook</span> <span class="ss">:initialize</span> <span class="k">do</span> <span class="o">|</span><span class=
+"n">autotest</span><span class="o">|</span>
+  <span class="o">[</span><span class="s1">'.svn'</span><span class="p">,</span><span class="s1">'.hg'</span><span class="p">,</span><span class=
+"s1">'.git'</span><span class="o">]</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class=
+"o">|</span><span class="n">exception</span><span class="o">|</span> <span class="n">autotest</span><span class="p">.</span><span class=
+"nf">add_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span> <span class="p">}</span>
 <span class="k">end</span>
 </code>
 </pre>
@@ -179,6 +179,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -193,16 +202,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

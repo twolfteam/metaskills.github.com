@@ -203,7 +203,7 @@ $ tail -f /the/path/to/your/logfile.log | grep 10.0.1.4
 Date: Sun, 19 Feb 2006 16:42:05 GMT
 Server: Apache/2.0.55 (Unix) DAV/2 PHP/5.1.1
 Last-Modified: Sun, 08 Jan 2006 16:17:25 GMT
-ETag: &quot;73049-defc-37c52f40&quot;
+ETag: "73049-defc-37c52f40"
 Accept-Ranges: bytes
 Content-Length: 57084
 Cache-Control: max-age=7200
@@ -228,8 +228,8 @@ Content-Type: image/png
           </p>
           <div class="highlight">
             <pre>
-<code class="apache language-apache" data-lang="apache"><span class="nb">LoadModule</span> expires_module modules/mod_expires.so
-<span class="nb">LoadModule</span> headers_module modules/mod_headers.so
+<code class="apache language-apache" data-lang="apache">LoadModule expires_module modules/mod_expires.so
+LoadModule headers_module modules/mod_headers.so
 </code>
 </pre>
           </div>
@@ -259,19 +259,18 @@ Content-Type: image/png
           </p>
           <div class="highlight">
             <pre>
-<code class="apache language-apache" data-lang="apache"><span class="nt">&lt;IfModule</span> <span class="s">mod_expires.c</span><span class=
-"nt">&gt;</span>
-  <span class="nb">ExpiresActive</span> <span class="k">On</span>
-  <span class="nb">ExpiresDefault</span> <span class="s2">&quot;access plus 1 seconds&quot;</span>
-  <span class="nb">ExpiresByType</span> text/html <span class="s2">&quot;access plus 1 seconds&quot;</span>
-  <span class="nb">ExpiresByType</span> image/gif <span class="s2">&quot;access plus 120 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> image/jpeg <span class="s2">&quot;access plus 120 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> image/png <span class="s2">&quot;access plus 120 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> text/css <span class="s2">&quot;access plus 60 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> text/javascript <span class="s2">&quot;access plus 60 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> application/x-javascript <span class="s2">&quot;access plus 60 minutes&quot;</span>
-  <span class="nb">ExpiresByType</span> text/xml <span class="s2">&quot;access plus 60 minutes&quot;</span>
-<span class="nt">&lt;/IfModule&gt;</span>
+<code class="apache language-apache" data-lang="apache">&lt;IfModule mod_expires.c&gt;
+  ExpiresActive On
+  ExpiresDefault "access plus 1 seconds"
+  ExpiresByType text/html "access plus 1 seconds"
+  ExpiresByType image/gif "access plus 120 minutes"
+  ExpiresByType image/jpeg "access plus 120 minutes"
+  ExpiresByType image/png "access plus 120 minutes"
+  ExpiresByType text/css "access plus 60 minutes"
+  ExpiresByType text/javascript "access plus 60 minutes"
+  ExpiresByType application/x-javascript "access plus 60 minutes"
+  ExpiresByType text/xml "access plus 60 minutes"
+&lt;/IfModule&gt;
 </code>
 </pre>
           </div>
@@ -376,6 +375,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -390,16 +398,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

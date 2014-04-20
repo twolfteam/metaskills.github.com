@@ -139,28 +139,29 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="javascript language-javascript" data-lang="javascript"><span class="c1">// File app/assets/javascripts/integration.js</span>
-
-<span class="c1">//= require sinon-1.4.2</span>
-<span class="c1">//= require integration/sinon</span>
-<span class="c1">//= require application</span>
-</code>
+<code class="javascript language-javascript" data-lang="javascript"><span class="c1">// File app/assets/javascripts/integration.js
+</span>
+<span class="c1">//= require sinon-1.4.2
+//= require integration/sinon
+//= require application
+</span></code>
 </pre>
           </div>
           <div class="highlight">
             <pre>
 <code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class=
-"c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb</span>
+"c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb
+</span>
+<span class="o">&lt;%</span> <span class="nx">central</span> <span class="o">=</span> <span class="na">ActiveSupport</span><span class=
+"o">::</span><span class="nx">TimeZone</span><span class="p">[</span><span class="s">'Central Time (US &amp; Canada)'</span><span class=
+"p">]</span> <span class="o">%&gt;</span>
+<span class="o">&lt;%</span> <span class="nx">today</span> <span class="o">=</span> <span class="nx">central</span><span class=
+"p">.</span><span class="na">parse</span><span class="p">(</span><span class="s">'8:30am'</span><span class="p">).</span><span class=
+"na">to_i</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">%&gt;</span>
 
-<span class="o">&lt;%</span> <span class="nv">central = </span><span class="nx">ActiveSupport</span><span class="o">::</span><span class=
-"nx">TimeZone</span><span class="p">[</span><span class="s">&#39;Central Time (US &amp; Canada)&#39;</span><span class="p">]</span> <span class=
-"o">%&gt;</span>
-<span class="o">&lt;%</span> <span class="nv">today = </span><span class="nx">central</span><span class="p">.</span><span class=
-"nx">parse</span><span class="p">(</span><span class="s">&#39;8:30am&#39;</span><span class="p">).</span><span class="nx">to_i</span> <span class=
-"o">*</span> <span class="mi">1000</span> <span class="o">%&gt;</span>
-
-<span class="nb">window</span><span class="p">.</span><span class="nv">clock = </span><span class="nx">sinon</span><span class=
-"p">.</span><span class="nx">useFakeTimers</span> <span class="o">&lt;%=</span> <span class="nx">today</span> <span class="o">%&gt;</span>
+<span class="nb">window</span><span class="p">.</span><span class="na">clock</span> <span class="o">=</span> <span class=
+"nx">sinon</span><span class="p">.</span><span class="na">useFakeTimers</span> <span class="o">&lt;%=</span> <span class=
+"nx">today</span> <span class="o">%&gt;</span>
 </code>
 </pre>
           </div>
@@ -177,49 +178,48 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># File test/test_helper_integration.rb</span>
 
-<span class="nb">require</span> <span class="s2">&quot;test_helper&quot;</span>
-<span class="nb">require</span> <span class="s2">&quot;capybara/rails&quot;</span>
+<span class="nb">require</span> <span class="s2">"test_helper"</span>
+<span class="nb">require</span> <span class="s2">"capybara/rails"</span>
 
 <span class="k">module</span> <span class="nn">ActionDispatch</span>
   <span class="k">class</span> <span class="nc">IntegrationTest</span>
 
   <span class="kp">include</span> <span class="no">Capybara</span><span class="o">::</span><span class="no">DSL</span>
 
-  <span class="n">before</span> <span class="p">{</span> <span class="n">travel</span> <span class="s1">&#39;8:30am&#39;</span> <span class=
-"p">}</span>
-  <span class="n">after</span>  <span class="p">{</span> <span class="no">Capybara</span><span class="o">.</span><span class=
-"n">reset_sessions!</span> <span class="p">}</span>
+  <span class="n">before</span> <span class="p">{</span> <span class="n">travel</span> <span class="s1">'8:30am'</span> <span class="p">}</span>
+  <span class="n">after</span>  <span class="p">{</span> <span class="no">Capybara</span><span class="p">.</span><span class=
+"nf">reset_sessions!</span> <span class="p">}</span>
 
   <span class="kp">private</span>
 
   <span class="k">def</span> <span class="nf">travel</span><span class="p">(</span><span class="n">parseable_time</span><span class="p">)</span>
-    <span class="no">Timecop</span><span class="o">.</span><span class="n">return</span>
-    <span class="no">Timecop</span><span class="o">.</span><span class="n">travel</span> <span class="n">parse_time</span><span class=
+    <span class="no">Timecop</span><span class="p">.</span><span class="nf">return</span>
+    <span class="no">Timecop</span><span class="p">.</span><span class="nf">travel</span> <span class="n">parse_time</span><span class=
 "p">(</span><span class="n">parseable_time</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">parse_time</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">String</span><span class=
-"p">)</span> <span class="p">?</span> <span class="no">Chronic</span><span class="o">.</span><span class="n">parse</span><span class=
-"p">(</span><span class="n">time</span><span class="p">)</span> <span class="p">:</span> <span class="n">time</span>
+    <span class="n">time</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class=
+"no">String</span><span class="p">)</span> <span class="p">?</span> <span class="no">Chronic</span><span class="p">.</span><span class=
+"nf">parse</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="p">:</span> <span class="n">time</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">advance_time</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
-    <span class="n">now_ms</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class=
-"n">current</span><span class="o">.</span><span class="n">to_i</span> <span class="o">*</span> <span class="mi">1000</span>
-    <span class="no">Timecop</span><span class="o">.</span><span class="n">travel</span> <span class="no">Time</span><span class=
-"o">.</span><span class="n">current</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class=
+    <span class="n">now_ms</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class=
+"nf">current</span><span class="p">.</span><span class="nf">to_i</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="no">Timecop</span><span class="p">.</span><span class="nf">travel</span> <span class="no">Time</span><span class=
+"p">.</span><span class="nf">current</span><span class="p">.</span><span class="nf">advance</span><span class="p">(</span><span class=
 "n">options</span><span class="p">)</span>
     <span class="n">traveled_ms</span> <span class="o">=</span> <span class="p">(</span><span class="no">Time</span><span class=
-"o">.</span><span class="n">current</span><span class="o">.</span><span class="n">to_i</span> <span class="o">*</span> <span class=
+"p">.</span><span class="nf">current</span><span class="p">.</span><span class="nf">to_i</span> <span class="o">*</span> <span class=
 "mi">1000</span><span class="p">)</span> <span class="o">-</span> <span class="n">now_ms</span>
     <span class="n">advance_sinon</span> <span class="n">traveled_ms</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">advance_sinon</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>
-    <span class="n">page</span><span class="o">.</span><span class="n">execute_script</span> <span class=
-"s2">&quot;if (window.clock) { window.clock.tick(</span><span class="si">#{</span><span class="n">ms</span><span class="si">}</span><span class=
-"s2">); }&quot;</span>
+    <span class="n">page</span><span class="p">.</span><span class="nf">execute_script</span> <span class=
+"s2">"if (window.clock) { window.clock.tick(</span><span class="si">#{</span><span class="n">ms</span><span class="si">}</span><span class=
+"s2">); }"</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
@@ -308,6 +308,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -322,16 +331,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

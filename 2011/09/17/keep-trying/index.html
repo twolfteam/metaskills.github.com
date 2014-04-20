@@ -78,12 +78,11 @@
   <span class="k">def</span> <span class="nf">try_keypath</span><span class="p">(</span><span class="nb">methods</span><span class=
 "p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class=
 "n">block</span><span class="p">)</span>
-    <span class="nb">methods</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class=
-"n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class=
-"n">inject</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span> <span class=
-"o">|</span><span class="n">result</span><span class="p">,</span> <span class="nb">method</span><span class="o">|</span> <span class=
-"n">result</span><span class="o">.</span><span class="n">try</span><span class="p">(</span><span class="nb">method</span><span class=
-"p">)</span> <span class="p">}</span>
+    <span class="nb">methods</span><span class="p">.</span><span class="nf">to_s</span><span class="p">.</span><span class=
+"nf">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">).</span><span class="nf">inject</span><span class=
+"p">(</span><span class="nb">self</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class=
+"n">result</span><span class="p">,</span> <span class="nb">method</span><span class="o">|</span> <span class="n">result</span><span class=
+"p">.</span><span class="nf">try</span><span class="p">(</span><span class="nb">method</span><span class="p">)</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
@@ -105,17 +104,17 @@
 <code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Foo</span>
   <span class="k">def</span> <span class="nf">bar</span>
     <span class="nb">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class=
-"mi">1</span> <span class="o">?</span> <span class="no">Bar</span><span class="o">.</span><span class="n">new</span> <span class=
+"mi">1</span> <span class="p">?</span> <span class="no">Bar</span><span class="p">.</span><span class="nf">new</span> <span class=
 "p">:</span> <span class="kp">nil</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
 <span class="k">class</span> <span class="nc">Bar</span>
   <span class="k">def</span> <span class="nf">batz</span>
-    <span class="s1">&#39;wohoo&#39;</span>
+    <span class="s1">'wohoo'</span>
   <span class="k">end</span>
   <span class="k">def</span> <span class="nf">deep</span>
-    <span class="no">Deep</span><span class="o">.</span><span class="n">new</span>
+    <span class="no">Deep</span><span class="p">.</span><span class="nf">new</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
@@ -132,44 +131,44 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class=
-"o">.</span><span class="n">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7dfd0&gt;</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class=
+<code class="ruby language-ruby" data-lang="ruby"><span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class=
+"p">.</span><span class="nf">try</span> <span class="ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7dfd0&gt;</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">try</span> <span class=
 "ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7ddf0&gt;</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class=
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">try</span> <span class=
 "ss">:bar</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class=
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">try</span> <span class=
 "ss">:bar</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class=
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">try</span> <span class=
 "ss">:bar</span> <span class="c1"># =&gt; #&lt;Bar:0x108d7d4b8&gt;</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try</span> <span class=
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">try</span> <span class=
 "ss">:bar</span> <span class="c1"># =&gt; nil</span>
 
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.batz&#39;</span> <span class="c1"># =&gt; &quot;wohoo&quot;</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.batz'</span> <span class="c1"># =&gt; "wohoo"</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.batz'</span> <span class="c1"># =&gt; "wohoo"</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.batz'</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.batz'</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.batz'</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.batz'</span> <span class="c1"># =&gt; "wohoo"</span>
 
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
-<span class="no">Foo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">try_keypath</span> <span class=
-"s1">&#39;bar.deep.info&#39;</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.deep.info'</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.deep.info'</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.deep.info'</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.deep.info'</span> <span class="c1"># =&gt; nil</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.deep.info'</span> <span class="c1"># =&gt; {:winning=&gt;true}</span>
+<span class="no">Foo</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class=
+"nf">try_keypath</span> <span class="s1">'bar.deep.info'</span> <span class="c1"># =&gt; nil</span>
 </code>
 </pre>
           </div>
@@ -233,6 +232,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -247,16 +255,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

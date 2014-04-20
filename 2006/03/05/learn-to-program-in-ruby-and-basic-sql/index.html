@@ -134,18 +134,18 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="n">bottles</span> <span class="o">=</span> <span class="mi">99</span>
 
-<span class="k">while</span> <span class="n">bottles</span><span class="o">.</span><span class="n">to_i</span> <span class="o">!=</span> <span class=
-"mi">0</span>
-  <span class="nb">puts</span> <span class="n">bottles</span><span class="o">.</span><span class="n">to_s</span> <span class=
-"o">+</span> <span class="s1">&#39; bottles of beer on the wall. &#39;</span> <span class="o">+</span>
-    <span class="n">bottles</span><span class="o">.</span><span class="n">to_s</span> <span class="o">+</span> <span class=
-"s1">&#39; bottles of beer!&#39;</span>
-  <span class="n">bottles</span> <span class="o">=</span> <span class="n">bottles</span><span class="o">.</span><span class=
-"n">to_i</span><span class="o">-</span><span class="mi">1</span>
-  <span class="nb">puts</span> <span class="s1">&#39;You take one down and pass it around... you have &#39;</span> <span class="o">+</span>
-    <span class="n">bottles</span><span class="o">.</span><span class="n">to_s</span> <span class="o">+</span> <span class=
-"s1">&#39; bottles of beer on the wall.&#39;</span>
-  <span class="nb">puts</span> <span class="s1">&#39;&#39;</span>
+<span class="k">while</span> <span class="n">bottles</span><span class="p">.</span><span class="nf">to_i</span> <span class=
+"o">!=</span> <span class="mi">0</span>
+  <span class="nb">puts</span> <span class="n">bottles</span><span class="p">.</span><span class="nf">to_s</span> <span class=
+"o">+</span> <span class="s1">' bottles of beer on the wall. '</span> <span class="o">+</span>
+    <span class="n">bottles</span><span class="p">.</span><span class="nf">to_s</span> <span class="o">+</span> <span class=
+"s1">' bottles of beer!'</span>
+  <span class="n">bottles</span> <span class="o">=</span> <span class="n">bottles</span><span class="p">.</span><span class=
+"nf">to_i</span><span class="o">-</span><span class="mi">1</span>
+  <span class="nb">puts</span> <span class="s1">'You take one down and pass it around... you have '</span> <span class="o">+</span>
+    <span class="n">bottles</span><span class="p">.</span><span class="nf">to_s</span> <span class="o">+</span> <span class=
+"s1">' bottles of beer on the wall.'</span>
+  <span class="nb">puts</span> <span class="s1">''</span>
 <span class="k">end</span>
 </code>
 </pre>
@@ -157,18 +157,18 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">romanize</span> <span class="n">integer</span>
   <span class="n">mdiv</span> <span class="o">=</span> <span class="n">integer</span><span class="o">/</span><span class="mi">1000</span>
-  <span class="n">m</span> <span class="o">=</span> <span class="s1">&#39;M&#39;</span><span class="o">*</span><span class="n">mdiv</span>
-  <span class="n">d</span> <span class="o">=</span> <span class="s1">&#39;D&#39;</span><span class="o">*</span><span class="p">(</span><span class=
+  <span class="n">m</span> <span class="o">=</span> <span class="s1">'M'</span><span class="o">*</span><span class="n">mdiv</span>
+  <span class="n">d</span> <span class="o">=</span> <span class="s1">'D'</span><span class="o">*</span><span class="p">(</span><span class=
 "n">integer</span><span class="o">%</span><span class="mi">1000</span><span class="o">/</span><span class="mi">500</span><span class="p">)</span>
-  <span class="n">c</span> <span class="o">=</span> <span class="s1">&#39;C&#39;</span><span class="o">*</span><span class="p">(</span><span class=
+  <span class="n">c</span> <span class="o">=</span> <span class="s1">'C'</span><span class="o">*</span><span class="p">(</span><span class=
 "n">integer</span><span class="o">%</span><span class="mi">500</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
-  <span class="n">l</span> <span class="o">=</span> <span class="s1">&#39;L&#39;</span><span class="o">*</span><span class="p">(</span><span class=
+  <span class="n">l</span> <span class="o">=</span> <span class="s1">'L'</span><span class="o">*</span><span class="p">(</span><span class=
 "n">integer</span><span class="o">%</span><span class="mi">100</span><span class="o">/</span><span class="mi">50</span><span class="p">)</span>
-  <span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span><span class="o">*</span><span class="p">(</span><span class=
+  <span class="n">x</span> <span class="o">=</span> <span class="s1">'X'</span><span class="o">*</span><span class="p">(</span><span class=
 "n">integer</span><span class="o">%</span><span class="mi">50</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span>
-  <span class="n">v</span> <span class="o">=</span> <span class="s1">&#39;V&#39;</span><span class="o">*</span><span class="p">(</span><span class=
+  <span class="n">v</span> <span class="o">=</span> <span class="s1">'V'</span><span class="o">*</span><span class="p">(</span><span class=
 "n">integer</span><span class="o">%</span><span class="mi">10</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span>
-  <span class="n">i</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span><span class="o">*</span><span class="p">(</span><span class=
+  <span class="n">i</span> <span class="o">=</span> <span class="s1">'I'</span><span class="o">*</span><span class="p">(</span><span class=
 "n">integer</span><span class="o">%</span><span class="mi">5</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span>
   <span class="n">m</span><span class="o">+</span><span class="n">d</span><span class="o">+</span><span class="n">c</span><span class=
 "o">+</span><span class="n">l</span><span class="o">+</span><span class="n">x</span><span class="o">+</span><span class="n">v</span><span class=
@@ -188,33 +188,31 @@
           </h2>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="nb">puts</span> <span class=
-"s1">&#39;What year were you born in? (number please)&#39;</span>
-<span class="n">year</span> <span class="o">=</span> <span class="nb">gets</span><span class="o">.</span><span class="n">chomp</span><span class=
-"o">.</span><span class="n">to_i</span>
-<span class="nb">puts</span> <span class="s1">&#39;What month were you born on? (number please)&#39;</span>
-<span class="n">month</span> <span class="o">=</span> <span class="nb">gets</span><span class="o">.</span><span class="n">chomp</span><span class=
-"o">.</span><span class="n">to_i</span>
-<span class="nb">puts</span> <span class="s1">&#39;What day were you born on? (number please)&#39;</span>
-<span class="n">day</span> <span class="o">=</span> <span class="nb">gets</span><span class="o">.</span><span class="n">chomp</span><span class=
-"o">.</span><span class="n">to_i</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">puts</span> <span class="s1">'What year were you born in? (number please)'</span>
+<span class="n">year</span> <span class="o">=</span> <span class="nb">gets</span><span class="p">.</span><span class="nf">chomp</span><span class=
+"p">.</span><span class="nf">to_i</span>
+<span class="nb">puts</span> <span class="s1">'What month were you born on? (number please)'</span>
+<span class="n">month</span> <span class="o">=</span> <span class="nb">gets</span><span class="p">.</span><span class="nf">chomp</span><span class=
+"p">.</span><span class="nf">to_i</span>
+<span class="nb">puts</span> <span class="s1">'What day were you born on? (number please)'</span>
+<span class="n">day</span> <span class="o">=</span> <span class="nb">gets</span><span class="p">.</span><span class="nf">chomp</span><span class=
+"p">.</span><span class="nf">to_i</span>
 
-<span class="n">bday</span>        <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class=
-"n">mktime</span><span class="p">(</span><span class="n">year</span><span class="o">.</span><span class="n">to_i</span><span class=
-"p">,</span> <span class="n">month</span><span class="o">.</span><span class="n">to_i</span><span class="p">,</span> <span class=
-"n">day</span><span class="o">.</span><span class="n">to_i</span><span class="p">)</span>
-<span class="n">time</span>        <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">new</span>
+<span class="n">bday</span>        <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class=
+"nf">mktime</span><span class="p">(</span><span class="n">year</span><span class="p">.</span><span class="nf">to_i</span><span class=
+"p">,</span> <span class="n">month</span><span class="p">.</span><span class="nf">to_i</span><span class="p">,</span> <span class=
+"n">day</span><span class="p">.</span><span class="nf">to_i</span><span class="p">)</span>
+<span class="n">time</span>        <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">new</span>
 <span class="n">diftime</span>     <span class="o">=</span> <span class="n">time</span> <span class="o">-</span> <span class="n">bday</span>
 <span class="n">diftoyears</span>  <span class="o">=</span> <span class="p">(</span><span class="n">diftime</span><span class=
 "o">/</span><span class="mi">60</span><span class="o">/</span><span class="mi">60</span><span class="o">/</span><span class=
-"mi">24</span><span class="o">/</span><span class="mi">365</span><span class="p">)</span><span class="o">.</span><span class=
-"n">to_i</span><span class="o">/</span><span class="mi">1</span>
+"mi">24</span><span class="o">/</span><span class="mi">365</span><span class="p">).</span><span class="nf">to_i</span><span class="sr">/1
 
-<span class="nb">puts</span>
-<span class="n">diftoyears</span><span class="o">.</span><span class="n">times</span> <span class="k">do</span>
-  <span class="nb">puts</span> <span class="s1">&#39;SPANK!&#39;</span>
-<span class="k">end</span>
-</code>
+puts
+diftoyears.times do
+  puts 'SPANK!'
+end
+</span></code>
 </pre>
           </div>
           <footer id="disqus_thread">
@@ -277,6 +275,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -291,16 +298,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

@@ -105,12 +105,12 @@
 "o">&lt;</span> <span class="no">ActionMailer</span><span class="o">::</span><span class="no">Base</span>
   <span class="k">def</span> <span class="nf">user_notification</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
     <span class="c1"># ...</span>
-    <span class="n">do_not_deliver!</span> <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class=
-"n">email</span><span class="o">.</span><span class="n">blank?</span>
+    <span class="n">do_not_deliver!</span> <span class="k">if</span> <span class="n">user</span><span class="p">.</span><span class=
+"nf">email</span><span class="p">.</span><span class="nf">blank?</span>
   <span class="k">end</span>
 <span class="k">end</span>
 <span class="c1"># In your controller code.</span>
-<span class="no">MyMailerClass</span><span class="o">.</span><span class="n">deliver_user_notification</span><span class="p">(</span><span class=
+<span class="no">MyMailerClass</span><span class="p">.</span><span class="nf">deliver_user_notification</span><span class="p">(</span><span class=
 "vi">@user</span><span class="p">)</span>
 </code>
 </pre>
@@ -191,6 +191,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -205,16 +214,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

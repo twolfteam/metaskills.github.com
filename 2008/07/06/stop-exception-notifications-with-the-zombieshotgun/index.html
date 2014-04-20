@@ -86,12 +86,12 @@
 <code class="ruby language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">ZombieShotgun</span>
 
   <span class="no">ZOMBIE_AGENTS</span>       <span class="o">=</span> <span class="o">[</span><span class=
-"s1">&#39;Microsoft Office Protocol Discovery&#39;</span><span class="p">,</span><span class=
-"s1">&#39;Microsoft Data Access Internet Publishing Provider Protocol Discovery&#39;</span><span class="p">,</span><span class=
-"s1">&#39;FrontPage&#39;</span><span class="o">]</span>
-  <span class="no">ZOMBIE_ATTACK_DIRS</span>  <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;_vti_bin&#39;</span><span class=
-"p">,</span><span class="s1">&#39;MSOffice&#39;</span><span class="p">,</span><span class="s1">&#39;verify-VCNstrict&#39;</span><span class=
-"p">,</span><span class="s1">&#39;notified-VCNstrict&#39;</span><span class="o">]</span>
+"s1">'Microsoft Office Protocol Discovery'</span><span class="p">,</span><span class=
+"s1">'Microsoft Data Access Internet Publishing Provider Protocol Discovery'</span><span class="p">,</span><span class=
+"s1">'FrontPage'</span><span class="o">]</span>
+  <span class="no">ZOMBIE_ATTACK_DIRS</span>  <span class="o">=</span> <span class="o">[</span><span class="s1">'_vti_bin'</span><span class=
+"p">,</span><span class="s1">'MSOffice'</span><span class="p">,</span><span class="s1">'verify-VCNstrict'</span><span class="p">,</span><span class=
+"s1">'notified-VCNstrict'</span><span class="o">]</span>
 
   <span class="kp">protected</span>
 
@@ -104,23 +104,22 @@
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">zombie_attack_on_directory?</span>
-    <span class="n">attack</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class=
-"n">path</span><span class="o">.</span><span class="n">from</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">attack_dir</span> <span class="o">=</span> <span class="n">attack</span><span class="o">.</span><span class=
-"n">index</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">.</span><span class=
-"n">nil?</span> <span class="p">?</span> <span class="n">attack</span> <span class="p">:</span> <span class="n">attack</span><span class=
-"o">.</span><span class="n">to</span><span class="p">(</span><span class="n">attack</span><span class="o">.</span><span class=
-"n">index</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">-</span><span class=
-"mi">1</span><span class="p">)</span>
-    <span class="no">ZOMBIE_ATTACK_DIRS</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class=
+    <span class="n">attack</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class=
+"nf">path</span><span class="p">.</span><span class="nf">from</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">attack_dir</span> <span class="o">=</span> <span class="n">attack</span><span class="p">.</span><span class=
+"nf">index</span><span class="p">(</span><span class="s1">'/'</span><span class="p">).</span><span class="nf">nil?</span> <span class=
+"p">?</span> <span class="n">attack</span> <span class="p">:</span> <span class="n">attack</span><span class="p">.</span><span class=
+"nf">to</span><span class="p">(</span><span class="n">attack</span><span class="p">.</span><span class="nf">index</span><span class=
+"p">(</span><span class="s1">'/'</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="no">ZOMBIE_ATTACK_DIRS</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class=
 "n">attack_dir</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">zombie_agent_attack?</span>
-    <span class="n">ua</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">env</span><span class=
-"o">[</span><span class="s1">&#39;HTTP_USER_AGENT&#39;</span><span class="o">]</span>
-    <span class="o">!</span><span class="n">ua</span><span class="o">.</span><span class="n">blank?</span> <span class=
-"o">&amp;&amp;</span> <span class="no">ZOMBIE_AGENTS</span><span class="o">.</span><span class="n">any?</span> <span class="p">{</span> <span class=
+    <span class="n">ua</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">env</span><span class=
+"o">[</span><span class="s1">'HTTP_USER_AGENT'</span><span class="o">]</span>
+    <span class="o">!</span><span class="n">ua</span><span class="p">.</span><span class="nf">blank?</span> <span class=
+"o">&amp;&amp;</span> <span class="no">ZOMBIE_AGENTS</span><span class="p">.</span><span class="nf">any?</span> <span class="p">{</span> <span class=
 "o">|</span><span class="n">za</span><span class="o">|</span> <span class="n">za</span> <span class="o">=~</span> <span class=
 "sr">/</span><span class="si">#{</span><span class="n">ua</span><span class="si">}</span><span class="sr">/</span> <span class="p">}</span>
   <span class="k">end</span>
@@ -190,6 +189,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -204,16 +212,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

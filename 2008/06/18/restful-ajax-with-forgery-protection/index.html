@@ -92,7 +92,7 @@
           <div class="highlight">
             <pre>
 <code class="html language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class=
-"s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+"s">"text/javascript"</span><span class="nt">&gt;</span>
   <span class="o">&lt;%=</span> <span class="nx">auth_params_js_var</span> <span class="o">%&gt;</span>
 <span class="nt">&lt;/script&gt;</span>
 </code>
@@ -101,10 +101,8 @@
           <div class="highlight">
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">auth_params_js_var</span>
-  <span class="k">unless</span> <span class="no">RAILS_ENV</span> <span class="o">==</span> <span class="s1">&#39;test&#39;</span>
-    <span class="sx">%|var authParams = $H({</span><span class="si">#{</span><span class="n">request_forgery_protection_token</span><span class=
-"si">}</span><span class="sx">:</span><span class="si">#{</span><span class="n">form_authenticity_token</span><span class="o">.</span><span class=
-"n">inspect</span><span class="si">}</span><span class="sx">});|</span>
+  <span class="k">unless</span> <span class="no">RAILS_ENV</span> <span class="o">==</span> <span class="s1">'test'</span>
+    <span class="sx">%|var authParams = $H({#{request_forgery_protection_token}:#{form_authenticity_token.inspect}});|</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code>
@@ -118,15 +116,15 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="javascript language-javascript" data-lang="javascript"><span class="nx">doAjaxRequest</span><span class="o">:</span> <span class=
+<code class="javascript language-javascript" data-lang="javascript"><span class="nx">doAjaxRequest</span><span class="err">:</span> <span class=
 "kd">function</span><span class="p">(</span><span class="nx">elmnt</span><span class="p">,</span><span class="nx">finishMethod</span><span class=
 "p">)</span> <span class="p">{</span>
-  <span class="c1">// ...</span>
-  <span class="kd">var</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">elmnt</span><span class=
-"p">.</span><span class="nx">method</span> <span class="o">||</span> <span class="s1">&#39;post&#39;</span><span class="p">;</span>
+  <span class="c1">// ...
+</span>  <span class="kd">var</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">elmnt</span><span class=
+"p">.</span><span class="nx">method</span> <span class="o">||</span> <span class="s1">'post'</span><span class="p">;</span>
   <span class="k">new</span> <span class="nx">Ajax</span><span class="p">.</span><span class="nx">Request</span><span class="p">(</span><span class=
 "nx">elmnt</span><span class="p">.</span><span class="nx">action</span><span class="p">,{</span>
-    <span class="nx">onComplete</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+    <span class="na">onComplete</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class=
 "nx">request</span><span class="p">){</span>
       <span class="k">this</span><span class="p">.</span><span class="nx">completeAjaxRequest</span><span class="p">(</span><span class=
 "nx">request</span><span class="p">);</span>
@@ -134,9 +132,9 @@
 "p">{</span> <span class="nx">finishMethod</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class=
 "k">this</span><span class="p">,</span><span class="nx">request</span><span class="p">)</span> <span class="p">};</span>
     <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">),</span>
-    <span class="nx">parameters</span><span class="o">:</span> <span class="nx">parameters</span><span class="p">.</span><span class=
+    <span class="na">parameters</span><span class="p">:</span> <span class="nx">parameters</span><span class="p">.</span><span class=
 "nx">merge</span><span class="p">(</span><span class="nx">authParams</span><span class="p">),</span>
-    <span class="nx">method</span><span class="o">:</span> <span class="nx">method</span>
+    <span class="na">method</span><span class="p">:</span> <span class="nx">method</span>
   <span class="p">});</span>
 <span class="p">}</span>
 </code>
@@ -210,6 +208,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -224,16 +231,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

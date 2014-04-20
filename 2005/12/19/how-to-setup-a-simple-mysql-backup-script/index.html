@@ -96,10 +96,10 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="text language-text" data-lang="text">From: kencollins@ken-pb.local (Cron Daemon)
+<code class=" language-" data-lang="">From: kencollins@ken-pb.local (Cron Daemon)
 To: kencollins@ken-pb.local
 Date: Mon, 19 Dec 2005 23:04:01 -0500 (EST)
-Subject: Cron &lt;kencollins@ken-pb&gt; &quot;/Applications/MySQL Administrator.app/Contents/Resources/mabackup&quot; --directory=&quot;/Users/kencollins/Desktop&quot; --connection=&quot;localhost&quot; --prefix=&quot;MetaDB&quot; MetaDB
+Subject: Cron &lt;kencollins@ken-pb&gt; "/Applications/MySQL Administrator.app/Contents/Resources/mabackup" --directory="/Users/kencollins/Desktop" --connection="localhost" --prefix="MetaDB" MetaDB
 </code>
 </pre>
           </div>
@@ -133,7 +133,8 @@ Subject: Cron &lt;kencollins@ken-pb&gt; &quot;/Applications/MySQL Administrator.
           <div class="highlight">
             <pre>
 <code class="bash language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
-<span class="nv">timestamp</span><span class="o">=</span><span class="s2">&quot;$(date -u +%Y-%m-%d_%a)&quot;</span>
+<span class="nv">timestamp</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>date -u +%Y-%m-%d_%a<span class=
+"k">)</span><span class="s2">"</span>
 /usr/local/mysql/bin/mysqldump -uXXXX -pXXXX metadb &gt; /Backups/MetaDB_<span class="k">${</span><span class="nv">timestamp</span><span class=
 "k">}</span>.sql
 </code>
@@ -214,6 +215,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -228,16 +238,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

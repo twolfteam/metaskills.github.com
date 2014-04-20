@@ -1,0 +1,625 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ken Collins">
+    <meta name="google-site-verification" content="W3DG-CkoWHypH24OfrGmGbMezvhC6AyLql4jLI7hXhI">
+    <title>
+      Jekyll-Style Blogging On Rails @MetaSkills.net
+    </title>
+    <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/metaskills" title="MetaSkills.net">
+    <link rel="author" href="mailto:ken@metaskills.net">
+    <link rel="stylesheet" href="/resource/reset.css">
+    <link rel="stylesheet" href="/resource/site.css">
+    <link rel="shortcut icon" href="/favicon.png">
+    <script src="/resource/jquery-1.7.1.min.js">
+</script>
+    <script src="/resource/site.js">
+</script>
+  </head>
+  <body>
+    <header id="mast">
+      <div class="content">
+        <section id="identity">
+          <div id="avatar"></div>
+          <div>
+            MetaSkills.net
+          </div>
+          <div>
+            Coding things under other things!
+          </div>
+        </section>
+        <nav>
+          <ul>
+            <li>
+              <a href="/" class="button" data-icon="H">Home</a>
+            </li>
+            <li>
+              <a href="/pages/colophon.html" class="button" data-icon="U">About Me</a>
+            </li>
+            <li>
+              <a href="/pages/projects.html" class="button" data-icon="x">Projects</a>
+            </li>
+            <li>
+              <a href="/pages/resume.html" class="button" data-icon="N">Resume</a>
+            </li>
+            <li>
+              <a href="http://twitter.com/metaskills" class="button" data-icon="B">Twitter</a>
+            </li>
+            <li>
+              <a href="/archive.html" class="button" data-icon="l">Archives</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="page">
+      <section id="content">
+        <article id="post">
+          <header>
+            <time pubdate="" datetime="2014-04-19T00:00:00-04:00"><span class="day">19</span> <span class="month">Apr</span> <span class=
+            "year">2014</span></time>
+            <h1>
+              Jekyll-Style Blogging On Rails
+            </h1>
+          </header>
+          <p>
+            <img src="/assets/jekyll-on-rails.png" width="350" class="floatr"> Do you want to use your existing Rails&#39; layouts &amp; business
+            logic for your new Blog? Do you know and love <a href="http://jekyllrb.com">Jekyll</a>, but cant seem to get the two to play nice
+            together?
+          </p>
+          <p>
+            In the spirit of <a href="http://c2.com/cgi/wiki?DoSimpleThings">doing the simplest thing</a> that could possibly work, I set out on a
+            solution to this problem. Besides mimicing Jekyll as closely as possible, my requirements were loosly defined as:
+          </p>
+          <ul>
+            <li>Use a directory of markdown files with a <code>YYYY-MM-DD-blog-post-title.md</code> naming convention.
+            </li>
+            <li>Have fast syntax highlighting via fenced code blocks.
+            </li>
+            <li>Expose model class finders for a single resource &amp; collections.
+            </li>
+            <li>Some model object to ask posts for their title, date, html, etc.
+            </li>
+            <li>Make local development follow Rails conventions. Like page refreshes.
+            </li>
+            <li>Provide a reasonable amount of caching in production.
+            </li>
+          </ul>
+          <p>
+            Additionally if I had time or the gumption:
+          </p>
+          <ul>
+            <li>Use YAML front matter for different post titles &amp; other options.
+            </li>
+            <li>Preprocess markdown with ERB and allow Rails routes &amp; helpers to be used.
+            </li>
+            <li>Ask each post for an excerpt so we can render teasers elsewhere.
+            </li>
+            <li>Create a rake task that tees up a new post using the current date.
+            </li>
+          </ul>
+          <h2 id="getting-started">
+            Getting Started
+          </h2>
+          <p>
+            Most times I like to start coding to high-level interfaces. It helps me think about the smaller details I will need to build later. A
+            Rails controller is a good option but be careful and keep it simple! If you are the type of person that likes to jump to the end, check
+            out <a href="https://gist.github.com/metaskills/11071934">the final gist</a> of our completed work.
+          </p>
+          <p>
+            First, we are going to make our blog routes and controller. We want two actions, an <code>index</code> to list all blog posts and a
+            <code>show</code> to render each post.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In config/routes.rb</span>
+<span class="n">resources</span> <span class="ss">:blog</span><span class="p">,</span> <span class="ss">only: </span><span class=
+"o">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="o">]</span>
+
+<span class="c1"># In app/controllers/blog_controller.rb</span>
+<span class="k">class</span> <span class="nc">BlogController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="n">layout</span> <span class="s1">'site'</span>
+  <span class="n">before_filter</span> <span class="ss">:find_post</span><span class="p">,</span> <span class="ss">only: </span><span class=
+"o">[</span><span class="ss">:show</span><span class="o">]</span>
+
+  <span class="k">def</span> <span class="nf">index</span>
+    <span class="vi">@posts</span> <span class="o">=</span> <span class="no">BlogPost</span><span class="p">.</span><span class="nf">all</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span> <span class="ss">text: </span><span class="vi">@post</span><span class="p">.</span><span class=
+"nf">html</span><span class="p">,</span> <span class="ss">layout: </span><span class="s1">'site'</span> <span class="k">if</span> <span class=
+"n">stale?</span> <span class="vi">@post</span><span class="p">,</span> <span class="kp">public</span><span class="p">:</span> <span class=
+"kp">true</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">find_post</span>
+    <span class="vi">@post</span> <span class="o">=</span> <span class="no">BlogPost</span><span class="p">.</span><span class=
+"nf">find</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span>
+    <span class="n">redirect_to</span> <span class="n">blog_index_path</span> <span class="k">unless</span> <span class="vi">@post</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</code>
+</pre>
+          </div>
+          <p>
+            Pretty simple looking, but this code exposes some neat details that we will have to build while accomplishing a lot too. Our
+            <code>index</code> action shows we will need a class finder for all posts and assumes they will be ordered somehow. The <code>show</code>
+            action which is behind our <code>find_post</code> filter tells us we need some type of key for our posts – likewise we have determined
+            that we need an <code>html</code> instance method. Lastly, we are going to check when a post is stale somehow while setting the public
+            Cache-Control header for proxies.
+          </p>
+          <h2 id="our-blogpost-model">
+            Our BlogPost Model
+          </h2>
+          <p>
+            Our <code>:id</code> key will use the file name as our <a href="http://en.wikipedia.org/wiki/Clean_URL#Slug">slug</a>. Our markdown files
+            will be located where our controller would normally find them, in the <code>app/views/blog</code> directory. Feel free to create your
+            first post there, name it <code>2014-04-19-my-first-post.md</code> using the current date. Now here is our first itteration of our new
+            <code>BlogPost</code> model that allows us to find our posts.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+
+  <span class="kp">attr_reader</span> <span class="ss">:slug</span>
+
+  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+
+    <span class="k">def</span> <span class="nf">all</span>
+      <span class="n">all_slugs</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span> <span class=
+"o">|</span><span class="n">slug</span><span class="o">|</span> <span class="kp">new</span><span class="p">(</span><span class=
+"n">slug</span><span class="p">)</span> <span class="p">}.</span><span class="nf">sort</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
+      <span class="n">all</span><span class="p">.</span><span class="nf">detect</span> <span class="p">{</span> <span class="o">|</span><span class=
+"n">post</span><span class="o">|</span> <span class="n">post</span><span class="p">.</span><span class="nf">slug</span> <span class=
+"o">==</span> <span class="n">slug</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">directory</span>
+      <span class="no">Rails</span><span class="p">.</span><span class="nf">root</span><span class="p">.</span><span class=
+"nf">join</span> <span class="s1">'app'</span><span class="p">,</span> <span class="s1">'views'</span><span class="p">,</span> <span class=
+"s1">'blog'</span>
+    <span class="k">end</span>
+
+    <span class="kp">private</span>
+
+    <span class="k">def</span> <span class="nf">all_slugs</span>
+      <span class="vi">@all_slugs</span> <span class="o">||=</span> <span class="no">Dir</span><span class="p">.</span><span class=
+"nf">glob</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">directory</span><span class=
+"si">}</span><span class="s2">/*.md"</span><span class="p">).</span><span class="nf">map</span> <span class="p">{</span> <span class=
+"o">|</span><span class="n">f</span><span class="o">|</span> <span class="no">File</span><span class="p">.</span><span class=
+"nf">basename</span><span class="p">(</span><span class="n">f</span><span class="p">).</span><span class="nf">sub</span><span class=
+"p">(</span><span class="sr">/\.md$/</span><span class="p">,</span><span class="s1">''</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
+    <span class="vi">@slug</span> <span class="o">=</span> <span class="n">slug</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Notice how we memoize the private <code>all_slugs</code> class method to avoid hiting the filesystem again and again in production? This
+            idea is definitly not complete and if needed, we can update it later. So, with the class methods out of the way, we can flesh out the
+            model more. But first, we need to think about Jekyll.
+          </p>
+          <h2 id="time-for-jekyll">
+            Time For Jekyll
+          </h2>
+          <p>
+            I&#39;ve used Jekyll for a handful of static sites and blogs. Most of which have been running the next major version which is not quite
+            out yet. Jekyll v2 is amazing and we totally need it for this project. Below are the gem deps you will need to bundle up. Remember, when
+            Jekyll v2 is released, you can change your Gemfile as needed.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In Gemfile</span>
+<span class="n">gem</span> <span class="s1">'jekyll'</span><span class="p">,</span> <span class="s1">'~&gt; 2.0.0.alpha'</span>
+<span class="n">gem</span> <span class="s1">'redcarpet'</span>
+<span class="n">gem</span> <span class="s1">'rouge'</span>
+</code>
+</pre>
+          </div>
+          <p>
+            So, most of us are familiar with the <a href="https://github.com/vmg/redcarpet">Redcarpet</a> gem. That will be the markdown converter we
+            use, but what about rouge? The <a href="https://github.com/jayferd/rouge">Rouge</a> gem is a pure-ruby syntax highlighter. It can
+            highlight over 60 languages, and output HTML or ANSI 256-color text. Its HTML output is compatible with existing stylesheets designed for
+            pygments.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+
+  <span class="c1"># ...</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">to_html</span>
+    <span class="no">Jekyll</span><span class="o">::</span><span class="no">Converters</span><span class="o">::</span><span class=
+"no">Markdown</span><span class="o">::</span><span class="no">RedcarpetParser</span><span class="p">.</span><span class="nf">new</span><span class=
+"p">({</span>
+      <span class="s1">'highlighter'</span> <span class="o">=&gt;</span> <span class="s1">'rouge'</span><span class="p">,</span>
+      <span class="s1">'redcarpet'</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="s1">'extensions'</span> <span class="o">=&gt;</span> <span class="o">[</span>
+          <span class="s2">"no_intra_emphasis"</span><span class="p">,</span> <span class="s2">"fenced_code_blocks"</span><span class=
+"p">,</span> <span class="s2">"autolink"</span><span class="p">,</span>
+          <span class="s2">"strikethrough"</span><span class="p">,</span> <span class="s2">"lax_spacing"</span><span class="p">,</span>  <span class=
+"s2">"superscript"</span><span class="p">,</span> <span class="s2">"with_toc_data"</span>
+        <span class="o">]</span>
+      <span class="p">}</span>
+    <span class="p">}).</span><span class="nf">convert</span><span class="p">(</span><span class="n">markdown</span><span class="p">)</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            It is not just sexy, Rouge is fast too! And by using it, we avoid bundling to pygments which has Python dependencies. We are going to let
+            Jekyll do the heavy lifting and implement our private <code>to_html</code> method like so. This will give us Github flavored markdown
+            using Rouge for our fenced code blocks.
+          </p>
+          <h2 id="other-blogpost-details">
+            Other BlogPost Details
+          </h2>
+          <p>
+            In our <code>BlogPost.all</code> class method, we called sort on the collection with the expectation that the newest post comes first. To
+            fulfill this we are going to use Ruby&#39;s <code>&lt;=&gt;</code> spaceship operator by comparing each post&#39;s date. This completes
+            our controller&#39;s <code>index</code> requirement.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">&lt;</span><span class="o">=&gt;</span> <span class="n">other</span>
+    <span class="n">other</span><span class="p">.</span><span class="nf">date</span> <span class="o">&lt;=&gt;</span> <span class="n">date</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            We want each post to have a <code>title</code> and <code>date</code> method. We can easily parse these form the slug. I even made a
+            <code>date_formatted</code> method using ActiveSupport&#39;s Inflector that will be useful for our views. It returns date strings like
+            April 19th, 2014. We also have a <code>path</code> method that we can use when linking to our posts from elsewhere in our site. It will
+            use the slug as the <code>:id</code> param. This completes our controller&#39;s <code>find_post</code> requirement and gives us pretty
+            URLs just like Jekyll.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">title</span>
+    <span class="n">slug</span><span class="p">.</span><span class="nf">sub</span><span class="p">(</span><span class=
+"sr">/\d{4}-\d{2}-\d{2}-/</span><span class="p">,</span> <span class="s1">''</span><span class="p">).</span><span class="nf">titleize</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">date</span>
+    <span class="no">Date</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">slug</span><span class=
+"p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">date_formatted</span>
+    <span class="n">day_format</span> <span class="o">=</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class=
+"no">Inflector</span><span class="p">.</span><span class="nf">ordinalize</span><span class="p">(</span><span class="n">date</span><span class=
+"p">.</span><span class="nf">day</span><span class="p">)</span>
+    <span class="n">date</span><span class="p">.</span><span class="nf">strftime</span> <span class="s2">"%B </span><span class=
+"si">#{</span><span class="n">day_format</span><span class="si">}</span><span class="s2">, %G"</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">path</span>
+    <span class="s2">"/blog/</span><span class="si">#{</span><span class="n">slug</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Before implementing our markdown to HTML conversion, we should think about caching. Following Rails&#39; <a href=
+            "http://guides.rubyonrails.org/caching_with_rails.html">conventions</a> we implment a <code>cache_key</code> method that combines the
+            blog namespace with the posts unique slug and timestamp. The <code>updated_at</code> timestamp is simply the last time the file was
+            modified on disk. Convention is to convert this to an integer which is seconds since Unix Epoch. The <code>cache_key</code> will be used
+            by the controller&#39;s <code>show</code> method when determining the ETag for the response.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">updated_at</span>
+    <span class="no">File</span><span class="p">.</span><span class="nf">mtime</span><span class="p">(</span><span class=
+"n">file_path</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">cache_key</span>
+    <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Cache</span><span class="p">.</span><span class=
+"nf">expand_cache_key</span> <span class="o">[</span><span class="s1">'blog'</span><span class="p">,</span> <span class="n">slug</span><span class=
+"p">,</span> <span class="n">updated_at</span><span class="p">.</span><span class="nf">to_i</span><span class="o">]</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            Now the fun part, converting our markdown to HTML. We are going to use the <code>Rails.cache</code> which in local development is a
+            simple memory store and Memcached in production. The <code>fetch</code> method takes a key and a block. The block is only executed if
+            there is a cache miss.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">html</span>
+    <span class="no">Rails</span><span class="p">.</span><span class="nf">cache</span><span class="p">.</span><span class=
+"nf">fetch</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">cache_key</span><span class=
+"si">}</span><span class="s2">/html"</span><span class="p">)</span> <span class="p">{</span> <span class="n">to_html</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">file_path</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class=
+"nf">directory</span><span class="p">.</span><span class="nf">join</span> <span class="s2">"</span><span class="si">#{</span><span class=
+"n">slug</span><span class="si">}</span><span class="s2">.md"</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">markdown</span>
+    <span class="no">Rails</span><span class="p">.</span><span class="nf">cache</span><span class="p">.</span><span class=
+"nf">fetch</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">cache_key</span><span class=
+"si">}</span><span class="s2">/markdown"</span><span class="p">)</span> <span class="p">{</span> <span class="no">File</span><span class=
+"p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <h2 id="code-highlighting">
+            Code Highlighting
+          </h2>
+          <p>
+            The only thing left to do is style the highlighted output from the Rouge gem. Thankfully, there are many existing pygment theme options
+            spread accross the internet. Here are a few to get you started.
+          </p>
+          <ul>
+            <li>
+              <a href="https://github.com/richleland/pygments-css">pygments-css</a> - CSS files created from pygment&#39;s built-in styles.
+            </li>
+            <li>
+              <a href="https://github.com/StylishThemes/GitHub-Dark/">GitHub-Dark</a> - GitHub Dark theme for Stylish. Browse the themes directory.
+            </li>
+            <li>
+              <a href="https://github.com/aahan/pygments-github-style">pygments-github-style</a> - GitHub style for Pygments.
+            </li>
+          </ul>
+          <p>
+            For the <a href="http://homemarks.com/">HomeMarks</a> blog, I used the github <code>jekyll-github.css</code> from the last resource
+            above. Have fun choosing your own and <code>@import</code> it into your existing CSS bundle in the manner that matches your own project.
+          </p>
+          <h2 id="taking-it-further?">
+            Taking It Further?
+          </h2>
+          <p>
+            So that&#39;s it, we can ship it! But what about those other great requirements like YAML front matter, ERB templates, Rails&#39;
+            routes/helpers, and more? The good news is that I found the time to do them all. You can find each implemented in the final <a href=
+            "https://gist.github.com/metaskills/11071934">Jekyll-Style Blogging On Rails</a> gist.
+          </p>
+          <div class="highlight">
+            <pre>
+<code class="ruby language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">scope</span>
+  <span class="no">ApplicationController</span><span class="p">.</span><span class="nf">helpers</span><span class="p">.</span><span class=
+"nf">clone</span><span class="p">.</span><span class="nf">tap</span> <span class="k">do</span> <span class="o">|</span><span class=
+"n">h</span><span class="o">|</span>
+    <span class="n">h</span><span class="p">.</span><span class="nf">singleton_class</span><span class="p">.</span><span class=
+"nf">send</span> <span class="ss">:include</span><span class="p">,</span> <span class="no">Rails</span><span class="p">.</span><span class=
+"nf">application</span><span class="p">.</span><span class="nf">routes</span><span class="p">.</span><span class="nf">url_helpers</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code>
+</pre>
+          </div>
+          <p>
+            One aspect that I was particularly proud of was ERB pre-processing with a evaluation scope to Rails&#39; routes and helpers. The solution
+            turned out to be simple after digging into the <a href=
+            "https://github.com/rails/rails/tree/4-1-stable/railties/lib/rails/console">railties IRB console</a> helpers and ActionPack. My solution
+            above used this <code>scope</code> with the Tilt&#39;s erubis template.
+          </p>
+          <h2 id="where-to-go-from-here?">
+            Where To Go From Here?
+          </h2>
+          <p>
+            With <a href="https://gist.github.com/metaskills/11071934">this setup</a>, you have a great foundation for Jekyll on Rails. Feel free to
+            customize it as needed. Some ideas include:
+          </p>
+          <ul>
+            <li>Better caching in production. Currently hits the filesystem for <code>cache_key</code>.
+            </li>
+            <li>Maybe make a jekyll-rails engine that does all of this for you?
+            </li>
+            <li>Add an Emoji HTML filter to your posts.
+            </li>
+          </ul>
+          <h2 id="resources">
+            Resources
+          </h2>
+          <p>
+            Thanks for reading! Would love to hear your feedback too.
+          </p>
+          <ul>
+            <li>
+              <a href="https://gist.github.com/metaskills/11071934">The Final &quot;Jekyll-Style Blogging On Rails&quot; Gist</a>
+            </li>
+            <li>
+              <a href="http://c2.com/cgi/wiki?DoSimpleThings">Do Simple Things</a>
+            </li>
+          </ul>
+          <footer id="disqus_thread">
+            <script type="text/javascript">
+var disqus_shortname = 'metaskillsnet';
+            var disqus_identifier = '/2014/04/19/jekyll-style-blogging-on-rail';
+            var disqus_title = "Jekyll-Style Blogging On Rails";
+            (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+            </script>
+          </footer>
+        </article>
+      </section>
+      <nav>
+        <div>
+          <a href="http://www.youtube.com/watch?v=8pBTK-pdMP0">Society for coding things on top of other things!</a>
+        </div>
+        <h3>
+          Categories
+        </h3>
+        <ul>
+          <li>
+            <a href="/categories/heuristics.html">Heuristics</a>
+          </li>
+          <li>
+            <a href="/categories/workflow.html">Workflow</a>
+          </li>
+          <li>
+            <a href="/categories/apple-os.html">Apple/OS</a>
+          </li>
+          <li>
+            <a href="/categories/database.html">Database</a>
+          </li>
+          <li>
+            <a href="/categories/lifestyle.html">Lifestyle</a>
+          </li>
+          <li>
+            <a href="/categories/miscellaneous.html">Miscellaneous</a>
+          </li>
+          <li>
+            <a href="/categories/ruby-rails.html">Ruby/Rails</a>
+          </li>
+          <li>
+            <a href="/categories/javascript.html">JavaScript</a>
+          </li>
+          <li>
+            <a href="/categories/tools.html">Tools</a>
+          </li>
+        </ul>
+      </nav>
+    </section>
+    <footer id="foot">
+      <section id="footer">
+        <section id="recentposts">
+          <h3>
+            Recent Posts
+          </h3>
+          <article>
+            <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails&#39; layouts &amp; business logic for your
+              new Blog? Do you know and love Jekyll, but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Thanks To My Mother For The Career I Have Today!
+            </h4>
+            <p>
+              <a href="/2014/03/15/mom">As a white male in the computer industry, I have never felt like I could add value to the conversations that
+              call for diversity and respect to all those that...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
+              Instrumenting Your Code With ActiveSupport Notifications
+            </h4>
+            <p>
+              <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
+              to gain valuable metrics to your Rails application&#39;s internals? Or maybe you are interested in learning how to write...</a>
+            </p>
+          </article>
+          <aside id="powered">
+            <span>Powered by <a href="http://jekyllrb.com">Jekyll</a> and <a href="http://disqus.com">Disqus</a>. Check out <a href=
+            "https://github.com/metaskills/metaskills.net">the code</a>.</span><br>
+            <span>&copy; 2006-2014 Ken Collins. All rights reserved.</span>
+          </aside>
+          <aside id="html5_badge">
+            <a href="http://www.w3.org/html/logo/"></a>
+          </aside>
+        </section>
+        <section id="badges">
+          <ul>
+            <li>
+              <a id="badge_757rb" href="http://757rb.org/"></a>
+            </li>
+            <li>
+              <a id="badge_speakerdeck" href="http://speakerdeck.com/u/metaskills"></a>
+            </li>
+            <li>
+              <a id="badge_railscore" href="http://contributors.rubyonrails.org/contributors/ken-collins/commits"></a>
+            </li>
+            <li>
+              <a id="badge_pragalumni" href="http://alumni.pragmaticstudio.com/users/128"></a>
+            </li>
+            <li>
+              <a id="badge_js" href="https://developer.mozilla.org/en/JavaScript" title='JavaScript'>JavaScript</a>
+            </li>
+            <li>
+              <a id="badge_ios" href="http://developer.apple.com/"></a>
+            </li>
+            <li>
+              <a id="badge_linkedin" href="http://www.linkedin.com/in/metaskills"></a>
+            </li>
+          </ul>
+        </section>
+        <section id="blogroll">
+          <h3>
+            Blogroll
+          </h3>
+          <ul>
+            <li>
+              <a href="http://technology.customink.com">CustomInk Technology</a>
+            </li>
+            <li>
+              <a href="http://fearoffish.com">Jamie van Dyke</a>
+            </li>
+            <li>
+              <a href="http://ryan.mcgeary.org/">Ryan McGeary</a>
+            </li>
+            <li>
+              <a href="http://www.buzzwordcompliant.net/">Mike Buckbee</a>
+            </li>
+            <li>
+              <a href="http://brennandunn.com">Brennan Dunn</a>
+            </li>
+            <li>
+              <a href="http://evan.tiggerpalace.com">Evan Light</a>
+            </li>
+            <li>
+              <a href="http://techiferous.com">Wyatt Greene</a>
+            </li>
+            <li>
+              <a href="http://www.engineyard.com/blog/author/wayneseguin/">Wayne E. Sequin</a>
+            </li>
+          </ul>
+        </section>
+      </section>
+    </footer>
+  </body>
+</html>

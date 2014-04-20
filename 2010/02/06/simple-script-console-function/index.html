@@ -71,8 +71,8 @@
           <div class="highlight">
             <pre>
 <code class="bash language-bash" data-lang="bash">sc <span class="o">()</span> <span class="o">{</span>
-  <span class="k">if</span> <span class="o">[</span> -f ./script/rails <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-<span class="k">    </span>rails console <span class="nv">$argv</span>
+  <span class="k">if</span> <span class="o">[</span> -f ./script/rails <span class="o">]</span>; <span class="k">then
+    </span>rails console <span class="nv">$argv</span>
   <span class="k">else</span>
     ./script/console <span class="nv">$argv</span>
   <span class="k">fi</span>
@@ -90,18 +90,18 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># IRB history patch &lt;http://redmine.ruby-lang.org/issues/show/1556&gt;</span>
 
-<span class="nb">require</span> <span class="s1">&#39;irb/completion&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;irb/ext/save-history&#39;</span>
+<span class="nb">require</span> <span class="s1">'irb/completion'</span>
+<span class="nb">require</span> <span class="s1">'irb/ext/save-history'</span>
 
-<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+<span class="no">IRB</span><span class="p">.</span><span class="nf">conf</span><span class="o">[</span><span class=
 "ss">:USE_READLINE</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
-<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+<span class="no">IRB</span><span class="p">.</span><span class="nf">conf</span><span class="o">[</span><span class=
 "ss">:SAVE_HISTORY</span><span class="o">]</span> <span class="o">=</span> <span class="mi">500</span>
-<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
-"ss">:HISTORY_FILE</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
-"no">ENV</span><span class="o">[</span><span class="s1">&#39;HOME&#39;</span><span class="o">]</span><span class="si">}</span><span class=
-"s2">/.irb.hist&quot;</span>
-<span class="no">IRB</span><span class="o">.</span><span class="n">conf</span><span class="o">[</span><span class=
+<span class="no">IRB</span><span class="p">.</span><span class="nf">conf</span><span class="o">[</span><span class=
+"ss">:HISTORY_FILE</span><span class="o">]</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class=
+"no">ENV</span><span class="o">[</span><span class="s1">'HOME'</span><span class="o">]</span><span class="si">}</span><span class=
+"s2">/.irb.hist"</span>
+<span class="no">IRB</span><span class="p">.</span><span class="nf">conf</span><span class="o">[</span><span class=
 "ss">:PROMPT_MODE</span><span class="o">]</span> <span class="o">=</span> <span class="ss">:SIMPLE</span>
 </code>
 </pre>
@@ -166,6 +166,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -180,16 +189,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

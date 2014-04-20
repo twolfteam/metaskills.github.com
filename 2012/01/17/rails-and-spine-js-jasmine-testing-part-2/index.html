@@ -128,34 +128,34 @@
   <span class="k">module</span> <span class="nn">MyApplication</span>
     <span class="kp">extend</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Concern</span>
     <span class="n">included</span> <span class="k">do</span>
-      <span class="n">delegate</span> <span class="ss">:foo_path</span><span class="p">,</span> <span class="ss">to</span><span class=
-"p">:</span> <span class="o">::</span><span class="no">Rails</span><span class="o">.</span><span class="n">application</span><span class=
-"o">.</span><span class="n">routes_url_helpers</span>
+      <span class="n">delegate</span> <span class="ss">:foo_path</span><span class="p">,</span> <span class="ss">to: </span><span class=
+"o">::</span><span class="no">Rails</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class=
+"nf">routes_url_helpers</span>
     <span class="k">end</span>
     <span class="k">def</span> <span class="nf">jasminerice?</span>
       <span class="kp">true</span>
     <span class="k">end</span>
     <span class="k">def</span> <span class="nf">current_user</span>
-      <span class="vi">@current_user</span> <span class="o">||=</span> <span class="no">User</span><span class="o">.</span><span class=
-"n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+      <span class="vi">@current_user</span> <span class="o">||=</span> <span class="no">User</span><span class="p">.</span><span class=
+"nf">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
-  <span class="no">ApplicationHelper</span><span class="o">.</span><span class="n">send</span> <span class="ss">:include</span><span class=
+  <span class="no">ApplicationHelper</span><span class="p">.</span><span class="nf">send</span> <span class="ss">:include</span><span class=
 "p">,</span> <span class="no">MyApplication</span>
 
   <span class="k">class</span> <span class="nc">SpecController</span> <span class="o">&lt;</span> <span class="no">Jasminerice</span><span class=
 "o">::</span><span class="no">ApplicationController</span>
     <span class="k">def</span> <span class="nf">index</span>
-      <span class="n">render</span> <span class="ss">template</span><span class="p">:</span> <span class="s1">&#39;users/home&#39;</span><span class=
-"p">,</span> <span class="ss">layout</span><span class="p">:</span> <span class="s1">&#39;application&#39;</span>
+      <span class="n">render</span> <span class="ss">template: </span><span class="s1">'users/home'</span><span class="p">,</span> <span class=
+"ss">layout: </span><span class="s1">'application'</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
 <span class="k">end</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class=
 "no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class=
-"o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class=
-"no">Rails</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+"p">.</span><span class="nf">environments</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class=
+"no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="p">)</span>
 </code>
 </pre>
           </div>
@@ -176,25 +176,25 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="o">!!!</span> <span class="mi">5</span>
 <span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;en&#39;</span><span class="p">}</span>
+"s1">'en'</span><span class="p">}</span>
   <span class="o">%</span><span class="n">head</span>
     <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
+"o">=&gt;</span> <span class="s1">'utf-8'</span><span class="p">}</span>
     <span class="o">=</span> <span class="n">csrf_meta_tags</span>
     <span class="o">%</span><span class="n">title</span> <span class="no">My</span> <span class="no">Application</span>
     <span class="o">-</span> <span class="k">if</span> <span class="n">jasminerice?</span>
-      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">&#39;spec&#39;</span>
-      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">&#39;spec&#39;</span>
+      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">'spec'</span>
+      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">'spec'</span>
     <span class="o">-</span> <span class="k">else</span>
-      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">&#39;application&#39;</span>
-      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">&#39;application&#39;</span>
+      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">'application'</span>
+      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">'application'</span>
       <span class="o">%</span><span class="n">script</span> <span class="n">jQuery</span><span class="p">(</span><span class=
-"n">function</span><span class="p">(){</span> <span class="no">MyApp</span><span class="o">.</span><span class="n">App</span><span class=
-"o">.</span><span class="n">Home</span><span class="o">.</span><span class="n">init</span><span class="p">();</span> <span class="p">});</span>
+"n">function</span><span class="p">(){</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">App</span><span class=
+"o">.</span><span class="no">Home</span><span class="p">.</span><span class="nf">init</span><span class="p">();</span> <span class="p">});</span>
   <span class="o">%</span><span class="n">body</span>
     <span class="o">%</span><span class="n">section</span><span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class=
-"s1">&#39;app&#39;</span><span class="p">,</span> <span class="ss">data</span><span class="p">:</span> <span class="p">{</span><span class=
-"nb">id</span><span class="p">:</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">}}</span>
+"s1">'app'</span><span class="p">,</span> <span class="ss">data: </span><span class="p">{</span><span class="nb">id</span><span class=
+"p">:</span> <span class="n">current_user</span><span class="p">.</span><span class="nf">id</span><span class="p">}}</span>
 </code>
 </pre>
           </div>
@@ -207,12 +207,12 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="css language-css" data-lang="css"><span class="c">/*</span>
-<span class="c"> *= require jasmine</span>
-<span class="c"> *= require application</span>
-<span class="c"> */</span>
-<span class="nc">.jasmine_reporter</span> <span class="p">{</span> <span class="k">display</span><span class="o">:</span> <span class=
-"k">none</span><span class="p">;</span> <span class="p">}</span>
+<code class="css language-css" data-lang="css"><span class="c">/*
+ *= require jasmine
+ *= require application
+ */</span>
+<span class="nc">.jasmine_reporter</span> <span class="p">{</span> <span class="nl">display</span><span class="p">:</span> <span class=
+"nb">none</span><span class="p">;</span> <span class="p">}</span>
 </code>
 </pre>
           </div>
@@ -341,6 +341,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -355,16 +364,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

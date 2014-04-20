@@ -62,6 +62,19 @@
           <article class="excerpt">
             <header>
               <h3>
+                <a href="/2014/04/19/jekyll-style-blogging-on-rail">Jekyll-Style Blogging On Rails</a>
+              </h3><time pubdate="" datetime="2014-04-19T00:00:00-04:00">19 Apr 2014</time>
+            </header>
+            <p>
+              Do you want to use your existing Rails&#39; layouts &amp; business logic for your new Blog? Do you know and love Jekyll, but cant seem
+              to get the two to play nice together? In the spirit of doing the simplest thing that could possibly work, I set out on a solution to
+              this problem. Besides mimicing Jekyll as closely as possible, my requirements were loosly defined as: Use a directory of markdown files
+              with a YYYY-MM-DD-blog-post-title.md naming convention. Have fast...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
                 <a href="/2014/03/15/mom">Thanks To My Mother For The Career I Have Today!</a>
               </h3><time pubdate="" datetime="2014-03-15T00:00:00-04:00">15 Mar 2014</time>
             </header>
@@ -188,9 +201,9 @@
             <p>
               When ActiveRecord 3.2 was released there was a small addition called ActiveRecord::Store which bills itself as a simple key/value store
               for your models. The code below is pulled right from their example usage. class User &lt; ActiveRecord::Base store :settings,
-              accessors: [:color, :homepage] end @user = User.new(color: &#39;black&#39;, homepage: &#39;37signals.com&#39;) @user.color # =&gt;
-              &#39;black&#39; @user.settings[:color] # =&gt; &#39;black&#39; @user.settings[:remember_me] = true Most people know that I love simple
-              tools. But when I found myself considering ActiveRecord::Store, I found it seriously lacking...
+              accessors: [:color, :homepage] end @user = User.new(color: 'black', homepage: '37signals.com') @user.color # =&gt; 'black'
+              @user.settings[:color] # =&gt; 'black' @user.settings[:remember_me] = true Most people know that I love simple tools. But when I found
+              myself considering ActiveRecord::Store, I found it seriously lacking...
             </p>
           </article>
           <article class="excerpt">
@@ -246,19 +259,6 @@
               like any good programmer, you want to test your JavaScript web application,...
             </p>
           </article>
-          <article class="excerpt">
-            <header>
-              <h3>
-                <a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source">Rails &amp; Spine.JS - Using The CoffeeScript Source</a>
-              </h3><time pubdate="" datetime="2012-01-15T00:00:00-05:00">15 Jan 2012</time>
-            </header>
-            <p>
-              Our options for JavaScript MVC frameworks are numerous these days. While working on the third major rewrite of my personal bookmarking
-              application, HomeMarks, I decided to learn Backbone.js. Thankfully a local friend of mine recommended that I try Spine.JS. I was
-              immediately hooked! Why Spine.JS? Spine.JS is is authored in CoffeeScript and that is a big deal for me. I will never write raw
-              JavaScript again, which I consider, the deprecated syntax. So a JavaScript MVC framework that is written...
-            </p>
-          </article>
           <div class="floatr mr20">
             <a href="/archive.html">&laquo; Archives</a>
           </div>
@@ -310,6 +310,15 @@
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails&#39; layouts &amp; business logic for your
+              new Blog? Do you know and love Jekyll, but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -324,16 +333,6 @@
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application&#39;s internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single DATABASE_URL environment variable for every part of it&#39;s configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

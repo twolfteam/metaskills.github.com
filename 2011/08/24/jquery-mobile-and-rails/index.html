@@ -83,24 +83,24 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="o">!!!</span> <span class="mi">5</span>
 <span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;en&#39;</span><span class="p">}</span>
+"s1">'en'</span><span class="p">}</span>
   <span class="o">%</span><span class="n">head</span>
     <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
+"o">=&gt;</span> <span class="s1">'utf-8'</span><span class="p">}</span>
     <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;viewport&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;width=device-width, initial-scale=1&#39;</span><span class="p">}</span>
+"o">=&gt;</span> <span class="s1">'viewport'</span><span class="p">,</span> <span class="ss">:content</span> <span class=
+"o">=&gt;</span> <span class="s1">'width=device-width, initial-scale=1'</span><span class="p">}</span>
     <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;format-detection&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;telephone=no&#39;</span><span class="p">}</span>
-    <span class="o">%</span><span class="n">title</span><span class="o">=</span> <span class="s1">&#39;My Mobile App&#39;</span>
+"o">=&gt;</span> <span class="s1">'format-detection'</span><span class="p">,</span> <span class="ss">:content</span> <span class=
+"o">=&gt;</span> <span class="s1">'telephone=no'</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">title</span><span class="o">=</span> <span class="s1">'My Mobile App'</span>
     <span class="o">%</span><span class="n">link</span><span class="p">{</span><span class="ss">:rel</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;stylesheet&#39;</span><span class="p">,</span> <span class="ss">:href</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css&#39;</span><span class="p">}</span>
+"s1">'stylesheet'</span><span class="p">,</span> <span class="ss">:href</span> <span class="o">=&gt;</span> <span class=
+"s1">'http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css'</span><span class="p">}</span>
     <span class="o">%</span><span class="n">script</span><span class="p">{</span><span class="ss">:src</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/jquery-1.6.2.min.js&#39;</span><span class="p">}</span>
+"o">=&gt;</span> <span class="s1">'http://code.jquery.com/jquery-1.6.2.min.js'</span><span class="p">}</span>
     <span class="o">%</span><span class="n">script</span><span class="p">{</span><span class="ss">:src</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js&#39;</span><span class="p">}</span>
+"o">=&gt;</span> <span class="s1">'http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js'</span><span class="p">}</span>
   <span class="o">%</span><span class="n">body</span>
     <span class="o">=</span> <span class="k">yield</span><span class="p">(</span><span class="ss">:layout</span><span class="p">)</span>
 </code>
@@ -135,11 +135,10 @@
 <span class="k">module</span> <span class="nn">MobileConcerns</span>
   <span class="k">module</span> <span class="nn">Helpers</span>
     <span class="k">def</span> <span class="nf">mobile_page_id</span><span class="p">(</span><span class="n">path</span> <span class=
-"o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-      <span class="n">path</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class=
-"sr">/\A\/mobile\//</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class=
-"n">gsub</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="s1">&#39;_&#39;</span><span class=
-"p">)</span>
+"o">=</span> <span class="n">request</span><span class="p">.</span><span class="nf">path</span><span class="p">)</span>
+      <span class="n">path</span><span class="p">.</span><span class="nf">sub</span><span class="p">(</span><span class=
+"sr">/\A\/mobile\//</span><span class="p">,</span><span class="s1">''</span><span class="p">).</span><span class="nf">gsub</span><span class=
+"p">(</span><span class="s2">"/"</span><span class="p">,</span><span class="s1">'_'</span><span class="p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -171,24 +170,24 @@
           <div class="highlight">
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="o">-</span> <span class="n">title</span> <span class="o">=</span> <span class=
-"s2">&quot;User Profile&quot;</span>
+"s2">"User Profile"</span>
 
 <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class=
 "n">mobile_page_id</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
-"ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class=
-"ss">:title</span> <span class="o">=&gt;</span> <span class="n">title</span><span class="p">}}</span>
+"ss">:role</span> <span class="o">=&gt;</span> <span class="s1">'page'</span><span class="p">,</span> <span class="ss">:title</span> <span class=
+"o">=&gt;</span> <span class="n">title</span><span class="p">}}</span>
 
   <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class=
-"p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;header&#39;</span><span class="p">}}</span>
+"p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">'header'</span><span class="p">}}</span>
     <span class="o">%</span><span class="n">h1</span><span class="o">=</span> <span class="n">title</span>
   <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class=
-"p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;content&#39;</span><span class="p">}}</span>
-    <span class="n">edit</span> <span class="n">your</span> <span class="n">profile</span><span class="o">.</span><span class=
-"n">.</span><span class="o">.</span>
+"p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">'content'</span><span class="p">}}</span>
+    <span class="n">edit</span> <span class="n">your</span> <span class="n">profile</span><span class="p">.</span><span class=
+"nf">.</span><span class="o">.</span>
   <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:data</span> <span class="o">=&gt;</span> <span class=
-"p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;footer&#39;</span><span class="p">}}</span>
-    <span class="sr">/...</span>
-</code>
+"p">{</span><span class="ss">:role</span> <span class="o">=&gt;</span> <span class="s1">'footer'</span><span class="p">}}</span>
+    <span class="sr">/...
+</span></code>
 </pre>
           </div>
           <h2>
@@ -203,23 +202,20 @@
           <div class="highlight">
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># HAML Shorthand For:</span>
-<span class=
-"c1"># &lt;div id=&quot;foo&quot; data-role=&quot;page&quot; data-title=&quot;Title&quot; data-rel=&quot;dialog&quot;&gt;&lt;/div&gt;</span>
+<span class="c1"># &lt;div id="foo" data-role="page" data-title="Title" data-rel="dialog"&gt;&lt;/div&gt;</span>
 
 <span class="o">%</span><span class="n">div</span><span class="p">{</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;foo&#39;</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
-"ss">:role</span> <span class="o">=&gt;</span> <span class="s1">&#39;page&#39;</span><span class="p">,</span> <span class=
-"ss">:title</span> <span class="o">=&gt;</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class=
-"ss">:rel</span> <span class="o">=&gt;</span> <span class="s1">&#39;dialog&#39;</span><span class="p">}}</span>
+"s1">'foo'</span><span class="p">,</span> <span class="ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class=
+"ss">:role</span> <span class="o">=&gt;</span> <span class="s1">'page'</span><span class="p">,</span> <span class="ss">:title</span> <span class=
+"o">=&gt;</span> <span class="s1">'Title'</span><span class="p">,</span> <span class="ss">:rel</span> <span class="o">=&gt;</span> <span class=
+"s1">'dialog'</span><span class="p">}}</span>
 
 <span class="c1"># Rails 3.1 Tag Helpers</span>
-<span class=
-"c1"># &lt;div data-name=&quot;Stephen&quot; data-city-state=&quot;[&amp;quot;Chicago&amp;quot;,&amp;quot;IL&amp;quot;]&quot; /&gt;</span>
+<span class="c1"># &lt;div data-name="Stephen" data-city-state="[&amp;quot;Chicago&amp;quot;,&amp;quot;IL&amp;quot;]" /&gt;</span>
 
-<span class="n">tag</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class=
-"ss">:data</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;Stephen&#39;</span><span class="p">,</span> <span class="ss">:city_state</span> <span class="o">=&gt;</span> <span class=
-"sx">%w(Chicago IL)</span><span class="p">})</span>
+<span class="n">tag</span><span class="p">(</span><span class="s2">"div"</span><span class="p">,</span> <span class="ss">:data</span> <span class=
+"o">=&gt;</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">'Stephen'</span><span class=
+"p">,</span> <span class="ss">:city_state</span> <span class="o">=&gt;</span> <span class="sx">%w(Chicago IL)</span><span class="p">})</span>
 </code>
 </pre>
           </div>
@@ -239,21 +235,20 @@
 <code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Mobile</span><span class="o">::</span><span class=
 "no">BaseController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
 
-  <span class="no">LAYOUT</span> <span class="o">=</span> <span class="s1">&#39;mobile&#39;</span><span class="o">.</span><span class=
-"n">freeze</span>
+  <span class="no">LAYOUT</span> <span class="o">=</span> <span class="s1">'mobile'</span><span class="p">.</span><span class="nf">freeze</span>
   <span class="n">layout</span> <span class="no">LAYOUT</span>
   <span class="n">around_filter</span> <span class="ss">:dynamically_assign_layout</span>
 
   <span class="kp">private</span>
 
   <span class="k">def</span> <span class="nf">dynamically_assign_layout</span>
-    <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class=
-"n">layout</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class=
-"n">get?</span> <span class="o">&amp;&amp;</span> <span class="n">request</span><span class="o">.</span><span class="n">xhr?</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class=
+"nf">layout</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class=
+"nf">get?</span> <span class="o">&amp;&amp;</span> <span class="n">request</span><span class="p">.</span><span class="nf">xhr?</span>
     <span class="k">yield</span>
   <span class="k">ensure</span>
-    <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class=
-"n">layout</span> <span class="no">LAYOUT</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class=
+"nf">layout</span> <span class="no">LAYOUT</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
@@ -294,8 +289,8 @@
 <span class="k">def</span> <span class="nf">current_page_id</span><span class="p">(</span><span class="n">path</span><span class=
 "o">=</span><span class="kp">nil</span><span class="p">)</span>
   <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">||</span> <span class="n">current_path</span>
-  <span class="s2">&quot;div#</span><span class="si">#{</span><span class="n">mobile_page_id</span><span class="p">(</span><span class=
-"n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">.ui-page-active&quot;</span>
+  <span class="s2">"div#</span><span class="si">#{</span><span class="n">mobile_page_id</span><span class="p">(</span><span class=
+"n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">.ui-page-active"</span>
 <span class="k">end</span>
 
 <span class="k">def</span> <span class="nf">current_page</span><span class="p">(</span><span class="n">path</span><span class=
@@ -323,24 +318,24 @@
           <div class="highlight">
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="n">should</span> <span class=
-"s1">&#39;be able to navigate to logged in user page and change email&#39;</span> <span class="k">do</span>
+"s1">'be able to navigate to logged in user page and change email'</span> <span class="k">do</span>
   <span class="n">login_as</span> <span class="vi">@user</span>
   <span class="n">visit</span> <span class="n">mobile_homepage_path</span>
-  <span class="n">click_on</span> <span class="s1">&#39;My Account&#39;</span>
+  <span class="n">click_on</span> <span class="s1">'My Account'</span>
   <span class="n">user_path</span> <span class="o">=</span> <span class="n">mobile_user_path</span><span class="p">(</span><span class=
 "vi">@user</span><span class="p">)</span>
   <span class="n">assert</span> <span class="n">current_page</span><span class="p">(</span><span class="n">user_path</span><span class="p">)</span>
   <span class="c1"># Change email</span>
   <span class="n">new_email</span> <span class="o">=</span> <span class="no">Forgery</span><span class="p">(</span><span class=
-"ss">:email</span><span class="p">)</span><span class="o">.</span><span class="n">address</span>
+"ss">:email</span><span class="p">).</span><span class="nf">address</span>
   <span class="n">within_current_page</span><span class="p">(</span><span class="n">user_path</span><span class="p">)</span> <span class=
 "k">do</span>
-    <span class="n">fill_in</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="ss">:with</span> <span class=
+    <span class="n">fill_in</span> <span class="s1">'email'</span><span class="p">,</span> <span class="ss">:with</span> <span class=
 "o">=&gt;</span> <span class="n">new_email</span>
-    <span class="n">click_button</span> <span class="s1">&#39;Save Changes&#39;</span>
+    <span class="n">click_button</span> <span class="s1">'Save Changes'</span>
   <span class="k">end</span>
-  <span class="vi">@user</span><span class="o">.</span><span class="n">reload</span><span class="o">.</span><span class="n">email</span><span class=
-"o">.</span><span class="n">must_equal</span> <span class="n">new_email</span>
+  <span class="vi">@user</span><span class="p">.</span><span class="nf">reload</span><span class="p">.</span><span class=
+"nf">email</span><span class="p">.</span><span class="nf">must_equal</span> <span class="n">new_email</span>
 <span class="k">end</span>
 </code>
 </pre>
@@ -436,6 +431,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -450,16 +454,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

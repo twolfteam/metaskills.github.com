@@ -92,9 +92,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="apache language-apache" data-lang="apache"><span class=
-"nb">RewriteRule</span> ^2010/8/19/how-to-clean-a-campfire-room-of-uploads$ <span class=
-"sx">/2010/08/19/how-to-clean-a-campfire-room-of-uploads/</span> [L]
+<code class="apache language-apache" data-lang=
+"apache">RewriteRule ^2010/8/19/how-to-clean-a-campfire-room-of-uploads$ /2010/08/19/how-to-clean-a-campfire-room-of-uploads/ [L]
 </code>
 </pre>
           </div>
@@ -126,10 +125,10 @@ sass --scss --watch _sass:_site/resource --style compact --no-cache
 <span class="c"># File: tasks/jekyll</span>
 <span class="c"># Create the site and tidy it.</span>
 setopt rmstarsilent
-rm -rf _site/* <span class="o">&amp;&amp;</span> <span class="se">\</span>
+rm -rf _site/<span class="k">*</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
   sass --style compressed _sass/site.scss:resource/site.css <span class="o">&amp;&amp;</span> <span class="se">\</span>
   bundle <span class="nb">exec </span>jekyll <span class="o">&amp;&amp;</span> <span class="se">\</span>
-  find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <span class="k">$(</span><span class="nb">pwd</span><span class=
+  find _site -name <span class="s2">"*.html"</span> -exec tidy -config <span class="k">$(</span><span class="nb">pwd</span><span class=
 "k">)</span>/tidy.conf <span class="o">{}</span> <span class="se">\;</span>
 
 <span class="c">#!/usr/bin/env zsh</span>
@@ -164,21 +163,21 @@ rm -rf _site/* <span class="o">&amp;&amp;</span> <span class="se">\</span>
           <div class="highlight">
             <pre>
 <code class="html language-html" data-lang="html"><span class="nt">&lt;article</span> <span class="na">id=</span><span class=
-"s">&quot;post&quot;</span><span class="nt">&gt;</span>
+"s">"post"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;header&gt;</span>
     <span class="nt">&lt;time</span> <span class="na">pubdate</span> <span class="na">datetime=</span><span class=
-"s">&quot;2010-12-27T00:00:00-05:00&quot;</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;day&quot;</span><span class="nt">&gt;</span>27<span class=
+"s">"2010-12-27T00:00:00-05:00"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"day"</span><span class="nt">&gt;</span>27<span class=
 "nt">&lt;/span&gt;</span>
-      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;month&quot;</span><span class=
-"nt">&gt;</span>Dec<span class="nt">&lt;/span&gt;</span>
-      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;year&quot;</span><span class=
-"nt">&gt;</span>2010<span class="nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"month"</span><span class="nt">&gt;</span>Dec<span class=
+"nt">&lt;/span&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"year"</span><span class="nt">&gt;</span>2010<span class=
+"nt">&lt;/span&gt;</span>
     <span class="nt">&lt;/time&gt;</span>
     <span class="nt">&lt;h1&gt;</span>Let It Go - Moving From Mephisto To Jekyll<span class="nt">&lt;/h1&gt;</span>
   <span class="nt">&lt;/header&gt;</span>
   ...
-  <span class="nt">&lt;footer</span> <span class="na">id=</span><span class="s">&quot;disqus_thread&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;footer</span> <span class="na">id=</span><span class="s">"disqus_thread"</span><span class="nt">&gt;</span>
     ...
   <span class="nt">&lt;/footer&gt;</span>
 <span class="nt">&lt;/article&gt;</span>
@@ -306,17 +305,16 @@ section#page {
           <div class="highlight">
             <pre>
 <code class="html language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class=
-"s">&quot;photobounding&quot;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;tl&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;tr&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;bl&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;br&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;photoborder&quot;</span><span class=
-"nt">&gt;&lt;/div&gt;</span>
-  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;photo&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;/files/yourpicture.jpg&quot;</span> <span class=
-"na">alt=</span><span class="s">&quot;&quot;</span> <span class="na">width=</span><span class="s">&quot;&quot;</span> <span class=
-"na">height=</span><span class="s">&quot;&quot;</span> <span class="nt">/&gt;</span>
+"s">"photobounding"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"tl"</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"tr"</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"bl"</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"br"</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"photoborder"</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"photo"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">"/files/yourpicture.jpg"</span> <span class=
+"na">alt=</span><span class="s">""</span> <span class="na">width=</span><span class="s">""</span> <span class="na">height=</span><span class=
+"s">""</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;/div&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 </code>
@@ -451,6 +449,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -465,16 +472,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

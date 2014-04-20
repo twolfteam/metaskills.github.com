@@ -75,34 +75,35 @@
           <div class="highlight">
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="no">Rake</span><span class="o">::</span><span class=
-"no">TaskManager</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span>
+"no">TaskManager</span><span class="p">.</span><span class="nf">class_eval</span> <span class="k">do</span>
   <span class="k">def</span> <span class="nf">alias_task</span><span class="p">(</span><span class="n">fq_name</span><span class="p">)</span>
-    <span class="n">new_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
-"n">fq_name</span><span class="si">}</span><span class="s2">:original&quot;</span>
+    <span class="n">new_name</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class=
+"n">fq_name</span><span class="si">}</span><span class="s2">:original"</span>
     <span class="vi">@tasks</span><span class="o">[</span><span class="n">new_name</span><span class="o">]</span> <span class=
-"o">=</span> <span class="vi">@tasks</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class=
+"o">=</span> <span class="vi">@tasks</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class=
 "n">fq_name</span><span class="p">)</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
 <span class="k">def</span> <span class="nf">alias_task</span><span class="p">(</span><span class="n">fq_name</span><span class="p">)</span>
-  <span class="no">Rake</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class=
-"n">alias_task</span><span class="p">(</span><span class="n">fq_name</span><span class="p">)</span>
+  <span class="no">Rake</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class=
+"nf">alias_task</span><span class="p">(</span><span class="n">fq_name</span><span class="p">)</span>
 <span class="k">end</span>
 
 <span class="k">def</span> <span class="nf">override_task</span><span class="p">(</span><span class="o">*</span><span class=
 "n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
   <span class="nb">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">deps</span> <span class=
-"o">=</span> <span class="no">Rake</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class=
-"n">resolve_args</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">dup</span><span class="p">)</span>
-  <span class="n">fq_name</span> <span class="o">=</span> <span class="no">Rake</span><span class="o">.</span><span class=
-"n">application</span><span class="o">.</span><span class="n">instance_variable_get</span><span class="p">(</span><span class=
-"ss">:@scope</span><span class="p">)</span><span class="o">.</span><span class="n">dup</span><span class="o">.</span><span class=
-"n">push</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span><span class="o">.</span><span class=
-"n">join</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+"o">=</span> <span class="no">Rake</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class=
+"nf">resolve_args</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="nf">dup</span><span class=
+"p">)</span>
+  <span class="n">fq_name</span> <span class="o">=</span> <span class="no">Rake</span><span class="p">.</span><span class=
+"nf">application</span><span class="p">.</span><span class="nf">instance_variable_get</span><span class="p">(</span><span class=
+"ss">:@scope</span><span class="p">).</span><span class="nf">dup</span><span class="p">.</span><span class="nf">push</span><span class=
+"p">(</span><span class="nb">name</span><span class="p">).</span><span class="nf">join</span><span class="p">(</span><span class=
+"s1">':'</span><span class="p">)</span>
   <span class="n">alias_task</span><span class="p">(</span><span class="n">fq_name</span><span class="p">)</span>
-  <span class="no">Rake</span><span class="o">::</span><span class="no">Task</span><span class="o">.</span><span class=
-"n">define_task</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class=
+  <span class="no">Rake</span><span class="o">::</span><span class="no">Task</span><span class="p">.</span><span class=
+"nf">define_task</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class=
 "o">&amp;</span><span class="n">block</span><span class="p">)</span>
 <span class="k">end</span>
 </code>
@@ -118,11 +119,11 @@
   <span class="n">namespace</span> <span class="ss">:test</span> <span class="k">do</span>
     <span class="n">override_task</span> <span class="ss">:purge</span> <span class="o">=&gt;</span> <span class=
 "ss">:environment</span> <span class="k">do</span>
-      <span class="o">.</span><span class="n">.</span><span class="o">.</span>
-      <span class="c1"># To invoke the original task add &quot;:original&quot; to its name</span>
+      <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
+      <span class="c1"># To invoke the original task add ":original" to its name</span>
       <span class="no">Rake</span><span class="o">::</span><span class="no">Task</span><span class="o">[</span><span class=
-"s2">&quot;db:test:purge:original&quot;</span><span class="o">].</span><span class="n">execute</span>
-      <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+"s2">"db:test:purge:original"</span><span class="o">]</span><span class="p">.</span><span class="nf">execute</span>
+      <span class="p">.</span><span class="nf">.</span><span class="o">.</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -194,6 +195,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -208,16 +218,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

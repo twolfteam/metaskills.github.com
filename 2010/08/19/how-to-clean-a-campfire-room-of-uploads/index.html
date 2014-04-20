@@ -78,66 +78,66 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;tinder&#39;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">'rubygems'</span>
+<span class="nb">require</span> <span class="s1">'tinder'</span>
 
 <span class="k">class</span> <span class="nc">CampfireUploadCleaner</span>
 
-  <span class="no">CF_DOMAIN</span> <span class="o">=</span> <span class="s1">&#39;mydomain&#39;</span>
-  <span class="no">CF_ROOM</span>   <span class="o">=</span> <span class="s1">&#39;My Room Name&#39;</span>
+  <span class="nc">CF_DOMAIN</span> <span class="o">=</span> <span class="s1">'mydomain'</span>
+  <span class="no">CF_ROOM</span>   <span class="o">=</span> <span class="s1">'My Room Name'</span>
   <span class="no">CF_TOKEN</span>  <span class="o">=</span> <span class="no">ENV</span><span class="o">[</span><span class=
-"s1">&#39;MY_CF_TOKEN&#39;</span><span class="o">]</span>
+"s1">'MY_CF_TOKEN'</span><span class="o">]</span>
 
   <span class="k">def</span> <span class="nf">initialize</span>
     <span class="vi">@campfire</span> <span class="o">=</span> <span class="no">Tinder</span><span class="o">::</span><span class=
-"no">Campfire</span><span class="o">.</span><span class="n">new</span> <span class="no">CF_DOMAIN</span><span class="p">,</span> <span class=
+"no">Campfire</span><span class="p">.</span><span class="nf">new</span> <span class="no">CF_DOMAIN</span><span class="p">,</span> <span class=
 "ss">:token</span> <span class="o">=&gt;</span> <span class="no">CF_TOKEN</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">room</span>
-    <span class="vi">@room</span> <span class="o">||=</span> <span class="vi">@campfire</span><span class="o">.</span><span class=
-"n">find_room_by_name</span><span class="p">(</span><span class="no">CF_ROOM</span><span class="p">)</span>
+    <span class="vi">@room</span> <span class="o">||=</span> <span class="vi">@campfire</span><span class="p">.</span><span class=
+"nf">find_room_by_name</span><span class="p">(</span><span class="no">CF_ROOM</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">connection</span>
-    <span class="n">room</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class=
+    <span class="n">room</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class=
 "ss">:connection</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">delete_uploads</span>
-    <span class="n">uploads</span> <span class="o">=</span> <span class="n">room</span><span class="o">.</span><span class=
-"n">send</span><span class="p">(</span><span class="ss">:get</span><span class="p">,</span><span class="ss">:uploads</span><span class=
-"p">)</span><span class="o">[</span><span class="s1">&#39;uploads&#39;</span><span class="o">]</span>
-    <span class="n">uploads</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class=
+    <span class="n">uploads</span> <span class="o">=</span> <span class="n">room</span><span class="p">.</span><span class=
+"nf">send</span><span class="p">(</span><span class="ss">:get</span><span class="p">,</span><span class="ss">:uploads</span><span class=
+"p">)</span><span class="o">[</span><span class="s1">'uploads'</span><span class="o">]</span>
+    <span class="n">uploads</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class=
 "n">upload</span><span class="o">|</span>
       <span class="nb">id</span> <span class="o">=</span> <span class="n">upload</span><span class="o">[</span><span class=
-"s1">&#39;id&#39;</span><span class="o">]</span>
+"s1">'id'</span><span class="o">]</span>
       <span class="nb">name</span> <span class="o">=</span> <span class="n">upload</span><span class="o">[</span><span class=
-"s1">&#39;name&#39;</span><span class="o">]</span>
-      <span class="n">connection</span><span class="o">.</span><span class="n">post</span> <span class="s2">&quot;/uploads/delete/</span><span class=
-"si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">?n=0&quot;</span>
-      <span class="nb">puts</span> <span class="s2">&quot;Deleted: [</span><span class="si">#{</span><span class="nb">id</span><span class=
-"si">}</span><span class="s2">] </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
+"s1">'name'</span><span class="o">]</span>
+      <span class="n">connection</span><span class="p">.</span><span class="nf">post</span> <span class="s2">"/uploads/delete/</span><span class=
+"si">#{</span><span class="nb">id</span><span class="si">}</span><span class="s2">?n=0"</span>
+      <span class="nb">puts</span> <span class="s2">"Deleted: [</span><span class="si">#{</span><span class="nb">id</span><span class=
+"si">}</span><span class="s2">] </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
       <span class="nb">sleep</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">25</span><span class=
 "p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">sweep_uploads</span>
-    <span class="k">while</span> <span class="n">room</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class=
-"n">present?</span>
+    <span class="k">while</span> <span class="n">room</span><span class="p">.</span><span class="nf">files</span><span class="p">.</span><span class=
+"nf">present?</span>
       <span class="n">delete_uploads</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
 
-<span class="n">cleaner</span> <span class="o">=</span> <span class="no">CampfireUploadCleaner</span><span class="o">.</span><span class=
-"n">new</span>
+<span class="n">cleaner</span> <span class="o">=</span> <span class="no">CampfireUploadCleaner</span><span class="p">.</span><span class=
+"nf">new</span>
 
-<span class="n">cleaner</span><span class="o">.</span><span class="n">delete_uploads</span>  <span class=
+<span class="n">cleaner</span><span class="p">.</span><span class="nf">delete_uploads</span>  <span class=
 "c1"># =&gt; Deletes the top 5 uploads.</span>
-<span class="n">cleaner</span><span class="o">.</span><span class="n">sweep_uploads</span>   <span class="c1"># =&gt; Deletes all uploads.</span>
+<span class="n">cleaner</span><span class="p">.</span><span class="nf">sweep_uploads</span>   <span class="c1"># =&gt; Deletes all uploads.</span>
 </code>
 </pre>
           </div>
@@ -206,6 +206,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -220,16 +229,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

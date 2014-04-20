@@ -105,8 +105,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">&#39;grouped_scope&#39;</span><span class=
-"p">,</span> <span class="s1">&#39;~&gt; 3.1.0&#39;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">'grouped_scope'</span><span class=
+"p">,</span> <span class="s1">'~&gt; 3.1.0'</span>
 </code>
 </pre>
           </div>
@@ -141,14 +141,14 @@
   <span class="n">grouped_scope</span> <span class="ss">:things</span><span class="p">,</span> <span class="ss">:problems</span>
 <span class="k">end</span>
 
-<span class="vi">@jack</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class=
-"n">find_by_name</span><span class="p">(</span><span class="s1">&#39;Jack&#39;</span><span class="p">)</span>
-<span class="vi">@bob</span>  <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class=
-"n">find_by_name</span><span class="p">(</span><span class="s1">&#39;Bob&#39;</span><span class="p">)</span>
+<span class="vi">@jack</span> <span class="o">=</span> <span class="no">Person</span><span class="p">.</span><span class=
+"nf">find_by_name</span><span class="p">(</span><span class="s1">'Jack'</span><span class="p">)</span>
+<span class="vi">@bob</span>  <span class="o">=</span> <span class="no">Person</span><span class="p">.</span><span class=
+"nf">find_by_name</span><span class="p">(</span><span class="s1">'Bob'</span><span class="p">)</span>
 
-<span class="vi">@jack</span><span class="o">.</span><span class="n">update_attribute</span> <span class="ss">:group_id</span><span class=
+<span class="vi">@jack</span><span class="p">.</span><span class="nf">update_attribute</span> <span class="ss">:group_id</span><span class=
 "p">,</span> <span class="mi">1</span>
-<span class="vi">@bob</span><span class="o">.</span><span class="n">update_attribute</span> <span class="ss">:group_id</span><span class=
+<span class="vi">@bob</span><span class="p">.</span><span class="nf">update_attribute</span> <span class="ss">:group_id</span><span class=
 "p">,</span> <span class="mi">1</span>
 </code>
 </pre>
@@ -161,8 +161,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="vi">@jack</span><span class="o">.</span><span class="n">group</span>   <span class=
-"c1"># =&gt; [#&lt;Person id: 1, name: &quot;Jack&quot;, group_id: 1&gt;, #&lt;Person id: 2, name: &quot;Bob&quot;, group_id: 1&gt;]</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="vi">@jack</span><span class="p">.</span><span class="nf">group</span>   <span class=
+"c1"># =&gt; [#&lt;Person id: 1, name: "Jack", group_id: 1&gt;, #&lt;Person id: 2, name: "Bob", group_id: 1&gt;]</span>
 </code>
 </pre>
           </div>
@@ -177,17 +177,17 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="vi">@jack</span><span class="o">.</span><span class="n">problems</span><span class=
-"o">.</span><span class="n">size</span>   <span class="c1"># =&gt; 6</span>
-<span class="vi">@bob</span><span class="o">.</span><span class="n">problems</span><span class="o">.</span><span class=
-"n">size</span>    <span class="c1"># =&gt; 2</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="vi">@jack</span><span class="p">.</span><span class="nf">problems</span><span class=
+"p">.</span><span class="nf">size</span>   <span class="c1"># =&gt; 6</span>
+<span class="vi">@bob</span><span class="p">.</span><span class="nf">problems</span><span class="p">.</span><span class=
+"nf">size</span>    <span class="c1"># =&gt; 2</span>
 
-<span class="vi">@bob</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class=
-"n">problems</span>        <span class="c1"># =&gt; [#&lt;Problem...&gt;,#&lt;Problem...&gt;,#&lt;Problem...&gt;,#&lt;Problem...&gt;,....]</span>
-<span class="vi">@bob</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">problems</span><span class=
-"o">.</span><span class="n">size</span>   <span class="c1"># =&gt; 8</span>
-<span class="vi">@jack</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">problems</span><span class=
-"o">.</span><span class="n">size</span>  <span class="c1"># =&gt; 8</span>
+<span class="vi">@bob</span><span class="p">.</span><span class="nf">group</span><span class="p">.</span><span class=
+"nf">problems</span>        <span class="c1"># =&gt; [#&lt;Problem...&gt;,#&lt;Problem...&gt;,#&lt;Problem...&gt;,#&lt;Problem...&gt;,....]</span>
+<span class="vi">@bob</span><span class="p">.</span><span class="nf">group</span><span class="p">.</span><span class="nf">problems</span><span class=
+"p">.</span><span class="nf">size</span>   <span class="c1"># =&gt; 8</span>
+<span class="vi">@jack</span><span class="p">.</span><span class="nf">group</span><span class="p">.</span><span class=
+"nf">problems</span><span class="p">.</span><span class="nf">size</span>  <span class="c1"># =&gt; 8</span>
 </code>
 </pre>
           </div>
@@ -208,7 +208,7 @@
 <code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Person</span> <span class=
 "o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">has_many</span> <span class="ss">:mental_issues</span><span class="p">,</span> <span class="ss">:class_name</span> <span class=
-"o">=&gt;</span> <span class="s2">&quot;MentalState&quot;</span><span class="p">,</span> <span class="ss">:foreign_key</span> <span class=
+"o">=&gt;</span> <span class="s2">"MentalState"</span><span class="p">,</span> <span class="ss">:foreign_key</span> <span class=
 "o">=&gt;</span> <span class="ss">:name</span> <span class="k">do</span>
     <span class="k">def</span> <span class="nf">dangerous</span>
       <span class="n">where</span><span class="p">(</span><span class="ss">:snap_tolerance</span> <span class="o">=&gt;</span> <span class=
@@ -222,13 +222,13 @@
 "o">::</span><span class="no">Base</span>
   <span class="n">scope</span> <span class="ss">:treatable_by</span><span class="p">,</span> <span class="nb">lambda</span> <span class=
 "p">{</span> <span class="o">|</span><span class="n">doctor</span><span class="o">|</span> <span class="n">where</span><span class=
-"p">(</span><span class="ss">:doctor_id</span> <span class="o">=</span> <span class="n">doctor</span><span class="o">.</span><span class=
-"n">id</span><span class="p">)</span> <span class="p">}</span>
+"p">(</span><span class="ss">:doctor_id</span> <span class="o">=</span> <span class="n">doctor</span><span class="p">.</span><span class=
+"nf">id</span><span class="p">)</span> <span class="p">}</span>
 <span class="k">end</span>
 
-<span class="vi">@jack</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class=
-"n">mental_issues</span><span class="o">.</span><span class="n">dangerous</span><span class="o">.</span><span class=
-"n">treatable_by</span><span class="p">(</span><span class="vi">@doctor</span><span class="p">)</span> <span class=
+<span class="vi">@jack</span><span class="p">.</span><span class="nf">group</span><span class="p">.</span><span class=
+"nf">mental_issues</span><span class="p">.</span><span class="nf">dangerous</span><span class="p">.</span><span class=
+"nf">treatable_by</span><span class="p">(</span><span class="vi">@doctor</span><span class="p">)</span> <span class=
 "c1"># =&gt; [#&lt;MentalState...&gt;,#&lt;MentalState...&gt;]</span>
 </code>
 </pre>
@@ -325,6 +325,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -339,16 +348,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

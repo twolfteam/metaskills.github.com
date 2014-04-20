@@ -84,13 +84,12 @@
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># Gems used only for assets and not required</span>
 <span class="c1"># in production environments by default.</span>
 <span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
-  <span class="n">gem</span> <span class="s1">&#39;sass-rails&#39;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 3.1.0.rc&quot;</span>
-  <span class="n">gem</span> <span class="s1">&#39;coffee-rails&#39;</span><span class="p">,</span> <span class=
-"s2">&quot;~&gt; 3.1.0.rc&quot;</span>
-  <span class="n">gem</span> <span class="s1">&#39;uglifier&#39;</span>
-  <span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class="p">,</span> <span class="ss">:git</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;git://github.com/chriseppstein/compass.git&#39;</span><span class="p">,</span> <span class=
-"ss">:branch</span> <span class="o">=&gt;</span> <span class="s1">&#39;rails31&#39;</span>
+  <span class="n">gem</span> <span class="s1">'sass-rails'</span><span class="p">,</span> <span class="s2">"~&gt; 3.1.0.rc"</span>
+  <span class="n">gem</span> <span class="s1">'coffee-rails'</span><span class="p">,</span> <span class="s2">"~&gt; 3.1.0.rc"</span>
+  <span class="n">gem</span> <span class="s1">'uglifier'</span>
+  <span class="n">gem</span> <span class="s1">'compass'</span><span class="p">,</span> <span class="ss">:git</span> <span class=
+"o">=&gt;</span> <span class="s1">'git://github.com/chriseppstein/compass.git'</span><span class="p">,</span> <span class=
+"ss">:branch</span> <span class="o">=&gt;</span> <span class="s1">'rails31'</span>
 <span class="k">end</span>
 </code>
 </pre>
@@ -101,8 +100,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="no">Bundler</span><span class="o">.</span><span class="n">require</span> <span class=
-"o">*</span><span class="no">Rails</span><span class="o">.</span><span class="n">groups</span><span class="p">(</span><span class=
+<code class="ruby language-ruby" data-lang="ruby"><span class="no">Bundler</span><span class="p">.</span><span class="nf">require</span> <span class=
+"o">*</span><span class="no">Rails</span><span class="p">.</span><span class="nf">groups</span><span class="p">(</span><span class=
 "ss">:assets</span><span class="p">)</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class=
 "no">Bundler</span><span class="p">)</span>
 </code>
@@ -115,13 +114,13 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="no">Rails</span><span class="o">.</span><span class=
-"n">configuration</span><span class="o">.</span><span class="n">sass</span><span class="o">.</span><span class="n">tap</span> <span class=
+<code class="ruby language-ruby" data-lang="ruby"><span class="no">Rails</span><span class="p">.</span><span class=
+"nf">configuration</span><span class="p">.</span><span class="nf">sass</span><span class="p">.</span><span class="nf">tap</span> <span class=
 "k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-  <span class="n">config</span><span class="o">.</span><span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class=
-"s2">&quot;</span><span class="si">#{</span><span class="no">Gem</span><span class="o">.</span><span class="n">loaded_specs</span><span class=
-"o">[</span><span class="s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class=
-"si">}</span><span class="s2">/frameworks/compass/stylesheets&quot;</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">load_paths</span> <span class="o">&lt;&lt;</span> <span class=
+"s2">"</span><span class="si">#{</span><span class="no">Gem</span><span class="p">.</span><span class="nf">loaded_specs</span><span class=
+"o">[</span><span class="s1">'compass'</span><span class="o">]</span><span class="p">.</span><span class="nf">full_gem_path</span><span class=
+"si">}</span><span class="s2">/frameworks/compass/stylesheets"</span>
 <span class="k">end</span>
 </code>
 </pre>
@@ -186,6 +185,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -200,16 +208,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

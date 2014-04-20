@@ -78,23 +78,22 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">MyObject</span>
 
-  <span class="ss">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
+  <span class="ss">constructor: </span><span class="o">-&gt;</span>
     <span class="vi">@myDomElement</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class=
-"s1">&#39;#myDomElement&#39;</span><span class="p">)</span>
-    <span class="err">@</span><span class="o">.</span><span class="n">_initBehavior</span><span class="p">()</span>
+"s1">'#myDomElement'</span><span class="p">)</span>
+    <span class="err">@</span><span class="p">.</span><span class="nf">_initBehavior</span><span class="p">()</span>
 
-  <span class="ss">handler</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">-&gt;</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">this</span><span class=
+  <span class="ss">handler: </span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="n">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">this</span><span class=
 "p">)</span>
     <span class="kp">false</span>
 
-  <span class="ss">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
-"n">resize</span> <span class="vi">@handler</span>
+  <span class="ss">_initBehavior: </span><span class="o">-&gt;</span>
+    <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">).</span><span class=
+"nf">resize</span> <span class="vi">@handler</span>
 
 <span class="n">jQuery</span> <span class="o">-&gt;</span>
-  <span class="n">window</span><span class="o">.</span><span class="n">myObject</span> <span class="o">=</span> <span class=
+  <span class="n">window</span><span class="p">.</span><span class="nf">myObject</span> <span class="o">=</span> <span class=
 "kp">new</span> <span class="no">MyObject</span><span class="p">();</span>
 </code>
 </pre>
@@ -108,10 +107,10 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="ss">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
-  <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
-"n">resize</span> <span class="n">jQuery</span><span class="o">.</span><span class="n">proxy</span><span class="p">(</span><span class=
-"vi">@handler</span><span class="p">,</span><span class="n">this</span><span class="p">)</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="ss">_initBehavior: </span><span class="o">-&gt;</span>
+  <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">).</span><span class="nf">resize</span> <span class=
+"n">jQuery</span><span class="p">.</span><span class="nf">proxy</span><span class="p">(</span><span class="vi">@handler</span><span class=
+"p">,</span><span class="n">this</span><span class="p">)</span>
 </code>
 </pre>
           </div>
@@ -132,23 +131,22 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">MyObject</span>
 
-  <span class="ss">constructor</span><span class="p">:</span> <span class="o">-&gt;</span>
+  <span class="ss">constructor: </span><span class="o">-&gt;</span>
     <span class="vi">@myDomElement</span> <span class="o">=</span> <span class="err">$</span><span class="p">(</span><span class=
-"s1">&#39;#myDomElement&#39;</span><span class="p">)</span>
-    <span class="err">@</span><span class="o">.</span><span class="n">_initBehavior</span><span class="p">()</span>
+"s1">'#myDomElement'</span><span class="p">)</span>
+    <span class="err">@</span><span class="p">.</span><span class="nf">_initBehavior</span><span class="p">()</span>
 
-  <span class="ss">handler</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class=
-"o">=&gt;</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">this</span><span class=
+  <span class="ss">handler: </span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="n">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">this</span><span class=
 "p">)</span>
     <span class="kp">false</span>
 
-  <span class="ss">_initBehavior</span><span class="p">:</span> <span class="o">-&gt;</span>
-    <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class=
-"n">resize</span> <span class="vi">@handler</span>
+  <span class="ss">_initBehavior: </span><span class="o">-&gt;</span>
+    <span class="err">$</span><span class="p">(</span><span class="n">window</span><span class="p">).</span><span class=
+"nf">resize</span> <span class="vi">@handler</span>
 
 <span class="n">jQuery</span> <span class="o">-&gt;</span>
-  <span class="n">window</span><span class="o">.</span><span class="n">myObject</span> <span class="o">=</span> <span class=
+  <span class="n">window</span><span class="p">.</span><span class="nf">myObject</span> <span class="o">=</span> <span class=
 "kp">new</span> <span class="no">MyObject</span><span class="p">();</span>
 </code>
 </pre>
@@ -213,6 +211,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -227,16 +234,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

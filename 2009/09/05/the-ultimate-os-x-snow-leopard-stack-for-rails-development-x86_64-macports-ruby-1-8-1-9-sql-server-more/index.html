@@ -109,11 +109,11 @@
           <div class="highlight">
             <pre>
 <code class="bash language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class=
-"s2">&quot;/usr/local/bin:$PATH&quot;</span>
-<span class="nb">export </span><span class="nv">MANPATH</span><span class="o">=</span><span class=
-"s2">&quot;/usr/local/share/man:$MANPATH&quot;</span>
-<span class="nb">export </span><span class="nv">INFOPATH</span><span class="o">=</span><span class=
-"s2">&quot;/usr/local/share/info:$INFOPATH&quot;</span>
+"s2">"/usr/local/bin:</span><span class="nv">$PATH</span><span class="s2">"</span>
+<span class="nb">export </span><span class="nv">MANPATH</span><span class="o">=</span><span class="s2">"/usr/local/share/man:</span><span class=
+"nv">$MANPATH</span><span class="s2">"</span>
+<span class="nb">export </span><span class="nv">INFOPATH</span><span class="o">=</span><span class="s2">"/usr/local/share/info:</span><span class=
+"nv">$INFOPATH</span><span class="s2">"</span>
 </code>
 </pre>
           </div>
@@ -466,12 +466,11 @@ $ sudo gem install mysql -- --with-mysql-config=/opt/local/bin/mysql_config5
           <div class="highlight">
             <pre>
 <code class="bash language-bash" data-lang="bash"><span class="nb">alias </span><span class="nv">my_stop</span><span class="o">=</span><span class=
-"s2">&quot;sudo launchctl stop org.macports.mysql5&quot;</span>
+"s2">"sudo launchctl stop org.macports.mysql5"</span>
 <span class="nb">alias </span><span class="nv">my_start</span><span class="o">=</span><span class=
-"s2">&quot;sudo launchctl start org.macports.mysql5&quot;</span>
-<span class="nb">alias </span><span class="nv">my_rs</span><span class="o">=</span><span class="s2">&quot;my_stop ; my_start&quot;</span>
-<span class="nb">alias </span><span class="nv">myconf</span><span class="o">=</span><span class=
-"s2">&quot;mate /opt/local/etc/mysql5/my.cnf&quot;</span>
+"s2">"sudo launchctl start org.macports.mysql5"</span>
+<span class="nb">alias </span><span class="nv">my_rs</span><span class="o">=</span><span class="s2">"my_stop ; my_start"</span>
+<span class="nb">alias </span><span class="nv">myconf</span><span class="o">=</span><span class="s2">"mate /opt/local/etc/mysql5/my.cnf"</span>
 </code>
 </pre>
           </div>
@@ -535,6 +534,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -549,16 +557,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

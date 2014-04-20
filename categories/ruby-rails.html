@@ -62,6 +62,19 @@
           <article class="excerpt">
             <header>
               <h3>
+                <a href="/2014/04/19/jekyll-style-blogging-on-rail">Jekyll-Style Blogging On Rails</a>
+              </h3><time pubdate="" datetime="2014-04-19T00:00:00-04:00">19 Apr 2014</time>
+            </header>
+            <p>
+              Do you want to use your existing Rails&#39; layouts &amp; business logic for your new Blog? Do you know and love Jekyll, but cant seem
+              to get the two to play nice together? In the spirit of doing the simplest thing that could possibly work, I set out on a solution to
+              this problem. Besides mimicing Jekyll as closely as possible, my requirements were loosly defined as: Use a directory of markdown files
+              with a YYYY-MM-DD-blog-post-title.md naming convention. Have fast...
+            </p>
+          </article>
+          <article class="excerpt">
+            <header>
+              <h3>
                 <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Instrumenting Your Code With ActiveSupport
                 Notifications</a>
               </h3><time pubdate="" datetime="2013-12-15T00:00:00-05:00">15 Dec 2013</time>
@@ -135,9 +148,9 @@
             <p>
               When ActiveRecord 3.2 was released there was a small addition called ActiveRecord::Store which bills itself as a simple key/value store
               for your models. The code below is pulled right from their example usage. class User &lt; ActiveRecord::Base store :settings,
-              accessors: [:color, :homepage] end @user = User.new(color: &#39;black&#39;, homepage: &#39;37signals.com&#39;) @user.color # =&gt;
-              &#39;black&#39; @user.settings[:color] # =&gt; &#39;black&#39; @user.settings[:remember_me] = true Most people know that I love simple
-              tools. But when I found myself considering ActiveRecord::Store, I found it seriously lacking...
+              accessors: [:color, :homepage] end @user = User.new(color: 'black', homepage: '37signals.com') @user.color # =&gt; 'black'
+              @user.settings[:color] # =&gt; 'black' @user.settings[:remember_me] = true Most people know that I love simple tools. But when I found
+              myself considering ActiveRecord::Store, I found it seriously lacking...
             </p>
           </article>
           <article class="excerpt">
@@ -484,8 +497,8 @@
               I never liked how Webrat shows the complete response body for exceptions when integration testing rails applications. For the longest
               time I redefined the formatted_error method to simple do nothing. Today I used Nokogiri to parse out the good bits from that page. Here
               is the result. Not pretty, but it's working fine so far. Got a better example? Please share! module Webrat class Session def
-              formatted_error doc = Nokogiri::HTML(response_body) exception_name = doc.css(&#39;head title&#39;).inner_html.squish exception_msg =
-              doc.css(&#39;body h1&#39;).inner_html.squish exception_detail1 =...
+              formatted_error doc = Nokogiri::HTML(response_body) exception_name = doc.css('head title').inner_html.squish exception_msg =
+              doc.css('body h1').inner_html.squish exception_detail1 =...
             </p>
           </article>
           <article class="excerpt">
@@ -667,10 +680,10 @@
             </header>
             <p>
               Want a list of the users and the number of commits they made? Git makes it really really easy, while I could not find such an easy
-              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require &#39;rubygems&#39;
-              require &#39;activesupport&#39; log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)[&#39;logentry&#39;] report_hash =
-              svn_logs.inject({}) do |report,log| author = log[&#39;author&#39;][0] report[author] ||= {:commit_count =&gt; 0}
-              report[author][:commit_count] += 1 report end commits_authors = report_hash.keys.map {...
+              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require 'rubygems' require
+              'activesupport' log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)['logentry'] report_hash = svn_logs.inject({}) do
+              |report,log| author = log['author'][0] report[author] ||= {:commit_count =&gt; 0} report[author][:commit_count] += 1 report end
+              commits_authors = report_hash.keys.map {...
             </p>
           </article>
           <article class="excerpt">
@@ -1086,6 +1099,15 @@
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails&#39; layouts &amp; business logic for your
+              new Blog? Do you know and love Jekyll, but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -1100,16 +1122,6 @@
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application&#39;s internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single DATABASE_URL environment variable for every part of it&#39;s configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

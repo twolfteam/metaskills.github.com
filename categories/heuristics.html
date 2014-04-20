@@ -81,9 +81,9 @@
             <p>
               When ActiveRecord 3.2 was released there was a small addition called ActiveRecord::Store which bills itself as a simple key/value store
               for your models. The code below is pulled right from their example usage. class User &lt; ActiveRecord::Base store :settings,
-              accessors: [:color, :homepage] end @user = User.new(color: &#39;black&#39;, homepage: &#39;37signals.com&#39;) @user.color # =&gt;
-              &#39;black&#39; @user.settings[:color] # =&gt; &#39;black&#39; @user.settings[:remember_me] = true Most people know that I love simple
-              tools. But when I found myself considering ActiveRecord::Store, I found it seriously lacking...
+              accessors: [:color, :homepage] end @user = User.new(color: 'black', homepage: '37signals.com') @user.color # =&gt; 'black'
+              @user.settings[:color] # =&gt; 'black' @user.settings[:remember_me] = true Most people know that I love simple tools. But when I found
+              myself considering ActiveRecord::Store, I found it seriously lacking...
             </p>
           </article>
           <article class="excerpt">
@@ -173,10 +173,10 @@
             </header>
             <p>
               Here is a little ZSH function I have been using for quickly setting up new XCode apps I call tire kickers, little play and learn apps.
-              Being able to track your learning as you go with git. if [[ -x `which git` ]]; then function ginit_xcode () { git init echo &quot;\n\n#
+              Being able to track your learning as you go with git. if [[ -x `which git` ]]; then function ginit_xcode () { git init echo "\n\n#
               XCode\nbuild\n*.mode1v3\n*.mode2v3\n*.nib\n*.swp\n\ *.pbxuser\n*.perspective\n*.perspectivev3\n\n# OSX\n.DS_Store\n\n\ #
-              TextMate\n*.tm_build_errors\n\n\n&quot; &gt;&gt; .gitignore git add .gitignore git commit -m &quot;Ignore Xcode stuff.&quot; git add .
-              git commit -m &quot;Initial Xcode project.&quot; } fi The...
+              TextMate\n*.tm_build_errors\n\n\n" &gt;&gt; .gitignore git add .gitignore git commit -m "Ignore Xcode stuff." git add . git commit -m
+              "Initial Xcode project." } fi The...
             </p>
           </article>
           <article class="excerpt">
@@ -345,10 +345,10 @@
             </header>
             <p>
               Want a list of the users and the number of commits they made? Git makes it really really easy, while I could not find such an easy
-              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require &#39;rubygems&#39;
-              require &#39;activesupport&#39; log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)[&#39;logentry&#39;] report_hash =
-              svn_logs.inject({}) do |report,log| author = log[&#39;author&#39;][0] report[author] ||= {:commit_count =&gt; 0}
-              report[author][:commit_count] += 1 report end commits_authors = report_hash.keys.map {...
+              method on Subversion. Here they are. Git $ git log | git shortlog -n -s Subversion #!/usr/bin/env ruby require 'rubygems' require
+              'activesupport' log_xml = `svn log -q --xml` svn_logs = XmlSimple.xml_in(log_xml)['logentry'] report_hash = svn_logs.inject({}) do
+              |report,log| author = log['author'][0] report[author] ||= {:commit_count =&gt; 0} report[author][:commit_count] += 1 report end
+              commits_authors = report_hash.keys.map {...
             </p>
           </article>
           <article class="excerpt">
@@ -752,6 +752,15 @@
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails&#39; layouts &amp; business logic for your
+              new Blog? Do you know and love Jekyll, but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -766,16 +775,6 @@
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application&#39;s internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single DATABASE_URL environment variable for every part of it&#39;s configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

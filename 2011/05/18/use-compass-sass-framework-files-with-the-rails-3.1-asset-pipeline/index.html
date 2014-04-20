@@ -80,8 +80,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">&#39;compass&#39;</span><span class=
-"p">,</span> <span class="ss">:require</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">'compass'</span><span class="p">,</span> <span class=
+"ss">:require</span> <span class="o">=&gt;</span> <span class="kp">false</span>
 </code>
 </pre>
           </div>
@@ -94,14 +94,14 @@
           <div class="highlight">
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="no">Sass</span><span class="o">::</span><span class="no">Engine</span><span class=
-"o">::</span><span class="no">DEFAULT_OPTIONS</span><span class="o">[</span><span class="ss">:load_paths</span><span class="o">].</span><span class=
-"n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">load_paths</span><span class="o">|</span>
-  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
-"no">Rails</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2">/app/assets/stylesheets&quot;</span>
-  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
-"no">Gem</span><span class="o">.</span><span class="n">loaded_specs</span><span class="o">[</span><span class=
-"s1">&#39;compass&#39;</span><span class="o">].</span><span class="n">full_gem_path</span><span class="si">}</span><span class=
-"s2">/frameworks/compass/stylesheets&quot;</span>
+"o">::</span><span class="no">DEFAULT_OPTIONS</span><span class="o">[</span><span class="ss">:load_paths</span><span class="o">]</span><span class=
+"p">.</span><span class="nf">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">load_paths</span><span class="o">|</span>
+  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">"</span><span class="si">#{</span><span class=
+"no">Rails</span><span class="p">.</span><span class="nf">root</span><span class="si">}</span><span class="s2">/app/assets/stylesheets"</span>
+  <span class="n">load_paths</span> <span class="o">&lt;&lt;</span> <span class="s2">"</span><span class="si">#{</span><span class=
+"no">Gem</span><span class="p">.</span><span class="nf">loaded_specs</span><span class="o">[</span><span class="s1">'compass'</span><span class=
+"o">]</span><span class="p">.</span><span class="nf">full_gem_path</span><span class="si">}</span><span class=
+"s2">/frameworks/compass/stylesheets"</span>
 <span class="k">end</span>
 </code>
 </pre>
@@ -112,11 +112,9 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="css language-css" data-lang="css"><span class="k">@import</span> <span class="s2">&quot;compass/css3/opacity&quot;</span><span class=
-"p">;</span>
-<span class="nf">#mylogo</span> <span class="p">{</span> <span class="o">@</span><span class="n">include</span> <span class=
-"k">opacity</span><span class="p">(</span><span class="m">0</span><span class="o">.</span><span class="m">5</span><span class=
-"p">);</span> <span class="p">}</span>
+<code class="css language-css" data-lang="css"><span class="k">@import</span> <span class="s1">"compass/css3/opacity"</span><span class="p">;</span>
+<span class="nf">#mylogo</span> <span class="p">{</span> <span class="err">@include</span> <span class="err">opacity(0.5);</span> <span class=
+"p">}</span>
 </code>
 </pre>
           </div>
@@ -126,13 +124,12 @@
           <div class="highlight">
             <pre>
 <code class="css language-css" data-lang="css"><span class="nf">#mylogo</span> <span class="p">{</span>
-  <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">filter</span><span class="o">:</span> <span class=
-"s2">&quot;progid:DXImageTransform.Microsoft.Alpha(Opacity=50)&quot;</span><span class="p">;</span>
-  <span class="n">filter</span><span class="o">:</span> <span class="n">progid</span><span class="o">:</span><span class=
-"n">DXImageTransform</span><span class="o">.</span><span class="n">Microsoft</span><span class="o">.</span><span class="n">Alpha</span><span class=
-"p">(</span><span class="n">Opacity</span><span class="o">=</span><span class="m">50</span><span class="p">);</span>
-  <span class="k">opacity</span><span class="o">:</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span><span class=
-"p">;</span> <span class="p">}</span>
+  <span class="nl">-ms-filter</span><span class="p">:</span> <span class=
+"s1">"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"</span><span class="p">;</span>
+  <span class="nl">filter</span><span class="p">:</span> <span class="n">progid</span><span class="p">:</span><span class=
+"n">DXImageTransform</span><span class="p">.</span><span class="n">Microsoft</span><span class="p">.</span><span class="n">Alpha</span><span class=
+"p">(</span><span class="n">Opacity</span><span class="err">=</span><span class="m">50</span><span class="p">);</span>
+  <span class="nl">opacity</span><span class="p">:</span> <span class="m">0.5</span><span class="p">;</span> <span class="p">}</span>
 </code>
 </pre>
           </div>
@@ -196,6 +193,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -210,16 +216,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

@@ -106,7 +106,7 @@
           </ul>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="nb">puts</span> <span class="s2">&quot;This code will be highlighted&quot;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">puts</span> <span class="s2">"This code will be highlighted"</span>
 </code>
 </pre>
           </div>
@@ -123,8 +123,8 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">cd</span> ../my_app_name
-<span class="nv">$ </span>bundle <span class="nb">exec </span>rake <span class="nb">test</span>:all
+<code class="bash language-bash" data-lang="bash"><span class="gp">$ </span><span class="nb">cd</span> ../my_app_name
+<span class="gp">$ </span>bundle <span class="nb">exec </span>rake <span class="nb">test</span>:all
 </code>
 </pre>
           </div>
@@ -161,7 +161,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper&#39;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">'test_helper'</span>
 
 <span class="k">class</span> <span class="nc">UserTest</span> <span class="o">&lt;</span> <span class="no">ActiveSupport</span><span class=
 "o">::</span><span class="no">TestCase</span>
@@ -171,9 +171,9 @@
   <span class="n">let</span><span class="p">(</span><span class="ss">:admin</span><span class="p">)</span> <span class="p">{</span> <span class=
 "n">users</span><span class="p">(</span><span class="ss">:admin</span><span class="p">)</span> <span class="p">}</span>
 
-  <span class="n">it</span> <span class="s1">&#39;must respond true to #admin? for administrators only&#39;</span> <span class="k">do</span>
-    <span class="n">admin</span><span class="o">.</span><span class="n">must_be</span> <span class="ss">:admin?</span>
-    <span class="n">bob</span><span class="o">.</span><span class="n">wont_be</span>   <span class="ss">:admin?</span>
+  <span class="n">it</span> <span class="s1">'must respond true to #admin? for administrators only'</span> <span class="k">do</span>
+    <span class="n">admin</span><span class="p">.</span><span class="nf">must_be</span> <span class="ss">:admin?</span>
+    <span class="n">bob</span><span class="p">.</span><span class="nf">wont_be</span>   <span class="ss">:admin?</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
@@ -216,7 +216,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper_integration&#39;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">'test_helper_integration'</span>
 
 <span class="k">class</span> <span class="nc">ApplicationTest</span> <span class="o">&lt;</span> <span class="no">ActionDispatch</span><span class=
 "o">::</span><span class="no">IntegrationTest</span>
@@ -224,10 +224,10 @@
   <span class="n">before</span> <span class="p">{</span> <span class="n">visit</span> <span class="n">root_path</span> <span class="p">}</span>
 
   <span class="n">let</span><span class="p">(</span><span class="ss">:h1</span><span class="p">)</span> <span class="p">{</span> <span class=
-"n">find</span> <span class="s1">&#39;h1&#39;</span> <span class="p">}</span>
+"n">find</span> <span class="s1">'h1'</span> <span class="p">}</span>
 
-  <span class="n">it</span> <span class="s1">&#39;renders&#39;</span> <span class="k">do</span>
-    <span class="n">h1</span><span class="o">.</span><span class="n">must_be</span> <span class="ss">:present?</span>
+  <span class="n">it</span> <span class="s1">'renders'</span> <span class="k">do</span>
+    <span class="n">h1</span><span class="p">.</span><span class="nf">must_be</span> <span class="ss">:present?</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
@@ -287,7 +287,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>rake <span class="nb">test</span>:all     <span class=
+<code class="bash language-bash" data-lang="bash"><span class="gp">$ </span>rake <span class="nb">test</span>:all     <span class=
 "c"># Runs all Rails tests, then Konacha tests.</span>
 </code>
 </pre>
@@ -303,10 +303,10 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>guard             <span class=
+<code class="bash language-bash" data-lang="bash"><span class="gp">$ </span>guard             <span class=
 "c"># Monitor both Ruby and JavaScript tests.</span>
-<span class="nv">$ </span>guard -g ruby     <span class="c"># Monitor Ruby tests.</span>
-<span class="nv">$ </span>guard -g js       <span class="c"># Monitor JavaScript tests.</span>
+<span class="gp">$ </span>guard -g ruby     <span class="c"># Monitor Ruby tests.</span>
+<span class="gp">$ </span>guard -g js       <span class="c"># Monitor JavaScript tests.</span>
 </code>
 </pre>
           </div>
@@ -341,16 +341,16 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In test/factories/user_factory.rb</span>
 
-<span class="no">FactoryGirl</span><span class="o">.</span><span class="n">define</span> <span class="k">do</span>
+<span class="no">FactoryGirl</span><span class="p">.</span><span class="nf">define</span> <span class="k">do</span>
 
   <span class="n">factory</span> <span class="ss">:user</span> <span class="k">do</span>
     <span class="n">email</span>      <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class=
-"no">Email</span><span class="o">.</span><span class="n">address</span> <span class="p">}</span>
+"no">Email</span><span class="p">.</span><span class="nf">address</span> <span class="p">}</span>
     <span class="n">first_name</span> <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class=
-"no">Name</span><span class="o">.</span><span class="n">first_name</span> <span class="p">}</span>
+"no">Name</span><span class="p">.</span><span class="nf">first_name</span> <span class="p">}</span>
     <span class="n">last_name</span>  <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class=
-"no">Name</span><span class="o">.</span><span class="n">first_name</span> <span class="p">}</span>
-    <span class="n">password</span>   <span class="s1">&#39;test&#39;</span>
+"no">Name</span><span class="p">.</span><span class="nf">first_name</span> <span class="p">}</span>
+    <span class="n">password</span>   <span class="s1">'test'</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
@@ -367,18 +367,17 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In db/test/seeds.rb</span>
 
-<span class="nb">require</span> <span class="s1">&#39;factory_girl&#39;</span>
-<span class="no">FactoryGirl</span><span class="o">.</span><span class="n">find_definitions</span> <span class="k">rescue</span> <span class=
+<span class="nb">require</span> <span class="s1">'factory_girl'</span>
+<span class="no">FactoryGirl</span><span class="p">.</span><span class="nf">find_definitions</span> <span class="k">rescue</span> <span class=
 "kp">true</span>
 <span class="kp">include</span> <span class="no">FactoryGirl</span><span class="o">::</span><span class="no">Syntax</span><span class=
 "o">::</span><span class="no">Methods</span>
 
 <span class="vi">@admin</span> <span class="o">=</span> <span class="n">create</span> <span class="ss">:user</span><span class=
-"p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="no">NamedSeeds</span><span class="o">.</span><span class=
-"n">identify</span><span class="p">(</span><span class="ss">:admin</span><span class="p">),</span>
-                       <span class="n">first_name</span><span class="p">:</span> <span class="s1">&#39;Admin&#39;</span><span class=
-"p">,</span> <span class="n">last_name</span><span class="p">:</span> <span class="s1">&#39;User&#39;</span><span class="p">,</span> <span class=
-"ss">email</span><span class="p">:</span> <span class="s1">&#39;admin@test.com&#39;</span>
+"p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="no">NamedSeeds</span><span class="p">.</span><span class=
+"nf">identify</span><span class="p">(</span><span class="ss">:admin</span><span class="p">),</span>
+                       <span class="ss">first_name: </span><span class="s1">'Admin'</span><span class="p">,</span> <span class=
+"ss">last_name: </span><span class="s1">'User'</span><span class="p">,</span> <span class="ss">email: </span><span class="s1">'admin@test.com'</span>
 </code>
 </pre>
           </div>
@@ -419,11 +418,11 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="k">class</span> <span class="nx">@MyAppName</span><span class=
-"p">.</span><span class="nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class=
-"nx">User</span> <span class="k">extends</span> <span class="nx">View</span>
-  <span class="nx">@configure</span> <span class="s">&#39;User&#39;</span><span class="p">,</span> <span class="s">&#39;id&#39;</span><span class=
-"p">,</span> <span class="s">&#39;email&#39;</span>
+<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="k">class</span> <span class="vi">@</span><span class=
+"na">MyAppName</span><span class="p">.</span><span class="na">App</span><span class="p">.</span><span class="na">Models</span><span class=
+"p">.</span><span class="na">User</span> <span class="k">extends</span> <span class="nx">View</span>
+  <span class="vi">@</span><span class="na">configure</span> <span class="s">'User'</span><span class="p">,</span> <span class=
+"s">'id'</span><span class="p">,</span> <span class="s">'email'</span>
 </code>
 </pre>
           </div>
@@ -468,21 +467,23 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="vi">@initApplication = </span><span class=
-"nf">(callback) =&gt;</span>
-  <span class="nv">bob = </span><span class="nx">MyAppName</span><span class="p">.</span><span class="nx">Test</span><span class=
-"p">.</span><span class="nx">Seeds</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">bob</span>
-  <span class="nx">$</span><span class="p">.</span><span class="nx">mockjax</span> <span class="nv">url: </span><span class=
-"s">&quot;/users/</span><span class="si">#{</span><span class="nx">bob</span><span class="p">.</span><span class="nx">id</span><span class=
-"si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">responseText: </span><span class=
-"nx">MyAppName</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Response</span><span class=
-"p">.</span><span class="nx">bobInitial</span><span class="p">.</span><span class="nx">responseText</span>
-  <span class="nx">MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class=
-"nx">Models</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">fetch</span> <span class=
-"nv">id: </span><span class="nx">bob</span><span class="p">.</span><span class="nx">id</span>
-  <span class="nx">MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class=
-"nx">Models</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">one</span> <span class=
-"s">&#39;refresh&#39;</span><span class="p">,</span> <span class="nx">callback</span>
+<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="vi">@</span><span class=
+"na">initApplication</span> <span class="o">=</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class=
+"o">=&gt;</span>
+  <span class="nx">bob</span> <span class="o">=</span> <span class="nx">MyAppName</span><span class="p">.</span><span class=
+"na">Test</span><span class="p">.</span><span class="na">Seeds</span><span class="p">.</span><span class="na">users</span><span class=
+"p">.</span><span class="na">bob</span>
+  <span class="nx">$</span><span class="p">.</span><span class="na">mockjax</span> <span class="na">url</span><span class="o">:</span> <span class=
+"s">"/users/</span><span class="si">#{</span><span class="nx">bob</span><span class="p">.</span><span class="na">id</span><span class=
+"si">}</span><span class="s">"</span><span class="p">,</span> <span class="na">responseText</span><span class="o">:</span> <span class=
+"nx">MyAppName</span><span class="p">.</span><span class="na">Test</span><span class="p">.</span><span class="na">Response</span><span class=
+"p">.</span><span class="na">bobInitial</span><span class="p">.</span><span class="na">responseText</span>
+  <span class="nx">MyAppName</span><span class="p">.</span><span class="na">App</span><span class="p">.</span><span class=
+"na">Models</span><span class="p">.</span><span class="na">User</span><span class="p">.</span><span class="na">fetch</span> <span class=
+"na">id</span><span class="o">:</span> <span class="nx">bob</span><span class="p">.</span><span class="na">id</span>
+  <span class="nx">MyAppName</span><span class="p">.</span><span class="na">App</span><span class="p">.</span><span class=
+"na">Models</span><span class="p">.</span><span class="na">User</span><span class="p">.</span><span class="na">one</span> <span class=
+"s">'refresh'</span><span class="p">,</span> <span class="nx">callback</span>
 </code>
 </pre>
           </div>
@@ -511,7 +512,7 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="text language-text" data-lang="text">├── application.css
+<code class=" language-" data-lang="">├── application.css
 ├── application
 │   ├── _layout.scss
 │   ├── index.scss
@@ -537,10 +538,10 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="css language-css" data-lang="css"><span class="c">/*</span>
-<span class="c"> *= require application/twitter</span>
-<span class="c"> *= require application/index</span>
-<span class="c">*/</span>
+<code class="css language-css" data-lang="css"><span class="c">/*
+ *= require application/twitter
+ *= require application/index
+*/</span>
 </code>
 </pre>
           </div>
@@ -568,17 +569,17 @@
           <div class="highlight">
             <pre>
 <code class="sass language-sass" data-lang="sass"><span class=
-"c1">// Think of this file as your own compass. Importing the base, never generates CSS.</span>
-
-<span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;bootstrap/mixins&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;compass&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;compass/layout&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;compass/css3/user-interface&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;shared/fonts&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;shared/mixins&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;shared/animations&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;shared/placeholders&quot;;</span>
+"c1">// Think of this file as your own compass. Importing the base, never generates CSS.
+</span>
+<span class="k">@import</span> <span class="s">"shared/variables";</span>
+<span class="k">@import</span> <span class="s">"bootstrap/mixins";</span>
+<span class="k">@import</span> <span class="s">"compass";</span>
+<span class="k">@import</span> <span class="s">"compass/layout";</span>
+<span class="k">@import</span> <span class="s">"compass/css3/user-interface";</span>
+<span class="k">@import</span> <span class="s">"shared/fonts";</span>
+<span class="k">@import</span> <span class="s">"shared/mixins";</span>
+<span class="k">@import</span> <span class="s">"shared/animations";</span>
+<span class="k">@import</span> <span class="s">"shared/placeholders";</span>
 </code>
 </pre>
           </div>
@@ -593,9 +594,9 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">&quot;shared/base&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;./layout&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;components/*&quot;;</span>
+<code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">"shared/base";</span>
+<span class="k">@import</span> <span class="s">"./layout";</span>
+<span class="k">@import</span> <span class="s">"components/*";</span>
 </code>
 </pre>
           </div>
@@ -620,12 +621,12 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;bootstrap&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;font-awesome&quot;;</span>
+<code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">"shared/variables";</span>
+<span class="k">@import</span> <span class="s">"bootstrap";</span>
+<span class="k">@import</span> <span class="s">"font-awesome";</span>
 
-<span class="c1">// Tweak or redefine Twitter classes below.</span>
-</code>
+<span class="c1">// Tweak or redefine Twitter classes below.
+</span></code>
 </pre>
           </div>
           <h3 id="font-awesome">
@@ -702,6 +703,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -716,16 +726,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

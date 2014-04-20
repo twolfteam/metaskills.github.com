@@ -134,7 +134,7 @@ variant utf8 {
           </p>
           <div class="highlight">
             <pre>
-<code class="diff language-diff" data-lang="diff"># My notes
+<code class="diff language-diff" data-lang="diff"><span class="err"># My notes
 # +CPPFLAGS = -DHAVE_LONG_LONG
 # +CPPFLAGS = -DHAVE_VERSION_H
 # +CPPFLAGS = -DHAVE_TYPE_SQLBIGINT
@@ -142,26 +142,26 @@ variant utf8 {
 # -CPPFLAGS = -DHAVE_SQLINSTALLERERRORW
 # -CPPFLAGS = -DHAVE_SQLWRITEFILEDSNW
 # -CPPFLAGS = -DHAVE_SQLREADFILEDSNW
-<span class="gd">--- Makefile(+utf8)  2010-07-18 12:00:24.000000000 -0400</span>
-<span class="gi">+++ Makefile(-utf8)  2010-07-18 12:49:32.000000000 -0400</span>
-<span class="gu">@@ -47,7 +47,7 @@</span>
- CFLAGS   =  -fno-common -O2 -arch x86_64  -fno-common -pipe -fno-common $(cflags) -arch x86_64
+</span><span class="gd">--- Makefile(+utf8)  2010-07-18 12:00:24.000000000 -0400
+</span><span class="gi">+++ Makefile(-utf8)  2010-07-18 12:49:32.000000000 -0400
+</span><span class="gh">@@ -47,7 +47,7 @@
+</span> CFLAGS   =  -fno-common -O2 -arch x86_64  -fno-common -pipe -fno-common $(cflags) -arch x86_64
  INCFLAGS = -I. -I. -I/opt/local/lib/ruby/1.8/i686-darwin10 -I.
  DEFS     =
 <span class=
-"gd">-CPPFLAGS = -DHAVE_SQL_H -DHAVE_SQLEXT_H -DHAVE_TYPE_SQLTCHAR -DHAVE_TYPE_SQLLEN -DHAVE_TYPE_SQLULEN -DHAVE_ODBCINST_H -DHAVE_SQLCONFIGDATASOURCEW -DHAVE_SQLWRITEFILEDSNW -DHAVE_SQLREADFILEDSNW -DHAVE_SQLINSTALLERERROR -DHAVE_SQLINSTALLERERRORW -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include</span>
-<span class=
-"gi">+CPPFLAGS = -DHAVE_VERSION_H -DHAVE_SQL_H -DHAVE_SQLEXT_H -DHAVE_TYPE_SQLTCHAR -DHAVE_TYPE_SQLLEN -DHAVE_TYPE_SQLULEN -DHAVE_ODBCINST_H -DHAVE_SQLINSTALLERERROR -DHAVE_TYPE_SQLBIGINT -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -DHAVE_LONG_LONG</span>
- CXXFLAGS = $(CFLAGS)
+"gd">-CPPFLAGS = -DHAVE_SQL_H -DHAVE_SQLEXT_H -DHAVE_TYPE_SQLTCHAR -DHAVE_TYPE_SQLLEN -DHAVE_TYPE_SQLULEN -DHAVE_ODBCINST_H -DHAVE_SQLCONFIGDATASOURCEW -DHAVE_SQLWRITEFILEDSNW -DHAVE_SQLREADFILEDSNW -DHAVE_SQLINSTALLERERROR -DHAVE_SQLINSTALLERERRORW -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include
+</span><span class=
+"gi">+CPPFLAGS = -DHAVE_VERSION_H -DHAVE_SQL_H -DHAVE_SQLEXT_H -DHAVE_TYPE_SQLTCHAR -DHAVE_TYPE_SQLLEN -DHAVE_TYPE_SQLULEN -DHAVE_ODBCINST_H -DHAVE_SQLINSTALLERERROR -DHAVE_TYPE_SQLBIGINT -I/opt/local/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/opt/local/include -DHAVE_LONG_LONG
+</span> CXXFLAGS = $(CFLAGS)
  ldflags  = -L. -L/opt/local/lib -arch x86_64
  dldflags =
-<span class="gu">@@ -89,7 +89,7 @@</span>
- LIBS = $(LIBRUBYARG_SHARED) -lodbcinst -lodbc  -lpthread -ldl -lobjc
+<span class="gh">@@ -89,7 +89,7 @@
+</span> LIBS = $(LIBRUBYARG_SHARED) -lodbcinst -lodbc  -lpthread -ldl -lobjc
  SRCS = init.c odbc.c
  OBJS = init.o odbc.o
-<span class="gd">-TARGET = odbc_utf8</span>
-<span class="gi">+TARGET = odbc</span>
- DLLIB = $(TARGET).bundle
+<span class="gd">-TARGET = odbc_utf8
+</span><span class="gi">+TARGET = odbc
+</span> DLLIB = $(TARGET).bundle
  EXTSTATIC =
  STATIC_LIB =
 </code>
@@ -227,6 +227,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -241,16 +250,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

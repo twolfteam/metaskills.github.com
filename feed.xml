@@ -4,13 +4,255 @@
  <title>MetaSkills.net</title>
  <link href="http://metaskills.net/feed.xml" rel="self"/>
  <link href="http://metaskills.net/"/>
- <updated>2014-03-18T10:53:24-04:00</updated>
+ <updated>2014-04-19T21:16:24-04:00</updated>
  <id>http://metaskills.net/</id>
  <author>
    <name>Ken Collins</name>
    <email>ken@metaskills.net</email>
  </author>
 
+ 
+ <entry>
+   <title>Jekyll-Style Blogging On Rails</title>
+   <link href="http://metaskills.net/2014/04/19/jekyll-style-blogging-on-rail"/>
+   <updated>2014-04-19T00:00:00-04:00</updated>
+   <id>http://metaskills.net/2014/04/19/jekyll-style-blogging-on-rail</id>
+   <content type="html">
+     <![CDATA[<p><img src="/assets/jekyll-on-rails.png" width="350" class="floatr" />
+Do you want to use your existing Rails&#39; layouts &amp; business logic for your new Blog? Do you know and love <a href="http://jekyllrb.com">Jekyll</a>, but cant seem to get the two to play nice together?</p>
+
+<p>In the spirit of <a href="http://c2.com/cgi/wiki?DoSimpleThings">doing the simplest thing</a> that could possibly work, I set out on a solution to this problem. Besides mimicing Jekyll as closely as possible, my requirements were loosly defined as:</p>
+
+<ul>
+<li>Use a directory of markdown files with a <code>YYYY-MM-DD-blog-post-title.md</code> naming convention.</li>
+<li>Have fast syntax highlighting via fenced code blocks.</li>
+<li>Expose model class finders for a single resource &amp; collections.</li>
+<li>Some model object to ask posts for their title, date, html, etc.</li>
+<li>Make local development follow Rails conventions. Like page refreshes.</li>
+<li>Provide a reasonable amount of caching in production.</li>
+</ul>
+
+<p>Additionally if I had time or the gumption:</p>
+
+<ul>
+<li>Use YAML front matter for different post titles &amp; other options.</li>
+<li>Preprocess markdown with ERB and allow Rails routes &amp; helpers to be used.</li>
+<li>Ask each post for an excerpt so we can render teasers elsewhere.</li>
+<li>Create a rake task that tees up a new post using the current date.</li>
+</ul>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>Most times I like to start coding to high-level interfaces. It helps me think about the smaller details I will need to build later. A Rails controller is a good option but be careful and keep it simple! If you are the type of person that likes to jump to the end, check out <a href="https://gist.github.com/metaskills/11071934">the final gist</a> of our completed work.</p>
+
+<p>First, we are going to make our blog routes and controller. We want two actions, an <code>index</code> to list all blog posts and a <code>show</code> to render each post.</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In config/routes.rb</span>
+<span class="n">resources</span> <span class="ss">:blog</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:index</span><span class="p">,</span> <span class="ss">:show</span><span class="o">]</span>
+
+<span class="c1"># In app/controllers/blog_controller.rb</span>
+<span class="k">class</span> <span class="nc">BlogController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="n">layout</span> <span class="s1">'site'</span>
+  <span class="n">before_filter</span> <span class="ss">:find_post</span><span class="p">,</span> <span class="ss">only: </span><span class="o">[</span><span class="ss">:show</span><span class="o">]</span>
+
+  <span class="k">def</span> <span class="nf">index</span>
+    <span class="vi">@posts</span> <span class="o">=</span> <span class="no">BlogPost</span><span class="p">.</span><span class="nf">all</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">show</span>
+    <span class="n">render</span> <span class="ss">text: </span><span class="vi">@post</span><span class="p">.</span><span class="nf">html</span><span class="p">,</span> <span class="ss">layout: </span><span class="s1">'site'</span> <span class="k">if</span> <span class="n">stale?</span> <span class="vi">@post</span><span class="p">,</span> <span class="kp">public</span><span class="p">:</span> <span class="kp">true</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">find_post</span>
+    <span class="vi">@post</span> <span class="o">=</span> <span class="no">BlogPost</span><span class="p">.</span><span class="nf">find</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span>
+    <span class="n">redirect_to</span> <span class="n">blog_index_path</span> <span class="k">unless</span> <span class="vi">@post</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</code></pre></div>
+<p>Pretty simple looking, but this code exposes some neat details that we will have to build while accomplishing a lot too. Our <code>index</code> action shows we will need a class finder for all posts and assumes they will be ordered somehow. The <code>show</code> action which is behind our <code>find_post</code> filter tells us we need some type of key for our posts – likewise we have determined that we need an <code>html</code> instance method. Lastly, we are going to check when a post is stale somehow while setting the public Cache-Control header for proxies.</p>
+
+<h2 id="our-blogpost-model">Our BlogPost Model</h2>
+
+<p>Our <code>:id</code> key will use the file name as our <a href="http://en.wikipedia.org/wiki/Clean_URL#Slug">slug</a>. Our markdown files will be located where our controller would normally find them, in the <code>app/views/blog</code> directory. Feel free to create your first post there, name it <code>2014-04-19-my-first-post.md</code> using the current date. Now here is our first itteration of our new <code>BlogPost</code> model that allows us to find our posts.</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+
+  <span class="kp">attr_reader</span> <span class="ss">:slug</span>
+
+  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+
+    <span class="k">def</span> <span class="nf">all</span>
+      <span class="n">all_slugs</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span> <span class="o">|</span><span class="n">slug</span><span class="o">|</span> <span class="kp">new</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span> <span class="p">}.</span><span class="nf">sort</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
+      <span class="n">all</span><span class="p">.</span><span class="nf">detect</span> <span class="p">{</span> <span class="o">|</span><span class="n">post</span><span class="o">|</span> <span class="n">post</span><span class="p">.</span><span class="nf">slug</span> <span class="o">==</span> <span class="n">slug</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">directory</span>
+      <span class="no">Rails</span><span class="p">.</span><span class="nf">root</span><span class="p">.</span><span class="nf">join</span> <span class="s1">'app'</span><span class="p">,</span> <span class="s1">'views'</span><span class="p">,</span> <span class="s1">'blog'</span>
+    <span class="k">end</span>
+
+    <span class="kp">private</span>
+
+    <span class="k">def</span> <span class="nf">all_slugs</span>
+      <span class="vi">@all_slugs</span> <span class="o">||=</span> <span class="no">Dir</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">directory</span><span class="si">}</span><span class="s2">/*.md"</span><span class="p">).</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="no">File</span><span class="p">.</span><span class="nf">basename</span><span class="p">(</span><span class="n">f</span><span class="p">).</span><span class="nf">sub</span><span class="p">(</span><span class="sr">/\.md$/</span><span class="p">,</span><span class="s1">''</span><span class="p">)</span> <span class="p">}</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
+    <span class="vi">@slug</span> <span class="o">=</span> <span class="n">slug</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div>
+<p>Notice how we memoize the private <code>all_slugs</code> class method to avoid hiting the filesystem again and again in production? This idea is definitly not complete and if needed, we can update it later. So, with the class methods out of the way, we can flesh out the model more. But first, we need to think about Jekyll.</p>
+
+<h2 id="time-for-jekyll">Time For Jekyll</h2>
+
+<p>I&#39;ve used Jekyll for a handful of static sites and blogs. Most of which have been running the next major version which is not quite out yet. Jekyll v2 is amazing and we totally need it for this project. Below are the gem deps you will need to bundle up. Remember, when Jekyll v2 is released, you can change your Gemfile as needed.</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In Gemfile</span>
+<span class="n">gem</span> <span class="s1">'jekyll'</span><span class="p">,</span> <span class="s1">'~&gt; 2.0.0.alpha'</span>
+<span class="n">gem</span> <span class="s1">'redcarpet'</span>
+<span class="n">gem</span> <span class="s1">'rouge'</span>
+</code></pre></div>
+<p>So, most of us are familiar with the <a href="https://github.com/vmg/redcarpet">Redcarpet</a> gem. That will be the markdown converter we use, but what about rouge? The <a href="https://github.com/jayferd/rouge">Rouge</a> gem is a pure-ruby syntax highlighter. It can highlight over 60 languages, and output HTML or ANSI 256-color text. Its HTML output is compatible with existing stylesheets designed for pygments.</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+
+  <span class="c1"># ...</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">to_html</span>
+    <span class="no">Jekyll</span><span class="o">::</span><span class="no">Converters</span><span class="o">::</span><span class="no">Markdown</span><span class="o">::</span><span class="no">RedcarpetParser</span><span class="p">.</span><span class="nf">new</span><span class="p">({</span>
+      <span class="s1">'highlighter'</span> <span class="o">=&gt;</span> <span class="s1">'rouge'</span><span class="p">,</span>
+      <span class="s1">'redcarpet'</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="s1">'extensions'</span> <span class="o">=&gt;</span> <span class="o">[</span>
+          <span class="s2">"no_intra_emphasis"</span><span class="p">,</span> <span class="s2">"fenced_code_blocks"</span><span class="p">,</span> <span class="s2">"autolink"</span><span class="p">,</span>
+          <span class="s2">"strikethrough"</span><span class="p">,</span> <span class="s2">"lax_spacing"</span><span class="p">,</span>  <span class="s2">"superscript"</span><span class="p">,</span> <span class="s2">"with_toc_data"</span>
+        <span class="o">]</span>
+      <span class="p">}</span>
+    <span class="p">}).</span><span class="nf">convert</span><span class="p">(</span><span class="n">markdown</span><span class="p">)</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div>
+<p>It is not just sexy, Rouge is fast too! And by using it, we avoid bundling to pygments which has Python dependencies. We are going to let Jekyll do the heavy lifting and implement our private <code>to_html</code> method like so. This will give us Github flavored markdown using Rouge for our fenced code blocks.</p>
+
+<h2 id="other-blogpost-details">Other BlogPost Details</h2>
+
+<p>In our <code>BlogPost.all</code> class method, we called sort on the collection with the expectation that the newest post comes first. To fulfill this we are going to use Ruby&#39;s <code>&lt;=&gt;</code> spaceship operator by comparing each post&#39;s date. This completes our controller&#39;s <code>index</code> requirement.</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">&lt;</span><span class="o">=&gt;</span> <span class="n">other</span>
+    <span class="n">other</span><span class="p">.</span><span class="nf">date</span> <span class="o">&lt;=&gt;</span> <span class="n">date</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>We want each post to have a <code>title</code> and <code>date</code> method. We can easily parse these form the slug. I even made a <code>date_formatted</code> method using ActiveSupport&#39;s Inflector that will be useful for our views. It returns date strings like April 19th, 2014. We also have a <code>path</code> method that we can use when linking to our posts from elsewhere in our site. It will use the slug as the <code>:id</code> param. This completes our controller&#39;s <code>find_post</code> requirement and gives us pretty URLs just like Jekyll.</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">title</span>
+    <span class="n">slug</span><span class="p">.</span><span class="nf">sub</span><span class="p">(</span><span class="sr">/\d{4}-\d{2}-\d{2}-/</span><span class="p">,</span> <span class="s1">''</span><span class="p">).</span><span class="nf">titleize</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">date</span>
+    <span class="no">Date</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">date_formatted</span>
+    <span class="n">day_format</span> <span class="o">=</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Inflector</span><span class="p">.</span><span class="nf">ordinalize</span><span class="p">(</span><span class="n">date</span><span class="p">.</span><span class="nf">day</span><span class="p">)</span>
+    <span class="n">date</span><span class="p">.</span><span class="nf">strftime</span> <span class="s2">"%B </span><span class="si">#{</span><span class="n">day_format</span><span class="si">}</span><span class="s2">, %G"</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">path</span>
+    <span class="s2">"/blog/</span><span class="si">#{</span><span class="n">slug</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Before implementing our markdown to HTML conversion, we should think about caching. Following Rails&#39; <a href="http://guides.rubyonrails.org/caching_with_rails.html">conventions</a> we implment a <code>cache_key</code> method that combines the blog namespace with the posts unique slug and timestamp. The <code>updated_at</code> timestamp is simply the last time the file was modified on disk. Convention is to convert this to an integer which is seconds since Unix Epoch. The <code>cache_key</code> will be used by the controller&#39;s <code>show</code> method when determining the ETag for the response.</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">updated_at</span>
+    <span class="no">File</span><span class="p">.</span><span class="nf">mtime</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">cache_key</span>
+    <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Cache</span><span class="p">.</span><span class="nf">expand_cache_key</span> <span class="o">[</span><span class="s1">'blog'</span><span class="p">,</span> <span class="n">slug</span><span class="p">,</span> <span class="n">updated_at</span><span class="p">.</span><span class="nf">to_i</span><span class="o">]</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Now the fun part, converting our markdown to HTML. We are going to use the <code>Rails.cache</code> which in local development is a simple memory store and Memcached in production. The <code>fetch</code> method takes a key and a block. The block is only executed if there is a cache miss.</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">BlogPost</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="nf">html</span>
+    <span class="no">Rails</span><span class="p">.</span><span class="nf">cache</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">cache_key</span><span class="si">}</span><span class="s2">/html"</span><span class="p">)</span> <span class="p">{</span> <span class="n">to_html</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">file_path</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">directory</span><span class="p">.</span><span class="nf">join</span> <span class="s2">"</span><span class="si">#{</span><span class="n">slug</span><span class="si">}</span><span class="s2">.md"</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">markdown</span>
+    <span class="no">Rails</span><span class="p">.</span><span class="nf">cache</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">cache_key</span><span class="si">}</span><span class="s2">/markdown"</span><span class="p">)</span> <span class="p">{</span> <span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div>
+<h2 id="code-highlighting">Code Highlighting</h2>
+
+<p>The only thing left to do is style the highlighted output from the Rouge gem. Thankfully, there are many existing pygment theme options spread accross the internet. Here are a few to get you started.</p>
+
+<ul>
+<li><a href="https://github.com/richleland/pygments-css">pygments-css</a> - CSS files created from pygment&#39;s built-in styles.</li>
+<li><a href="https://github.com/StylishThemes/GitHub-Dark/">GitHub-Dark</a> - GitHub Dark theme for Stylish. Browse the themes directory.</li>
+<li><a href="https://github.com/aahan/pygments-github-style">pygments-github-style</a> - GitHub style for Pygments.</li>
+</ul>
+
+<p>For the <a href="http://homemarks.com/">HomeMarks</a> blog, I used the github <code>jekyll-github.css</code> from the last resource above. Have fun choosing your own and <code>@import</code> it into your existing CSS bundle in the manner that matches your own project.</p>
+
+<h2 id="taking-it-further?">Taking It Further?</h2>
+
+<p>So that&#39;s it, we can ship it! But what about those other great requirements like YAML front matter, ERB templates, Rails&#39; routes/helpers, and more? The good news is that I found the time to do them all. You can find each implemented in the final <a href="https://gist.github.com/metaskills/11071934">Jekyll-Style Blogging On Rails</a> gist.</p>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">scope</span>
+  <span class="no">ApplicationController</span><span class="p">.</span><span class="nf">helpers</span><span class="p">.</span><span class="nf">clone</span><span class="p">.</span><span class="nf">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">h</span><span class="o">|</span>
+    <span class="n">h</span><span class="p">.</span><span class="nf">singleton_class</span><span class="p">.</span><span class="nf">send</span> <span class="ss">:include</span><span class="p">,</span> <span class="no">Rails</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class="nf">routes</span><span class="p">.</span><span class="nf">url_helpers</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>One aspect that I was particularly proud of was ERB pre-processing with a evaluation scope to Rails&#39; routes and helpers. The solution turned out to be simple after digging into the <a href="https://github.com/rails/rails/tree/4-1-stable/railties/lib/rails/console">railties IRB console</a> helpers and ActionPack. My solution above used this <code>scope</code> with the Tilt&#39;s erubis template.</p>
+
+<h2 id="where-to-go-from-here?">Where To Go From Here?</h2>
+
+<p>With <a href="https://gist.github.com/metaskills/11071934">this setup</a>, you have a great foundation for Jekyll on Rails. Feel free to customize it as needed. Some ideas include:</p>
+
+<ul>
+<li>Better caching in production. Currently hits the filesystem for <code>cache_key</code>.</li>
+<li>Maybe make a jekyll-rails engine that does all of this for you?</li>
+<li>Add an Emoji HTML filter to your posts.</li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<p>Thanks for reading! Would love to hear your feedback too.</p>
+
+<ul>
+<li><a href="https://gist.github.com/metaskills/11071934">The Final &quot;Jekyll-Style Blogging On Rails&quot; Gist</a></li>
+<li><a href="http://c2.com/cgi/wiki?DoSimpleThings">Do Simple Things</a></li>
+</ul>
+]]>
+    </content>
+ </entry>
  
  <entry>
    <title>Thanks To My Mother For The Career I Have Today!</title>
@@ -68,8 +310,8 @@ Have you ever wondered how tools like New Relic are able to gain valuable metric
 
 <p>Lucky for us, the Subexec gem has one interface, the <code>Subexec#run!</code> method. So our work is going to be straight forward. All we have to do is <a href="http://erniemiller.org/2011/02/03/when-to-use-alias_method_chain/">alias method chain</a> that instance method and wrap it with some instrumentation. Assuming you are up to speed on this practice, here is our new implementation.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">run_with_notifications!</span>
-  <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="nb">sub</span><span class="p">:</span> <span class="nb">self</span><span class="p">,</span> <span class="ss">hostname</span><span class="p">:</span> <span class="no">Socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">}</span>
-  <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Notifications</span><span class="o">.</span><span class="n">instrument</span> <span class="s2">&quot;subexec.run&quot;</span><span class="p">,</span> <span class="n">payload</span> <span class="k">do</span>
+  <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="nb">sub</span><span class="p">:</span> <span class="nb">self</span><span class="p">,</span> <span class="ss">hostname: </span><span class="no">Socket</span><span class="p">.</span><span class="nf">gethostname</span><span class="p">}</span>
+  <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Notifications</span><span class="p">.</span><span class="nf">instrument</span> <span class="s2">"subexec.run"</span><span class="p">,</span> <span class="n">payload</span> <span class="k">do</span>
     <span class="n">run_without_notifications!</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -98,14 +340,14 @@ Have you ever wondered how tools like New Relic are able to gain valuable metric
 <p>Assuming we have a Rails application that makes use of MiniMagick, Subexec or both, all we have to do now is bundle up our new notification gem along with librato-metrics.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In Gemfile</span>
 
-<span class="n">gem</span> <span class="s1">&#39;subexec-notifications&#39;</span>
-<span class="n">gem</span> <span class="s1">&#39;librato-metrics&#39;</span>
+<span class="n">gem</span> <span class="s1">'subexec-notifications'</span>
+<span class="n">gem</span> <span class="s1">'librato-metrics'</span>
 </code></pre></div>
 <p>Now we need to subscribe to the <code>subexec.run</code> events that we instrumented in the subexec-notifications gem. For a Rails application, this is best done in an initializer named after the gem.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In config/initializers/subexec_notifications.rb</span>
 
-<span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Notifications</span><span class="o">.</span><span class="n">subscribe</span> <span class="s1">&#39;subexec.run&#39;</span> <span class="k">do</span> <span class="o">|*</span><span class="n">args</span><span class="o">|</span>
-  <span class="no">Subscribers</span><span class="o">::</span><span class="no">SubexecLibrato</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Notifications</span><span class="p">.</span><span class="nf">subscribe</span> <span class="s1">'subexec.run'</span> <span class="k">do</span> <span class="o">|*</span><span class="n">args</span><span class="o">|</span>
+  <span class="no">Subscribers</span><span class="o">::</span><span class="no">SubexecLibrato</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 <span class="k">end</span>
 </code></pre></div>
 <h2 id="publishing-metrics">Publishing Metrics</h2>
@@ -121,7 +363,7 @@ Have you ever wondered how tools like New Relic are able to gain valuable metric
     <span class="kp">attr_reader</span> <span class="ss">:event</span>
 
     <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-      <span class="vi">@event</span> <span class="o">=</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Notifications</span><span class="o">::</span><span class="no">Event</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+      <span class="vi">@event</span> <span class="o">=</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Notifications</span><span class="o">::</span><span class="no">Event</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
       <span class="n">process</span>
     <span class="k">end</span>
 
@@ -139,13 +381,13 @@ Have you ever wondered how tools like New Relic are able to gain valuable metric
   <span class="k">class</span> <span class="nc">SubexecLibrato</span> <span class="o">&lt;</span> <span class="no">Base</span>
 
     <span class="k">def</span> <span class="nf">process</span>
-      <span class="nb">sub</span>   <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">payload</span><span class="o">[</span><span class="ss">:sub</span><span class="o">]</span>
-      <span class="n">dur</span>   <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">duration</span>
-      <span class="n">type</span>  <span class="o">=</span> <span class="nb">sub</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="o">.</span><span class="n">first</span>
-      <span class="n">host</span>  <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">payload</span><span class="o">[</span><span class="ss">:hostname</span><span class="o">]</span>
-      <span class="n">time</span>  <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">current</span>
-      <span class="no">Librato</span><span class="o">::</span><span class="no">Metrics</span><span class="o">.</span><span class="n">submit</span> <span class="s1">&#39;subexec.hosts&#39;</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="n">measure_time</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> <span class="ss">value</span><span class="p">:</span> <span class="n">dur</span><span class="p">,</span> <span class="ss">source</span><span class="p">:</span> <span class="n">host</span><span class="p">}</span>
-      <span class="no">Librato</span><span class="o">::</span><span class="no">Metrics</span><span class="o">.</span><span class="n">submit</span> <span class="s1">&#39;subexec.types&#39;</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="n">measure_time</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> <span class="ss">value</span><span class="p">:</span> <span class="n">dur</span><span class="p">,</span> <span class="ss">source</span><span class="p">:</span> <span class="n">type</span><span class="p">}</span>
+      <span class="nb">sub</span>   <span class="o">=</span> <span class="n">event</span><span class="p">.</span><span class="nf">payload</span><span class="o">[</span><span class="ss">:sub</span><span class="o">]</span>
+      <span class="n">dur</span>   <span class="o">=</span> <span class="n">event</span><span class="p">.</span><span class="nf">duration</span>
+      <span class="n">type</span>  <span class="o">=</span> <span class="nb">sub</span><span class="p">.</span><span class="nf">command</span><span class="p">.</span><span class="nf">split</span><span class="p">.</span><span class="nf">first</span>
+      <span class="n">host</span>  <span class="o">=</span> <span class="n">event</span><span class="p">.</span><span class="nf">payload</span><span class="o">[</span><span class="ss">:hostname</span><span class="o">]</span>
+      <span class="n">time</span>  <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">current</span>
+      <span class="no">Librato</span><span class="o">::</span><span class="no">Metrics</span><span class="p">.</span><span class="nf">submit</span> <span class="s1">'subexec.hosts'</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">measure_time: </span><span class="n">time</span><span class="p">,</span> <span class="ss">value: </span><span class="n">dur</span><span class="p">,</span> <span class="ss">source: </span><span class="n">host</span><span class="p">}</span>
+      <span class="no">Librato</span><span class="o">::</span><span class="no">Metrics</span><span class="p">.</span><span class="nf">submit</span> <span class="s1">'subexec.types'</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">measure_time: </span><span class="n">time</span><span class="p">,</span> <span class="ss">value: </span><span class="n">dur</span><span class="p">,</span> <span class="ss">source: </span><span class="n">type</span><span class="p">}</span>
     <span class="k">end</span>
 
   <span class="k">end</span>
@@ -200,25 +442,25 @@ Have you ever wondered how tools like New Relic are able to gain valuable metric
 
 <p>Let&#39;s get started. First, let&#39;s add the gem to your Rails project&#39;s Gemfile.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In Gemfile</span>
-<span class="n">gem</span> <span class="s1">&#39;dotenv&#39;</span><span class="p">,</span> <span class="ss">github</span><span class="p">:</span> <span class="s1">&#39;ecbypi/dotenv&#39;</span><span class="p">,</span> <span class="ss">branch</span><span class="p">:</span> <span class="s1">&#39;overload-environment-variables&#39;</span>
+<span class="n">gem</span> <span class="s1">'dotenv'</span><span class="p">,</span> <span class="ss">github: </span><span class="s1">'ecbypi/dotenv'</span><span class="p">,</span> <span class="ss">branch: </span><span class="s1">'overload-environment-variables'</span>
 </code></pre></div>
 <p>Next up, open your <code>config/application.rb</code> and add this line right after the require &#39;rails/all&#39; line. This will require the Dotenv gem, then load your own per-developer local settings (if present), then a .env file that matches the current <code>Rails.env</code>.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In config/application.rb</span>
-<span class="nb">require</span> <span class="s1">&#39;rails/all&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;dotenv&#39;</span> <span class="p">;</span> <span class="no">Dotenv</span><span class="o">.</span><span class="n">load</span> <span class="s2">&quot;.env.local&quot;</span><span class="p">,</span> <span class="s2">&quot;.env.</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">require</span> <span class="s1">'rails/all'</span>
+<span class="nb">require</span> <span class="s1">'dotenv'</span> <span class="p">;</span> <span class="no">Dotenv</span><span class="p">.</span><span class="nf">load</span> <span class="s2">".env.local"</span><span class="p">,</span> <span class="s2">".env.</span><span class="si">#{</span><span class="no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="si">}</span><span class="s2">"</span>
 </code></pre></div>
 <p>Next, create individual <code>.env.RAILS_ENV</code> files with your configurations. YMMV on this one, but the idea is to check all of these in. The <code>.env.development</code> will hold all the default configurations for a new developer to get up and running quickly. The <code>.env.test</code> will hold all the configurations for your test runs. Past that, how you handle the production file or not, is left up to you. In my examples below, we are setting the environment variable for the Awesome gem.</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">$ echo &quot;AWESOME_GEM_URL=https://awesome.dev&quot;          &gt; .env.development
-$ echo &quot;AWESOME_GEM_URL=https://sandbox.awesome.com&quot;  &gt; .env.test
-$ echo &quot;AWESOME_GEM_URL=https://awesome.com&quot;          &gt; .env.production
+<div class="highlight"><pre><code class=" language-" data-lang="">$ echo "AWESOME_GEM_URL=https://awesome.dev"          &gt; .env.development
+$ echo "AWESOME_GEM_URL=https://sandbox.awesome.com"  &gt; .env.test
+$ echo "AWESOME_GEM_URL=https://awesome.com"          &gt; .env.production
 </code></pre></div>
 <p>This covers our bases, but what if a developer wants to override a configuration. They can use good ol&#39; environment variables and get the behavior they expect. Or they create their own <code>.env.local</code> file and set their configurations there. The benefit of the local file is that your Rails application via the console or the development server (for example Pow) will automatically get the same thing when using the .env.local file. Oh yea, it is a good idea to add the this file to your <code>.gitignore</code>.</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">$ echo &quot;AWESOME_GEM_URL=https://my-awesome.dev&quot;       &gt; .env.local
+<div class="highlight"><pre><code class=" language-" data-lang="">$ echo "AWESOME_GEM_URL=https://my-awesome.dev"       &gt; .env.local
 </code></pre></div>
 <p>Now, one last thing. We need to make sure that our tests do not use any real, development or local environment settings. This is where @ecbypi overload feature comes in handy. I have added this to the top of the Rails <code>test/test_helper.rb</code> file.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In test/test_helper.rb</span>
-<span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;RAILS_ENV&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
-<span class="o">+</span><span class="nb">require</span> <span class="s1">&#39;dotenv&#39;</span> <span class="p">;</span> <span class="no">Dotenv</span><span class="o">.</span><span class="n">overload</span> <span class="s2">&quot;.env.test&quot;</span>
+<span class="no">ENV</span><span class="o">[</span><span class="s2">"RAILS_ENV"</span><span class="o">]</span> <span class="o">=</span> <span class="s2">"test"</span>
+<span class="o">+</span><span class="nb">require</span> <span class="s1">'dotenv'</span> <span class="p">;</span> <span class="no">Dotenv</span><span class="p">.</span><span class="nf">overload</span> <span class="s2">".env.test"</span>
 </code></pre></div>
 <p>Happy environment usage! Have you been solving environment and application configuration in a different way (don&#39;t say YAML), if so, I would love to hear about it!</p>
 ]]>
@@ -271,21 +513,21 @@ Last week, our localy Ruby community in Norfolk, VA re-launched the <a href="htt
 <span class="nb">set</span> -e
 
 jekyll build <span class="nv">$*</span>
-find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/tidy.conf <span class="o">{}</span> <span class="se">\;</span>
+find _site -name <span class="s2">"*.html"</span> -exec tidy -config <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/tidy.conf <span class="o">{}</span> <span class="se">\;</span>
 </code></pre></div>
 <p>I will cover <code>jekyll-livereload</code> and <code>deploy</code> later in this post. The <a href="https://gist.github.com/metaskills/6414700">optipng</a> script is a useful command line utility that compresses assets. While the <a href="https://gist.github.com/metaskills/6414713">post</a> script allows you to easily create a new post. For example:</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">$ ./tasks/post &quot;Jekyll Tips And Tricks&quot;
+<div class="highlight"><pre><code class=" language-" data-lang="">$ ./tasks/post "Jekyll Tips And Tricks"
 </code></pre></div>
 <h2 id="development-&amp;-production-environments">Development &amp; Production Environments</h2>
 
 <p>Sometimes you do not want a production feature turned on when developing your site locally. Blogs backed by <a href="https://disqus.com">DISQUS</a> comments would be a great example. Likewise, maybe you want to develop a new feature that you can see during local development only to be enabled at a later time. Thanks to v1.0 of Jekyll and up, this is easy to do with different configuration files.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In _config.yml</span>
-<span class="ss">production</span><span class="p">:</span> <span class="kp">false</span>
-<span class="ss">timezone</span><span class="p">:</span> <span class="s2">&quot;America/New_York&quot;</span>
+<span class="ss">production: </span><span class="kp">false</span>
+<span class="ss">timezone: </span><span class="s2">"America/New_York"</span>
 
 <span class="c1"># In _config_production.yml</span>
-<span class="ss">production</span><span class="p">:</span> <span class="kp">true</span>
-<span class="ss">timezone</span><span class="p">:</span> <span class="s2">&quot;America/New_York&quot;</span>
+<span class="ss">production: </span><span class="kp">true</span>
+<span class="ss">timezone: </span><span class="s2">"America/New_York"</span>
 </code></pre></div>
 <p>Here we have the default <code>_config.yml</code> acting as our default development configuration. It sets the production site variable to false while the <code>_config_production.yml</code> sets it to true. Remember the <code>deploy</code> task I mentioned above? This is a great place to pass down the <code>--config</code> argument to your own jekyll task. Here is a partial example of a deploy task.</p>
 <div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="c">#!/usr/bin/env bash</span>
@@ -294,21 +536,23 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
 ./tasks/jekyll --config _config_production.yml
 </code></pre></div>
 <p>Now you can write code like the following examples in your layouts or includes. Jekyll will automatically take any additional top level configurations and turn them into properties on the <code>site</code> object.</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="c">&lt;!-- Only show DISQUS comments in production. --&gt;</span>
+<div class="highlight"><pre><code class="html language-html" data-lang="html">
+<span class="c">&lt;!-- Only show DISQUS comments in production. --&gt;</span>
 {% if site.production %}
-<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
-  <span class="kd">var</span> <span class="nx">disqus_shortname</span> <span class="o">=</span> <span class="s1">&#39;...&#39;</span><span class="p">;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+  <span class="kd">var</span> <span class="nx">disqus_shortname</span> <span class="o">=</span> <span class="s1">'...'</span><span class="p">;</span>
   <span class="p">...</span>
 <span class="nt">&lt;/script&gt;</span>
 {% endif %}
 
 <span class="c">&lt;!-- Developing a local only feature not ready for production. --&gt;</span>
 {% unless site.production %}
-<span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">&quot;promotion&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">"promotion"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;header&gt;</span>T-SHIRT FUNDRAISER!<span class="nt">&lt;/header&gt;</span>
   ...
 <span class="nt">&lt;/section&gt;</span>
 {% endunless %}
+
 </code></pre></div>
 <h2 id="use-the-asset-pipeline">Use The Asset Pipeline</h2>
 
@@ -317,46 +561,46 @@ find _site -name <span class="s2">&quot;*.html&quot;</span> -exec tidy -config <
 <p>But now Jekyll has the power of the asset pipeline too. Just install the <a href="https://github.com/ixti/jekyll-assets">jekyll-assets</a> gem. Here are a few tips to get you up and running faster.</p>
 
 <p>First, remember that Sprockets is built on top of a gem named Tilt which is a generic interface to multiple template engines. Installing tilt does not install template engines, so make sure to install the ones you want to work with by explicitly declaring them in your Gemfile.</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">&#39;jekyll-assets&#39;</span>
-<span class="n">gem</span> <span class="s1">&#39;coffee-script&#39;</span>
-<span class="n">gem</span> <span class="s1">&#39;compass&#39;</span>
-<span class="n">gem</span> <span class="s1">&#39;sass&#39;</span>
-<span class="n">gem</span> <span class="s1">&#39;uglifier&#39;</span>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">'jekyll-assets'</span>
+<span class="n">gem</span> <span class="s1">'coffee-script'</span>
+<span class="n">gem</span> <span class="s1">'compass'</span>
+<span class="n">gem</span> <span class="s1">'sass'</span>
+<span class="n">gem</span> <span class="s1">'uglifier'</span>
 </code></pre></div>
 <p>I found the default configuration for jekyll-assets very confusing. It mimicked a production environment Rails setting. All the files used the digest as part of the file name and compression was on by default. This made it really hard to debug. So to make jekyll-assets more like Rails defaults. Use these configurations for each jekyll environment.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In _config.yml</span>
-<span class="ss">assets</span><span class="p">:</span>
-  <span class="n">js_compressor</span><span class="p">:</span>
-  <span class="n">css_compressor</span><span class="p">:</span>
-  <span class="ss">cache</span><span class="p">:</span>
-  <span class="ss">cachebust</span><span class="p">:</span> <span class="n">none</span>
+<span class="ss">assets:
+  js_compressor:
+  css_compressor:
+  cache:
+  cachebust: </span><span class="n">none</span>
 
 <span class="c1"># In _config_production.yml</span>
-<span class="ss">assets</span><span class="p">:</span>
-  <span class="n">js_compressor</span><span class="p">:</span> <span class="n">uglifier</span>
-  <span class="n">css_compressor</span><span class="p">:</span> <span class="n">sass</span>
-  <span class="ss">cache</span><span class="p">:</span> <span class="n">_cache</span><span class="o">/</span><span class="n">assets</span>
-  <span class="ss">cachebust</span><span class="p">:</span> <span class="n">hard</span>
+<span class="ss">assets:
+  js_compressor: </span><span class="n">uglifier</span>
+  <span class="ss">css_compressor: </span><span class="n">sass</span>
+  <span class="ss">cache: </span><span class="n">_cache</span><span class="o">/</span><span class="n">assets</span>
+  <span class="ss">cachebust: </span><span class="n">hard</span>
 </code></pre></div>
 <h2 id="pow-it-up">Pow It Up</h2>
 
 <p>Sure the new jekyll release has a <code>serve</code> option to boot up a web server. But like good software developers, we should be too lazy for such things. If you develop on a Mac and use <a href="http://pow.cx">Pow</a> already for your Rails applications, why not just hook it up to serve your Jekyll site(s) too. Here are the steps.</p>
 
 <p>First, add both rack and rack-rewrite to your <code>Gemfile</code>.</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">&#39;rack&#39;</span>
-<span class="n">gem</span> <span class="s1">&#39;rack-rewrite&#39;</span>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">'rack'</span>
+<span class="n">gem</span> <span class="s1">'rack-rewrite'</span>
 </code></pre></div>
 <p>Now create a <code>config.ru</code> file at the root of your project with the following contents.</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">&#39;rack-rewrite&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;rack/rewrite&#39;</span>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">gem</span> <span class="s1">'rack-rewrite'</span>
+<span class="nb">require</span> <span class="s1">'rack/rewrite'</span>
 
 <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Rewrite</span> <span class="k">do</span>
-  <span class="n">r301</span> <span class="sr">%r{^([^\.]*[^\/])$}</span><span class="p">,</span> <span class="s1">&#39;$1/&#39;</span>
-  <span class="n">r301</span> <span class="sr">%r{^(.*\/)$}</span><span class="p">,</span> <span class="s1">&#39;$1index.html&#39;</span>
+  <span class="n">r301</span> <span class="sr">%r{^([^</span><span class="se">\.</span><span class="sr">]*[^</span><span class="se">\/</span><span class="sr">])$}</span><span class="p">,</span> <span class="s1">'$1/'</span>
+  <span class="n">r301</span> <span class="sr">%r{^(.*</span><span class="se">\/</span><span class="sr">)$}</span><span class="p">,</span> <span class="s1">'$1index.html'</span>
 <span class="k">end</span>
 </code></pre></div>
 <p>Lastly, sym link the <code>_site</code> directory of your Jekyll project to the <code>public</code>. Then symlink your Jekyll project directory to Pow as you normally would do any Rails or Rack app.</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">$ ln -s _site public
+<div class="highlight"><pre><code class=" language-" data-lang="">$ ln -s _site public
 $ cd ~/.pow
 $ ln -s /path/to/myjekyllapp
 </code></pre></div>
@@ -392,9 +636,9 @@ Also, make sure to exclude any directories that you do not want LiveReload to mo
 <div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="c">#!/usr/bin/env bash</span>
 <span class="nb">set</span> -e
 
-<span class="nb">export </span><span class="nv">LANG</span><span class="o">=</span><span class="s2">&quot;en_US.UTF-8&quot;</span>
-<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$HOME/.rbenv/shims:$HOME/.rbenv/bin:$HOME/.rbenv/plugins/ruby-build/bin:$PATH&quot;</span>
-<span class="nb">eval</span> <span class="s2">&quot;$(rbenv init -)&quot;</span>
+<span class="nb">export </span><span class="nv">LANG</span><span class="o">=</span><span class="s2">"en_US.UTF-8"</span>
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.rbenv/shims:</span><span class="nv">$HOME</span><span class="s2">/.rbenv/bin:</span><span class="nv">$HOME</span><span class="s2">/.rbenv/plugins/ruby-build/bin:</span><span class="nv">$PATH</span><span class="s2">"</span>
+<span class="nb">eval</span> <span class="s2">"</span><span class="k">$(</span>rbenv init -<span class="k">)</span><span class="s2">"</span>
 
 jekyll build --limit_posts 1
 </code></pre></div>
@@ -542,13 +786,13 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <li><a href="https://github.com/metaskills/holy_grail_harness/archive/master.zip">Download</a> the project.</li>
 <li>Now from the root of &quot;holy_grail_harness&quot; directory.</li>
 </ul>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="nb">puts</span> <span class="s2">&quot;This code will be highlighted&quot;</span>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="nb">puts</span> <span class="s2">"This code will be highlighted"</span>
 </code></pre></div>
 <p>Make sure to replace <code>my_app_name</code> above with the name of your new Rails application. The setup script has a few options, but the end result will be a new Rails application all ready to go. <strong>So why not a normal Rails application template?</strong> Although, Rails application templates provide a really nice feature set. It was much easier to bootstrap a new Rails application using this prototype method. The end result is a cleaner Gemfile and application setup that can be vetted and tested from within HolyGrailHarness itself.</p>
 
 <p>The script will rename your directory and prompt you to <code>cd</code> to that directory. Once you do that, run <code>rake test:all</code> to see that everything is working.</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">cd</span> ../my_app_name
-<span class="nv">$ </span>bundle <span class="nb">exec </span>rake <span class="nb">test</span>:all
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="gp">$ </span><span class="nb">cd</span> ../my_app_name
+<span class="gp">$ </span>bundle <span class="nb">exec </span>rake <span class="nb">test</span>:all
 </code></pre></div>
 <h1 id="rails-3">Rails 3</h1>
 
@@ -564,16 +808,16 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <h3 id="minitest::spec-all-the-way-across-the-sky!">MiniTest::Spec All The Way Across The Sky!</h3>
 
 <p>Don&#39;t wait for Rails 4 to use MiniTest::Spec! This application is using the <a href="https://github.com/metaskills/minitest-spec-rails">minitest-spec-rails</a> gem which forces <code>ActiveSupport::TestCase</code> to subclass <code>MiniTest::Spec</code>. This means that you can start using the MiniTest&#39;s Spec or Unit structure and assertions directly within the familiar Rails unit, functional, or integration directories. For full details, check out the <a href="https://github.com/metaskills/minitest-spec-rails">minitest-spec-rails</a> documentation or some of the <a href="https://github.com/metaskills/holy_grail_harness/blob/master/test/functional/application_controller_test.rb">test shims</a> within HolyGrailHarness. For example, a <code>test/unit/user_test.rb</code> might look like this.</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper&#39;</span>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">'test_helper'</span>
 
 <span class="k">class</span> <span class="nc">UserTest</span> <span class="o">&lt;</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">TestCase</span>
 
   <span class="n">let</span><span class="p">(</span><span class="ss">:bob</span><span class="p">)</span>   <span class="p">{</span> <span class="n">users</span><span class="p">(</span><span class="ss">:bob</span><span class="p">)</span> <span class="p">}</span>
   <span class="n">let</span><span class="p">(</span><span class="ss">:admin</span><span class="p">)</span> <span class="p">{</span> <span class="n">users</span><span class="p">(</span><span class="ss">:admin</span><span class="p">)</span> <span class="p">}</span>
 
-  <span class="n">it</span> <span class="s1">&#39;must respond true to #admin? for administrators only&#39;</span> <span class="k">do</span>
-    <span class="n">admin</span><span class="o">.</span><span class="n">must_be</span> <span class="ss">:admin?</span>
-    <span class="n">bob</span><span class="o">.</span><span class="n">wont_be</span>   <span class="ss">:admin?</span>
+  <span class="n">it</span> <span class="s1">'must respond true to #admin? for administrators only'</span> <span class="k">do</span>
+    <span class="n">admin</span><span class="p">.</span><span class="nf">must_be</span> <span class="ss">:admin?</span>
+    <span class="n">bob</span><span class="p">.</span><span class="nf">wont_be</span>   <span class="ss">:admin?</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
@@ -593,16 +837,16 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 </ul>
 
 <p>HolyGrailHarness comes with a integration test example in the <a href="https://github.com/metaskills/holy_grail_harness/blob/master/test/integration/application_test.rb">test/integration/application_test.rb</a> file. An integration test might look something like this.</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;test_helper_integration&#39;</span>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">'test_helper_integration'</span>
 
 <span class="k">class</span> <span class="nc">ApplicationTest</span> <span class="o">&lt;</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">IntegrationTest</span>
 
   <span class="n">before</span> <span class="p">{</span> <span class="n">visit</span> <span class="n">root_path</span> <span class="p">}</span>
 
-  <span class="n">let</span><span class="p">(</span><span class="ss">:h1</span><span class="p">)</span> <span class="p">{</span> <span class="n">find</span> <span class="s1">&#39;h1&#39;</span> <span class="p">}</span>
+  <span class="n">let</span><span class="p">(</span><span class="ss">:h1</span><span class="p">)</span> <span class="p">{</span> <span class="n">find</span> <span class="s1">'h1'</span> <span class="p">}</span>
 
-  <span class="n">it</span> <span class="s1">&#39;renders&#39;</span> <span class="k">do</span>
-    <span class="n">h1</span><span class="o">.</span><span class="n">must_be</span> <span class="ss">:present?</span>
+  <span class="n">it</span> <span class="s1">'renders'</span> <span class="k">do</span>
+    <span class="n">h1</span><span class="p">.</span><span class="nf">must_be</span> <span class="ss">:present?</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
@@ -627,14 +871,14 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 </ul>
 
 <p>Because your CI system should run all your tests, the HolyGrailHarness has added a Rake task to the test namespace that runs the default rails test task (units, functional, integrations) then your Konacha tests.</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>rake <span class="nb">test</span>:all     <span class="c"># Runs all Rails tests, then Konacha tests.</span>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="gp">$ </span>rake <span class="nb">test</span>:all     <span class="c"># Runs all Rails tests, then Konacha tests.</span>
 </code></pre></div>
 <h3 id="guard">Guard</h3>
 
 <p>TDD in style and run your tests when you hit save! Both <a href="https://github.com/guard/guard-minitest">guard-minitest</a> and <a href="https://github.com/alexgb/guard-konacha">guard-konacha</a> are bundled and ready to go. A basic <code>Guardfile</code> is already setup too. Unlike most, this one is split into two groups <code>:ruby</code> or <code>:js</code>. This lets you focus on either everything or a specific language for your tests.</p>
-<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="nv">$ </span>guard             <span class="c"># Monitor both Ruby and JavaScript tests.</span>
-<span class="nv">$ </span>guard -g ruby     <span class="c"># Monitor Ruby tests.</span>
-<span class="nv">$ </span>guard -g js       <span class="c"># Monitor JavaScript tests.</span>
+<div class="highlight"><pre><code class="bash language-bash" data-lang="bash"><span class="gp">$ </span>guard             <span class="c"># Monitor both Ruby and JavaScript tests.</span>
+<span class="gp">$ </span>guard -g ruby     <span class="c"># Monitor Ruby tests.</span>
+<span class="gp">$ </span>guard -g js       <span class="c"># Monitor JavaScript tests.</span>
 </code></pre></div>
 <p>The Guardfile assumes you are running OS X and wish to use the Ruby GNTP (Growl Notification Transport Protocol). If this is not the case, consult the Guard documentation on different <a href="https://github.com/guard/guard#system-notifications">system notification</a> alternatives.</p>
 
@@ -647,13 +891,13 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>Create factories in the <code>test/factories</code> directory. Note, factories are best when they make <code>valid garbage™</code>, so the HolyGrailHarness also requires the <a href="https://github.com/sevenwire/forgery">forgery</a> gem to help with that.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In test/factories/user_factory.rb</span>
 
-<span class="no">FactoryGirl</span><span class="o">.</span><span class="n">define</span> <span class="k">do</span>
+<span class="no">FactoryGirl</span><span class="p">.</span><span class="nf">define</span> <span class="k">do</span>
 
   <span class="n">factory</span> <span class="ss">:user</span> <span class="k">do</span>
-    <span class="n">email</span>      <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class="no">Email</span><span class="o">.</span><span class="n">address</span> <span class="p">}</span>
-    <span class="n">first_name</span> <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class="no">Name</span><span class="o">.</span><span class="n">first_name</span> <span class="p">}</span>
-    <span class="n">last_name</span>  <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class="no">Name</span><span class="o">.</span><span class="n">first_name</span> <span class="p">}</span>
-    <span class="n">password</span>   <span class="s1">&#39;test&#39;</span>
+    <span class="n">email</span>      <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class="no">Email</span><span class="p">.</span><span class="nf">address</span> <span class="p">}</span>
+    <span class="n">first_name</span> <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class="no">Name</span><span class="p">.</span><span class="nf">first_name</span> <span class="p">}</span>
+    <span class="n">last_name</span>  <span class="p">{</span> <span class="no">Forgery</span><span class="o">::</span><span class="no">Name</span><span class="p">.</span><span class="nf">first_name</span> <span class="p">}</span>
+    <span class="n">password</span>   <span class="s1">'test'</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
@@ -661,12 +905,12 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>When making seed data, be explicit with your attributes that may be forged in the factory, database seeds should be consistent and have meaningful attributes. In this example we are creating an admin user. Note too how we are using <code>NamedSeeds.identify</code> which mimics AcctiveRecord&#39;s fixture identity. This gives us a handle to the fixture within our tests. We also create the <code>@admin</code> instance variable because we might want to use that user later on in the fixture story.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In db/test/seeds.rb</span>
 
-<span class="nb">require</span> <span class="s1">&#39;factory_girl&#39;</span>
-<span class="no">FactoryGirl</span><span class="o">.</span><span class="n">find_definitions</span> <span class="k">rescue</span> <span class="kp">true</span>
+<span class="nb">require</span> <span class="s1">'factory_girl'</span>
+<span class="no">FactoryGirl</span><span class="p">.</span><span class="nf">find_definitions</span> <span class="k">rescue</span> <span class="kp">true</span>
 <span class="kp">include</span> <span class="no">FactoryGirl</span><span class="o">::</span><span class="no">Syntax</span><span class="o">::</span><span class="no">Methods</span>
 
-<span class="vi">@admin</span> <span class="o">=</span> <span class="n">create</span> <span class="ss">:user</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="no">NamedSeeds</span><span class="o">.</span><span class="n">identify</span><span class="p">(</span><span class="ss">:admin</span><span class="p">),</span>
-                       <span class="n">first_name</span><span class="p">:</span> <span class="s1">&#39;Admin&#39;</span><span class="p">,</span> <span class="n">last_name</span><span class="p">:</span> <span class="s1">&#39;User&#39;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s1">&#39;admin@test.com&#39;</span>
+<span class="vi">@admin</span> <span class="o">=</span> <span class="n">create</span> <span class="ss">:user</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="no">NamedSeeds</span><span class="p">.</span><span class="nf">identify</span><span class="p">(</span><span class="ss">:admin</span><span class="p">),</span>
+                       <span class="ss">first_name: </span><span class="s1">'Admin'</span><span class="p">,</span> <span class="ss">last_name: </span><span class="s1">'User'</span><span class="p">,</span> <span class="ss">email: </span><span class="s1">'admin@test.com'</span>
 </code></pre></div>
 <p>Lastly, in your <a href="https://github.com/metaskills/holy_grail_harness/blob/master/test/test_helper.rb"><code>test/test_helper.rb</code></a> file, declare that you have a named seed to the users model. This will allow your tests to act just like those with ActiveRecord fixtures and use the <code>users(:admin)</code> helper to get to that seeded fixture.</p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In test/test_helper.rb</span>
@@ -682,8 +926,8 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>The HolyGrailHarness wants you to use some type MV* structure for your JavaScript. The setup script supports <a href="http://spinejs.com">Spine.js</a> as an option, however you can decline and all traces of Spine.js will be removed. If so, the following features will still remain.</p>
 
 <p>A single JavaScript <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/holy_grail_harness/lib/namespaces.js.coffee">namespace</a> on the window object. This namespace creates a model, view, controller object structure that direly matches to the <a href="https://github.com/metaskills/holy_grail_harness/tree/master/app/assets/javascripts/holy_grail_harness"><code>app/assets/javascripts/#{my_app_name}/(model|view|controller)</code></a> directory structure within the Rails asset pipeline. This JavaScript namespace and matching directories will be changed to your new application name as part of the setup task. Here is an example of a User model whose corresponding file would be found in the <code>app/assets/javascripts/my_app_name/models/user.js.coffee</code> file.</p>
-<div class="highlight"><pre><code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="k">class</span> <span class="nx">@MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class="nx">User</span> <span class="k">extends</span> <span class="nx">View</span>
-  <span class="nx">@configure</span> <span class="s">&#39;User&#39;</span><span class="p">,</span> <span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="s">&#39;email&#39;</span>
+<div class="highlight"><pre><code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="k">class</span> <span class="vi">@</span><span class="na">MyAppName</span><span class="p">.</span><span class="na">App</span><span class="p">.</span><span class="na">Models</span><span class="p">.</span><span class="na">User</span> <span class="k">extends</span> <span class="nx">View</span>
+  <span class="vi">@</span><span class="na">configure</span> <span class="s">'User'</span><span class="p">,</span> <span class="s">'id'</span><span class="p">,</span> <span class="s">'email'</span>
 </code></pre></div>
 <p>The main <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/application.js"><code>application.js</code></a> file requires all vendor frameworks, then the <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/holy_grail_harness/index.js.coffee"><code>index.js.coffee</code></a> within your application name directory. Use this file to boot your JavaScript application and/or setup your root view controller.</p>
 
@@ -694,11 +938,11 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>If you choose to use Spine.js as your JavaScript MVC structure, the setup script will create a git submodule to the Spine repository to the <code>vendor/assets/javascripts/spine</code> directory. This allows your project to use the the source CoffeeScript files, which makes for a wonderful <a href="http://metaskills.net/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">learning experience</a> to both Spine.js and idomatic CoffeeScript.</p>
 
 <p>By default the <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/holy_grail_harness/index.js.coffee"><code>index.js.coffee</code></a> will require all Spine components. This includes manager (stacks), ajax, route, and relation. Remove anything that you do not need. This file also defines the root view controller along with a <code>MyAppName.App.Index.init()</code> class level initialization function. This is called in the main <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/views/layouts/application.html.erb"><code>application.html.erb</code></a> layout file for you too. Likewise, the application init is done in the Mocha before filters mentioned above in both the <a href="https://github.com/metaskills/holy_grail_harness/blob/master/spec/javascripts/spec_helper.js.coffee"><code>spec_helper.js.coffee</code></a> and <a href="https://github.com/metaskills/holy_grail_harness/blob/master/spec/javascripts/spec_helper/fixtures.js.coffee"><code>fixtures.js.coffee</code></a> files. If you examine these files closely, you will see how they make use of Mocha&#39;s <code>done()</code> callback so that you can cleanly abstract AJAX mocks and anything else related to your JavaScript application&#39;s boot process. Here is an example of how you might setup your <code>initApplication()</code>.</p>
-<div class="highlight"><pre><code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="vi">@initApplication = </span><span class="nf">(callback) =&gt;</span>
-  <span class="nv">bob = </span><span class="nx">MyAppName</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Seeds</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">bob</span>
-  <span class="nx">$</span><span class="p">.</span><span class="nx">mockjax</span> <span class="nv">url: </span><span class="s">&quot;/users/</span><span class="si">#{</span><span class="nx">bob</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nv">responseText: </span><span class="nx">MyAppName</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Response</span><span class="p">.</span><span class="nx">bobInitial</span><span class="p">.</span><span class="nx">responseText</span>
-  <span class="nx">MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">fetch</span> <span class="nv">id: </span><span class="nx">bob</span><span class="p">.</span><span class="nx">id</span>
-  <span class="nx">MyAppName</span><span class="p">.</span><span class="nx">App</span><span class="p">.</span><span class="nx">Models</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">one</span> <span class="s">&#39;refresh&#39;</span><span class="p">,</span> <span class="nx">callback</span>
+<div class="highlight"><pre><code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="vi">@</span><span class="na">initApplication</span> <span class="o">=</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="o">=&gt;</span>
+  <span class="nx">bob</span> <span class="o">=</span> <span class="nx">MyAppName</span><span class="p">.</span><span class="na">Test</span><span class="p">.</span><span class="na">Seeds</span><span class="p">.</span><span class="na">users</span><span class="p">.</span><span class="na">bob</span>
+  <span class="nx">$</span><span class="p">.</span><span class="na">mockjax</span> <span class="na">url</span><span class="o">:</span> <span class="s">"/users/</span><span class="si">#{</span><span class="nx">bob</span><span class="p">.</span><span class="na">id</span><span class="si">}</span><span class="s">"</span><span class="p">,</span> <span class="na">responseText</span><span class="o">:</span> <span class="nx">MyAppName</span><span class="p">.</span><span class="na">Test</span><span class="p">.</span><span class="na">Response</span><span class="p">.</span><span class="na">bobInitial</span><span class="p">.</span><span class="na">responseText</span>
+  <span class="nx">MyAppName</span><span class="p">.</span><span class="na">App</span><span class="p">.</span><span class="na">Models</span><span class="p">.</span><span class="na">User</span><span class="p">.</span><span class="na">fetch</span> <span class="na">id</span><span class="o">:</span> <span class="nx">bob</span><span class="p">.</span><span class="na">id</span>
+  <span class="nx">MyAppName</span><span class="p">.</span><span class="na">App</span><span class="p">.</span><span class="na">Models</span><span class="p">.</span><span class="na">User</span><span class="p">.</span><span class="na">one</span> <span class="s">'refresh'</span><span class="p">,</span> <span class="nx">callback</span>
 </code></pre></div>
 <p>No JavaScript project should be without a local notification system to help keep disparate components up to date. Thankfully, Spine&#39;s event module makes a local PubSub system a breeze. The HolyGrailHarness has a <a href="https://github.com/metaskills/holy_grail_harness/blob/master/app/assets/javascripts/holy_grail_harness/lib/notifications.js.coffee"><code>notifications.js.coffee</code></a> that exposes a class level <code>bind()</code> and <code>trigger()</code> to any event string/namespace you want. To make more simple, we recommend creating class level functions that expose the event name as the function name and pass the args to the <code>handle()</code> function. We have done this for the <code>MyAppName.Notifications.appReady()</code> to demonstrate. Calling this function will trigger the <code>app.ready</code> event and passing a function to this function will bind that function to the same event name.</p>
 
@@ -707,7 +951,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p><a href="http://sass-lang.com">Sass</a> is the only way to write CSS for today&#39;s modern web applications. <a href="http://compass-style.org">Compass</a> is the CSS framework that no Sass user should go without. Together they provide a foundation for writing beautiful CSS using pre-built time saving functions. The HolyGrailHarness includes both the <a href="https://github.com/rails/sass-rails">sass-rails</a> and <a href="https://github.com/Compass/compass-rails">compass-rails</a> gems.</p>
 
 <p>To get you started on the right path, we have also created a basic structure within the <code>app/assets/stylesheets</code> asset pipeline directory to help you organize your Sass files. Here is the directory structure below.</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">├── application.css
+<div class="highlight"><pre><code class=" language-" data-lang="">├── application.css
 ├── application
 │   ├── _layout.scss
 │   ├── index.scss
@@ -724,10 +968,10 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <h3 id="the-application.css-file.">The application.css file.</h3>
 
 <p>Never write CSS in <code>application.css</code>. Say what? I know right, but trust me. Just consider this file a top level bundle dependency that only requires other top level bundle assets. Here is the contents of that file. Notice how it requires a bundle called twitter and an index. One is for twitter bootstrap, see section below, and the other is the index to your own Sass framework.</p>
-<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="c">/*</span>
-<span class="c"> *= require application/twitter</span>
-<span class="c"> *= require application/index</span>
-<span class="c">*/</span>
+<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="c">/*
+ *= require application/twitter
+ *= require application/index
+*/</span>
 </code></pre></div>
 <h3 id="the-shared-directory.">The shared directory.</h3>
 
@@ -736,24 +980,24 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>Pay special attention to the <code>_placeholders.scss</code> file. If you do not know about Sass 3.2&#39;s placeholder selectors (silent classes) and how they make presentational classes efficiently extended by semantic ones, then I highly suggest you read Dale Sande&#39;s presentation titled <a href="https://speakerdeck.com/anotheruiguy/sass-32-silent-classes">Sass 3.2 Silent Classes</a> on Speaker Deck.</p>
 
 <p>Below is the contents of the <code>base.scss</code> file, take note of the order. See too how we import the entire Compass framework. This means that all of your Sass code in any of the shared files can take full advantage of both Bootstrap and Compass&#39; variables and mixins. Epic win!</p>
-<div class="highlight"><pre><code class="sass language-sass" data-lang="sass"><span class="c1">// Think of this file as your own compass. Importing the base, never generates CSS.</span>
-
-<span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;bootstrap/mixins&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;compass&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;compass/layout&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;compass/css3/user-interface&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;shared/fonts&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;shared/mixins&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;shared/animations&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;shared/placeholders&quot;;</span>
+<div class="highlight"><pre><code class="sass language-sass" data-lang="sass"><span class="c1">// Think of this file as your own compass. Importing the base, never generates CSS.
+</span>
+<span class="k">@import</span> <span class="s">"shared/variables";</span>
+<span class="k">@import</span> <span class="s">"bootstrap/mixins";</span>
+<span class="k">@import</span> <span class="s">"compass";</span>
+<span class="k">@import</span> <span class="s">"compass/layout";</span>
+<span class="k">@import</span> <span class="s">"compass/css3/user-interface";</span>
+<span class="k">@import</span> <span class="s">"shared/fonts";</span>
+<span class="k">@import</span> <span class="s">"shared/mixins";</span>
+<span class="k">@import</span> <span class="s">"shared/animations";</span>
+<span class="k">@import</span> <span class="s">"shared/placeholders";</span>
 </code></pre></div>
 <h3 id="the-application-directory.">The application directory.</h3>
 
 <p>Organize this as you see fit. We have started you off by creating a <code>_layout.scss</code> file for your general layout/structure styles. There is also a <code>components</code> directory which all sub files are imported via a glob. The idea is that components are not dependent upon another. Files that might go in here are things like datepicker, navigation, and general files named after components or widgets. Below is what the <code>application/index.scss</code> looks like.</p>
-<div class="highlight"><pre><code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">&quot;shared/base&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;./layout&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;components/*&quot;;</span>
+<div class="highlight"><pre><code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">"shared/base";</span>
+<span class="k">@import</span> <span class="s">"./layout";</span>
+<span class="k">@import</span> <span class="s">"components/*";</span>
 </code></pre></div>
 <p>If you are more advanced with your CSS and like the idea of style guides, take a looks a the <a href="https://github.com/Anotheruiguy/toadstool">Toadstool</a> style guide framework.</p>
 
@@ -762,12 +1006,12 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> is awesome, but <a href="http://metaskills.net/2012/02/27/too-less-should-you-be-using-sass/">LESS is not</a>. That is why the HolyGrailHarness uses the <a href="https://github.com/thomas-mcdonald/bootstrap-sass">bootstrap-sass</a> gem that converts all the Bootstrap LESS files to Sass. Making them ready to import via the Rails asset pipeline.</p>
 
 <p>As shown above in the Sass section, we require the <code>application/twitter.scss</code> bundle asset from the top level <code>application.css</code> bundle file. This twitter bundle file, contents below, take advantage of your shared variables before importing bootstrap from the gem. In this way you can define variables that tweak bootstrap. A good example would be button colors, column widths, etc. Later on in the file you can extend bootstrap styles to your liking. For instance, add more padding to buttons.</p>
-<div class="highlight"><pre><code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">&quot;shared/variables&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;bootstrap&quot;;</span>
-<span class="k">@import</span> <span class="s">&quot;font-awesome&quot;;</span>
+<div class="highlight"><pre><code class="sass language-sass" data-lang="sass"><span class="k">@import</span> <span class="s">"shared/variables";</span>
+<span class="k">@import</span> <span class="s">"bootstrap";</span>
+<span class="k">@import</span> <span class="s">"font-awesome";</span>
 
-<span class="c1">// Tweak or redefine Twitter classes below.</span>
-</code></pre></div>
+<span class="c1">// Tweak or redefine Twitter classes below.
+</span></code></pre></div>
 <h3 id="font-awesome">Font Awesome</h3>
 
 <p>The glyph icons included in Twitter Bootstrap are horrible for hi-resolution &quot;retina&quot; displays typically found on mobile devices. Thankfully the <a href="http://fortawesome.github.com/Font-Awesome/">Font Awesome</a> project provides a drop in replacement that instead uses icon fonts vs raster images.</p>
@@ -827,54 +1071,54 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   These file snippets below assume you have an <code>integration.js</code> manifest which includes both a vendored Sinon.JS then a sub file which actually initializes Sinon.JS for our integration test run. In this case below, we are first processing a CoffeeScript file with ERB and then initializing Sinon.JS' fake timers to a default time. In my case, this is 8:30am central standard time. Now we can assure that Capybara's browser engine will be frozen at that time and ready to move forward for each test.
 </p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// File app/assets/javascripts/integration.js</span>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// File app/assets/javascripts/integration.js
+</span>
+<span class="c1">//= require sinon-1.4.2
+//= require integration/sinon
+//= require application
+</span></code></pre></div><div class="highlight"><pre><code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb
+</span>
+<span class="o">&lt;%</span> <span class="nx">central</span> <span class="o">=</span> <span class="na">ActiveSupport</span><span class="o">::</span><span class="nx">TimeZone</span><span class="p">[</span><span class="s">'Central Time (US &amp; Canada)'</span><span class="p">]</span> <span class="o">%&gt;</span>
+<span class="o">&lt;%</span> <span class="nx">today</span> <span class="o">=</span> <span class="nx">central</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="s">'8:30am'</span><span class="p">).</span><span class="na">to_i</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">%&gt;</span>
 
-<span class="c1">//= require sinon-1.4.2</span>
-<span class="c1">//= require integration/sinon</span>
-<span class="c1">//= require application</span>
-</code></pre></div><div class="highlight"><pre><code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="c1"># File app/assets/javascripts/integration/sinon.js.coffee.erb</span>
-
-<span class="o">&lt;%</span> <span class="nv">central = </span><span class="nx">ActiveSupport</span><span class="o">::</span><span class="nx">TimeZone</span><span class="p">[</span><span class="s">&#39;Central Time (US &amp; Canada)&#39;</span><span class="p">]</span> <span class="o">%&gt;</span>
-<span class="o">&lt;%</span> <span class="nv">today = </span><span class="nx">central</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="s">&#39;8:30am&#39;</span><span class="p">).</span><span class="nx">to_i</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">%&gt;</span>
-
-<span class="nb">window</span><span class="p">.</span><span class="nv">clock = </span><span class="nx">sinon</span><span class="p">.</span><span class="nx">useFakeTimers</span> <span class="o">&lt;%=</span> <span class="nx">today</span> <span class="o">%&gt;</span>
+<span class="nb">window</span><span class="p">.</span><span class="na">clock</span> <span class="o">=</span> <span class="nx">sinon</span><span class="p">.</span><span class="na">useFakeTimers</span> <span class="o">&lt;%=</span> <span class="nx">today</span> <span class="o">%&gt;</span>
 </code></pre></div>
 <p>
   Now, the Ruby code. Here is slimmed down version of my base integration test case which <a href="/2011/03/26/using-minitest-spec-with-rails/">uses MiniTest::Spec</a> to drive Capybara tests. The first thing I do before any integration test is use Timecop to travel to 8:30am. This means that both Ruby and JavaScript are synced to the exact millisecond in time. Any test that needs to move time forward must call the <code>#advance_time</code> test helper. This method takes a hash of options which is passed directly to the <code>#advance</code> method I previously talked about. It measures the milliseconds between now and the advancement and sends that directly to Sinon.JS' fake timers using Capybara's <code>#execute_script</code> method. So calling <code>advance_time(seconds:20)</code> in Ruby now moves time forward in both Ruby and JavaScript. Epic win!!!
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># File test/test_helper_integration.rb</span>
 
-<span class="nb">require</span> <span class="s2">&quot;test_helper&quot;</span>
-<span class="nb">require</span> <span class="s2">&quot;capybara/rails&quot;</span>
+<span class="nb">require</span> <span class="s2">"test_helper"</span>
+<span class="nb">require</span> <span class="s2">"capybara/rails"</span>
 
 <span class="k">module</span> <span class="nn">ActionDispatch</span>
   <span class="k">class</span> <span class="nc">IntegrationTest</span>
 
   <span class="kp">include</span> <span class="no">Capybara</span><span class="o">::</span><span class="no">DSL</span>
 
-  <span class="n">before</span> <span class="p">{</span> <span class="n">travel</span> <span class="s1">&#39;8:30am&#39;</span> <span class="p">}</span>
-  <span class="n">after</span>  <span class="p">{</span> <span class="no">Capybara</span><span class="o">.</span><span class="n">reset_sessions!</span> <span class="p">}</span>
+  <span class="n">before</span> <span class="p">{</span> <span class="n">travel</span> <span class="s1">'8:30am'</span> <span class="p">}</span>
+  <span class="n">after</span>  <span class="p">{</span> <span class="no">Capybara</span><span class="p">.</span><span class="nf">reset_sessions!</span> <span class="p">}</span>
 
   <span class="kp">private</span>
 
   <span class="k">def</span> <span class="nf">travel</span><span class="p">(</span><span class="n">parseable_time</span><span class="p">)</span>
-    <span class="no">Timecop</span><span class="o">.</span><span class="n">return</span>
-    <span class="no">Timecop</span><span class="o">.</span><span class="n">travel</span> <span class="n">parse_time</span><span class="p">(</span><span class="n">parseable_time</span><span class="p">)</span>
+    <span class="no">Timecop</span><span class="p">.</span><span class="nf">return</span>
+    <span class="no">Timecop</span><span class="p">.</span><span class="nf">travel</span> <span class="n">parse_time</span><span class="p">(</span><span class="n">parseable_time</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">parse_time</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span> <span class="p">?</span> <span class="no">Chronic</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="p">:</span> <span class="n">time</span>
+    <span class="n">time</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">String</span><span class="p">)</span> <span class="p">?</span> <span class="no">Chronic</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="p">:</span> <span class="n">time</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">advance_time</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
-    <span class="n">now_ms</span> <span class="o">=</span> <span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">to_i</span> <span class="o">*</span> <span class="mi">1000</span>
-    <span class="no">Timecop</span><span class="o">.</span><span class="n">travel</span> <span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
-    <span class="n">traveled_ms</span> <span class="o">=</span> <span class="p">(</span><span class="no">Time</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">to_i</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">-</span> <span class="n">now_ms</span>
+    <span class="n">now_ms</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">current</span><span class="p">.</span><span class="nf">to_i</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="no">Timecop</span><span class="p">.</span><span class="nf">travel</span> <span class="no">Time</span><span class="p">.</span><span class="nf">current</span><span class="p">.</span><span class="nf">advance</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">traveled_ms</span> <span class="o">=</span> <span class="p">(</span><span class="no">Time</span><span class="p">.</span><span class="nf">current</span><span class="p">.</span><span class="nf">to_i</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">-</span> <span class="n">now_ms</span>
     <span class="n">advance_sinon</span> <span class="n">traveled_ms</span>
   <span class="k">end</span>
 
   <span class="k">def</span> <span class="nf">advance_sinon</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>
-    <span class="n">page</span><span class="o">.</span><span class="n">execute_script</span> <span class="s2">&quot;if (window.clock) { window.clock.tick(</span><span class="si">#{</span><span class="n">ms</span><span class="si">}</span><span class="s2">); }&quot;</span>
+    <span class="n">page</span><span class="p">.</span><span class="nf">execute_script</span> <span class="s2">"if (window.clock) { window.clock.tick(</span><span class="si">#{</span><span class="n">ms</span><span class="si">}</span><span class="s2">); }"</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
@@ -913,10 +1157,10 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 
     <span class="k">def</span> <span class="nf">as_json</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
       <span class="p">{</span> <span class="ss">:name</span>                <span class="o">=&gt;</span> <span class="nb">name</span><span class="p">,</span>
-        <span class="ss">:identifier</span>          <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span>
-        <span class="ss">:friendly_identifier</span> <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class="n">friendly_identifier</span><span class="p">,</span>
+        <span class="ss">:identifier</span>          <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="p">.</span><span class="nf">identifier</span><span class="p">,</span>
+        <span class="ss">:friendly_identifier</span> <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="p">.</span><span class="nf">friendly_identifier</span><span class="p">,</span>
         <span class="ss">:utc_offset</span>          <span class="o">=&gt;</span> <span class="n">utc_offset</span><span class="p">,</span>
-        <span class="ss">:utc_total_offset</span>    <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class="n">current_period</span><span class="o">.</span><span class="n">utc_total_offset</span> <span class="p">}</span>
+        <span class="ss">:utc_total_offset</span>    <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="p">.</span><span class="nf">current_period</span><span class="p">.</span><span class="nf">utc_total_offset</span> <span class="p">}</span>
     <span class="k">end</span>
 
   <span class="k">end</span>
@@ -925,34 +1169,34 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   Now assuming you have serialized a models time zone attribute using the full <code>ActiveSupport::TimeZone</code> object, we can easily use this information client side via a quick extension to Moment.js' prototype. Here is a <code>moment.js.coffee</code> file I have required in my Rails applications.
 </p>
-<div class="highlight"><pre><code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="nv">moment.fn.forTimeZone = </span><span class="nf">(timeZone) -&gt;</span>
-  <span class="nv">currentOffset = </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">zone</span><span class="p">()</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
-  <span class="nv">adjustedOfffset = </span><span class="k">if</span> <span class="nx">currentOffset</span> <span class="o">&gt;</span> <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span>
-                      <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span> <span class="o">-</span> <span class="nx">currentOffset</span>
+<div class="highlight"><pre><code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="nx">moment</span><span class="p">.</span><span class="na">fn</span><span class="p">.</span><span class="na">forTimeZone</span> <span class="o">=</span> <span class="p">(</span><span class="nx">timeZone</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nx">currentOffset</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">zone</span><span class="p">()</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="nx">adjustedOfffset</span> <span class="o">=</span> <span class="k">if</span> <span class="nx">currentOffset</span> <span class="o">&gt;</span> <span class="nx">timeZone</span><span class="p">.</span><span class="na">utc_total_offset</span>
+                      <span class="nx">timeZone</span><span class="p">.</span><span class="na">utc_total_offset</span> <span class="o">-</span> <span class="nx">currentOffset</span>
                     <span class="k">else</span>
-                      <span class="nx">currentOffset</span> <span class="o">-</span> <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">clone</span><span class="p">().</span><span class="nx">add</span> <span class="s">&#39;seconds&#39;</span><span class="p">,</span> <span class="nx">adjustedOfffset</span>
+                      <span class="nx">currentOffset</span> <span class="o">-</span> <span class="nx">timeZone</span><span class="p">.</span><span class="na">utc_total_offset</span>
+  <span class="k">this</span><span class="p">.</span><span class="na">clone</span><span class="p">().</span><span class="na">add</span> <span class="s">'seconds'</span><span class="p">,</span> <span class="nx">adjustedOfffset</span>
 </code></pre></div>
 <p>
   So we let Ruby do all the hard work of telling us what time zones are observing DST without all the bloat to our JavaScript for parsing zone identifiers. Some sample output.
 </p>
 <div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">eastern</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">friendly_identifier</span><span class="o">:</span> <span class="s2">&quot;America - New York&quot;</span><span class="p">,</span>
-  <span class="nx">identifier</span><span class="o">:</span> <span class="s2">&quot;America/New_York&quot;</span><span class="p">,</span>
-  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Eastern Time (US &amp; Canada)&quot;</span><span class="p">,</span>
-  <span class="nx">utc_offset</span><span class="o">:</span> <span class="o">-</span><span class="mi">18000</span><span class="p">,</span>
-  <span class="nx">utc_total_offset</span><span class="o">:</span> <span class="o">-</span><span class="mi">14400</span>
+  <span class="na">friendly_identifier</span><span class="p">:</span> <span class="s2">"America - New York"</span><span class="p">,</span>
+  <span class="na">identifier</span><span class="p">:</span> <span class="s2">"America/New_York"</span><span class="p">,</span>
+  <span class="na">name</span><span class="p">:</span> <span class="s2">"Eastern Time (US &amp; Canada)"</span><span class="p">,</span>
+  <span class="na">utc_offset</span><span class="p">:</span> <span class="o">-</span><span class="mi">18000</span><span class="p">,</span>
+  <span class="na">utc_total_offset</span><span class="p">:</span> <span class="o">-</span><span class="mi">14400</span>
 <span class="p">}</span>
 
-<span class="nx">noonPacific</span> <span class="o">=</span> <span class="mi">1344279600000</span> <span class="c1">// &quot;2012-08-06T12:00:00-07:00&quot;</span>
-<span class="nx">format</span> <span class="o">=</span> <span class="s1">&#39;MMMM Do, YYYY \\at h:mma&#39;</span>
+<span class="nx">noonPacific</span> <span class="o">=</span> <span class="mi">1344279600000</span> <span class="c1">// "2012-08-06T12:00:00-07:00"
+</span><span class="nx">format</span> <span class="o">=</span> <span class="s1">'MMMM Do, YYYY \\at h:mma'</span>
 
 <span class="nx">moment</span><span class="p">(</span><span class="nx">noonPacific</span><span class="p">).</span><span class="nx">format</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span>
-<span class="c1">// &quot;August 6th, 2012 at 12:00pm&quot;</span>
-
+<span class="c1">// "August 6th, 2012 at 12:00pm"
+</span>
 <span class="nx">moment</span><span class="p">(</span><span class="nx">noonPacific</span><span class="p">).</span><span class="nx">forTimeZone</span><span class="p">(</span><span class="nx">eastern</span><span class="p">).</span><span class="nx">format</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span>
-<span class="c1">// &quot;August 6th, 2012 at 3:00pm&quot;</span>
-</code></pre></div>
+<span class="c1">// "August 6th, 2012 at 3:00pm"
+</span></code></pre></div>
 <h2>Resources</h2>
 
 <ul>
@@ -1008,16 +1252,16 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 
   <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="o">=&gt;</span>
-      <span class="vi">@h1</span> <span class="s2">&quot;Space Ships&quot;</span>
+      <span class="vi">@h1</span> <span class="s2">"Space Ships"</span>
       <span class="vi">@ol</span> <span class="o">=&gt;</span>
-        <span class="vi">@li</span> <span class="s2">&quot;Apollo&quot;</span>
-        <span class="vi">@li</span> <span class="s2">&quot;Soyuz&quot;</span>
-        <span class="vi">@li</span> <span class="s2">&quot;Space Shuttle&quot;</span>
+        <span class="vi">@li</span> <span class="s2">"Apollo"</span>
+        <span class="vi">@li</span> <span class="s2">"Soyuz"</span>
+        <span class="vi">@li</span> <span class="s2">"Space Shuttle"</span>
 </code></pre></div><div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
-<span class="n">view</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ol&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;li&gt;Star Destroyer&lt;/li&gt;&#39;</span><span class="p">)</span>
+<span class="n">view</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="s1">'ol'</span><span class="p">).</span><span class="nf">append</span><span class="p">(</span><span class="s1">'&lt;li&gt;Star Destroyer&lt;/li&gt;'</span><span class="p">)</span>
 
-<span class="n">view</span><span class="o">.</span><span class="n">click</span> <span class="s1">&#39;li&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-  <span class="n">alert</span> <span class="s2">&quot;You clicked on </span><span class="si">#{</span><span class="err">$</span><span class="p">(</span><span class="n">this</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="n">view</span><span class="p">.</span><span class="nf">click</span> <span class="s1">'li'</span><span class="p">,</span> <span class="o">-&gt;</span>
+  <span class="n">alert</span> <span class="s2">"You clicked on </span><span class="si">#{</span><span class="err">$</span><span class="p">(</span><span class="n">this</span><span class="p">).</span><span class="nf">text</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
 </code></pre></div>
 <p>
   This simple example shows how your SpacePen view class defines its markup in a <code>@content</code> class function. This function yields a builder syntax where you can easily add attributes and values. My advice is to do basic structure only in your <code>@content</code> function and rarely take advantage of the fact that it also takes the same parameters argument passed to your constructor. I will explain more on that advice later. But first, I did say that views should expose interfaces to controllers and are first class code citizens that champion their own concerns right? Let's look at a common pattern, views building new nodes within itself.
@@ -1026,13 +1270,13 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 
   <span class="vi">@content</span><span class="p">:</span> <span class="o">-&gt;</span>
     <span class="vi">@div</span> <span class="o">=&gt;</span>
-      <span class="vi">@h1</span> <span class="s2">&quot;SpacePort&quot;</span>
-      <span class="vi">@ol</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;shipList&#39;</span>
+      <span class="vi">@h1</span> <span class="s2">"SpacePort"</span>
+      <span class="vi">@ol</span> <span class="ss">outlet: </span><span class="s1">'shipList'</span>
 
-  <span class="ss">addShip</span><span class="p">:</span> <span class="p">(</span><span class="n">ship</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@shipList</span><span class="o">.</span><span class="n">append</span> <span class="s2">&quot;&lt;li&gt;</span><span class="si">#{</span><span class="n">ship</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/li&gt;&quot;</span>
+  <span class="ss">addShip: </span><span class="p">(</span><span class="n">ship</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@shipList</span><span class="p">.</span><span class="nf">append</span> <span class="s2">"&lt;li&gt;</span><span class="si">#{</span><span class="n">ship</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">&lt;/li&gt;"</span>
 </code></pre></div><div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">SpacePort</span>
-<span class="n">view</span><span class="o">.</span><span class="n">addShip</span> <span class="s2">&quot;Enterprise&quot;</span>
+<span class="n">view</span><span class="p">.</span><span class="nf">addShip</span> <span class="s2">"Enterprise"</span>
 </code></pre></div>
 <p>
   The example has been changed slightly so that the view now exposes a public function called <code>addShip()</code> which takes an object to add to the view. It can easily implement this because I have declared the ordered list to be an outlet called <code>shipList</code> which will automatically be assigned as a property on each view instance. Calling append on that node is possible because like the view object itself, any outlet is a jQuery object as well.
@@ -1059,21 +1303,21 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In app/assets/javascripts/app/controller/day.js.coffee</span>
 
-<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class="n">Controller</span>
+<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="no">Controllers</span><span class="o">.</span><span class="no">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class="no">Controller</span>
 
-  <span class="ss">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span>
-    <span class="k">super</span> <span class="ss">el</span><span class="p">:</span> <span class="vi">@view</span>
+  <span class="ss">constructor: </span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class="o">.</span><span class="no">Views</span><span class="o">.</span><span class="no">Day</span>
+    <span class="k">super</span> <span class="ss">el: </span><span class="vi">@view</span>
 </code></pre></div><div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In app/assets/javascripts/app/views/day.js.coffee</span>
 
-<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
+<span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="no">Views</span><span class="o">.</span><span class="no">Day</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@div</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="o">=&gt;</span>
+    <span class="vi">@div</span> <span class="k">class</span><span class="p">:</span> <span class="s1">'day'</span><span class="p">,</span> <span class="o">=&gt;</span>
       <span class="c1"># ...</span>
 
   <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">moment</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
+    <span class="vi">@attr</span> <span class="s1">'data-date'</span><span class="p">,</span> <span class="n">params</span><span class="p">.</span><span class="nf">moment</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="s1">'YYYY-MM-DD'</span><span class="p">)</span>
 </code></pre></div>
 <p>
   So rule number one, always create an instance of a SpacePen view and assign that to the <code>@view</code> property of every Spine.JS controller. That <code>@view</code> will be assigned to the controller's <code>@el</code> property when it supers up.
@@ -1088,35 +1332,35 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <p>
   Here is the same controller and view example with a bit more detail. First up, the view. This day view CoffeeScript file has a public <code>App.Views.Day</code> view and a private <code>EventView</code> that represents a subview and would be bound to a model instance. This public day view exposes a few public functions for a controller to hook into. The <code>addEvent</code> function will actually build a new SpacePen views for the passed model and append it as a subview. Notice too the <code>findEvent</code> helper function which can find the DOM element for a model object and then use the <code>view()</code> function provided by SpacePen to get to the SpacePen instance for this node.
 </p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">View</span>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="no">Views</span><span class="o">.</span><span class="no">Day</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@div</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="o">=&gt;</span>
+    <span class="vi">@div</span> <span class="k">class</span><span class="p">:</span> <span class="s1">'day'</span><span class="p">,</span> <span class="o">=&gt;</span>
       <span class="c1"># ...</span>
-      <span class="vi">@div</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;events&#39;</span>
+      <span class="vi">@div</span> <span class="ss">outlet: </span><span class="s1">'events'</span><span class="p">,</span> <span class="k">class</span><span class="p">:</span> <span class="s1">'events'</span>
       <span class="c1"># ...</span>
 
   <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">moment</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-    <span class="vi">@attr</span> <span class="s1">&#39;data-date&#39;</span><span class="p">,</span> <span class="vi">@date</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;YYYY-MM-DD&#39;</span><span class="p">)</span>
+    <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="p">.</span><span class="nf">moment</span><span class="p">.</span><span class="nf">clone</span><span class="p">()</span>
+    <span class="vi">@attr</span> <span class="s1">'data-date'</span><span class="p">,</span> <span class="vi">@date</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="s1">'YYYY-MM-DD'</span><span class="p">)</span>
 
-  <span class="ss">addEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="ss">addEvent: </span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
     <span class="n">view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">EventView</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-    <span class="vi">@events</span><span class="o">.</span><span class="n">append</span>
+    <span class="vi">@events</span><span class="p">.</span><span class="nf">append</span>
 
-  <span class="ss">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+  <span class="ss">updateEvent: </span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?.</span><span class="nf">update</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
-  <span class="ss">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+  <span class="ss">removeEvent: </span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@findEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)?.</span><span class="nf">remove</span><span class="p">()</span>
 
   <span class="c1"># Private</span>
 
-  <span class="ss">findEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="n">selector</span> <span class="o">=</span> <span class="s2">&quot;.event[data-event-id=&#39;</span><span class="si">#{</span><span class="n">event</span><span class="o">.</span><span class="n">startsAtFormat</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;]&quot;</span>
-    <span class="vi">@events</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">selector</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+  <span class="ss">findEvent: </span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="n">selector</span> <span class="o">=</span> <span class="s2">".event[data-event-id='</span><span class="si">#{</span><span class="n">event</span><span class="p">.</span><span class="nf">startsAtFormat</span><span class="p">()</span><span class="si">}</span><span class="s2">']"</span>
+    <span class="vi">@events</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">selector</span><span class="p">).</span><span class="nf">view</span><span class="p">()</span>
 
-  <span class="ss">afterAttach</span><span class="p">:</span> <span class="o">-&gt;</span>
+  <span class="ss">afterAttach: </span><span class="o">-&gt;</span>
     <span class="vi">@startSpinner</span><span class="p">()</span>
     <span class="vi">@loadEvents</span><span class="p">()</span>
 
@@ -1125,49 +1369,49 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <span class="k">class</span> <span class="nc">EventView</span> <span class="n">extends</span> <span class="no">View</span>
 
   <span class="vi">@content</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@div</span> <span class="ss">class</span><span class="p">:</span> <span class="s1">&#39;.event&#39;</span><span class="p">,</span> <span class="s1">&#39;data-event-id&#39;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">id</span> <span class="o">=&gt;</span>
-      <span class="vi">@div</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;description&#39;</span>
-      <span class="vi">@div</span> <span class="ss">outlet</span><span class="p">:</span> <span class="s1">&#39;duration&#39;</span>
+    <span class="vi">@div</span> <span class="k">class</span><span class="p">:</span> <span class="s1">'.event'</span><span class="p">,</span> <span class="s1">'data-event-id'</span><span class="p">:</span> <span class="n">event</span><span class="p">.</span><span class="nf">id</span> <span class="o">=&gt;</span>
+      <span class="vi">@div</span> <span class="ss">outlet: </span><span class="s1">'description'</span>
+      <span class="vi">@div</span> <span class="ss">outlet: </span><span class="s1">'duration'</span>
 
   <span class="kp">initialize</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
     <span class="vi">@update</span> <span class="n">event</span>
 
-  <span class="ss">update</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@attr</span> <span class="s1">&#39;data-starts-at&#39;</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">startsAtFormat</span><span class="p">()</span>
-    <span class="vi">@description</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class="o">.</span><span class="n">description</span>
-    <span class="vi">@duration</span><span class="o">.</span><span class="n">text</span> <span class="n">event</span><span class="o">.</span><span class="n">duration</span>
+  <span class="ss">update: </span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@attr</span> <span class="s1">'data-starts-at'</span><span class="p">,</span> <span class="n">event</span><span class="p">.</span><span class="nf">startsAtFormat</span><span class="p">()</span>
+    <span class="vi">@description</span><span class="p">.</span><span class="nf">text</span> <span class="n">event</span><span class="p">.</span><span class="nf">description</span>
+    <span class="vi">@duration</span><span class="p">.</span><span class="nf">text</span> <span class="n">event</span><span class="p">.</span><span class="nf">duration</span>
 </code></pre></div>
 <p>
   Next up, the expanded day controller example that manages the view above. In this example we bind to two of the the Spine.JS <code>CalendarEvent</code> model events. One for update and one for destroy. These events are then pushed down to the view and will do any work necessary. Just in case this controller is ever discarded for performance reasons, we hook into the <code>release()</code> function provided by Spine.JS controllers to remove the event listeners.
 </p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="n">Controllers</span><span class="o">.</span><span class="n">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class="n">Controller</span>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">App</span><span class="o">.</span><span class="no">Controllers</span><span class="o">.</span><span class="no">Day</span> <span class="n">extends</span> <span class="no">Spine</span><span class="o">.</span><span class="no">Controller</span>
 
   <span class="vi">@events</span><span class="p">:</span>
-    <span class="s1">&#39;click .event&#39;</span><span class="p">:</span> <span class="s1">&#39;selectEvent&#39;</span>
+    <span class="s1">'click .event'</span><span class="p">:</span> <span class="s1">'selectEvent'</span>
 
-  <span class="ss">constructor</span><span class="p">:</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">moment</span>
-    <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class="o">.</span><span class="n">Views</span><span class="o">.</span><span class="n">Day</span> <span class="ss">moment</span><span class="p">:</span> <span class="vi">@date</span>
-    <span class="k">super</span> <span class="ss">el</span><span class="p">:</span> <span class="vi">@view</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">bind</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="vi">@updateEvent</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">bind</span> <span class="s1">&#39;beforeDestroy&#39;</span><span class="p">,</span> <span class="vi">@destroyEvent</span>
+  <span class="ss">constructor: </span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@date</span> <span class="o">=</span> <span class="n">params</span><span class="p">.</span><span class="nf">moment</span>
+    <span class="vi">@view</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">App</span><span class="o">.</span><span class="no">Views</span><span class="o">.</span><span class="no">Day</span> <span class="ss">moment: </span><span class="vi">@date</span>
+    <span class="k">super</span> <span class="ss">el: </span><span class="vi">@view</span>
+    <span class="no">CalendarEvent</span><span class="p">.</span><span class="nf">bind</span> <span class="s1">'update'</span><span class="p">,</span> <span class="vi">@updateEvent</span>
+    <span class="no">CalendarEvent</span><span class="p">.</span><span class="nf">bind</span> <span class="s1">'beforeDestroy'</span><span class="p">,</span> <span class="vi">@destroyEvent</span>
 
-  <span class="ss">release</span><span class="p">:</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">unbind</span> <span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="vi">@updateEvent</span>
-    <span class="no">CalendarEvent</span><span class="o">.</span><span class="n">unbind</span> <span class="s1">&#39;beforeDestroy&#39;</span><span class="p">,</span> <span class="vi">@removeEvent</span>
+  <span class="ss">release:
+    </span><span class="no">CalendarEvent</span><span class="p">.</span><span class="nf">unbind</span> <span class="s1">'update'</span><span class="p">,</span> <span class="vi">@updateEvent</span>
+    <span class="no">CalendarEvent</span><span class="p">.</span><span class="nf">unbind</span> <span class="s1">'beforeDestroy'</span><span class="p">,</span> <span class="vi">@removeEvent</span>
     <span class="k">super</span>
 
   <span class="c1"># Private</span>
 
-  <span class="ss">selectEvent</span><span class="p">:</span> <span class="o">-&gt;</span>
+  <span class="ss">selectEvent: </span><span class="o">-&gt;</span>
     <span class="c1"># ...</span>
 
-  <span class="ss">updateEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@view</span><span class="o">.</span><span class="n">updateEvent</span> <span class="n">event</span>
+  <span class="ss">updateEvent: </span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@view</span><span class="p">.</span><span class="nf">updateEvent</span> <span class="n">event</span>
     <span class="c1"># ...</span>
 
-  <span class="ss">removeEvent</span><span class="p">:</span> <span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="vi">@view</span><span class="o">.</span><span class="n">removeEvent</span> <span class="n">event</span>
+  <span class="ss">removeEvent: </span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="vi">@view</span><span class="p">.</span><span class="nf">removeEvent</span> <span class="n">event</span>
     <span class="c1"># ...</span>
 </code></pre></div>
 <p>
@@ -1200,13 +1444,13 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   When ActiveRecord 3.2 was released there was a small addition called <a href="http://api.rubyonrails.org/classes/ActiveRecord/Store.html">ActiveRecord::Store</a> which bills itself as a simple key/value store for your models. The code below is pulled right from their example usage.
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">store</span> <span class="ss">:settings</span><span class="p">,</span> <span class="ss">accessors</span><span class="p">:</span> <span class="o">[</span><span class="ss">:color</span><span class="p">,</span> <span class="ss">:homepage</span><span class="o">]</span>
+  <span class="n">store</span> <span class="ss">:settings</span><span class="p">,</span> <span class="ss">accessors: </span><span class="o">[</span><span class="ss">:color</span><span class="p">,</span> <span class="ss">:homepage</span><span class="o">]</span>
 <span class="k">end</span>
 
-<span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">color</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="ss">homepage</span><span class="p">:</span> <span class="s1">&#39;37signals.com&#39;</span><span class="p">)</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">color</span>            <span class="c1"># =&gt; &#39;black&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:color</span><span class="o">]</span> <span class="c1"># =&gt; &#39;black&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class="ss">:remember_me</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">color: </span><span class="s1">'black'</span><span class="p">,</span> <span class="ss">homepage: </span><span class="s1">'37signals.com'</span><span class="p">)</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">color</span>            <span class="c1"># =&gt; 'black'</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">settings</span><span class="o">[</span><span class="ss">:color</span><span class="o">]</span> <span class="c1"># =&gt; 'black'</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">settings</span><span class="o">[</span><span class="ss">:remember_me</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
 </code></pre></div>
 <p>
   Most people know that I love simple tools. But when I found myself considering <code>ActiveRecord::Store</code>, I found it seriously lacking for my particular use case. What I wanted was a config for a user class that could do the following:
@@ -1230,11 +1474,11 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   <span class="n">store_configurable</span>
 <span class="k">end</span>
 
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">remember_me</span> <span class="o">=</span> <span class="kp">true</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">sortable_tables</span><span class="o">.</span><span class="n">column</span>    <span class="o">=</span> <span class="s1">&#39;created_at&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">sortable_tables</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;asc&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">you</span><span class="o">.</span><span class="n">should</span><span class="o">.</span><span class="n">never</span><span class="o">.</span><span class="n">need</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">do</span><span class="o">.</span><span class="n">this</span><span class="o">.</span><span class="n">but</span><span class="o">.</span><span class="n">you</span><span class="o">.</span><span class="n">could</span><span class="o">.</span><span class="n">if</span><span class="o">.</span><span class="n">you</span><span class="o">.</span><span class="n">wanted</span><span class="o">.</span><span class="n">to</span> <span class="o">=</span> <span class="s1">&#39;deep_value&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config_changed?</span> <span class="c1"># =&gt; true</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">remember_me</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">sortable_tables</span><span class="p">.</span><span class="nf">column</span>    <span class="o">=</span> <span class="s1">'created_at'</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">sortable_tables</span><span class="p">.</span><span class="nf">direction</span> <span class="o">=</span> <span class="s1">'asc'</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">you</span><span class="p">.</span><span class="nf">should</span><span class="p">.</span><span class="nf">never</span><span class="p">.</span><span class="nf">need</span><span class="p">.</span><span class="nf">to</span><span class="p">.</span><span class="nf">do</span><span class="p">.</span><span class="nf">this</span><span class="p">.</span><span class="nf">but</span><span class="p">.</span><span class="nf">you</span><span class="p">.</span><span class="nf">could</span><span class="p">.</span><span class="nf">if</span><span class="p">.</span><span class="nf">you</span><span class="p">.</span><span class="nf">wanted</span><span class="p">.</span><span class="nf">to</span> <span class="o">=</span> <span class="s1">'deep_value'</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">config_changed?</span> <span class="c1"># =&gt; true</span>
 </code></pre></div>
 <p>
   Rather than talking about how StoreConfigurable might be a good fit for you, I would instead like to discuss how my first practical usage of recursion in Ruby is implemented in StoreConfigurable. That along with how to leverage default Hash values is the topic for this post.
@@ -1247,14 +1491,14 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># Default value passed to new.</span>
 
-<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>  <span class="c1"># =&gt; {}</span>
-<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class="c1"># =&gt; &quot;default&quot;</span>
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'default'</span><span class="p">)</span>  <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class="c1"># =&gt; "default"</span>
 
-<span class="c1"># Default value from new&#39;s block.</span>
+<span class="c1"># Default value from new's block.</span>
 
-<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="o">|</span> <span class="s2">&quot;Missing </span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2"> for hash with id </span><span class="si">#{</span><span class="nb">hash</span><span class="o">.</span><span class="n">object_id</span><span class="si">}</span><span class="s2">.&quot;</span> <span class="p">}</span>
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="p">.</span><span class="nf">new</span> <span class="p">{</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="o">|</span> <span class="s2">"Missing </span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2"> for hash with id </span><span class="si">#{</span><span class="nb">hash</span><span class="p">.</span><span class="nf">object_id</span><span class="si">}</span><span class="s2">."</span> <span class="p">}</span>
 <span class="nb">hash</span>                        <span class="c1"># =&gt; {}</span>
-<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class="c1"># =&gt; &quot;Missing foo for hash with id 283829283.&quot;</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class="c1"># =&gt; "Missing foo for hash with id 283829283."</span>
 </code></pre></div>
 <h2>Recursion</h2>
 
@@ -1262,16 +1506,16 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   Recurion in Ruby can take many forms. My solution for StoreConfigurable was to always make the hash returned by the proxy object self replicate itself for key misses. Here is a fundamental example to make your own Hash object return new instances of itself when keys are missing.
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">RecursiveHash</span> <span class="o">&lt;</span> <span class="no">Hash</span>
-  <span class="no">Recursive</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
+  <span class="no">Recursive</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">h</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">new</span> <span class="p">}</span>
   <span class="k">def</span> <span class="nf">initialize</span>
     <span class="k">super</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Recursive</span><span class="p">)</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="nb">hash</span> <span class="o">=</span> <span class="no">RecursiveHash</span><span class="o">.</span><span class="n">new</span>  <span class="c1"># =&gt; {}</span>
-<span class="nb">hash</span><span class="o">.</span><span class="n">class</span>                <span class="c1"># =&gt; RecursiveHash</span>
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">RecursiveHash</span><span class="p">.</span><span class="nf">new</span>  <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="p">.</span><span class="nf">class</span>                <span class="c1"># =&gt; RecursiveHash</span>
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                <span class="c1"># =&gt; {}</span>
-<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">].</span><span class="n">class</span>          <span class="c1"># =&gt; RecursiveHash</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span><span class="p">.</span><span class="nf">class</span>          <span class="c1"># =&gt; RecursiveHash</span>
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:a</span><span class="o">][</span><span class="ss">:b</span><span class="o">][</span><span class="ss">:c</span><span class="o">]</span>          <span class="c1"># =&gt; {}</span>
 <span class="nb">hash</span>                      <span class="c1"># =&gt; {:foo=&gt;{}, :a=&gt;{:b=&gt;{:c=&gt;{}}}}</span>
 </code></pre></div>
@@ -1283,14 +1527,14 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   So default hashes in Ruby and simple recursion techniques are what make up some of the key points of StoreConfigurable. I also use recursion when loading the hash values from the YAML stored in the database. Here is what that technique looks like.
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">loader</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
-  <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Hash</span><span class="p">)</span>
-    <span class="n">value</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="nb">hash</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">if</span> <span class="n">value</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">Hash</span><span class="p">)</span>
+    <span class="n">value</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nb">hash</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
   <span class="k">else</span>
-    <span class="n">options</span><span class="o">.</span><span class="n">send</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="n">value</span>
+    <span class="n">options</span><span class="p">.</span><span class="nf">send</span> <span class="s2">"</span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2">="</span><span class="p">,</span> <span class="n">value</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="n">data</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">data</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
 </code></pre></div>
 <p>
   Hopefully this dive into Ruby or maybe StoreConfigurable is helpful!
@@ -1344,22 +1588,22 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 <span class="err">$</span><span class="nt">myGray</span><span class="o">:</span>  <span class="nt">rgb</span><span class="o">(</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">,</span><span class="nt">140</span><span class="o">);</span>
 <span class="err">$</span><span class="nt">myBlack</span><span class="o">:</span> <span class="nt">rgb</span><span class="o">(</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">,</span><span class="nt">30</span><span class="o">);</span>
 
-<span class="k">@mixin</span> <span class="nt">myColorClasses</span><span class="o">(</span><span class="err">$</span><span class="nt">property</span><span class="o">)</span> <span class="p">{</span>
-  <span class="o">&amp;</span><span class="nc">.white</span>   <span class="p">{</span> <span class="err">#{$</span><span class="n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myWhite</span><span class="o">;</span> <span class="p">}</span>
-  <span class="o">&amp;</span><span class="nc">.gray</span>    <span class="p">{</span> <span class="err">#{$</span><span class="n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myGray</span><span class="o">;</span> <span class="err">}</span>
-  <span class="o">&amp;</span><span class="nc">.black</span>   <span class="p">{</span> <span class="err">#{$</span><span class="n">property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myBlack</span><span class="o">;</span> <span class="err">}</span>
+<span class="k">@mixin</span> <span class="n">myColorClasses</span><span class="p">(</span><span class="err">$</span><span class="n">property</span><span class="p">)</span> <span class="p">{</span>
+  <span class="o">&amp;</span><span class="nc">.white</span>   <span class="p">{</span> <span class="err">#{$property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myWhite</span><span class="o">;</span> <span class="p">}</span>
+  <span class="o">&amp;</span><span class="nc">.gray</span>    <span class="p">{</span> <span class="err">#{$property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myGray</span><span class="o">;</span> <span class="err">}</span>
+  <span class="o">&amp;</span><span class="nc">.black</span>   <span class="p">{</span> <span class="err">#{$property</span><span class="p">}</span><span class="o">:</span> <span class="err">$</span><span class="nt">myBlack</span><span class="o">;</span> <span class="err">}</span>
 <span class="err">}</span>
 
 <span class="nc">.box</span> <span class="p">{</span>
-  <span class="o">@</span><span class="n">include</span> <span class="n">myColorClasses</span><span class="p">(</span><span class="k">background-color</span><span class="p">);</span>
+  <span class="err">@include</span> <span class="err">myColorClasses(background-color);</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>
   It would output something like the following. Notice how I use the variable string <code>background-color</code> and generate dynamic properties?
 </p>
-<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="nc">.box.white</span> <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class="m">#f0f0f0</span><span class="p">;</span> <span class="p">}</span>
-<span class="nc">.box.gray</span>  <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class="m">#8c8c8c</span><span class="p">;</span> <span class="p">}</span>
-<span class="nc">.box.black</span> <span class="p">{</span> <span class="k">background-color</span><span class="o">:</span> <span class="m">#1e1e1e</span><span class="p">;</span> <span class="p">}</span>
+<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="nc">.box.white</span> <span class="p">{</span> <span class="nl">background-color</span><span class="p">:</span> <span class="m">#f0f0f0</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.box.gray</span>  <span class="p">{</span> <span class="nl">background-color</span><span class="p">:</span> <span class="m">#8c8c8c</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.box.black</span> <span class="p">{</span> <span class="nl">background-color</span><span class="p">:</span> <span class="m">#1e1e1e</span><span class="p">;</span> <span class="p">}</span>
 </code></pre></div>
 <p>
   Astute observers may point out that you can achieve the same with sub classes and be more efficient in the generated CSS too. You would be correct. I did say this was a contrived example. The point is that LESS is not a CSS preprocessor and without the ability to dynamically define property values you will be limited in the ways your LESS based CSS framework can compete with frameworks like Compass. Simply put, LESS will never stack up to Sass.
@@ -1407,7 +1651,7 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
   The first place we need to patch things up is Guard::Jasmine itself. In my <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">last article</a> I covered how to monkey patch Jasminerice in a <code>config/initializers/jasminerice.rb</code> file. My Guard::Jasmine freedom patch will be placed in that same file. Pasted below, this does two things vs the <a href="http://github.com/netzpirat/guard-jasmine/blob/master/lib/guard/jasmine/runner.rb">original</a>. First it changes the <code>report_specdoc_logs</code> method to not pass <code>true</code> to the <code>format_log_message</code> method. Second, the <code>format_log_message</code> method itself now has the message regular expression changed to a multi-line scan. It will also look out for a custom prefix tag and allow it to pass through. This is for our pretty objects. Anything else now outputs the message with the file and line number, something previously stripped by Guard::Jasmine.
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1"># coding: utf-8</span>
-<span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="p">.</span><span class="nf">environments</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="p">)</span>
 
   <span class="c1"># Other Jasminerice patches from:</span>
   <span class="c1"># http://metaskills.net/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/</span>
@@ -1421,21 +1665,21 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
         <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
 
           <span class="k">def</span> <span class="nf">report_specdoc_logs</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">spec</span><span class="o">[</span><span class="s1">&#39;logs&#39;</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:console</span><span class="o">]</span> <span class="o">==</span> <span class="ss">:always</span> <span class="o">||</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:console</span><span class="o">]</span> <span class="o">==</span> <span class="ss">:failure</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">spec</span><span class="o">[</span><span class="s1">&#39;passed&#39;</span><span class="o">]</span><span class="p">))</span>
-              <span class="n">spec</span><span class="o">[</span><span class="s1">&#39;logs&#39;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">log</span><span class="o">|</span>
-                <span class="no">Formatter</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="s2">&quot;    • </span><span class="si">#{</span> <span class="n">format_log_message</span><span class="p">(</span><span class="n">log</span><span class="p">)</span> <span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">spec</span><span class="o">[</span><span class="s1">'logs'</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:console</span><span class="o">]</span> <span class="o">==</span> <span class="ss">:always</span> <span class="o">||</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:console</span><span class="o">]</span> <span class="o">==</span> <span class="ss">:failure</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">spec</span><span class="o">[</span><span class="s1">'passed'</span><span class="o">]</span><span class="p">))</span>
+              <span class="n">spec</span><span class="o">[</span><span class="s1">'logs'</span><span class="o">]</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">log</span><span class="o">|</span>
+                <span class="no">Formatter</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="s2">"    • </span><span class="si">#{</span> <span class="n">format_log_message</span><span class="p">(</span><span class="n">log</span><span class="p">)</span> <span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">level</span><span class="p">))</span>
               <span class="k">end</span>
             <span class="k">end</span>
           <span class="k">end</span>
 
           <span class="k">def</span> <span class="nf">format_log_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">message</span> <span class="o">=~</span> <span class="sr">/(.*?) in http.+?assets\/(.*)\?body=\d+\s\((line\s\d+)/m</span>
-              <span class="n">pp_prefix</span> <span class="o">=</span> <span class="s1">&#39;[myLog]&#39;</span>
+              <span class="n">pp_prefix</span> <span class="o">=</span> <span class="s1">'[myLog]'</span>
               <span class="n">msg</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">line</span> <span class="o">=</span> <span class="vg">$1</span><span class="p">,</span> <span class="vg">$2</span><span class="p">,</span> <span class="vg">$3</span>
-              <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">starts_with?</span> <span class="n">pp_prefix</span>
-                <span class="n">msg</span><span class="o">.</span><span class="n">sub</span> <span class="n">pp_prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+              <span class="k">if</span> <span class="n">msg</span><span class="p">.</span><span class="nf">starts_with?</span> <span class="n">pp_prefix</span>
+                <span class="n">msg</span><span class="p">.</span><span class="nf">sub</span> <span class="n">pp_prefix</span><span class="p">,</span> <span class="s1">''</span>
               <span class="k">else</span>
-                <span class="s2">&quot;</span><span class="si">#{</span><span class="n">msg</span><span class="si">}</span><span class="s2"> in </span><span class="si">#{</span><span class="n">file</span><span class="si">}</span><span class="s2"> on </span><span class="si">#{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"</span><span class="si">#{</span><span class="n">msg</span><span class="si">}</span><span class="s2"> in </span><span class="si">#{</span><span class="n">file</span><span class="si">}</span><span class="s2"> on </span><span class="si">#{</span><span class="n">line</span><span class="si">}</span><span class="s2">"</span>
               <span class="k">end</span>
             <span class="k">else</span>
               <span class="n">message</span>
@@ -1475,20 +1719,20 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
   <span class="c1"># ...</span>
-  <span class="n">gem</span> <span class="s1">&#39;sprockets-blackcoffee&#39;</span>
+  <span class="n">gem</span> <span class="s1">'sprockets-blackcoffee'</span>
 <span class="k">end</span>
 </code></pre></div>
 <p>
   Finally, here are examples of my logging helpers in the <code>jasmine-myapp</code> file. The <code>myLogParser</code> uses jsDump to get back a pretty formatted string of any object if that object is not already a string. The primary logging helper <code>myLog</code> will prefix your message with <code>[myLog]</code> so the Guard::Jasmine recognizes the message and outputs only the object. The last helper <code>myLogLine</code> will do just like the other, but will allow the file and line number tobe printed too.
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">myLog</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="n">console</span><span class="o">.</span><span class="n">log</span> <span class="s2">&quot;[myLog]</span><span class="si">#{</span><span class="n">myLogParser</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+  <span class="n">console</span><span class="p">.</span><span class="nf">log</span> <span class="s2">"[myLog]</span><span class="si">#{</span><span class="n">myLogParser</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
 
 <span class="n">myLogLine</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
   <span class="n">hmLogParser</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
 <span class="n">myLogParser</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="k">if</span> <span class="n">typeof</span> <span class="n">obj</span> <span class="n">is</span> <span class="s1">&#39;string&#39;</span> <span class="k">then</span> <span class="n">obj</span> <span class="k">else</span> <span class="n">jsDump</span><span class="o">.</span><span class="n">parse</span> <span class="n">obj</span>
+  <span class="k">if</span> <span class="n">typeof</span> <span class="n">obj</span> <span class="n">is</span> <span class="s1">'string'</span> <span class="k">then</span> <span class="n">obj</span> <span class="k">else</span> <span class="n">jsDump</span><span class="p">.</span><span class="nf">parse</span> <span class="n">obj</span>
 </code></pre></div>
 <h2>In Practice</h2>
 
@@ -1497,12 +1741,12 @@ My Mom, Linda Campbell - now remarried, recently told this story to my Brother a
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1">#= include spec_helper</span>
 
-<span class="n">describe</span> <span class="s1">&#39;User&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+<span class="n">describe</span> <span class="s1">'User'</span><span class="p">,</span> <span class="o">-&gt;</span>
 
-  <span class="n">it</span> <span class="s1">&#39;has been configured with proper attributes&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-    <span class="vi">@user</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">User</span> <span class="nb">id</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s1">&#39;bob@test.com&#39;</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">log</span> <span class="vi">@user</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span>
-    <span class="n">expect</span><span class="p">(</span><span class="vi">@user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="s1">&#39;bob@test.com&#39;</span>
+  <span class="n">it</span> <span class="s1">'has been configured with proper attributes'</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="vi">@user</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">User</span> <span class="nb">id</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="ss">email: </span><span class="s1">'bob@test.com'</span>
+    <span class="n">console</span><span class="p">.</span><span class="nf">log</span> <span class="vi">@user</span><span class="p">.</span><span class="nf">attributes</span><span class="p">()</span>
+    <span class="n">expect</span><span class="p">(</span><span class="vi">@user</span><span class="p">.</span><span class="nf">email</span><span class="p">).</span><span class="nf">toEqual</span> <span class="s1">'bob@test.com'</span>
 </code></pre></div>
 <pre class="code">
 User
@@ -1595,25 +1839,25 @@ in 0.653 seconds
   <span class="k">module</span> <span class="nn">MyApplication</span>
     <span class="kp">extend</span> <span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Concern</span>
     <span class="n">included</span> <span class="k">do</span>
-      <span class="n">delegate</span> <span class="ss">:foo_path</span><span class="p">,</span> <span class="ss">to</span><span class="p">:</span> <span class="o">::</span><span class="no">Rails</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">routes_url_helpers</span>
+      <span class="n">delegate</span> <span class="ss">:foo_path</span><span class="p">,</span> <span class="ss">to: </span><span class="o">::</span><span class="no">Rails</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class="nf">routes_url_helpers</span>
     <span class="k">end</span>
     <span class="k">def</span> <span class="nf">jasminerice?</span>
       <span class="kp">true</span>
     <span class="k">end</span>
     <span class="k">def</span> <span class="nf">current_user</span>
-      <span class="vi">@current_user</span> <span class="o">||=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+      <span class="vi">@current_user</span> <span class="o">||=</span> <span class="no">User</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
-  <span class="no">ApplicationHelper</span><span class="o">.</span><span class="n">send</span> <span class="ss">:include</span><span class="p">,</span> <span class="no">MyApplication</span>
+  <span class="no">ApplicationHelper</span><span class="p">.</span><span class="nf">send</span> <span class="ss">:include</span><span class="p">,</span> <span class="no">MyApplication</span>
 
   <span class="k">class</span> <span class="nc">SpecController</span> <span class="o">&lt;</span> <span class="no">Jasminerice</span><span class="o">::</span><span class="no">ApplicationController</span>
     <span class="k">def</span> <span class="nf">index</span>
-      <span class="n">render</span> <span class="ss">template</span><span class="p">:</span> <span class="s1">&#39;users/home&#39;</span><span class="p">,</span> <span class="ss">layout</span><span class="p">:</span> <span class="s1">&#39;application&#39;</span>
+      <span class="n">render</span> <span class="ss">template: </span><span class="s1">'users/home'</span><span class="p">,</span> <span class="ss">layout: </span><span class="s1">'application'</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
-<span class="k">end</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+<span class="k">end</span> <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="p">.</span><span class="nf">environments</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="p">)</span>
 </code></pre></div>
 <p>
   There we go, a simple example pulled from my current project. What we are doing here is freedom-patching that spec controller's index action to render both a template and layout from your application. I also have a <code>MyApplication</code> module which I include in the <code>Jasminerice::ApplicationHelper</code> for a few methods that my application view code would expect. In this case a <code>current_user</code> method and some delegation of URL helpers to the root Rails application. Do not get hung up on what user is returned there too. It is mostly moot as all AJAX calls will be stubbed. Lastly, I made a <code>jasminerice?</code> view helper and a matching one that I have in my own <code>ApplicationHelper</code> which returns false. I will show why and how this all fits together later on.
@@ -1623,29 +1867,29 @@ in 0.653 seconds
   Now that we have full control and some reflection for Jasminerice, let's reviw our appliation's main layout. Here is an example of my <code>app/views/layouts/application.html.haml</code> file.
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="o">!!!</span> <span class="mi">5</span>
-<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">}</span>
+<span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class="s1">'en'</span><span class="p">}</span>
   <span class="o">%</span><span class="n">head</span>
-    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
+    <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class="o">=&gt;</span> <span class="s1">'utf-8'</span><span class="p">}</span>
     <span class="o">=</span> <span class="n">csrf_meta_tags</span>
     <span class="o">%</span><span class="n">title</span> <span class="no">My</span> <span class="no">Application</span>
     <span class="o">-</span> <span class="k">if</span> <span class="n">jasminerice?</span>
-      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">&#39;spec&#39;</span>
-      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">&#39;spec&#39;</span>
+      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">'spec'</span>
+      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">'spec'</span>
     <span class="o">-</span> <span class="k">else</span>
-      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">&#39;application&#39;</span>
-      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">&#39;application&#39;</span>
-      <span class="o">%</span><span class="n">script</span> <span class="n">jQuery</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span> <span class="no">MyApp</span><span class="o">.</span><span class="n">App</span><span class="o">.</span><span class="n">Home</span><span class="o">.</span><span class="n">init</span><span class="p">();</span> <span class="p">});</span>
+      <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s1">'application'</span>
+      <span class="o">=</span> <span class="n">javascript_include_tag</span> <span class="s1">'application'</span>
+      <span class="o">%</span><span class="n">script</span> <span class="n">jQuery</span><span class="p">(</span><span class="n">function</span><span class="p">(){</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">App</span><span class="o">.</span><span class="no">Home</span><span class="p">.</span><span class="nf">init</span><span class="p">();</span> <span class="p">});</span>
   <span class="o">%</span><span class="n">body</span>
-    <span class="o">%</span><span class="n">section</span><span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="ss">data</span><span class="p">:</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">}}</span>
+    <span class="o">%</span><span class="n">section</span><span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="s1">'app'</span><span class="p">,</span> <span class="ss">data: </span><span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">current_user</span><span class="p">.</span><span class="nf">id</span><span class="p">}}</span>
 </code></pre></div>
 <p>
   It is really that simple! It has a single condition that says if Jasminerice is loading this page, use the top level <code>spec</code> CSS and JavaScript asset manifest. If not, render my main application's CSS and JavaScript manifests. You will also notice that I decouple my Spine's application initialization from the main JS files and only initialize the app on page load when not running in Jasminerce. This allows us to stub AJAX calls in specs then initialization the Spine.JS app when we are fully ready. So now, let us take a look at what both the <code>spec/javascripts/spec.css</code> and <code>spec/javascripts/spec.js</code> manifests may look like.
 </p>
-<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="c">/*</span>
-<span class="c"> *= require jasmine</span>
-<span class="c"> *= require application</span>
-<span class="c"> */</span>
-<span class="nc">.jasmine_reporter</span> <span class="p">{</span> <span class="k">display</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span> <span class="p">}</span>
+<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="c">/*
+ *= require jasmine
+ *= require application
+ */</span>
+<span class="nc">.jasmine_reporter</span> <span class="p">{</span> <span class="nl">display</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span> <span class="p">}</span>
 </code></pre></div><div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">jasminerice</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">mock</span><span class="o">-</span><span class="nx">ajax</span>
 <span class="err">#</span><span class="o">=</span> <span class="nx">require</span> <span class="nx">application</span>
@@ -1727,23 +1971,23 @@ in 0.653 seconds
   Next, we need to get the gems in our <code>Gemfile</code>. Here is how mine are setup. I have them in both the <code>:develpment</code> and <code>:test</code> groups since Jasminerice runs in both of those Rails environments. I also have that ruby_gntp dependency since I am using Growl on Mac OS X, YMMV.
 </p>
 <div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">group</span> <span class="ss">:development</span><span class="p">,</span> <span class="ss">:test</span> <span class="k">do</span>
-  <span class="n">gem</span> <span class="s1">&#39;jasminerice&#39;</span>
-  <span class="n">gem</span> <span class="s1">&#39;guard-jasmine&#39;</span>
-  <span class="n">gem</span> <span class="s1">&#39;ruby_gntp&#39;</span>
+  <span class="n">gem</span> <span class="s1">'jasminerice'</span>
+  <span class="n">gem</span> <span class="s1">'guard-jasmine'</span>
+  <span class="n">gem</span> <span class="s1">'ruby_gntp'</span>
 <span class="k">end</span>
 </code></pre></div>
 <p>
   So that was easy, now on to our <code>Guardfile</code>. Here is mine below. Notice how I put my JavaScript related guards into a <code>js</code> group? This is a seldom used feature of Guard and it means I can monitor only my jasmine specs by starting guard off using <code>$ guard -g js</code> and my other guards in my <code>ruby</code> group, like minitest, will be ignored.
 </p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">group</span> <span class="s1">&#39;js&#39;</span> <span class="k">do</span>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">group</span> <span class="s1">'js'</span> <span class="k">do</span>
 
-  <span class="n">guard</span> <span class="s1">&#39;jasmine&#39;</span> <span class="k">do</span>
-    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/index\.js\.coffee$}</span><span class="p">)</span>  <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
-    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/(.+)\.js\.coffee$}</span><span class="p">)</span>   <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">&quot;spec/javascripts/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_spec.js.coffee&quot;</span> <span class="p">}</span>
-    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/(.+)_spec\.js\.coffee$}</span><span class="p">)</span>          <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">&quot;spec/javascripts/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_spec.js.coffee&quot;</span> <span class="p">}</span>
-    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/spec\.js$}</span><span class="p">)</span>                       <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
-    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/spec_helper\.js$}</span><span class="p">)</span>                <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
-    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/jasmine-myapp.*}</span><span class="p">)</span>                 <span class="p">{</span> <span class="s2">&quot;spec/javascripts&quot;</span> <span class="p">}</span>
+  <span class="n">guard</span> <span class="s1">'jasmine'</span> <span class="k">do</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/index</span><span class="se">\.</span><span class="sr">js</span><span class="se">\.</span><span class="sr">coffee$}</span><span class="p">)</span>  <span class="p">{</span> <span class="s2">"spec/javascripts"</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{app/assets/javascripts/myapp/(.+)</span><span class="se">\.</span><span class="sr">js</span><span class="se">\.</span><span class="sr">coffee$}</span><span class="p">)</span>   <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">"spec/javascripts/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_spec.js.coffee"</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/(.+)_spec</span><span class="se">\.</span><span class="sr">js</span><span class="se">\.</span><span class="sr">coffee$}</span><span class="p">)</span>          <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="s2">"spec/javascripts/</span><span class="si">#{</span><span class="n">m</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="si">}</span><span class="s2">_spec.js.coffee"</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/spec</span><span class="se">\.</span><span class="sr">js$}</span><span class="p">)</span>                       <span class="p">{</span> <span class="s2">"spec/javascripts"</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/spec_helper</span><span class="se">\.</span><span class="sr">js$}</span><span class="p">)</span>                <span class="p">{</span> <span class="s2">"spec/javascripts"</span> <span class="p">}</span>
+    <span class="n">watch</span><span class="p">(</span><span class="sr">%r{spec/javascripts/jasmine-myapp.*}</span><span class="p">)</span>                 <span class="p">{</span> <span class="s2">"spec/javascripts"</span> <span class="p">}</span>
   <span class="k">end</span>
 
 <span class="k">end</span>
@@ -1757,13 +2001,13 @@ in 0.653 seconds
 <p>
   I will go into more details on the <code>spec_helper.js</code> and <code>jasmine-myapp</code> files above in <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">the second part</a> of this article. For now you should be set to start writing specs like the one below and seeing them run by either visiting the <code>/jasmine</code> URL of your running Rails application or by using Guard in your terminal window.
 </p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="s1">&#39;App&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="s1">'App'</span><span class="p">,</span> <span class="o">-&gt;</span>
 
-  <span class="n">it</span> <span class="s1">&#39;sets el&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-    <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">el</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="err">$</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span>
+  <span class="n">it</span> <span class="s1">'sets el'</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="no">Application</span><span class="p">.</span><span class="nf">el</span><span class="p">).</span><span class="nf">toEqual</span> <span class="err">$</span><span class="p">(</span><span class="s1">'#app'</span><span class="p">)</span>
 
-  <span class="n">it</span> <span class="s1">&#39;sets the userId as a property on itself&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-    <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="n">Application</span><span class="o">.</span><span class="n">userId</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="vi">@bob</span><span class="o">.</span><span class="n">id</span>
+  <span class="n">it</span> <span class="s1">'sets the userId as a property on itself'</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="n">expect</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="no">Application</span><span class="p">.</span><span class="nf">userId</span><span class="p">).</span><span class="nf">toEqual</span> <span class="vi">@bob</span><span class="p">.</span><span class="nf">id</span>
 </code></pre></div>
 <p>
   <a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Continue to part two...</a>
@@ -1787,82 +2031,6 @@ in 0.653 seconds
   <li><a href="http://github.com/netzpirat/guard-jasmine">Guard Jasmine - Automated Jasmine tests to your console.</a></li>
   <li><a href="http://github.com/bradphelan/jasminerice">Jasminerice - Pain free CoffeeScript testing under Rails 3.1</a></li>
   <li><a href="http://www.phantomjs.org/">PhantomJS - Headless WebKit with JavaScript API.</a></li>
-</ul>
-]]>
-    </content>
- </entry>
- 
- <entry>
-   <title>Rails &amp;amp; Spine.JS - Using The CoffeeScript Source</title>
-   <link href="http://metaskills.net/2012/01/15/rails-and-spine-js-using-the-coffeescript-source"/>
-   <updated>2012-01-15T00:00:00-05:00</updated>
-   <id>http://metaskills.net/2012/01/15/rails-and-spine-js-using-the-coffeescript-source</id>
-   <content type="html">
-     <![CDATA[<p>
-  Our <a href="http://addyosmani.com/blog/short-musings-on-javascript-mv-tech-stacks/">options for JavaScript MVC frameworks</a> are numerous these days. While working on the third major rewrite of my personal bookmarking application, <a href="http://homemarks.com/">HomeMarks</a>, I decided to learn <a href="http://documentcloud.github.com/backbone/">Backbone.js</a>. Thankfully a local friend of mine <a href="https://twitter.com/#!/brennandunn/status/153487553062907905">recommended</a> that I try <a href="http://spinejs.com/">Spine.JS</a>. I was immediately hooked!
-</p>
-
-<h2>Why Spine.JS?</h2>
-
-<p>
-  Spine.JS is is authored in <a href="http://coffeescript.org/">CoffeeScript</a> and that is a big deal for me. I will never write raw JavaScript again, which I consider, the deprecated syntax. So a JavaScript MVC framework that is written in CoffeeScript means I can read the source, learn from it and even debug it if necessary. Sure, I can read raw JavaScript or just rely on documentation. But nothing beats reading source code. A practice I think good developers follow. So here is an example of the <a href="https://github.com/documentcloud/backbone/blob/master/backbone.js#L151">Backbone.js model source</a> compared to reading <a href="https://github.com/maccman/spine/blob/master/src/spine.coffee#L83">Spine.JS model source</a> and I think you will see the difference.
-</p>
-
-<p>
-  Source code legibilty is not the only reason to use Spine.JS. It is also very lightweight and requires no other JavaScript dependencies. Take for example Backbone.js which requies the use of <a href="http://documentcloud.github.com/underscore/">Underscore.js</a> and think for a moment why. Underscore.js makes mundane tasks in JavaScript like itterators and event binding much more friendly. But this is all moot when you are using CoffeeScipt's loops and comprehensions. And take my advice, CoffeeScript has so much more to offer. One of my personal favorites is the existential operator!
-</p>
-
-<h2>Coffee Time!</h2>
-
-<p>
-  So, are you with me and want to try out Spine? Great! But do not rush in and use the <a href="http://github.com/maccman/spine-rails">spine-rails</a> gem. Sure it gives you a nice way to require the Spine JavaScript files in the asset pipeline and some fancy generators. But when you break it down, there are better ways to get Spine's source files and who the hell uses generators? I mean, the only useful one is the initial <code>rails g spine:new</code> generator. Past the initial project setup, the spine-rails gem really does nothing but lock you down to an explicit version of Spine tied to that gem release.
-</p>
-
-<p>
-  I highly advise that new-comers to Spine start off with the spine-rails gem and its new project generator. Then quickly switch to just including the spine source using a git submodule. This will give you the benefit of using the source CoffeeScript files and tracking Spine's git repo which is getting good active development. So let's live on the edge and read some source. First uninstall the spine-rails gem if you have it and add the Spine project as a git submodule to your git repo.
-</p>
-
-<pre class="command">
-$ mkdir -p vendor/assets/javascripts
-$ git submodule add git://github.com/maccman/spine.git vendor/assets/javascripts/spine
-</pre>
-
-<p>
-  This adds the Spine project to your <code>vendor/assets/javascripts/spine</code> directory. Which means it can now be leveraged by Rails asset pipeline using Sprockets. So if you had used the spine-rails generator above and had your spine requires in <code>app/assets/javascripts/app/index.js.coffee</code>, you would now be able to change what should have looked like this:
-</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1">#= require spine</span>
-<span class="c1">#= require spine/manager</span>
-<span class="c1">#= require spine/ajax</span>
-<span class="c1">#= require spine/route</span>
-</code></pre></div>
-<p>
-  To something like the following. Since the <code>spine/src</code> directory is where the source CoffeeScript files from our submodule above and Sprockets will render these just fine, it all just works!
-</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="c1">#= require spine/src/spine</span>
-<span class="c1">#= require spine/src/manager</span>
-<span class="c1">#= require spine/src/ajax</span>
-<span class="c1">#= require spine/src/route</span>
-</code></pre></div>
-<p>
-  So now you can easily update your Spine dependency using a simple git workflow with the added benefit that you can open up any of the source CoffeeScript files and learn Spine from the inside out. You can even change the source or put in console debugging to see what is happening and your application files will recompile via Sprockets on the next request.
-</p>
-
-<h2>Related</h2>
-
-<ul>
-  <li><a href="/2012/01/15/rails-and-spine-js-using-the-coffeescript-source/">Rails &amp; Spine.JS - Using The CoffeeScript Source</a></li>
-  <li><a href="/2012/01/16/rails-and-spine-js-jasmine-testing-part-1/">Rails &amp; Spine.JS - Jasmine Testing Part 1</a></li>
-  <li><a href="/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/">Rails &amp; Spine.JS - Jasmine Testing Part 2</a></li>
-  <li><a href="/2012/02/01/pretty-console-logging-with-guardjasmine-black-coffee/">Pretty Console Logging With Guard::Jasmine &amp; BlackCoffee</a></li>
-</ul>
-
-<h2>Resources</h2>
-
-<ul>
-  <li><a href="http://spinejs.com/">Spine.JS - Build Awesome JavaScript
-  MVC Applications</a></li>
-  <li><a href="http://coffeescript.org/">CoffeeScript - A little language that compiles into JavaScript.</a></li>
-  <li><a href="http://github.com/maccman/spine-rails">The Spine Rails Gem</a></li>
 </ul>
 ]]>
     </content>

@@ -86,9 +86,8 @@
           <div class="highlight">
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In Gemfile</span>
-<span class="n">gem</span> <span class="s1">&#39;dotenv&#39;</span><span class="p">,</span> <span class="ss">github</span><span class=
-"p">:</span> <span class="s1">&#39;ecbypi/dotenv&#39;</span><span class="p">,</span> <span class="ss">branch</span><span class=
-"p">:</span> <span class="s1">&#39;overload-environment-variables&#39;</span>
+<span class="n">gem</span> <span class="s1">'dotenv'</span><span class="p">,</span> <span class="ss">github: </span><span class=
+"s1">'ecbypi/dotenv'</span><span class="p">,</span> <span class="ss">branch: </span><span class="s1">'overload-environment-variables'</span>
 </code>
 </pre>
           </div>
@@ -100,11 +99,10 @@
           <div class="highlight">
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In config/application.rb</span>
-<span class="nb">require</span> <span class="s1">&#39;rails/all&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;dotenv&#39;</span> <span class="p">;</span> <span class="no">Dotenv</span><span class=
-"o">.</span><span class="n">load</span> <span class="s2">&quot;.env.local&quot;</span><span class="p">,</span> <span class=
-"s2">&quot;.env.</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class=
-"si">}</span><span class="s2">&quot;</span>
+<span class="nb">require</span> <span class="s1">'rails/all'</span>
+<span class="nb">require</span> <span class="s1">'dotenv'</span> <span class="p">;</span> <span class="no">Dotenv</span><span class=
+"p">.</span><span class="nf">load</span> <span class="s2">".env.local"</span><span class="p">,</span> <span class="s2">".env.</span><span class=
+"si">#{</span><span class="no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="si">}</span><span class="s2">"</span>
 </code>
 </pre>
           </div>
@@ -116,9 +114,9 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="text language-text" data-lang="text">$ echo &quot;AWESOME_GEM_URL=https://awesome.dev&quot;          &gt; .env.development
-$ echo &quot;AWESOME_GEM_URL=https://sandbox.awesome.com&quot;  &gt; .env.test
-$ echo &quot;AWESOME_GEM_URL=https://awesome.com&quot;          &gt; .env.production
+<code class=" language-" data-lang="">$ echo "AWESOME_GEM_URL=https://awesome.dev"          &gt; .env.development
+$ echo "AWESOME_GEM_URL=https://sandbox.awesome.com"  &gt; .env.test
+$ echo "AWESOME_GEM_URL=https://awesome.com"          &gt; .env.production
 </code>
 </pre>
           </div>
@@ -130,7 +128,7 @@ $ echo &quot;AWESOME_GEM_URL=https://awesome.com&quot;          &gt; .env.produc
           </p>
           <div class="highlight">
             <pre>
-<code class="text language-text" data-lang="text">$ echo &quot;AWESOME_GEM_URL=https://my-awesome.dev&quot;       &gt; .env.local
+<code class=" language-" data-lang="">$ echo "AWESOME_GEM_URL=https://my-awesome.dev"       &gt; .env.local
 </code>
 </pre>
           </div>
@@ -141,10 +139,10 @@ $ echo &quot;AWESOME_GEM_URL=https://awesome.com&quot;          &gt; .env.produc
           <div class="highlight">
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># In test/test_helper.rb</span>
-<span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;RAILS_ENV&quot;</span><span class="o">]</span> <span class=
-"o">=</span> <span class="s2">&quot;test&quot;</span>
-<span class="o">+</span><span class="nb">require</span> <span class="s1">&#39;dotenv&#39;</span> <span class="p">;</span> <span class=
-"no">Dotenv</span><span class="o">.</span><span class="n">overload</span> <span class="s2">&quot;.env.test&quot;</span>
+<span class="no">ENV</span><span class="o">[</span><span class="s2">"RAILS_ENV"</span><span class="o">]</span> <span class="o">=</span> <span class=
+"s2">"test"</span>
+<span class="o">+</span><span class="nb">require</span> <span class="s1">'dotenv'</span> <span class="p">;</span> <span class=
+"no">Dotenv</span><span class="p">.</span><span class="nf">overload</span> <span class="s2">".env.test"</span>
 </code>
 </pre>
           </div>
@@ -212,6 +210,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -226,16 +233,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single DATABASE_URL environment variable for every part of it&#39;s configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

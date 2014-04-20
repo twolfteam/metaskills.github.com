@@ -116,26 +116,52 @@
           <div class="highlight">
             <pre>
 <code class="bash language-bash" data-lang="bash"><span class="c"># User colors (root colors in /etc/bashrc)</span>
-<span class="nb">export </span><span class="nv">TERM</span><span class="o">=</span><span class="s2">&quot;xterm-color&quot;</span>
-<span class="nv">C1</span><span class="o">=</span><span class="s2">&quot;\[\033[1;32m\]&quot;</span>
-<span class="nv">C2</span><span class="o">=</span><span class="s2">&quot;\[\033[1;30m\]&quot;</span>
-<span class="nv">C3</span><span class="o">=</span><span class="s2">&quot;\[\033[0m\]&quot;</span>
-<span class="nv">C4</span><span class="o">=</span><span class="s2">&quot;\[\033[0;36m\]&quot;</span>
-<span class="nb">export </span><span class="nv">PS1</span><span class="o">=</span><span class=
-"s2">&quot;${C2}(${C1}\u${C2}@${C4}\h${C2}) - (${C4}\A${C2}) - (${C4}\w${C2})\n${C2}-${C1}=&gt;&gt;${C3}&quot;</span>
+<span class="nb">export </span><span class="nv">TERM</span><span class="o">=</span><span class="s2">"xterm-color"</span>
+<span class="nv">C1</span><span class="o">=</span><span class="s2">"</span><span class="se">\[\0</span><span class="s2">33[1;32m</span><span class=
+"se">\]</span><span class="s2">"</span>
+<span class="nv">C2</span><span class="o">=</span><span class="s2">"</span><span class="se">\[\0</span><span class="s2">33[1;30m</span><span class=
+"se">\]</span><span class="s2">"</span>
+<span class="nv">C3</span><span class="o">=</span><span class="s2">"</span><span class="se">\[\0</span><span class="s2">33[0m</span><span class=
+"se">\]</span><span class="s2">"</span>
+<span class="nv">C4</span><span class="o">=</span><span class="s2">"</span><span class="se">\[\0</span><span class="s2">33[0;36m</span><span class=
+"se">\]</span><span class="s2">"</span>
+<span class="nb">export </span><span class="nv">PS1</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class=
+"nv">C2</span><span class="k">}</span><span class="s2">(</span><span class="k">${</span><span class="nv">C1</span><span class=
+"k">}</span><span class="se">\u</span><span class="k">${</span><span class="nv">C2</span><span class="k">}</span><span class=
+"s2">@</span><span class="k">${</span><span class="nv">C4</span><span class="k">}</span><span class="se">\h</span><span class=
+"k">${</span><span class="nv">C2</span><span class="k">}</span><span class="s2">) - (</span><span class="k">${</span><span class=
+"nv">C4</span><span class="k">}</span><span class="se">\A</span><span class="k">${</span><span class="nv">C2</span><span class=
+"k">}</span><span class="s2">) - (</span><span class="k">${</span><span class="nv">C4</span><span class="k">}</span><span class=
+"se">\w</span><span class="k">${</span><span class="nv">C2</span><span class="k">}</span><span class="s2">)</span><span class=
+"se">\n</span><span class="k">${</span><span class="nv">C2</span><span class="k">}</span><span class="s2">-</span><span class=
+"k">${</span><span class="nv">C1</span><span class="k">}</span><span class="s2">=&gt;&gt;</span><span class="k">${</span><span class=
+"nv">C3</span><span class="k">}</span><span class="s2">"</span>
 </code>
 </pre>
           </div>
           <div class="highlight">
             <pre>
 <code class="bash language-bash" data-lang="bash"><span class="c"># Root colors (user colors in ~/.bash_profile)</span>
-<span class="nb">export </span><span class="nv">TERM</span><span class="o">=</span><span class="s2">&quot;xterm-color&quot;</span>
-<span class="nv">C1</span><span class="o">=</span><span class="s2">&quot;\[\033[0;31m\]&quot;</span>
-<span class="nv">C2</span><span class="o">=</span><span class="s2">&quot;\[\033[1;30m\]&quot;</span>
-<span class="nv">C3</span><span class="o">=</span><span class="s2">&quot;\[\033[0m\]&quot;</span>
-<span class="nv">C4</span><span class="o">=</span><span class="s2">&quot;\[\033[0;36m\]&quot;</span>
-<span class="nb">export </span><span class="nv">PS1</span><span class="o">=</span><span class=
-"s2">&quot;${C2}(${C1}\u${C2}@${C4}\h${C2}) - (${C4}\A${C2}) - (${C4}\w${C2})\n${C2}-${C1}=&gt;&gt;${C3}&quot;</span>
+<span class="nb">export </span><span class="nv">TERM</span><span class="o">=</span><span class="s2">"xterm-color"</span>
+<span class="nv">C1</span><span class="o">=</span><span class="s2">"</span><span class="se">\[\0</span><span class="s2">33[0;31m</span><span class=
+"se">\]</span><span class="s2">"</span>
+<span class="nv">C2</span><span class="o">=</span><span class="s2">"</span><span class="se">\[\0</span><span class="s2">33[1;30m</span><span class=
+"se">\]</span><span class="s2">"</span>
+<span class="nv">C3</span><span class="o">=</span><span class="s2">"</span><span class="se">\[\0</span><span class="s2">33[0m</span><span class=
+"se">\]</span><span class="s2">"</span>
+<span class="nv">C4</span><span class="o">=</span><span class="s2">"</span><span class="se">\[\0</span><span class="s2">33[0;36m</span><span class=
+"se">\]</span><span class="s2">"</span>
+<span class="nb">export </span><span class="nv">PS1</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class=
+"nv">C2</span><span class="k">}</span><span class="s2">(</span><span class="k">${</span><span class="nv">C1</span><span class=
+"k">}</span><span class="se">\u</span><span class="k">${</span><span class="nv">C2</span><span class="k">}</span><span class=
+"s2">@</span><span class="k">${</span><span class="nv">C4</span><span class="k">}</span><span class="se">\h</span><span class=
+"k">${</span><span class="nv">C2</span><span class="k">}</span><span class="s2">) - (</span><span class="k">${</span><span class=
+"nv">C4</span><span class="k">}</span><span class="se">\A</span><span class="k">${</span><span class="nv">C2</span><span class=
+"k">}</span><span class="s2">) - (</span><span class="k">${</span><span class="nv">C4</span><span class="k">}</span><span class=
+"se">\w</span><span class="k">${</span><span class="nv">C2</span><span class="k">}</span><span class="s2">)</span><span class=
+"se">\n</span><span class="k">${</span><span class="nv">C2</span><span class="k">}</span><span class="s2">-</span><span class=
+"k">${</span><span class="nv">C1</span><span class="k">}</span><span class="s2">=&gt;&gt;</span><span class="k">${</span><span class=
+"nv">C3</span><span class="k">}</span><span class="s2">"</span>
 </code>
 </pre>
           </div>
@@ -224,6 +250,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -238,16 +273,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

@@ -72,17 +72,17 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class=
 "no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">store</span> <span class="ss">:settings</span><span class="p">,</span> <span class="ss">accessors</span><span class=
-"p">:</span> <span class="o">[</span><span class="ss">:color</span><span class="p">,</span> <span class="ss">:homepage</span><span class="o">]</span>
+  <span class="n">store</span> <span class="ss">:settings</span><span class="p">,</span> <span class="ss">accessors: </span><span class=
+"o">[</span><span class="ss">:color</span><span class="p">,</span> <span class="ss">:homepage</span><span class="o">]</span>
 <span class="k">end</span>
 
-<span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class=
-"p">(</span><span class="ss">color</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class=
-"ss">homepage</span><span class="p">:</span> <span class="s1">&#39;37signals.com&#39;</span><span class="p">)</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">color</span>            <span class="c1"># =&gt; &#39;black&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class=
-"ss">:color</span><span class="o">]</span> <span class="c1"># =&gt; &#39;black&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">settings</span><span class="o">[</span><span class=
+<span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">new</span><span class=
+"p">(</span><span class="ss">color: </span><span class="s1">'black'</span><span class="p">,</span> <span class="ss">homepage: </span><span class=
+"s1">'37signals.com'</span><span class="p">)</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">color</span>            <span class="c1"># =&gt; 'black'</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">settings</span><span class="o">[</span><span class=
+"ss">:color</span><span class="o">]</span> <span class="c1"># =&gt; 'black'</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">settings</span><span class="o">[</span><span class=
 "ss">:remember_me</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
 </code>
 </pre>
@@ -117,21 +117,20 @@
   <span class="n">store_configurable</span>
 <span class="k">end</span>
 
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class=
-"n">remember_me</span> <span class="o">=</span> <span class="kp">true</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class=
-"n">sortable_tables</span><span class="o">.</span><span class="n">column</span>    <span class="o">=</span> <span class=
-"s1">&#39;created_at&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class=
-"n">sortable_tables</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;asc&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">you</span><span class=
-"o">.</span><span class="n">should</span><span class="o">.</span><span class="n">never</span><span class="o">.</span><span class=
-"n">need</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">do</span><span class="o">.</span><span class=
-"n">this</span><span class="o">.</span><span class="n">but</span><span class="o">.</span><span class="n">you</span><span class=
-"o">.</span><span class="n">could</span><span class="o">.</span><span class="n">if</span><span class="o">.</span><span class=
-"n">you</span><span class="o">.</span><span class="n">wanted</span><span class="o">.</span><span class="n">to</span> <span class=
-"o">=</span> <span class="s1">&#39;deep_value&#39;</span>
-<span class="vi">@user</span><span class="o">.</span><span class="n">config_changed?</span> <span class="c1"># =&gt; true</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class=
+"nf">remember_me</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class=
+"nf">sortable_tables</span><span class="p">.</span><span class="nf">column</span>    <span class="o">=</span> <span class="s1">'created_at'</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class=
+"nf">sortable_tables</span><span class="p">.</span><span class="nf">direction</span> <span class="o">=</span> <span class="s1">'asc'</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">config</span><span class="p">.</span><span class="nf">you</span><span class=
+"p">.</span><span class="nf">should</span><span class="p">.</span><span class="nf">never</span><span class="p">.</span><span class=
+"nf">need</span><span class="p">.</span><span class="nf">to</span><span class="p">.</span><span class="nf">do</span><span class=
+"p">.</span><span class="nf">this</span><span class="p">.</span><span class="nf">but</span><span class="p">.</span><span class=
+"nf">you</span><span class="p">.</span><span class="nf">could</span><span class="p">.</span><span class="nf">if</span><span class=
+"p">.</span><span class="nf">you</span><span class="p">.</span><span class="nf">wanted</span><span class="p">.</span><span class=
+"nf">to</span> <span class="o">=</span> <span class="s1">'deep_value'</span>
+<span class="vi">@user</span><span class="p">.</span><span class="nf">config_changed?</span> <span class="c1"># =&gt; true</span>
 </code>
 </pre>
           </div>
@@ -154,21 +153,21 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># Default value passed to new.</span>
 
-<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class=
-"p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>  <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="p">.</span><span class="nf">new</span><span class=
+"p">(</span><span class="s1">'default'</span><span class="p">)</span>  <span class="c1"># =&gt; {}</span>
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class=
-"c1"># =&gt; &quot;default&quot;</span>
+"c1"># =&gt; "default"</span>
 
-<span class="c1"># Default value from new&#39;s block.</span>
+<span class="c1"># Default value from new's block.</span>
 
-<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class=
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">Hash</span><span class="p">.</span><span class="nf">new</span> <span class=
 "p">{</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class=
-"o">|</span> <span class="s2">&quot;Missing </span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class=
-"s2"> for hash with id </span><span class="si">#{</span><span class="nb">hash</span><span class="o">.</span><span class=
-"n">object_id</span><span class="si">}</span><span class="s2">.&quot;</span> <span class="p">}</span>
+"o">|</span> <span class="s2">"Missing </span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class=
+"s2"> for hash with id </span><span class="si">#{</span><span class="nb">hash</span><span class="p">.</span><span class=
+"nf">object_id</span><span class="si">}</span><span class="s2">."</span> <span class="p">}</span>
 <span class="nb">hash</span>                        <span class="c1"># =&gt; {}</span>
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                  <span class=
-"c1"># =&gt; &quot;Missing foo for hash with id 283829283.&quot;</span>
+"c1"># =&gt; "Missing foo for hash with id 283829283."</span>
 </code>
 </pre>
           </div>
@@ -186,20 +185,20 @@
 "o">&lt;</span> <span class="no">Hash</span>
   <span class="no">Recursive</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span> <span class=
 "o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class=
-"o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class=
-"n">class</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
+"o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">h</span><span class="p">.</span><span class=
+"nf">class</span><span class="p">.</span><span class="nf">new</span> <span class="p">}</span>
   <span class="k">def</span> <span class="nf">initialize</span>
     <span class="k">super</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Recursive</span><span class="p">)</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="nb">hash</span> <span class="o">=</span> <span class="no">RecursiveHash</span><span class="o">.</span><span class=
-"n">new</span>  <span class="c1"># =&gt; {}</span>
-<span class="nb">hash</span><span class="o">.</span><span class="n">class</span>                <span class="c1"># =&gt; RecursiveHash</span>
+<span class="nb">hash</span> <span class="o">=</span> <span class="no">RecursiveHash</span><span class="p">.</span><span class=
+"nf">new</span>  <span class="c1"># =&gt; {}</span>
+<span class="nb">hash</span><span class="p">.</span><span class="nf">class</span>                <span class="c1"># =&gt; RecursiveHash</span>
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span>                <span class=
 "c1"># =&gt; {}</span>
-<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">].</span><span class=
-"n">class</span>          <span class="c1"># =&gt; RecursiveHash</span>
+<span class="nb">hash</span><span class="o">[</span><span class="ss">:foo</span><span class="o">]</span><span class="p">.</span><span class=
+"nf">class</span>          <span class="c1"># =&gt; RecursiveHash</span>
 <span class="nb">hash</span><span class="o">[</span><span class="ss">:a</span><span class="o">][</span><span class="ss">:b</span><span class=
 "o">][</span><span class="ss">:c</span><span class="o">]</span>          <span class="c1"># =&gt; {}</span>
 <span class="nb">hash</span>                      <span class="c1"># =&gt; {:foo=&gt;{}, :a=&gt;{:b=&gt;{:c=&gt;{}}}}</span>
@@ -220,22 +219,22 @@
 <code class="ruby language-ruby" data-lang="ruby"><span class="n">loader</span> <span class="o">=</span> <span class="nb">lambda</span> <span class=
 "k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,</span> <span class="n">key</span><span class=
 "p">,</span> <span class="n">value</span><span class="o">|</span>
-  <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class=
+  <span class="k">if</span> <span class="n">value</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class=
 "no">Hash</span><span class="p">)</span>
-    <span class="n">value</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class=
+    <span class="n">value</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class=
 "n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class=
-"o">.</span><span class="n">call</span><span class="p">(</span><span class="nb">hash</span><span class="o">.</span><span class=
-"n">send</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">k</span><span class=
+"p">.</span><span class="nf">call</span><span class="p">(</span><span class="nb">hash</span><span class="p">.</span><span class=
+"nf">send</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">k</span><span class=
 "p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
   <span class="k">else</span>
-    <span class="n">options</span><span class="o">.</span><span class="n">send</span> <span class="s2">&quot;</span><span class=
-"si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2">=&quot;</span><span class="p">,</span> <span class="n">value</span>
+    <span class="n">options</span><span class="p">.</span><span class="nf">send</span> <span class="s2">"</span><span class=
+"si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2">="</span><span class="p">,</span> <span class="n">value</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
-<span class="n">data</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class=
+<span class="n">data</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class=
 "n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">loader</span><span class=
-"o">.</span><span class="n">call</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class=
+"p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class=
 "n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">}</span>
 </code>
 </pre>
@@ -315,6 +314,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -329,16 +337,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

@@ -86,13 +86,13 @@
 "o">=</span><span class="kp">nil</span><span class="p">)</span>
       <span class="p">{</span> <span class="ss">:name</span>                <span class="o">=&gt;</span> <span class="nb">name</span><span class=
 "p">,</span>
-        <span class="ss">:identifier</span>          <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class=
-"n">identifier</span><span class="p">,</span>
-        <span class="ss">:friendly_identifier</span> <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class=
-"n">friendly_identifier</span><span class="p">,</span>
+        <span class="ss">:identifier</span>          <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="p">.</span><span class=
+"nf">identifier</span><span class="p">,</span>
+        <span class="ss">:friendly_identifier</span> <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="p">.</span><span class=
+"nf">friendly_identifier</span><span class="p">,</span>
         <span class="ss">:utc_offset</span>          <span class="o">=&gt;</span> <span class="n">utc_offset</span><span class="p">,</span>
-        <span class="ss">:utc_total_offset</span>    <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="o">.</span><span class=
-"n">current_period</span><span class="o">.</span><span class="n">utc_total_offset</span> <span class="p">}</span>
+        <span class="ss">:utc_total_offset</span>    <span class="o">=&gt;</span> <span class="n">tzinfo</span><span class="p">.</span><span class=
+"nf">current_period</span><span class="p">.</span><span class="nf">utc_total_offset</span> <span class="p">}</span>
     <span class="k">end</span>
 
   <span class="k">end</span>
@@ -107,20 +107,21 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="nv">moment.fn.forTimeZone = </span><span class=
-"nf">(timeZone) -&gt;</span>
-  <span class="nv">currentOffset = </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class=
-"nx">zone</span><span class="p">()</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span> <span class=
-"o">*</span> <span class="o">-</span><span class="mi">1</span>
-  <span class="nv">adjustedOfffset = </span><span class="k">if</span> <span class="nx">currentOffset</span> <span class="o">&gt;</span> <span class=
-"nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span>
-                      <span class="nx">timeZone</span><span class="p">.</span><span class="nx">utc_total_offset</span> <span class=
+<code class="coffeescript language-coffeescript" data-lang="coffeescript"><span class="nx">moment</span><span class="p">.</span><span class=
+"na">fn</span><span class="p">.</span><span class="na">forTimeZone</span> <span class="o">=</span> <span class="p">(</span><span class=
+"nx">timeZone</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nx">currentOffset</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class=
+"p">.</span><span class="na">zone</span><span class="p">()</span> <span class="o">*</span> <span class="mi">60</span><span class=
+"p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="nx">adjustedOfffset</span> <span class="o">=</span> <span class="k">if</span> <span class="nx">currentOffset</span> <span class=
+"o">&gt;</span> <span class="nx">timeZone</span><span class="p">.</span><span class="na">utc_total_offset</span>
+                      <span class="nx">timeZone</span><span class="p">.</span><span class="na">utc_total_offset</span> <span class=
 "o">-</span> <span class="nx">currentOffset</span>
                     <span class="k">else</span>
                       <span class="nx">currentOffset</span> <span class="o">-</span> <span class="nx">timeZone</span><span class=
-"p">.</span><span class="nx">utc_total_offset</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">clone</span><span class="p">().</span><span class="nx">add</span> <span class=
-"s">&#39;seconds&#39;</span><span class="p">,</span> <span class="nx">adjustedOfffset</span>
+"p">.</span><span class="na">utc_total_offset</span>
+  <span class="k">this</span><span class="p">.</span><span class="na">clone</span><span class="p">().</span><span class="na">add</span> <span class=
+"s">'seconds'</span><span class="p">,</span> <span class="nx">adjustedOfffset</span>
 </code>
 </pre>
           </div>
@@ -131,26 +132,25 @@
           <div class="highlight">
             <pre>
 <code class="javascript language-javascript" data-lang="javascript"><span class="nx">eastern</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">friendly_identifier</span><span class="o">:</span> <span class="s2">&quot;America - New York&quot;</span><span class="p">,</span>
-  <span class="nx">identifier</span><span class="o">:</span> <span class="s2">&quot;America/New_York&quot;</span><span class="p">,</span>
-  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Eastern Time (US &amp; Canada)&quot;</span><span class="p">,</span>
-  <span class="nx">utc_offset</span><span class="o">:</span> <span class="o">-</span><span class="mi">18000</span><span class="p">,</span>
-  <span class="nx">utc_total_offset</span><span class="o">:</span> <span class="o">-</span><span class="mi">14400</span>
+  <span class="na">friendly_identifier</span><span class="p">:</span> <span class="s2">"America - New York"</span><span class="p">,</span>
+  <span class="na">identifier</span><span class="p">:</span> <span class="s2">"America/New_York"</span><span class="p">,</span>
+  <span class="na">name</span><span class="p">:</span> <span class="s2">"Eastern Time (US &amp; Canada)"</span><span class="p">,</span>
+  <span class="na">utc_offset</span><span class="p">:</span> <span class="o">-</span><span class="mi">18000</span><span class="p">,</span>
+  <span class="na">utc_total_offset</span><span class="p">:</span> <span class="o">-</span><span class="mi">14400</span>
 <span class="p">}</span>
 
-<span class="nx">noonPacific</span> <span class="o">=</span> <span class="mi">1344279600000</span> <span class=
-"c1">// &quot;2012-08-06T12:00:00-07:00&quot;</span>
-<span class="nx">format</span> <span class="o">=</span> <span class="s1">&#39;MMMM Do, YYYY \\at h:mma&#39;</span>
+<span class="nx">noonPacific</span> <span class="o">=</span> <span class="mi">1344279600000</span> <span class="c1">// "2012-08-06T12:00:00-07:00"
+</span><span class="nx">format</span> <span class="o">=</span> <span class="s1">'MMMM Do, YYYY \\at h:mma'</span>
 
 <span class="nx">moment</span><span class="p">(</span><span class="nx">noonPacific</span><span class="p">).</span><span class=
 "nx">format</span><span class="p">(</span><span class="nx">format</span><span class="p">)</span>
-<span class="c1">// &quot;August 6th, 2012 at 12:00pm&quot;</span>
-
+<span class="c1">// "August 6th, 2012 at 12:00pm"
+</span>
 <span class="nx">moment</span><span class="p">(</span><span class="nx">noonPacific</span><span class="p">).</span><span class=
 "nx">forTimeZone</span><span class="p">(</span><span class="nx">eastern</span><span class="p">).</span><span class="nx">format</span><span class=
 "p">(</span><span class="nx">format</span><span class="p">)</span>
-<span class="c1">// &quot;August 6th, 2012 at 3:00pm&quot;</span>
-</code>
+<span class="c1">// "August 6th, 2012 at 3:00pm"
+</span></code>
 </pre>
           </div>
           <h2>
@@ -221,6 +221,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -235,16 +244,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

@@ -122,16 +122,16 @@ $ which wkhtmltopdf
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="o">!!!</span> <span class="mi">5</span>
 <span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;en&#39;</span><span class="p">}</span>
+"s1">'en'</span><span class="p">}</span>
   <span class="o">%</span><span class="n">head</span>
     <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
+"o">=&gt;</span> <span class="s1">'utf-8'</span><span class="p">}</span>
     <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:name</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;pdfkit-footer_html&#39;</span><span class="p">,</span> <span class="ss">:content</span> <span class=
+"o">=&gt;</span> <span class="s1">'pdfkit-footer_html'</span><span class="p">,</span> <span class="ss">:content</span> <span class=
 "o">=&gt;</span> <span class="n">pdf_footer_url</span><span class="p">}</span>
-    <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
-"n">request</span><span class="o">.</span><span class="n">protocol</span><span class="si">}#{</span><span class="n">request</span><span class=
-"o">.</span><span class="n">host_with_port</span><span class="si">}</span><span class="s2">/stylesheets/pdf.css&quot;</span>
+    <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s2">"</span><span class="si">#{</span><span class=
+"n">request</span><span class="p">.</span><span class="nf">protocol</span><span class="si">}#{</span><span class="n">request</span><span class=
+"p">.</span><span class="nf">host_with_port</span><span class="si">}</span><span class="s2">/stylesheets/pdf.css"</span>
   <span class="o">%</span><span class="n">body</span>
     <span class="o">=</span> <span class="k">yield</span><span class="p">(</span><span class="ss">:layout</span><span class="p">)</span>
 </code>
@@ -162,8 +162,8 @@ $ which wkhtmltopdf
           <div class="highlight">
             <pre>
 <code class="css language-css" data-lang="css"><span class="c">/* Reset CSS. http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css  */</span>
-<span class="nt">html</span><span class="p">{</span><span class="k">color</span><span class="o">:</span><span class="m">#000</span><span class=
-"p">;</span><span class="k">background</span><span class="o">:</span><span class="m">#FFF</span><span class="p">;}</span><span class=
+<span class="nt">html</span><span class="p">{</span><span class="nl">color</span><span class="p">:</span><span class="m">#000</span><span class=
+"p">;</span><span class="nl">background</span><span class="p">:</span><span class="m">#FFF</span><span class="p">;}</span><span class=
 "nt">body</span><span class="o">,</span><span class="nt">div</span><span class="o">,</span><span class="nt">dl</span><span class=
 "o">,</span><span class="nt">dt</span><span class="o">,</span><span class="nt">dd</span><span class="o">,</span><span class=
 "nt">ul</span><span class="o">,</span><span class="nt">ol</span><span class="o">,</span><span class="nt">li</span><span class=
@@ -174,74 +174,70 @@ $ which wkhtmltopdf
 "o">,</span><span class="nt">fieldset</span><span class="o">,</span><span class="nt">legend</span><span class="o">,</span><span class=
 "nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span><span class="nt">p</span><span class=
 "o">,</span><span class="nt">blockquote</span><span class="o">,</span><span class="nt">th</span><span class="o">,</span><span class=
-"nt">td</span><span class="p">{</span><span class="k">margin</span><span class="o">:</span><span class="m">0</span><span class=
-"p">;</span><span class="k">padding</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span>
-<span class="nt">table</span><span class="p">{</span><span class="k">border-collapse</span><span class="o">:</span><span class=
-"k">collapse</span><span class="p">;</span><span class="k">border-spacing</span><span class="o">:</span><span class="m">0</span><span class=
+"nt">td</span><span class="p">{</span><span class="nl">margin</span><span class="p">:</span><span class="m">0</span><span class=
+"p">;</span><span class="nl">padding</span><span class="p">:</span><span class="m">0</span><span class="p">;}</span>
+<span class="nt">table</span><span class="p">{</span><span class="nl">border-collapse</span><span class="p">:</span><span class=
+"nb">collapse</span><span class="p">;</span><span class="nl">border-spacing</span><span class="p">:</span><span class="m">0</span><span class=
 "p">;}</span><span class="nt">fieldset</span><span class="o">,</span><span class="nt">img</span><span class="p">{</span><span class=
-"k">border</span><span class="o">:</span><span class="m">0</span><span class="p">;}</span><span class="nt">address</span><span class=
+"nl">border</span><span class="p">:</span><span class="m">0</span><span class="p">;}</span><span class="nt">address</span><span class=
 "o">,</span><span class="nt">caption</span><span class="o">,</span>
 <span class="nt">cite</span><span class="o">,</span><span class="nt">code</span><span class="o">,</span><span class="nt">dfn</span><span class=
 "o">,</span><span class="nt">em</span><span class="o">,</span><span class="nt">strong</span><span class="o">,</span><span class=
-"nt">th</span><span class="o">,</span><span class="nt">var</span><span class="p">{</span><span class="k">font-style</span><span class=
-"o">:</span><span class="k">normal</span><span class="p">;</span><span class="k">font-weight</span><span class="o">:</span><span class=
-"k">normal</span><span class="p">;}</span><span class="nt">li</span><span class="p">{</span><span class="k">list-style</span><span class=
-"o">:</span><span class="k">none</span><span class="p">;}</span>
+"nt">th</span><span class="o">,</span><span class="nt">var</span><span class="p">{</span><span class="nl">font-style</span><span class=
+"p">:</span><span class="nb">normal</span><span class="p">;</span><span class="nl">font-weight</span><span class="p">:</span><span class=
+"nb">normal</span><span class="p">;}</span><span class="nt">li</span><span class="p">{</span><span class="nl">list-style</span><span class=
+"p">:</span><span class="nb">none</span><span class="p">;}</span>
 <span class="nt">caption</span><span class="o">,</span><span class="nt">th</span><span class="p">{</span><span class=
-"k">text-align</span><span class="o">:</span><span class="k">left</span><span class="p">;}</span><span class="nt">h1</span><span class=
+"nl">text-align</span><span class="p">:</span><span class="nb">left</span><span class="p">;}</span><span class="nt">h1</span><span class=
 "o">,</span><span class="nt">h2</span><span class="o">,</span><span class="nt">h3</span><span class="o">,</span><span class=
 "nt">h4</span><span class="o">,</span><span class="nt">h5</span><span class="o">,</span><span class="nt">h6</span><span class=
-"p">{</span><span class="k">font-size</span><span class="o">:</span><span class="m">100</span><span class="o">%</span><span class=
-"p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">normal</span><span class="p">;}</span>
+"p">{</span><span class="nl">font-size</span><span class="p">:</span><span class="m">100</span><span class="err">%</span><span class=
+"p">;</span><span class="nl">font-weight</span><span class="p">:</span><span class="nb">normal</span><span class="p">;}</span>
 <span class="nt">q</span><span class="nd">:before</span><span class="o">,</span><span class="nt">q</span><span class="nd">:after</span><span class=
-"p">{</span><span class="k">content</span><span class="o">:</span><span class="s1">&#39;&#39;</span><span class="p">;}</span><span class=
-"nt">abbr</span><span class="o">,</span><span class="nt">acronym</span><span class="p">{</span><span class="k">border</span><span class=
-"o">:</span><span class="m">0</span><span class="p">;</span><span class="k">font-variant</span><span class="o">:</span><span class=
-"k">normal</span><span class="p">;}</span>
-<span class="nt">sup</span><span class="p">{</span><span class="k">vertical-align</span><span class="o">:</span><span class=
-"k">text</span><span class="o">-</span><span class="k">top</span><span class="p">;}</span><span class="nt">sub</span><span class=
-"p">{</span><span class="k">vertical-align</span><span class="o">:</span><span class="k">text</span><span class="o">-</span><span class=
-"k">bottom</span><span class="p">;}</span><span class="nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class=
-"o">,</span>
-<span class="nt">select</span><span class="p">{</span><span class="k">font-family</span><span class="o">:</span><span class=
-"k">inherit</span><span class="p">;</span><span class="k">font-size</span><span class="o">:</span><span class="k">inherit</span><span class=
-"p">;</span><span class="k">font-weight</span><span class="o">:</span><span class="k">inherit</span><span class="p">;}</span><span class=
+"p">{</span><span class="nl">content</span><span class="p">:</span><span class="s2">''</span><span class="p">;}</span><span class=
+"nt">abbr</span><span class="o">,</span><span class="nt">acronym</span><span class="p">{</span><span class="nl">border</span><span class=
+"p">:</span><span class="m">0</span><span class="p">;</span><span class="nl">font-variant</span><span class="p">:</span><span class=
+"nb">normal</span><span class="p">;}</span>
+<span class="nt">sup</span><span class="p">{</span><span class="nl">vertical-align</span><span class="p">:</span><span class=
+"nb">text-top</span><span class="p">;}</span><span class="nt">sub</span><span class="p">{</span><span class="nl">vertical-align</span><span class=
+"p">:</span><span class="nb">text-bottom</span><span class="p">;}</span><span class="nt">input</span><span class="o">,</span><span class=
+"nt">textarea</span><span class="o">,</span>
+<span class="nt">select</span><span class="p">{</span><span class="nl">font-family</span><span class="p">:</span><span class=
+"nb">inherit</span><span class="p">;</span><span class="nl">font-size</span><span class="p">:</span><span class="nb">inherit</span><span class=
+"p">;</span><span class="nl">font-weight</span><span class="p">:</span><span class="nb">inherit</span><span class="p">;}</span><span class=
 "nt">input</span><span class="o">,</span><span class="nt">textarea</span><span class="o">,</span>
-<span class="nt">select</span><span class="p">{</span><span class="o">*</span><span class="k">font-size</span><span class="o">:</span><span class=
-"m">100</span><span class="o">%</span><span class="p">;}</span><span class="nt">legend</span><span class="p">{</span><span class=
-"k">color</span><span class="o">:</span><span class="m">#000</span><span class="p">;}</span>
+<span class="nt">select</span><span class="p">{</span><span class="err">*</span><span class="nl">font-size</span><span class="p">:</span><span class=
+"m">100</span><span class="err">%</span><span class="p">;}</span><span class="nt">legend</span><span class="p">{</span><span class=
+"nl">color</span><span class="p">:</span><span class="m">#000</span><span class="p">;}</span>
 
 <span class="c">/* Your Base Foundation */</span>
 <span class="nt">html</span><span class="o">,</span><span class="nt">body</span> <span class="p">{</span> <span class=
-"k">font-family</span><span class="o">:</span> <span class="k">sans-serif</span><span class="p">;</span> <span class="k">font-size</span><span class=
-"o">:</span><span class="m">12px</span><span class="p">;</span> <span class="p">}</span>
-<span class="nt">h1</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">18px</span><span class=
+"nl">font-family</span><span class="p">:</span> <span class="nb">sans-serif</span><span class="p">;</span> <span class=
+"nl">font-size</span><span class="p">:</span><span class="m">12px</span><span class="p">;</span> <span class="p">}</span>
+<span class="nt">h1</span> <span class="p">{</span> <span class="nl">font-size</span><span class="p">:</span><span class="m">18px</span><span class=
 "p">;</span> <span class="p">}</span>
-<span class="nt">h2</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">16px</span><span class=
+<span class="nt">h2</span> <span class="p">{</span> <span class="nl">font-size</span><span class="p">:</span><span class="m">16px</span><span class=
 "p">;</span> <span class="p">}</span>
-<span class="nt">h3</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">14px</span><span class=
+<span class="nt">h3</span> <span class="p">{</span> <span class="nl">font-size</span><span class="p">:</span><span class="m">14px</span><span class=
 "p">;</span> <span class="p">}</span>
-<span class="nt">h4</span> <span class="p">{</span> <span class="k">font-size</span><span class="o">:</span><span class="m">12px</span><span class=
+<span class="nt">h4</span> <span class="p">{</span> <span class="nl">font-size</span><span class="p">:</span><span class="m">12px</span><span class=
 "p">;</span> <span class="p">}</span>
-<span class="nt">strong</span> <span class="p">{</span> <span class="k">font-weight</span><span class="o">:</span><span class=
+<span class="nt">strong</span> <span class="p">{</span> <span class="nl">font-weight</span><span class="p">:</span><span class=
 "m">900</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
-<span class="nt">hr</span>     <span class="p">{</span> <span class="k">border</span><span class="o">:</span><span class="m">0</span><span class=
-"p">;</span> <span class="k">margin</span><span class="o">:</span><span class="m">0</span><span class="p">;</span> <span class=
-"k">padding</span><span class="o">:</span><span class="m">0</span><span class="p">;</span> <span class="k">height</span><span class=
-"o">:</span><span class="m">1px</span><span class="p">;</span> <span class="k">color</span><span class="o">:</span><span class=
-"m">#000</span><span class="p">;</span> <span class="k">background-color</span><span class="o">:</span><span class="m">#000</span><span class=
+<span class="nt">hr</span>     <span class="p">{</span> <span class="nl">border</span><span class="p">:</span><span class="m">0</span><span class=
+"p">;</span> <span class="nl">margin</span><span class="p">:</span><span class="m">0</span><span class="p">;</span> <span class=
+"nl">padding</span><span class="p">:</span><span class="m">0</span><span class="p">;</span> <span class="nl">height</span><span class=
+"p">:</span><span class="m">1px</span><span class="p">;</span> <span class="nl">color</span><span class="p">:</span><span class=
+"m">#000</span><span class="p">;</span> <span class="nl">background-color</span><span class="p">:</span><span class="m">#000</span><span class=
 "p">;</span> <span class="p">}</span>
 
 <span class="c">/* Page Breaks */</span>
-<span class="nc">.pb_before</span> <span class="p">{</span> <span class="k">page</span><span class="o">-</span><span class=
-"n">break</span><span class="o">-</span><span class="n">before</span><span class="o">:</span><span class="k">always</span> <span class=
-"cp">!important</span><span class="p">;</span> <span class="p">}</span>
-<span class="nc">.pb_after</span>  <span class="p">{</span> <span class="k">page</span><span class="o">-</span><span class=
-"n">break</span><span class="o">-</span><span class="n">after</span><span class="o">:</span><span class="k">always</span> <span class=
-"cp">!important</span><span class="p">;</span> <span class="p">}</span>
-<span class="nc">.pbi_avoid</span> <span class="p">{</span> <span class="k">page</span><span class="o">-</span><span class=
-"n">break</span><span class="o">-</span><span class="k">inside</span><span class="o">:</span><span class="k">avoid</span> <span class=
-"cp">!important</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.pb_before</span> <span class="p">{</span> <span class="nl">page-break-before</span><span class="p">:</span><span class=
+"nb">always</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.pb_after</span>  <span class="p">{</span> <span class="nl">page-break-after</span><span class="p">:</span><span class=
+"nb">always</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
+<span class="nc">.pbi_avoid</span> <span class="p">{</span> <span class="nl">page-break-inside</span><span class="p">:</span><span class=
+"nb">avoid</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
 </code>
 </pre>
           </div>
@@ -265,16 +261,16 @@ $ which wkhtmltopdf
             tag that forces a new page break makes sure that we always start a new page when rendering each document.
             <div class="highlight">
               <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="o">%</span><span class="n">div</span><span class="o">.</span><span class=
-"n">pb_before</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="o">%</span><span class="n">div</span><span class="p">.</span><span class=
+"nf">pb_before</span>
   <span class="o">=</span> <span class="n">render</span> <span class="ss">:partial</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;pdf/orders/print&#39;</span>
-<span class="o">%</span><span class="n">div</span><span class="o">.</span><span class="n">pb_before</span>
+"s1">'pdf/orders/print'</span>
+<span class="o">%</span><span class="n">div</span><span class="p">.</span><span class="nf">pb_before</span>
   <span class="o">=</span> <span class="n">render</span> <span class="ss">:partial</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;pdf/orders/invoice&#39;</span>
-<span class="o">%</span><span class="n">div</span><span class="o">.</span><span class="n">pb_before</span>
+"s1">'pdf/orders/invoice'</span>
+<span class="o">%</span><span class="n">div</span><span class="p">.</span><span class="nf">pb_before</span>
   <span class="o">=</span> <span class="n">render</span> <span class="ss">:partial</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;pdf/orders/picklist&#39;</span>
+"s1">'pdf/orders/picklist'</span>
 </code>
 </pre>
             </div>
@@ -292,7 +288,7 @@ $ which wkhtmltopdf
             <div class="highlight">
               <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class=
-"ss">:name</span> <span class="o">=&gt;</span> <span class="s1">&#39;pdfkit-footer_html&#39;</span><span class="p">,</span> <span class=
+"ss">:name</span> <span class="o">=&gt;</span> <span class="s1">'pdfkit-footer_html'</span><span class="p">,</span> <span class=
 "ss">:content</span> <span class="o">=&gt;</span> <span class="n">pdf_footer_url</span><span class="p">}</span>
 </code>
 </pre>
@@ -313,14 +309,14 @@ $ which wkhtmltopdf
             </p>
             <div class="highlight">
               <pre>
-<code class="ruby language-ruby" data-lang="ruby"><span class="no">PDFKit</span><span class="o">.</span><span class="n">configure</span> <span class=
-"k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-  <span class="n">config</span><span class="o">.</span><span class="n">default_options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="ss">:page_size</span>     <span class="o">=&gt;</span> <span class="s1">&#39;Letter&#39;</span><span class="p">,</span>
-    <span class="ss">:margin_top</span>    <span class="o">=&gt;</span> <span class="s1">&#39;0.5in&#39;</span><span class="p">,</span>
-    <span class="ss">:margin_right</span>  <span class="o">=&gt;</span> <span class="s1">&#39;0.5in&#39;</span><span class="p">,</span>
-    <span class="ss">:margin_bottom</span> <span class="o">=&gt;</span> <span class="s1">&#39;0.7in&#39;</span><span class="p">,</span>
-    <span class="ss">:margin_left</span>   <span class="o">=&gt;</span> <span class="s1">&#39;0.5in&#39;</span>
+<code class="ruby language-ruby" data-lang="ruby"><span class="no">PDFKit</span><span class="p">.</span><span class=
+"nf">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">default_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="ss">:page_size</span>     <span class="o">=&gt;</span> <span class="s1">'Letter'</span><span class="p">,</span>
+    <span class="ss">:margin_top</span>    <span class="o">=&gt;</span> <span class="s1">'0.5in'</span><span class="p">,</span>
+    <span class="ss">:margin_right</span>  <span class="o">=&gt;</span> <span class="s1">'0.5in'</span><span class="p">,</span>
+    <span class="ss">:margin_bottom</span> <span class="o">=&gt;</span> <span class="s1">'0.7in'</span><span class="p">,</span>
+    <span class="ss">:margin_left</span>   <span class="o">=&gt;</span> <span class="s1">'0.5in'</span>
   <span class="p">}</span>
 <span class="k">end</span>
 </code>
@@ -373,42 +369,42 @@ $ which wkhtmltopdf
               <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="o">!!!</span> <span class="mi">5</span>
 <span class="o">%</span><span class="n">html</span><span class="p">{</span><span class="ss">:lang</span> <span class="o">=&gt;</span> <span class=
-"s1">&#39;en&#39;</span><span class="p">}</span>
+"s1">'en'</span><span class="p">}</span>
   <span class="o">%</span><span class="n">head</span>
     <span class="o">%</span><span class="n">meta</span><span class="p">{</span><span class="ss">:charset</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">}</span>
-    <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s2">&quot;</span><span class="si">#{</span><span class=
-"n">request</span><span class="o">.</span><span class="n">protocol</span><span class="si">}#{</span><span class="n">request</span><span class=
-"o">.</span><span class="n">host_with_port</span><span class="si">}</span><span class="s2">/stylesheets/pdf.css&quot;</span>
+"o">=&gt;</span> <span class="s1">'utf-8'</span><span class="p">}</span>
+    <span class="o">=</span> <span class="n">stylesheet_link_tag</span> <span class="s2">"</span><span class="si">#{</span><span class=
+"n">request</span><span class="p">.</span><span class="nf">protocol</span><span class="si">}#{</span><span class="n">request</span><span class=
+"p">.</span><span class="nf">host_with_port</span><span class="si">}</span><span class="s2">/stylesheets/pdf.css"</span>
     <span class="ss">:javascript</span>
       <span class="n">var</span> <span class="n">pdfInfo</span> <span class="o">=</span> <span class="p">{};</span>
       <span class="n">var</span> <span class="n">x</span> <span class="o">=</span> <span class="n">document</span><span class=
-"o">.</span><span class="n">location</span><span class="o">.</span><span class="n">search</span><span class="o">.</span><span class=
-"n">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class=
-"n">split</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">);</span>
+"p">.</span><span class="nf">location</span><span class="p">.</span><span class="nf">search</span><span class="p">.</span><span class=
+"nf">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">split</span><span class=
+"p">(</span><span class="s1">'&amp;'</span><span class="p">);</span>
       <span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">i</span> <span class="k">in</span> <span class=
 "n">x</span><span class="p">)</span> <span class="p">{</span> <span class="n">var</span> <span class="n">z</span> <span class=
-"o">=</span> <span class="n">x</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class=
-"n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span><span class="mi">2</span><span class=
+"o">=</span> <span class="n">x</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">.</span><span class=
+"nf">split</span><span class="p">(</span><span class="s1">'='</span><span class="p">,</span><span class="mi">2</span><span class=
 "p">);</span> <span class="n">pdfInfo</span><span class="o">[</span><span class="n">z</span><span class="o">[</span><span class=
 "mi">0</span><span class="o">]]</span> <span class="o">=</span> <span class="n">unescape</span><span class="p">(</span><span class=
 "n">z</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">);</span> <span class="p">}</span>
       <span class="n">function</span> <span class="n">getPdfInfo</span><span class="p">()</span> <span class="p">{</span>
         <span class="n">var</span> <span class="n">page</span> <span class="o">=</span> <span class="n">pdfInfo</span><span class=
-"o">.</span><span class="n">page</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
+"p">.</span><span class="nf">page</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
         <span class="n">var</span> <span class="n">pageCount</span> <span class="o">=</span> <span class="n">pdfInfo</span><span class=
-"o">.</span><span class="n">topage</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class=
-"s1">&#39;pdfkit_page_current&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">textContent</span> <span class=
-"o">=</span> <span class="n">page</span><span class="p">;</span>
-        <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="p">(</span><span class=
-"s1">&#39;pdfkit_page_count&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">textContent</span> <span class=
-"o">=</span> <span class="n">pageCount</span><span class="p">;</span>
+"p">.</span><span class="nf">topage</span> <span class="o">||</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class=
+"s1">'pdfkit_page_current'</span><span class="p">).</span><span class="nf">textContent</span> <span class="o">=</span> <span class=
+"n">page</span><span class="p">;</span>
+        <span class="n">document</span><span class="p">.</span><span class="nf">getElementById</span><span class="p">(</span><span class=
+"s1">'pdfkit_page_count'</span><span class="p">).</span><span class="nf">textContent</span> <span class="o">=</span> <span class=
+"n">pageCount</span><span class="p">;</span>
       <span class="p">}</span>
   <span class="o">%</span><span class="n">body</span><span class="p">{</span><span class="ss">:onload</span> <span class=
-"o">=&gt;</span> <span class="s1">&#39;getPdfInfo()&#39;</span><span class="p">}</span>
+"o">=&gt;</span> <span class="s1">'getPdfInfo()'</span><span class="p">}</span>
     <span class="o">%</span><span class="n">div</span><span class="c1">#pdfkit_page_numbers</span>
-      <span class="o">%</span><span class="n">span</span> <span class="ss">Page</span><span class="p">:</span>
+      <span class="o">%</span><span class="n">span</span> <span class="no">Page</span><span class="p">:</span>
       <span class="o">%</span><span class="n">span</span><span class="c1">#pdfkit_page_current</span>
       <span class="o">%</span><span class="n">span</span> <span class="n">of</span>
       <span class="o">%</span><span class="n">span</span><span class="c1">#pdfkit_page_count</span>
@@ -480,6 +476,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -494,16 +499,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

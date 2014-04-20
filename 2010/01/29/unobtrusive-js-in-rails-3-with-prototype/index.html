@@ -76,12 +76,11 @@
           <div class="highlight">
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># This Ruby</span>
-<span class="n">link_to</span> <span class="s1">&#39;Logout&#39;</span><span class="p">,</span> <span class="n">session_path</span><span class=
+<span class="n">link_to</span> <span class="s1">'Logout'</span><span class="p">,</span> <span class="n">session_path</span><span class=
 "p">,</span> <span class="ss">:method</span> <span class="o">=&gt;</span> <span class="ss">:delete</span>
 
 <span class="c1"># Will out put this HTML in Rails 3</span>
-<span class=
-"c1"># &lt;a href=&quot;/session&quot; data-method=&quot;delete&quot; data-url &quot;/session&quot; rel=&quot;nofollow&quot;&gt;Logoout&lt;/a&gt;</span>
+<span class="c1"># &lt;a href="/session" data-method="delete" data-url "/session" rel="nofollow"&gt;Logoout&lt;/a&gt;</span>
 </code>
 </pre>
           </div>
@@ -97,28 +96,27 @@
 <code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">MyJsObject</span> <span class=
 "o">=</span> <span class="p">{</span>
 
-  <span class="nx">linkToDelete</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class=
+  <span class="na">linkToDelete</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class=
 "nx">event</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">event</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
     <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class=
 "nx">element</span><span class="p">();</span>
     <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class=
-"nx">readAttribute</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span> <span class="o">?</span> <span class=
-"nx">e</span> <span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">up</span><span class=
-"p">(</span><span class="s1">&#39;a&#39;</span><span class="p">);</span>
+"nx">readAttribute</span><span class="p">(</span><span class="s1">'href'</span><span class="p">)</span> <span class="p">?</span> <span class=
+"nx">e</span> <span class="p">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">up</span><span class=
+"p">(</span><span class="s1">'a'</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">form</span> <span class="o">=</span> <span class="nx">FORM</span><span class=
-"p">({</span><span class="nx">action</span><span class="o">:</span><span class="nx">a</span><span class="p">.</span><span class=
-"nx">href</span><span class="p">,</span> <span class="nx">method</span><span class="o">:</span><span class="s1">&#39;post&#39;</span><span class=
+"p">({</span><span class="na">action</span><span class="p">:</span><span class="nx">a</span><span class="p">.</span><span class=
+"nx">href</span><span class="p">,</span> <span class="na">method</span><span class="p">:</span><span class="s1">'post'</span><span class=
 "p">},[</span>
-      <span class="nx">INPUT</span><span class="p">({</span><span class="nx">type</span><span class="o">:</span><span class=
-"s1">&#39;hidden&#39;</span><span class="p">,</span><span class="nx">name</span><span class="o">:</span><span class=
-"s1">&#39;_method&#39;</span><span class="p">,</span><span class="nx">value</span><span class="o">:</span><span class=
-"s1">&#39;delete&#39;</span><span class="p">}),</span>
-      <span class="nx">INPUT</span><span class="p">({</span><span class="nx">type</span><span class="o">:</span><span class=
-"s1">&#39;hidden&#39;</span><span class="p">,</span><span class="nx">name</span><span class="o">:</span><span class=
-"s1">&#39;authenticity_token&#39;</span><span class="p">,</span><span class="nx">value</span><span class="o">:</span><span class=
+      <span class="nx">INPUT</span><span class="p">({</span><span class="na">type</span><span class="p">:</span><span class=
+"s1">'hidden'</span><span class="p">,</span><span class="na">name</span><span class="p">:</span><span class="s1">'_method'</span><span class=
+"p">,</span><span class="na">value</span><span class="p">:</span><span class="s1">'delete'</span><span class="p">}),</span>
+      <span class="nx">INPUT</span><span class="p">({</span><span class="na">type</span><span class="p">:</span><span class=
+"s1">'hidden'</span><span class="p">,</span><span class="na">name</span><span class="p">:</span><span class=
+"s1">'authenticity_token'</span><span class="p">,</span><span class="na">value</span><span class="p">:</span><span class=
 "nx">authParams</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class=
-"s1">&#39;authenticity_token&#39;</span><span class="p">)})]</span>
+"s1">'authenticity_token'</span><span class="p">)})]</span>
     <span class="p">);</span>
     <span class="nx">form</span><span class="p">.</span><span class="nx">submit</span><span class="p">();</span>
     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
@@ -127,11 +125,11 @@
 <span class="p">};</span>
 
 <span class="nb">document</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class=
-"s1">&#39;dom:loaded&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-  <span class="nx">$$</span><span class="p">(</span><span class="s1">&#39;a[data-method=delete]&#39;</span><span class="p">).</span><span class=
+"s1">'dom:loaded'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">$$</span><span class="p">(</span><span class="s1">'a[data-method=delete]'</span><span class="p">).</span><span class=
 "nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class=
 "p">){</span> <span class="nx">a</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class=
-"s1">&#39;click&#39;</span><span class="p">,</span> <span class="nx">MyJsObject</span><span class="p">.</span><span class=
+"s1">'click'</span><span class="p">,</span> <span class="nx">MyJsObject</span><span class="p">.</span><span class=
 "nx">linkToDelete</span><span class="p">);</span> <span class="p">});</span>
 <span class="p">});</span>
 </code>
@@ -205,6 +203,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -219,16 +226,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

@@ -86,8 +86,8 @@
           <div class="highlight">
             <pre>
 <code class="html language-html" data-lang="html"><span class="nt">&lt;head&gt;</span>
-  <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">&quot;Content-Type&quot;</span> <span class=
-"na">content=</span><span class="s">&quot;text/html; charset=utf-8&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"Content-Type"</span> <span class=
+"na">content=</span><span class="s">"text/html; charset=utf-8"</span><span class="nt">/&gt;</span>
   <span class="err">&lt;</span>%= csrf_meta_tag %&gt;
 </code>
 </pre>
@@ -95,22 +95,21 @@
           <div class="highlight">
             <pre>
 <code class="javascript language-javascript" data-lang="javascript"><span class="nb">document</span><span class="p">.</span><span class=
-"nx">observe</span><span class="p">(</span><span class="s2">&quot;dom:loaded&quot;</span><span class="p">,</span> <span class=
-"kd">function</span><span class="p">()</span> <span class="p">{</span>
+"nx">observe</span><span class="p">(</span><span class="s2">"dom:loaded"</span><span class="p">,</span> <span class="kd">function</span><span class=
+"p">()</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">authToken</span> <span class="o">=</span> <span class="nx">$$</span><span class=
-"p">(</span><span class="s1">&#39;meta[name=csrf-token]&#39;</span><span class="p">).</span><span class="nx">first</span><span class=
-"p">().</span><span class="nx">readAttribute</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">),</span>
+"p">(</span><span class="s1">'meta[name=csrf-token]'</span><span class="p">).</span><span class="nx">first</span><span class=
+"p">().</span><span class="nx">readAttribute</span><span class="p">(</span><span class="s1">'content'</span><span class="p">),</span>
     <span class="nx">authParam</span> <span class="o">=</span> <span class="nx">$$</span><span class="p">(</span><span class=
-"s1">&#39;meta[name=csrf-param]&#39;</span><span class="p">).</span><span class="nx">first</span><span class="p">().</span><span class=
-"nx">readAttribute</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">),</span>
-    <span class="nx">formTemplate</span> <span class="o">=</span> <span class=
-"s1">&#39;&lt;form method=&quot;#{method}&quot; action=&quot;#{action}&quot;&gt;\</span>
-<span class="s1">      #{realmethod}&lt;input name=&quot;#{param}&quot; value=&quot;#{token}&quot; type=&quot;hidden&quot;&gt;\</span>
-<span class="s1">      &lt;/form&gt;&#39;</span><span class="p">,</span>
+"s1">'meta[name=csrf-param]'</span><span class="p">).</span><span class="nx">first</span><span class="p">().</span><span class=
+"nx">readAttribute</span><span class="p">(</span><span class="s1">'content'</span><span class="p">),</span>
+    <span class="nx">formTemplate</span> <span class="o">=</span> <span class="s1">'&lt;form method="#{method}" action="#{action}"&gt;\
+      #{realmethod}&lt;input name="#{param}" value="#{token}" type="hidden"&gt;\
+      &lt;/form&gt;'</span><span class="p">,</span>
     <span class="nx">realmethodTemplate</span> <span class="o">=</span> <span class=
-"s1">&#39;&lt;input name=&quot;_method&quot; value=&quot;#{method}&quot; type=&quot;hidden&quot;&gt;&#39;</span><span class="p">;</span>
-  <span class="c1">//... etc</span>
-</code>
+"s1">'&lt;input name="_method" value="#{method}" type="hidden"&gt;'</span><span class="p">;</span>
+  <span class="c1">//... etc
+</span></code>
 </pre>
           </div>
           <h2>
@@ -126,18 +125,18 @@
           </p>
           <div class="highlight">
             <pre>
-<code class="javascript language-javascript" data-lang="javascript"><span class="c1">// A base JS object.</span>
-
+<code class="javascript language-javascript" data-lang="javascript"><span class="c1">// A base JS object.
+</span>
 <span class="kd">var</span> <span class="nx">MyBase</span> <span class="o">=</span> <span class="p">{</span>
 
-  <span class="nx">authParams</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="na">authParams</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="kd">var</span> <span class="nx">authParam</span> <span class="o">=</span> <span class="nx">$$</span><span class=
-"p">(</span><span class="s1">&#39;meta[name=csrf-param]&#39;</span><span class="p">).</span><span class="nx">first</span><span class=
-"p">().</span><span class="nx">readAttribute</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">);</span>
+"p">(</span><span class="s1">'meta[name=csrf-param]'</span><span class="p">).</span><span class="nx">first</span><span class=
+"p">().</span><span class="nx">readAttribute</span><span class="p">(</span><span class="s1">'content'</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">authToken</span> <span class="o">=</span> <span class="nx">$$</span><span class=
-"p">(</span><span class="s1">&#39;meta[name=csrf-token]&#39;</span><span class="p">).</span><span class="nx">first</span><span class=
-"p">().</span><span class="nx">readAttribute</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">);</span>
+"p">(</span><span class="s1">'meta[name=csrf-token]'</span><span class="p">).</span><span class="nx">first</span><span class=
+"p">().</span><span class="nx">readAttribute</span><span class="p">(</span><span class="s1">'content'</span><span class="p">);</span>
     <span class="nx">params</span><span class="p">[</span><span class="nx">authParam</span><span class="p">]</span> <span class=
 "o">=</span> <span class="nx">authToken</span>
     <span class="k">return</span> <span class="nx">$H</span><span class="p">(</span><span class="nx">params</span><span class="p">);</span>
@@ -145,15 +144,15 @@
 
 <span class="p">};</span>
 
-<span class="c1">// Mixed Into Other Classes.</span>
-
+<span class="c1">// Mixed Into Other Classes.
+</span>
 <span class="kd">var</span> <span class="nx">SomeClass</span> <span class="o">=</span> <span class="nx">Class</span><span class=
 "p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">MyBase</span><span class="p">,{</span>
 
-  <span class="nx">doAjaxRequest</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="na">doAjaxRequest</span><span class="p">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">new</span> <span class="nx">Ajax</span><span class="p">.</span><span class="nx">Request</span><span class=
 "p">(</span><span class="nx">elmnt</span><span class="p">.</span><span class="nx">action</span><span class="p">,{</span>
-      <span class="nx">parameters</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class=
+      <span class="na">parameters</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class=
 "nx">form</span><span class="p">.</span><span class="nx">serialize</span><span class="p">(</span><span class="kc">true</span><span class=
 "p">).</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class=
 "nx">authParams</span><span class="p">()),</span>
@@ -224,6 +223,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -238,16 +246,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

@@ -95,9 +95,9 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1"># coding: utf-8</span>
 <span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Jasminerice</span><span class=
-"p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="o">.</span><span class=
-"n">environments</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="no">Rails</span><span class=
-"o">.</span><span class="n">env</span><span class="p">)</span>
+"p">)</span> <span class="o">&amp;&amp;</span> <span class="no">Jasminerice</span><span class="p">.</span><span class=
+"nf">environments</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="no">Rails</span><span class=
+"p">.</span><span class="nf">env</span><span class="p">)</span>
 
   <span class="c1"># Other Jasminerice patches from:</span>
   <span class="c1"># http://metaskills.net/2012/01/17/rails-and-spine-js-jasmine-testing-part-2/</span>
@@ -112,18 +112,18 @@
 
           <span class="k">def</span> <span class="nf">report_specdoc_logs</span><span class="p">(</span><span class="n">spec</span><span class=
 "p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">spec</span><span class="o">[</span><span class="s1">&#39;logs&#39;</span><span class=
+            <span class="k">if</span> <span class="n">spec</span><span class="o">[</span><span class="s1">'logs'</span><span class=
 "o">]</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">options</span><span class="o">[</span><span class=
 "ss">:console</span><span class="o">]</span> <span class="o">==</span> <span class="ss">:always</span> <span class="o">||</span> <span class=
 "p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:console</span><span class="o">]</span> <span class=
 "o">==</span> <span class="ss">:failure</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">spec</span><span class=
-"o">[</span><span class="s1">&#39;passed&#39;</span><span class="o">]</span><span class="p">))</span>
-              <span class="n">spec</span><span class="o">[</span><span class="s1">&#39;logs&#39;</span><span class="o">].</span><span class=
-"n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">log</span><span class="o">|</span>
-                <span class="no">Formatter</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class=
-"n">indent</span><span class="p">(</span><span class="s2">&quot;    • </span><span class="si">#{</span> <span class=
+"o">[</span><span class="s1">'passed'</span><span class="o">]</span><span class="p">))</span>
+              <span class="n">spec</span><span class="o">[</span><span class="s1">'logs'</span><span class="o">]</span><span class=
+"p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">log</span><span class="o">|</span>
+                <span class="no">Formatter</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class=
+"n">indent</span><span class="p">(</span><span class="s2">"    • </span><span class="si">#{</span> <span class=
 "n">format_log_message</span><span class="p">(</span><span class="n">log</span><span class="p">)</span> <span class="si">}</span><span class=
-"s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="p">))</span>
+"s2">"</span><span class="p">,</span> <span class="n">level</span><span class="p">))</span>
               <span class="k">end</span>
             <span class="k">end</span>
           <span class="k">end</span>
@@ -132,18 +132,18 @@
 "p">)</span>
             <span class="k">if</span> <span class="n">message</span> <span class="o">=~</span> <span class=
 "sr">/(.*?) in http.+?assets\/(.*)\?body=\d+\s\((line\s\d+)/m</span>
-              <span class="n">pp_prefix</span> <span class="o">=</span> <span class="s1">&#39;[myLog]&#39;</span>
+              <span class="n">pp_prefix</span> <span class="o">=</span> <span class="s1">'[myLog]'</span>
               <span class="n">msg</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class=
 "n">line</span> <span class="o">=</span> <span class="vg">$1</span><span class="p">,</span> <span class="vg">$2</span><span class=
 "p">,</span> <span class="vg">$3</span>
-              <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">starts_with?</span> <span class=
+              <span class="k">if</span> <span class="n">msg</span><span class="p">.</span><span class="nf">starts_with?</span> <span class=
 "n">pp_prefix</span>
-                <span class="n">msg</span><span class="o">.</span><span class="n">sub</span> <span class="n">pp_prefix</span><span class=
-"p">,</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">msg</span><span class="p">.</span><span class="nf">sub</span> <span class="n">pp_prefix</span><span class=
+"p">,</span> <span class="s1">''</span>
               <span class="k">else</span>
-                <span class="s2">&quot;</span><span class="si">#{</span><span class="n">msg</span><span class="si">}</span><span class=
+                <span class="s2">"</span><span class="si">#{</span><span class="n">msg</span><span class="si">}</span><span class=
 "s2"> in </span><span class="si">#{</span><span class="n">file</span><span class="si">}</span><span class="s2"> on </span><span class=
-"si">#{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span>
+"si">#{</span><span class="n">line</span><span class="si">}</span><span class="s2">"</span>
               <span class="k">end</span>
             <span class="k">else</span>
               <span class="n">message</span>
@@ -215,7 +215,7 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="n">group</span> <span class="ss">:assets</span> <span class="k">do</span>
   <span class="c1"># ...</span>
-  <span class="n">gem</span> <span class="s1">&#39;sprockets-blackcoffee&#39;</span>
+  <span class="n">gem</span> <span class="s1">'sprockets-blackcoffee'</span>
 <span class="k">end</span>
 </code>
 </pre>
@@ -230,9 +230,9 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="n">myLog</span> <span class="o">=</span> <span class="p">(</span><span class=
 "n">obj</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="n">console</span><span class="o">.</span><span class="n">log</span> <span class="s2">&quot;[myLog]</span><span class=
+  <span class="n">console</span><span class="p">.</span><span class="nf">log</span> <span class="s2">"[myLog]</span><span class=
 "si">#{</span><span class="n">myLogParser</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class=
-"si">}</span><span class="s2">&quot;</span>
+"si">}</span><span class="s2">"</span>
 
 <span class="n">myLogLine</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
@@ -241,8 +241,8 @@
 <span class="n">myLogParser</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class=
 "o">-&gt;</span>
   <span class="k">if</span> <span class="n">typeof</span> <span class="n">obj</span> <span class="n">is</span> <span class=
-"s1">&#39;string&#39;</span> <span class="k">then</span> <span class="n">obj</span> <span class="k">else</span> <span class=
-"n">jsDump</span><span class="o">.</span><span class="n">parse</span> <span class="n">obj</span>
+"s1">'string'</span> <span class="k">then</span> <span class="n">obj</span> <span class="k">else</span> <span class="n">jsDump</span><span class=
+"p">.</span><span class="nf">parse</span> <span class="n">obj</span>
 </code>
 </pre>
           </div>
@@ -256,17 +256,16 @@
             <pre>
 <code class="ruby language-ruby" data-lang="ruby"><span class="c1">#= include spec_helper</span>
 
-<span class="n">describe</span> <span class="s1">&#39;User&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+<span class="n">describe</span> <span class="s1">'User'</span><span class="p">,</span> <span class="o">-&gt;</span>
 
-  <span class="n">it</span> <span class="s1">&#39;has been configured with proper attributes&#39;</span><span class="p">,</span> <span class=
-"o">-&gt;</span>
+  <span class="n">it</span> <span class="s1">'has been configured with proper attributes'</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="vi">@user</span> <span class="o">=</span> <span class="kp">new</span> <span class="no">User</span> <span class=
-"nb">id</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="ss">email</span><span class=
-"p">:</span> <span class="s1">&#39;bob@test.com&#39;</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">log</span> <span class="vi">@user</span><span class=
-"o">.</span><span class="n">attributes</span><span class="p">()</span>
-    <span class="n">expect</span><span class="p">(</span><span class="vi">@user</span><span class="o">.</span><span class=
-"n">email</span><span class="p">)</span><span class="o">.</span><span class="n">toEqual</span> <span class="s1">&#39;bob@test.com&#39;</span>
+"nb">id</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="ss">email: </span><span class=
+"s1">'bob@test.com'</span>
+    <span class="n">console</span><span class="p">.</span><span class="nf">log</span> <span class="vi">@user</span><span class=
+"p">.</span><span class="nf">attributes</span><span class="p">()</span>
+    <span class="n">expect</span><span class="p">(</span><span class="vi">@user</span><span class="p">.</span><span class=
+"nf">email</span><span class="p">).</span><span class="nf">toEqual</span> <span class="s1">'bob@test.com'</span>
 </code>
 </pre>
           </div>
@@ -390,6 +389,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -404,16 +412,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

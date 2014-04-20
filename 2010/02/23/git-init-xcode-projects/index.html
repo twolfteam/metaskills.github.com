@@ -70,17 +70,23 @@
           <div class="highlight">
             <pre>
 <code class="bash language-bash" data-lang="bash"><span class="k">if</span> <span class="o">[[</span> -x <span class=
-"sb">`</span>which git<span class="sb">`</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+"sb">`</span>which git<span class="sb">`</span> <span class="o">]]</span>; <span class="k">then
 
-<span class="k">    function </span>ginit_xcode <span class="o">()</span> <span class="o">{</span>
+    function </span>ginit_xcode <span class="o">()</span> <span class="o">{</span>
       git init
-      <span class="nb">echo</span> <span class="s2">&quot;\n\n# XCode\nbuild\n*.mode1v3\n*.mode2v3\n*.nib\n*.swp\n\</span>
-<span class="s2">*.pbxuser\n*.perspective\n*.perspectivev3\n\n# OSX\n.DS_Store\n\n\</span>
-<span class="s2"># TextMate\n*.tm_build_errors\n\n\n&quot;</span> &gt;&gt; .gitignore
+      <span class="nb">echo</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2"># XCode</span><span class=
+"se">\n</span><span class="s2">build</span><span class="se">\n</span><span class="s2">*.mode1v3</span><span class="se">\n</span><span class=
+"s2">*.mode2v3</span><span class="se">\n</span><span class="s2">*.nib</span><span class="se">\n</span><span class="s2">*.swp</span><span class=
+"se">\n\</span><span class="s2">
+*.pbxuser</span><span class="se">\n</span><span class="s2">*.perspective</span><span class="se">\n</span><span class=
+"s2">*.perspectivev3</span><span class="se">\n\n</span><span class="s2"># OSX</span><span class="se">\n</span><span class=
+"s2">.DS_Store</span><span class="se">\n\n\</span><span class="s2">
+# TextMate</span><span class="se">\n</span><span class="s2">*.tm_build_errors</span><span class="se">\n\n\n</span><span class=
+"s2">"</span> &gt;&gt; .gitignore
       git add .gitignore
-      git commit -m <span class="s2">&quot;Ignore Xcode stuff.&quot;</span>
+      git commit -m <span class="s2">"Ignore Xcode stuff."</span>
       git add .
-      git commit -m <span class="s2">&quot;Initial Xcode project.&quot;</span>
+      git commit -m <span class="s2">"Initial Xcode project."</span>
     <span class="o">}</span>
 
 <span class="k">fi</span>
@@ -170,6 +176,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -184,16 +199,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">

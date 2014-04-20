@@ -78,15 +78,14 @@
         <span class="k">if</span> <span class="nb">self</span> <span class="o">==</span> <span class="no">Base</span>
           <span class="k">super</span>
         <span class="k">elsif</span> <span class="n">abstract_class?</span>
-          <span class="s2">&quot;</span><span class="si">#{</span><span class="k">super</span><span class="si">}</span><span class=
-"s2">(abstract)&quot;</span>
+          <span class="s2">"</span><span class="si">#{</span><span class="k">super</span><span class="si">}</span><span class="s2">(abstract)"</span>
         <span class="k">elsif</span> <span class="n">table_exists?</span>
-          <span class="s2">&quot;</span><span class="si">#{</span><span class="k">super</span><span class="si">}</span><span class=
-"s2">(</span><span class="si">#{</span><span class="n">columns</span><span class="o">.</span><span class="n">count</span><span class=
-"si">}</span><span class="s2"> columns)&quot;</span>
+          <span class="s2">"</span><span class="si">#{</span><span class="k">super</span><span class="si">}</span><span class=
+"s2">(</span><span class="si">#{</span><span class="n">columns</span><span class="p">.</span><span class="nf">count</span><span class=
+"si">}</span><span class="s2"> columns)"</span>
         <span class="k">else</span>
-          <span class="s2">&quot;</span><span class="si">#{</span><span class="k">super</span><span class="si">}</span><span class=
-"s2">(Table doesn&#39;t exist)&quot;</span>
+          <span class="s2">"</span><span class="si">#{</span><span class="k">super</span><span class="si">}</span><span class=
+"s2">(Table doesn't exist)"</span>
         <span class="k">end</span>
       <span class="k">end</span>
 
@@ -156,6 +155,15 @@ var disqus_shortname = 'metaskillsnet';
           </h3>
           <article>
             <h4>
+              Jekyll-Style Blogging On Rails
+            </h4>
+            <p>
+              <a href="/2014/04/19/jekyll-style-blogging-on-rail">Do you want to use your existing Rails' layouts &amp; business logic for your new
+              Blog? Do you know and love [Jekyll](http://jekyllrb.com), but cant seem to get the two to...</a>
+            </p>
+          </article>
+          <article>
+            <h4>
               Thanks To My Mother For The Career I Have Today!
             </h4>
             <p>
@@ -170,16 +178,6 @@ var disqus_shortname = 'metaskillsnet';
             <p>
               <a href="/2013/12/15/instrumenting-your-code-with-activesupport-notifications">Have you ever wondered how tools like New Relic are able
               to gain valuable metrics to your Rails application's internals? Or maybe you are interested in learning how to write...</a>
-            </p>
-          </article>
-          <article>
-            <h4>
-              Using Dotenv In Rails
-            </h4>
-            <p>
-              <a href="/2013/10/03/using-dotenv-in-rails">Environment variables as a configuration means are everywhere in Ruby. For instance,
-              ActiveRecord will use the single `DATABASE_URL` environment variable for every part of it's configuration, no database.yml needed!
-              If...</a>
             </p>
           </article>
           <aside id="powered">
